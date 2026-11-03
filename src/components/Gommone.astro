@@ -1,0 +1,38 @@
+---
+import Foto from './Foto.astro';
+import Dato from './Dato.astro';
+import Icona from './Icona.astro';
+import { sito } from '../data/sito.js';
+interface Props { titoloLivello?: 'h1' | 'h2'; link?: boolean }
+const { titoloLivello = 'h2', link = true } = Astro.props;
+const { gommone, skipper } = sito;
+const Titolo = titoloLivello;
+---
+<div class="due-colonne">
+  <Foto nota="Il gommone di profilo, all'ancora in acqua turchese" class="gommone__foto" />
+  <div style="display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <p class="occhiello">Il gommone</p>
+      <Titolo id="gommone-titolo" class="titolo-sezione">Il maxi gommone e chi lo guida</Titolo>
+      <p class="testo-2"><Dato v={gommone.descrizione} e="Presenta il gommone in due righe: modello, comodità, perché è adatto a famiglie e gruppi" /></p>
+    </div>
+    <dl class="dati-barca">
+      <div><dt>Lunghezza</dt><dd><Dato v={gommone.lunghezza} e="—" /> metri</dd></div>
+      <div><dt>Motori</dt><dd><Dato v={gommone.motori} e="—" /> cv</dd></div>
+      <div><dt>Passeggeri</dt><dd>fino a <Dato v={gommone.passeggeri} e="N" /></dd></div>
+      <div><dt>A bordo</dt><dd class="testo"><Dato v={gommone.dotazioni} e="tendalino, scaletta bagno, doccetta…" /></dd></div>
+    </dl>
+    <div class="skipper">
+      <span class="skipper__foto" aria-hidden="true"></span>
+      <div>
+        <p style="font-size:18px;line-height:1.3;font-weight:700"><Dato v={skipper.nome} e="Nome" />, skipper</p>
+        <p class="testo-2" style="font-size:15px;line-height:1.5"><Dato v={skipper.descrizione} e="Una riga su di te: anni di mare nell'arcipelago, lingue parlate" /></p>
+      </div>
+    </div>
+    {link && <a href="/gommone/" class="link-freccia">Il gommone e lo skipper<Icona nome="destra" size={18} /></a>}
+  </div>
+</div>
+
+<style>
+  :global(.gommone__foto) { aspect-ratio: 5 / 4; }
+</style>

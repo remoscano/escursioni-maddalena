@@ -1,0 +1,8 @@
+---
+// Mostra un dato; se è vuoto mostra un segnaposto rosa con l'etichetta tra parentesi quadre.
+// Esempio: <Dato v={sito.contatti.telefonoVisibile} e="+39 numero" />
+interface Props { v?: string | number | null; e: string }
+const { v, e } = Astro.props;
+const vuoto = v === undefined || v === null || String(v).trim() === '';
+---
+{vuoto ? <span class="dato">[{e}]</span> : <Fragment>{v}</Fragment>}

@@ -1,0 +1,16 @@
+---
+// Marchio: un sole e due onde che disegnano la M di Maddalena.
+interface Props { size?: number; href?: string; etichetta?: string }
+const { size = 46, href = '/', etichetta = 'Escursioni Maddalena, torna alla home' } = Astro.props;
+---
+<a href={href} class="logo" aria-label={etichetta}>
+  <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
+    <circle cx="24" cy="24" r="24" fill="#2BB7C2" />
+    <circle cx="33.5" cy="14.5" r="5" fill="#FBF8F2" />
+    <path d="M9.5 32.5C12.5 22 18 22 24 30.5C30 22 35.5 22 38.5 32.5" fill="none" stroke="#0A3A51" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+  <span class="logo__testo">
+    <span class="logo__sopra">Escursioni</span>
+    <span class="logo__nome">Maddalena</span>
+  </span>
+</a>

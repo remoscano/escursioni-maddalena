@@ -1,0 +1,44 @@
+---
+import Foto from './Foto.astro';
+import Dato from './Dato.astro';
+import Icona from './Icona.astro';
+
+interface Props { e: any; grande?: boolean }
+const { e, grande = false } = Astro.props;
+const href = `/escursioni/${e.slug}/`;
+const richiesta = `/richiesta/?escursione=${e.slug}`;
+const tono = e.slug === 'tramonto-mezza-giornata' ? 'rosa' : 'acqua';
+---
+{grande ? (
+  <article class="scheda-grande">
+    <Foto nota={e.foto.copertina} tono={tono} />
+    <div class="scheda-grande__corpo">
+      <div class="etichette">{e.etichette.map((t: string) => <span class="etichetta">{t}</span>)}</div>
+      <h3><a href={href}>{e.titolo}</a></h3>
+      <p class="testo-2" style="font-size:18px">{e.breve}</p>
+      <p class="prezzo">
+        Da <Dato v={e.prezzoAdulti} e="PREZZO" /> € a persona
+        {e.prezzoBambini !== null && <small>· bambini <Dato v={e.prezzoBambini} e="PREZZO" /> €</small>}
+      </p>
+      <div class="azioni">
+        <a href={richiesta} class="btn btn--wa"><Icona nome="whatsapp" />Chiedi su WhatsApp</a>
+        <a href={href} class="btn btn--bordo">Scopri il tour<Icona nome="destra" /></a>
+      </div>
+    </div>
+  </article>
+) : (
+  <article class="scheda">
+    <Foto nota={e.foto.copertina} tono={tono} sizes="(max-width: 760px) 100vw, 33vw" />
+    <div class="scheda__corpo">
+      <div class="etichette">{e.etichette.map((t: string) => <span class="etichetta">{t}</span>)}</div>
+      <h3><a href={href}>{e.titolo}</a></h3>
+      <p>{e.breve}</p>
+      <p class="scheda__info">
+        {e.slug === 'tour-privato'
+          ? <Fragment>Fino a <Dato v={e.postiMax} e="N" /> persone · prezzo su richiesta</Fragment>
+          : <Fragment><Dato v={e.orari} e="orari" /> · da <Dato v={e.prezzoAdulti} e="PREZZO" /> €</Fragment>}
+      </p>
+      <span class="link-freccia" aria-hidden="true">Scopri l'escursione<Icona nome="destra" size={18} /></span>
+    </div>
+  </article>
+)}

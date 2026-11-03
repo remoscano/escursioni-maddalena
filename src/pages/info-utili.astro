@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+import BoxInfo from '../components/BoxInfo.astro';
+import Icona from '../components/Icona.astro';
+import Dato from '../components/Dato.astro';
+import SezioneRichiesta from '../components/SezioneRichiesta.astro';
+import { sito } from '../data/sito.js';
+const { imbarchi } = sito;
+---
+<Base
+  titolo="Info utili: imbarchi, cosa portare, meteo e Parco"
+  descrizione="Dove ci si imbarca a Palau e a La Maddalena, cosa portare, cosa succede con il maestrale e le regole del Parco Nazionale dell'Arcipelago."
+>
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Info utili</p>
+      <h1>Prima di salire a bordo</h1>
+      <p class="intro">Tutto quello che serve per arrivare puntuali al molo e goderti la giornata in mare.</p>
+    </div>
+  </section>
+
+  <section class="sezione" style="padding-top:48px">
+    <div class="contenitore"><BoxInfo /></div>
+  </section>
+
+  <section class="sezione sezione--calda" aria-labelledby="imbarchi-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione__testo">
+        <p class="occhiello">Gli imbarchi</p>
+        <h2 id="imbarchi-titolo" class="titolo-sezione">Palau o La Maddalena: scegli il più comodo</h2>
+      </div>
+      <div class="due-colonne due-colonne--alto">
+        <div class="box">
+          <span class="box__icona"><Icona nome="ancora" size={24} tratto={1.8} /></span>
+          <h3>Palau</h3>
+          <p><strong>Molo:</strong> <Dato v={imbarchi.palau.molo} e="molo e indirizzo" /></p>
+          <p><strong>Ritrovo:</strong> <Dato v={imbarchi.palau.ritrovo} e="ora" />, qualche minuto prima della partenza.</p>
+          <p><strong>Parcheggio:</strong> <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" /></p>
+          <p>Comodo se dormi in Gallura: Porto Cervo, Baja Sardinia, Cannigione, Santa Teresa.</p>
+          {imbarchi.palau.mappa
+            ? <a href={imbarchi.palau.mappa} class="link-freccia" rel="noopener">Apri in Google Maps<Icona nome="destra" size={18} /></a>
+            : <p><Dato e="Link Google Maps del punto di ritrovo" /></p>}
+        </div>
+        <div class="box">
+          <span class="box__icona"><Icona nome="ancora" size={24} tratto={1.8} /></span>
+          <h3>La Maddalena</h3>
+          <p><strong>Molo:</strong> <Dato v={imbarchi.maddalena.molo} e="molo e indirizzo" /></p>
+          <p><strong>Ritrovo:</strong> <Dato v={imbarchi.maddalena.ritrovo} e="ora" /></p>
+          <p>Comodo se dormi sull'isola: il gommone passa a prenderti dopo l'imbarco di Palau.</p>
+          <p>Da Palau a La Maddalena si arriva con i traghetti di linea, che partono di continuo e attraversano in pochi minuti.</p>
+          {imbarchi.maddalena.mappa
+            ? <a href={imbarchi.maddalena.mappa} class="link-freccia" rel="noopener">Apri in Google Maps<Icona nome="destra" size={18} /></a>
+            : <p><Dato e="Link Google Maps del punto di ritrovo" /></p>}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sezione" aria-labelledby="parco-titolo">
+    <div class="contenitore due-colonne due-colonne--alto">
+      <div class="intestazione__testo">
+        <p class="occhiello">Parco Nazionale</p>
+        <h2 id="parco-titolo" class="titolo-sezione">Un arcipelago protetto</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;font-size:18px;line-height:1.6" class="testo-2">
+        <p>Le isole sono nel Parco Nazionale dell'Arcipelago di La Maddalena. Le regole servono a proteggere spiagge e fondali, e le rispettiamo in ogni uscita.</p>
+        <ul style="padding-left:22px;display:flex;flex-direction:column;gap:8px">
+          <li>Alla Spiaggia Rosa di Budelli non si sbarca e non si fa il bagno: la si ammira dal mare.</li>
+          <li>Sabbia, sassi e conchiglie restano sulle spiagge: portarli via è vietato.</li>
+          <li>Rifiuti e mozziconi tornano a bordo con noi.</li>
+        </ul>
+        <p>Ticket del Parco: <Dato v={sito.regole.ticketParco} e="incluso o da pagare" /></p>
+      </div>
+    </div>
+  </section>
+
+  <SezioneRichiesta />
+</Base>

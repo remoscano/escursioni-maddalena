@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import Dato from '../components/Dato.astro';
+---
+<Base titolo="Cookie" descrizione="Questo sito non usa cookie di profilazione né cookie di terze parti.">
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Cookie</p>
+      <h1>Cookie</h1>
+      <p class="intro"><span class="dato">[BOZZA: da far verificare prima della pubblicazione]</span></p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:40px">
+    <div class="contenitore testo-lungo">
+      <p>Questo sito non installa cookie di profilazione, né cookie di terze parti per pubblicità o statistiche. Per questo non ti chiediamo il consenso con un banner.</p>
+      <p>Caratteri tipografici e immagini sono ospitati sul nostro sito: aprendo le pagine non vengono contattati servizi di terzi come Google Fonts, YouTube o Google Maps. I link a Google Maps e WhatsApp si aprono solo se li tocchi tu.</p>
+      <p><Dato e="Se in futuro si aggiungono statistiche (es. Cloudflare Web Analytics, senza cookie) o altri servizi, aggiornare questa pagina" /></p>
+      <p class="testo-2">Ultimo aggiornamento: <Dato e="data" /></p>
+    </div>
+  </section>
+</Base>

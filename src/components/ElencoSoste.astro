@@ -1,0 +1,31 @@
+---
+// Elenco delle soste (dalla voce "programma" di un'escursione), accanto alla mappa.
+import Icona from './Icona.astro';
+import Dato from './Dato.astro';
+interface Props { programma: any[]; rientro?: string }
+const { programma, rientro } = Astro.props;
+const tappe = programma.filter((t) => t.tipo !== 'imbarco');
+---
+<ul class="soste">
+  {tappe.map((t) => (
+    t.tipo === 'rientro' ? (
+      <li class="sosta">
+        <span class="sosta__n sosta__n--imbarco" aria-hidden="true"><Icona nome="ancora" /></span>
+        <p><strong style="color:var(--mare)">Rientro</strong> a La Maddalena e a Palau, alle <Dato v={rientro} e="ora" />.</p>
+      </li>
+    ) : (
+      <li class="sosta">
+        {t.tipo === 'vista'
+          ? <span class="sosta__n sosta__n--rosa" aria-hidden="true"><Icona nome="occhio" size={22} /></span>
+          : <span class="sosta__n"><span class="sr-only">Sosta </span>{t.n}</span>}
+        <div class="sosta__testo">
+          <div class="sosta__riga">
+            <h3>{t.titolo}</h3>
+            <span class={`sosta__luogo ${t.tipo === 'vista' ? 'sosta__luogo--rosa' : ''}`}>{t.luogo}</span>
+          </div>
+          <p>{t.testo || <Dato e={t.mancante} />}</p>
+        </div>
+      </li>
+    )
+  ))}
+</ul>

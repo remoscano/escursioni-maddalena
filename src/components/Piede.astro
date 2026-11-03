@@ -1,0 +1,46 @@
+---
+import Logo from './Logo.astro';
+import Dato from './Dato.astro';
+import { sito } from '../data/sito.js';
+import { escursioni } from '../data/escursioni.js';
+const { contatti, azienda } = sito;
+const anno = new Date().getFullYear();
+---
+<footer class="piede">
+  <div class="contenitore">
+    <div class="piede__griglia">
+      <div class="piede__col su-scuro">
+        <Logo size={42} etichetta="Escursioni Maddalena, home" />
+        <p style="max-width: 30ch">Escursioni in maxi gommone nell'Arcipelago di La Maddalena, con imbarco a Palau e a La Maddalena.</p>
+      </div>
+      <nav class="piede__col" aria-labelledby="piede-escursioni">
+        <h2 id="piede-escursioni">Escursioni</h2>
+        {escursioni.map((e) => <a href={`/escursioni/${e.slug}/`}>{e.titolo}</a>)}
+      </nav>
+      <nav class="piede__col" aria-labelledby="piede-info">
+        <h2 id="piede-info">Informazioni</h2>
+        <a href="/gommone/">Il gommone e lo skipper</a>
+        <a href="/info-utili/">Info utili</a>
+        <a href="/domande-frequenti/">Domande frequenti</a>
+        <a href="/richiesta/">Richiesta di disponibilità</a>
+      </nav>
+      <div class="piede__col">
+        <h2>Contatti</h2>
+        <p>WhatsApp e telefono {contatti.telefonoVisibile
+          ? <a href={`tel:+${contatti.whatsapp}`} style="font-weight:700">{contatti.telefonoVisibile}</a>
+          : <Dato e="+39 numero" />}</p>
+        <p>Email {contatti.email
+          ? <a href={`mailto:${contatti.email}`} style="font-weight:700">{contatti.email}</a>
+          : <Dato e="indirizzo email" />}</p>
+        <p>Imbarchi: Palau e La Maddalena</p>
+      </div>
+    </div>
+    <div class="piede__fondo">
+      <p>© {anno} {azienda.ragioneSociale || sito.nome} · P. IVA <Dato v={azienda.partitaIva} e="numero" /></p>
+      <div class="piede__link">
+        <a href="/privacy/">Privacy</a>
+        <a href="/cookie/">Cookie</a>
+      </div>
+    </div>
+  </div>
+</footer>

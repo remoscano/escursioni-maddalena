@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import Icona from '../components/Icona.astro';
+import Dato from '../components/Dato.astro';
+import ModuloRichiesta from '../components/ModuloRichiesta.astro';
+import { sito } from '../data/sito.js';
+const { contatti, imbarchi } = sito;
+---
+<Base
+  titolo="Contatti"
+  descrizione="Scrivici su WhatsApp, chiamaci o mandaci un'email. Imbarchi a Palau e a La Maddalena."
+>
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Contatti</p>
+      <h1>Scrivici, ti rispondiamo noi</h1>
+      <p class="intro">Il modo più veloce è WhatsApp: rispondiamo <Dato v={contatti.orariRisposta} e="giorni e orari" />.</p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:48px">
+    <div class="contenitore due-colonne due-colonne--alto">
+      <div class="griglia-info" style="grid-template-columns:1fr">
+        <div class="box">
+          <span class="box__icona"><Icona nome="whatsapp" size={24} tratto={1.8} /></span>
+          <h2 style="font-size:22px;line-height:1.2;font-weight:700">WhatsApp</h2>
+          {contatti.whatsapp
+            ? <a href={`https://wa.me/${contatti.whatsapp}`} class="btn btn--wa" rel="noopener" style="align-self:flex-start"><Icona nome="whatsapp" />{contatti.telefonoVisibile || 'Apri WhatsApp'}</a>
+            : <p><Dato e="+39 numero WhatsApp" /></p>}
+        </div>
+        <div class="box">
+          <span class="box__icona"><Icona nome="telefono" size={24} tratto={1.8} /></span>
+          <h2 style="font-size:22px;line-height:1.2;font-weight:700">Telefono</h2>
+          <p>{contatti.telefonoVisibile
+            ? <a href={`tel:+${contatti.whatsapp}`} style="font-weight:700">{contatti.telefonoVisibile}</a>
+            : <Dato e="+39 numero" />}</p>
+        </div>
+        <div class="box">
+          <span class="box__icona"><Icona nome="email" size={24} tratto={1.8} /></span>
+          <h2 style="font-size:22px;line-height:1.2;font-weight:700">Email</h2>
+          <p>{contatti.email ? <a href={`mailto:${contatti.email}`} style="font-weight:700">{contatti.email}</a> : <Dato e="indirizzo email" />}</p>
+        </div>
+        <div class="box">
+          <span class="box__icona"><Icona nome="luogo" size={24} tratto={1.8} /></span>
+          <h2 style="font-size:22px;line-height:1.2;font-weight:700">Imbarchi</h2>
+          <p><strong>Palau</strong> · <Dato v={imbarchi.palau.molo} e="molo e indirizzo" /></p>
+          <p><strong>La Maddalena</strong> · <Dato v={imbarchi.maddalena.molo} e="molo e indirizzo" /></p>
+          <a href="/info-utili/" class="link-freccia">Come arrivare<Icona nome="destra" size={18} /></a>
+        </div>
+      </div>
+      <ModuloRichiesta chiaro />
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,33 @@
+---
+// Una foto. Finché "src" è vuoto mostra un segnaposto che dice quale foto scattare.
+// Per inserire la foto vera: metti il file in src/assets/foto/ e passalo come src (import).
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Icona from './Icona.astro';
+
+interface Props {
+  nota: string;           // descrizione della foto (diventa anche il testo alternativo)
+  src?: ImageMetadata;
+  tono?: 'acqua' | 'rosa' | 'sabbia';
+  class?: string;
+  sizes?: string;
+  priorita?: boolean;     // true solo per la foto in cima alla pagina
+}
+const { nota, src, tono = 'acqua', class: classe = '', sizes = '(max-width: 760px) 100vw, 50vw', priorita = false } = Astro.props;
+---
+{src ? (
+  <div class={`foto ${classe}`}>
+    <Image
+      src={src}
+      alt={nota}
+      widths={[480, 800, 1200, 1600, 2400].filter((w) => w <= src.width)}
+      sizes={sizes}
+      loading={priorita ? 'eager' : 'lazy'}
+      fetchpriority={priorita ? 'high' : 'auto'}
+    />
+  </div>
+) : (
+  <div class={`foto foto--vuota ${tono !== 'acqua' ? `foto--${tono}` : ''} ${classe}`} role="img" aria-label={`Foto in arrivo: ${nota}`}>
+    <span class="foto__nota" aria-hidden="true"><Icona nome="foto" size={18} tratto={1.8} />Foto: {nota}</span>
+  </div>
+)}

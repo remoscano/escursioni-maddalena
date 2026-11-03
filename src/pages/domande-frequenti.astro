@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import Faq from '../components/Faq.astro';
+import SezioneRichiesta from '../components/SezioneRichiesta.astro';
+import { faq } from '../data/faq.js';
+---
+<Base
+  titolo="Domande frequenti"
+  descrizione="Come si prenota e si paga, cosa succede con il maestrale, bambini e animali a bordo, Spiaggia Rosa e regole del Parco: le risposte prima di scriverci."
+>
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Domande frequenti</p>
+      <h1>Le risposte prima di scriverci</h1>
+      <p class="intro">Se non trovi quello che cerchi, scrivici su WhatsApp: rispondiamo noi, non un risponditore automatico.</p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:48px">
+    <div class="contenitore" style="max-width:920px;display:flex;flex-direction:column;gap:56px">
+      {faq.map((g) => (
+        <div class="faq-gruppo">
+          <h2>{g.gruppo}</h2>
+          <Faq domande={g.domande} primaAperta={false} />
+        </div>
+      ))}
+    </div>
+  </section>
+  <SezioneRichiesta titolo="Altre domande? Scrivici su WhatsApp" />
+</Base>

@@ -1,0 +1,28 @@
+---
+import Icona from './Icona.astro';
+import { sito, recensioni } from '../data/sito.js';
+const elenco = recensioni.length ? recensioni : [null, null, null];
+---
+<section class="sezione sezione--acqua" aria-labelledby="recensioni-titolo">
+  <div class="contenitore pila" style="gap:40px">
+    <div class="intestazione" style="gap:16px 48px">
+      <h2 id="recensioni-titolo" class="titolo-medio">Cosa raccontano gli ospiti</h2>
+      <a href={sito.recensioniGoogle || '#'} class="link-freccia" style="color:var(--mare)" rel="noopener">
+        Tutte le recensioni su Google<Icona nome="destra" size={18} />
+      </a>
+    </div>
+    <div class="griglia-schede">
+      {elenco.map((r) => r ? (
+        <figure class="recensione">
+          <blockquote>“{r.testo}”</blockquote>
+          <figcaption>{r.autore} · {r.data}</figcaption>
+        </figure>
+      ) : (
+        <figure class="recensione recensione--vuota">
+          <blockquote>“<span class="dato">[Recensione reale da Google o TripAdvisor]</span>”</blockquote>
+          <figcaption><span class="dato">[Nome, città · mese e anno]</span></figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import Dato from '../components/Dato.astro';
+import { sito } from '../data/sito.js';
+const { azienda, contatti } = sito;
+---
+<Base titolo="Informativa privacy" descrizione="Come Escursioni Maddalena tratta i dati personali di chi visita il sito e di chi chiede disponibilità su WhatsApp.">
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Privacy</p>
+      <h1>Informativa privacy</h1>
+      <p class="intro"><span class="dato">[BOZZA: testo da far verificare a chi segue la privacy dell'azienda prima della pubblicazione]</span></p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:40px">
+    <div class="contenitore testo-lungo">
+      <h2>Titolare del trattamento</h2>
+      <p><Dato v={azienda.ragioneSociale} e="Ragione sociale" />, <Dato v={azienda.indirizzo} e="indirizzo" />, P. IVA <Dato v={azienda.partitaIva} e="numero" />. Email: <Dato v={contatti.email} e="indirizzo email" />.</p>
+
+      <h2>Quali dati raccogliamo</h2>
+      <p><strong>Navigazione del sito.</strong> Il sito non usa cookie di profilazione né strumenti di tracciamento pubblicitario. Il fornitore dell'hosting registra dati tecnici (indirizzo IP, browser, pagine richieste) per motivi di sicurezza e funzionamento.</p>
+      <p><strong>Richiesta di disponibilità.</strong> Il modulo di richiesta non invia dati al sito: compone un messaggio nel tuo browser e lo apre in WhatsApp. I dati (nome, data, numero di persone, punto d'imbarco) ci arrivano solo se decidi di inviare il messaggio, insieme al tuo numero di telefono. Il messaggio passa attraverso WhatsApp, che li tratta secondo la propria informativa.</p>
+
+      <h2>Perché li usiamo</h2>
+      <ul>
+        <li>Rispondere alla tua richiesta e organizzare l'escursione (base giuridica: misure precontrattuali e contratto).</li>
+        <li>Avvisarti di cambi di orario o di programma dovuti al meteo.</li>
+        <li>Adempiere agli obblighi di legge, ad esempio fiscali.</li>
+        <li><Dato e="Eventuale richiesta di recensione dopo il tour: indicare la base giuridica" /></li>
+      </ul>
+
+      <h2>Per quanto tempo</h2>
+      <p><Dato e="Tempi di conservazione delle conversazioni e dei dati di prenotazione" /></p>
+
+      <h2>I tuoi diritti</h2>
+      <p>Puoi chiedere in ogni momento di accedere ai tuoi dati, correggerli, cancellarli o limitarne l'uso, e opporti al trattamento, scrivendo a <Dato v={contatti.email} e="indirizzo email" />. Puoi anche presentare reclamo al Garante per la protezione dei dati personali.</p>
+
+      <p class="testo-2">Ultimo aggiornamento: <Dato e="data" /></p>
+    </div>
+  </section>
+</Base>

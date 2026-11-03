@@ -1,0 +1,217 @@
+---
+// Modello unico per tutte le pagine escursione (stesso schema del Tour delle 7 isole).
+import Base from '../../layouts/Base.astro';
+import Foto from '../../components/Foto.astro';
+import Icona from '../../components/Icona.astro';
+import Dato from '../../components/Dato.astro';
+import Mappa from '../../components/Mappa.astro';
+import Faq from '../../components/Faq.astro';
+import SezioneRichiesta from '../../components/SezioneRichiesta.astro';
+import { escursioni } from '../../data/escursioni.js';
+import { domande } from '../../data/faq.js';
+import { sito } from '../../data/sito.js';
+
+export function getStaticPaths() {
+  return escursioni.map((e) => ({ params: { slug: e.slug }, props: { e } }));
+}
+
+const { e } = Astro.props;
+const { imbarchi, contatti } = sito;
+const altre = escursioni.filter((x) => x.slug !== e.slug);
+const toni = ['acqua', 'rosa', 'acqua', 'sabbia', 'acqua'] as const;
+
+const faqPerEscursione: Record<string, string[]> = {
+  'tour-7-isole': ['maestrale', 'pranzo', 'spiaggia-rosa', 'bambini', 'pagare', 'animali'],
+  'corsica-lavezzi-bonifacio': ['maestrale', 'bambini', 'pagare', 'animali'],
+  'tramonto-mezza-giornata': ['maestrale', 'bambini', 'pagare', 'animali'],
+  'tour-privato': ['pagare', 'maestrale', 'bambini', 'animali'],
+};
+const suRichiesta = e.prezzoAdulti === 'su richiesta';
+const durata = e.ore ? `${e.ore} ore` : '';
+---
+<Base
+  titolo={e.titoloPagina}
+  descrizione={`${e.breve} Imbarco a Palau o La Maddalena, richiesta di disponibilità su WhatsApp.`.slice(0, 160)}
+>
+  <section class="testa-tour" aria-labelledby="tour-titolo">
+    <div class="contenitore">
+      <nav class="briciole" aria-label="Sei qui">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li aria-hidden="true">›</li>
+          <li><a href="/escursioni/">Escursioni</a></li>
+          <li aria-hidden="true">›</li>
+          <li aria-current="page">{e.titolo}</li>
+        </ol>
+      </nav>
+      <div class="testa-tour__griglia">
+        <div>
+          <h1 id="tour-titolo">{e.titoloPagina}</h1>
+          <p class="testa-tour__intro">{e.intro}</p>
+          <ul class="fatti">
+            <li><Icona nome="orologio" size={18} /><Dato v={e.durata} e="durata" />{e.orari !== 'da concordare' && <Fragment>, <Dato v={e.orari} e="orari" /></Fragment>}</li>
+            <li><Icona nome="persone" size={18} />Massimo <Dato v={e.postiMax} e="N" /> persone</li>
+            {e.fatti.map((f: string) => <li><Icona nome="spunta" size={18} />{f}</li>)}
+          </ul>
+        </div>
+        <aside class="box-prezzo" aria-label="Prezzo e prenotazione">
+          <p class="box-prezzo__etichetta">Prezzo a persona</p>
+          {suRichiesta ? (
+            <p class="box-prezzo__cifra">Su richiesta</p>
+          ) : (
+            <p>
+              <span class="box-prezzo__cifra" style="display:block">da <Dato v={e.prezzoAdulti} e="PREZZO" /> €</span>
+              {e.prezzoBambini !== null && <span class="box-prezzo__bambini">bambini <Dato v={e.prezzoBambini} e="PREZZO" /> €</span>}
+            </p>
+          )}
+          <a href="#richiesta" class="btn btn--wa btn--grande btn--pieno"><Icona nome="whatsapp" />Chiedi disponibilità su WhatsApp</a>
+          <p class="box-prezzo__nota">Nessun pagamento online. Oppure chiama {contatti.telefonoVisibile
+            ? <a href={`tel:+${contatti.whatsapp}`}>{contatti.telefonoVisibile}</a>
+            : <Dato e="+39 numero" />}</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Galleria fotografica" style="padding-bottom:96px">
+    <div class="contenitore galleria">
+      <Foto nota={e.foto.galleria[0]} class="galleria__grande" priorita sizes="(max-width: 760px) 100vw, 60vw" />
+      <div class="galleria__piccole">
+        {e.foto.galleria.slice(1, 5).map((n: string, i: number) => (
+          <Foto nota={n} tono={toni[i + 1]} sizes="(max-width: 760px) 50vw, 20vw" />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="programma" class="sezione sezione--calda" aria-labelledby="programma-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione">
+        <div class="intestazione__testo">
+          <p class="occhiello">Il programma</p>
+          <h2 id="programma-titolo" class="titolo-sezione">La giornata, ora per ora</h2>
+        </div>
+        <p class="intestazione__lato">Orari indicativi. Con vento e mare lo skipper può cambiare l'ordine delle soste.</p>
+      </div>
+      <div class={e.mappa ? 'percorso' : 'due-colonne due-colonne--alto'}>
+        <ol class="programma">
+          {e.programma.map((t: any) => (
+            <li class="tappa">
+              <span class="tappa__ora">{e.slug !== 'tour-privato' && <Dato v={t.ora} e="ora" />}</span>
+              <span class="tappa__linea" aria-hidden="true">
+                {t.tipo === 'sosta' && <span class="tappa__punto">{t.n}</span>}
+                {t.tipo === 'vista' && <span class="tappa__punto tappa__punto--rosa"><Icona nome="occhio" size={18} /></span>}
+                {(t.tipo === 'imbarco' || t.tipo === 'rientro') && <span class="tappa__punto tappa__punto--imbarco"><Icona nome="ancora" size={18} /></span>}
+              </span>
+              <div class="tappa__corpo">
+                <div class="sosta__riga">
+                  <h3>{t.titolo}</h3>
+                  {t.luogo && <span class={`sosta__luogo ${t.tipo === 'vista' ? 'sosta__luogo--rosa' : ''}`}>{t.luogo}</span>}
+                </div>
+                <p>
+                  {t.testo}
+                  {t.moloDi && <Fragment> Molo: <Dato v={imbarchi[t.moloDi as 'palau'].molo} e="molo" />.</Fragment>}
+                  {!t.testo && t.mancante && <Dato e={t.mancante} />}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <div style="display:flex;flex-direction:column;gap:20px">
+          {e.mappa && <Mappa didascalia="Percorso indicativo. Il punto rosa è la Spiaggia Rosa, che si vede solo dal mare." />}
+          <dl class="numeri">
+            {e.numeri.map((n: any) => <div><dt>{n.etichetta}</dt><dd>{n.valore}</dd></div>)}
+            <div><dt>Durata</dt><dd><Dato v={durata} e="ore" /></dd></div>
+            <div><dt>Imbarco</dt><dd>Palau o La Maddalena</dd></div>
+          </dl>
+          {e.note.length > 0 && (
+            <ul class="note">
+              {e.note.map((n: string) => <li><Icona nome="info" />{n}</li>)}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pratiche" class="sezione" aria-labelledby="pratiche-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione__testo">
+        <p class="occhiello">Informazioni pratiche</p>
+        <h2 id="pratiche-titolo" class="titolo-sezione">Tutto quello che serve sapere</h2>
+      </div>
+      <div class="griglia-info">
+        <div class="box box--acqua">
+          <h3>Incluso</h3>
+          <ul>
+            {e.incluso.map((x: string) => <li>{x}</li>)}
+            {e.inclusoMancante && <li><Dato e={e.inclusoMancante} /></li>}
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Non incluso</h3>
+          <ul>
+            {e.nonIncluso.map((x: string) => <li>{x}</li>)}
+            {e.nonInclusoMancante && <li><Dato e={e.nonInclusoMancante} /></li>}
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Cosa portare</h3>
+          <ul>
+            <li>Costume, telo e un cambio</li>
+            <li>Crema solare, cappello e occhiali</li>
+            <li>Acqua da bere</li>
+            {e.slug === 'corsica-lavezzi-bonifacio' && <li>Carta d'identità valida per l'espatrio o passaporto</li>}
+            {e.slug === 'tour-7-isole' && <li>Contanti o carta per il pranzo</li>}
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Imbarco a Palau</h3>
+          <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.palau.ritrovo} e="ora" />.</p>
+          <p>Comodo se dormi in Gallura. Parcheggio: <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" />.</p>
+        </div>
+        <div class="box">
+          <h3>Imbarco a La Maddalena</h3>
+          <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" />.</p>
+          <p>Comodo se dormi sull'isola: il gommone passa a prenderti dopo Palau.</p>
+        </div>
+        <div class="box">
+          <h3>Regole del Parco</h3>
+          <p>Siamo nel Parco Nazionale dell'Arcipelago di La Maddalena. Alla Spiaggia Rosa niente sbarco né bagno; sabbia, sassi e conchiglie restano sulle spiagge.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="sezione sezione--calda" aria-labelledby="faq-titolo">
+    <div class="contenitore due-colonne due-colonne--alto">
+      <div class="intestazione__testo">
+        <p class="occhiello">Domande frequenti</p>
+        <h2 id="faq-titolo" class="titolo-sezione">Prima di chiederlo su WhatsApp</h2>
+        <a href="/domande-frequenti/" class="link-freccia">Tutte le domande<Icona nome="destra" size={18} /></a>
+      </div>
+      <Faq domande={domande(faqPerEscursione[e.slug] ?? [])} />
+    </div>
+  </section>
+
+  <SezioneRichiesta
+    escursione={e.slug}
+    titolo={`${e.titolo}: scegli la data`}
+    titoloModulo={e.titolo}
+    testo="Scegli data, persone e punto d'imbarco: WhatsApp si apre con il messaggio pronto e ti rispondiamo con posti e orari."
+  />
+
+  <section class="sezione" aria-labelledby="altre-titolo" style="padding:96px 0">
+    <div class="contenitore pila" style="gap:32px">
+      <h2 id="altre-titolo" class="titolo-medio">Altre uscite in maxi gommone</h2>
+      <div class="altre">
+        {altre.map((x) => (
+          <a href={`/escursioni/${x.slug}/`} class="altra">
+            <span class="altra__foto" aria-hidden="true"></span>
+            <span><strong>{x.titolo}</strong><span>{x.breve}</span></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

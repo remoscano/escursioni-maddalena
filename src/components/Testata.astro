@@ -1,0 +1,54 @@
+---
+import Logo from './Logo.astro';
+import Icona from './Icona.astro';
+import { menu } from '../data/menu.js';
+
+interface Props { scura?: boolean }
+const { scura = false } = Astro.props;
+const percorso = Astro.url.pathname;
+const attivo = (href: string) =>
+  href === '/escursioni/' ? percorso === href : percorso.startsWith(href);
+---
+<header class={`testata ${scura ? 'testata--scura su-scuro' : 'testata--chiara'}`}>
+  <div class="testata__barra">
+    <Logo />
+    <nav class="testata__menu" aria-label="Menu principale">
+      {menu.map((v) => (
+        <a href={v.href} aria-current={attivo(v.href) ? 'page' : undefined}>{v.testo}</a>
+      ))}
+    </nav>
+    <div class="testata__azioni">
+      <a href="/richiesta/" class="btn btn--wa"><Icona nome="whatsapp" />Scrivici su WhatsApp</a>
+      <button type="button" class="testata__apri" aria-expanded="false" aria-controls="menu-telefono" data-apri-menu>
+        <span class="sr-only">Apri il menu</span>
+        <Icona nome="menu" size={22} />
+      </button>
+    </div>
+  </div>
+  <div class="testata__pannello" id="menu-telefono" hidden>
+    <nav aria-label="Menu">
+      <a href="/">Home</a>
+      {menu.map((v) => (
+        <a href={v.href} aria-current={attivo(v.href) ? 'page' : undefined}>{v.testo}</a>
+      ))}
+      <a href="/richiesta/" class="btn btn--wa btn--grande"><Icona nome="whatsapp" />Chiedi disponibilità</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const bottone = document.querySelector<HTMLButtonElement>('[data-apri-menu]');
+  const pannello = document.getElementById('menu-telefono');
+  if (bottone && pannello) {
+    const etichetta = bottone.querySelector('.sr-only');
+    const imposta = (aperto: boolean) => {
+      pannello.hidden = !aperto;
+      bottone.setAttribute('aria-expanded', String(aperto));
+      if (etichetta) etichetta.textContent = aperto ? 'Chiudi il menu' : 'Apri il menu';
+    };
+    bottone.addEventListener('click', () => imposta(pannello.hidden));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !pannello.hidden) { imposta(false); bottone.focus(); }
+    });
+  }
+</script>

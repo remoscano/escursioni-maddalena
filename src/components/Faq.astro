@@ -1,0 +1,25 @@
+---
+import Icona from './Icona.astro';
+import Dato from './Dato.astro';
+import { sito } from '../data/sito.js';
+
+interface Props { domande: any[]; primaAperta?: boolean }
+const { domande, primaAperta = true } = Astro.props;
+const regole = sito.regole as Record<string, string>;
+---
+<div class="faq">
+  {domande.map((d, i) => {
+    const valoreRegola = d.regola ? regole[d.regola] : '';
+    return (
+      <details open={primaAperta && i === 0}>
+        <summary>{d.domanda}<Icona nome="piu" size={22} /></summary>
+        <p>
+          {d.risposta}
+          {d.mancante && (valoreRegola
+            ? <Fragment> {valoreRegola}</Fragment>
+            : <Fragment> <Dato e={d.mancante} /></Fragment>)}
+        </p>
+      </details>
+    );
+  })}
+</div>

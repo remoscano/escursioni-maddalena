@@ -1,0 +1,37 @@
+---
+// I quattro riquadri "Prima di salire a bordo": imbarchi, cosa portare, vento e mare, Parco.
+import Icona from './Icona.astro';
+import Dato from './Dato.astro';
+import { sito } from '../data/sito.js';
+const { imbarchi, regole } = sito;
+---
+<div class="griglia-info">
+  <div class="box">
+    <span class="box__icona"><Icona nome="luogo" size={24} tratto={1.8} /></span>
+    <h3>Due punti d'imbarco</h3>
+    <p><strong>Palau</strong> · <Dato v={imbarchi.palau.molo} e="molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.palau.ritrovo} e="ora" /></p>
+    <p><strong>La Maddalena</strong> · <Dato v={imbarchi.maddalena.molo} e="molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" /></p>
+  </div>
+  <div class="box">
+    <span class="box__icona"><Icona nome="borsa" size={24} tratto={1.8} /></span>
+    <h3>Cosa portare</h3>
+    <ul>
+      <li>Costume, telo e un cambio</li>
+      <li>Crema solare, cappello e occhiali</li>
+      <li>Acqua da bere</li>
+      <li>Contanti o carta per il pranzo</li>
+    </ul>
+  </div>
+  <div class="box">
+    <span class="box__icona"><Icona nome="vento" size={24} tratto={1.8} /></span>
+    <h3>Vento e mare</h3>
+    <p>Con il maestrale forte l'itinerario cambia o l'uscita si sposta: ti avvisiamo su WhatsApp.</p>
+    <p><Dato v={regole.maltempo} e="La vostra regola: rimborso o cambio data" /></p>
+  </div>
+  <div class="box">
+    <span class="box__icona"><Icona nome="foglia" size={24} tratto={1.8} /></span>
+    <h3>Nel Parco Nazionale</h3>
+    <p>Alla Spiaggia Rosa niente sbarco né bagno. Sabbia, sassi e conchiglie restano dove sono.</p>
+    <p>Ticket del Parco: <Dato v={regole.ticketParco} e="incluso o da pagare" /></p>
+  </div>
+</div>

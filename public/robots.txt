@@ -1,0 +1,6 @@
+# Sito in costruzione: niente indicizzazione finché ci sono segnaposto.
+# Al lancio sostituire con:
+#   User-agent: *
+#   Allow: /
+User-agent: *
+Disallow: /

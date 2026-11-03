@@ -1,0 +1,53 @@
+---
+import '@fontsource-variable/bricolage-grotesque/opsz.css';
+import '@fontsource-variable/figtree/wght.css';
+import '../styles/global.css';
+import Testata from '../components/Testata.astro';
+import Piede from '../components/Piede.astro';
+import Icona from '../components/Icona.astro';
+import { sito } from '../data/sito.js';
+
+interface Props {
+  titolo: string;          // titolo della pagina (senza il nome del sito)
+  descrizione: string;     // 140–160 caratteri, per Google
+  testataScura?: boolean;  // true se la testata è dentro un'immagine scura (home)
+  senzaTestata?: boolean;
+}
+const { titolo, descrizione, testataScura = false, senzaTestata = false } = Astro.props;
+const titoloCompleto = Astro.url.pathname === '/' ? titolo : `${titolo} · ${sito.nome}`;
+const canonico = new URL(Astro.url.pathname, sito.url).href;
+const telefono = sito.contatti.whatsapp ? `tel:+${sito.contatti.whatsapp}` : '/contatti/';
+---
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{titoloCompleto}</title>
+  <meta name="description" content={descrizione} />
+  <link rel="canonical" href={canonico} />
+  {sito.inCostruzione && <meta name="robots" content="noindex, nofollow" />}
+  <meta name="theme-color" content="#0A3A51" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="it_IT" />
+  <meta property="og:site_name" content={sito.nome} />
+  <meta property="og:title" content={titoloCompleto} />
+  <meta property="og:description" content={descrizione} />
+  <meta property="og:url" content={canonico} />
+  <slot name="head" />
+</head>
+<body>
+  <a class="salta" href="#contenuto">Vai al contenuto</a>
+  {!senzaTestata && !testataScura && <Testata />}
+  <slot name="hero" />
+  <main id="contenuto">
+    <slot />
+  </main>
+  <Piede />
+  <div class="barra-wa">
+    <a href="/richiesta/" class="btn btn--wa"><Icona nome="whatsapp" />Chiedi disponibilità</a>
+    <a href={telefono} class="btn btn--bordo" aria-label="Chiama"><Icona nome="telefono" /></a>
+  </div>
+</body>
+</html>

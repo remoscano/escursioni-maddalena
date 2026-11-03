@@ -1,0 +1,109 @@
+---
+import Base from '../layouts/Base.astro';
+import Testata from '../components/Testata.astro';
+import Foto from '../components/Foto.astro';
+import Icona from '../components/Icona.astro';
+import Dato from '../components/Dato.astro';
+import Mappa from '../components/Mappa.astro';
+import ElencoSoste from '../components/ElencoSoste.astro';
+import SchedaEscursione from '../components/SchedaEscursione.astro';
+import Gommone from '../components/Gommone.astro';
+import Recensioni from '../components/Recensioni.astro';
+import BoxInfo from '../components/BoxInfo.astro';
+import SezioneRichiesta from '../components/SezioneRichiesta.astro';
+import { escursioni, trovaEscursione } from '../data/escursioni.js';
+
+const tour = trovaEscursione('tour-7-isole');
+const altre = escursioni.filter((e) => !e.inEvidenza);
+---
+<Base
+  titolo="Escursioni Maddalena · Tour delle 7 isole in maxi gommone"
+  descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, Corsica, tramonto e tour privati. Imbarco a Palau o La Maddalena, prenoti su WhatsApp."
+  testataScura
+>
+  <section slot="hero" class="hero" aria-label="Apertura">
+    <Foto
+      class="hero__foto"
+      nota="il gommone in planata tra le isole, vista dall'alto (orizzontale, almeno 2400 px)"
+      priorita
+      sizes="100vw"
+    />
+    <div class="hero__velo" aria-hidden="true"></div>
+    <Testata scura />
+    <div class="hero__contenuto">
+      <p class="hero__occhiello">Tour delle 7 isole · Arcipelago di La Maddalena</p>
+      <h1 class="hero__titolo">Sette isole, sette soste, un giorno in maxi gommone.</h1>
+      <p class="hero__testo">Dalla Spiaggia Rosa di Budelli a Cala Corsara: il giro completo dell'arcipelago, con imbarco a Palau o a La Maddalena.</p>
+      <div class="hero__azioni">
+        <a href="/richiesta/?escursione=tour-7-isole" class="btn btn--wa btn--grande"><Icona nome="whatsapp" />Chiedi disponibilità su WhatsApp</a>
+        <a href="#percorso" class="btn btn--bordo-chiaro btn--grande">Guarda il percorso<Icona nome="giu" /></a>
+      </div>
+    </div>
+    <div class="hero__fatti">
+      <dl>
+        <div><dt><Icona nome="orologio" size={18} />Durata</dt><dd>Giornata intera, <Dato v={tour.orari} e="orari" /></dd></div>
+        <div><dt><Icona nome="ancora" size={18} />Imbarco</dt><dd>Palau o La Maddalena</dd></div>
+        <div><dt><Icona nome="persone" size={18} />A bordo</dt><dd>Massimo <Dato v={tour.postiMax} e="N" /> persone</dd></div>
+        <div><dt><Icona nome="euro" size={18} />Prezzo</dt><dd>Da <Dato v={tour.prezzoAdulti} e="PREZZO" /> € a persona</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="percorso" class="sezione" aria-labelledby="percorso-titolo">
+    <div class="contenitore pila" style="gap:56px">
+      <div class="intestazione">
+        <div class="intestazione__testo">
+          <p class="occhiello">Il percorso</p>
+          <h2 id="percorso-titolo" class="titolo-sezione">Il giro dell'arcipelago, sosta per sosta</h2>
+        </div>
+        <p class="intestazione__lato">Imbarco a Palau o a La Maddalena, rientro alle <Dato v={tour.oraRientro} e="ora" />. L'ordine delle soste può cambiare in base a vento e mare.</p>
+      </div>
+      <div class="percorso">
+        <Mappa />
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <ElencoSoste programma={tour.programma} rientro={tour.oraRientro} />
+          <a href="/escursioni/tour-7-isole/" class="link-freccia">Programma completo del tour<Icona nome="destra" size={18} /></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="escursioni" class="sezione sezione--calda" aria-labelledby="escursioni-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione">
+        <div class="intestazione__testo">
+          <p class="occhiello">Escursioni</p>
+          <h2 id="escursioni-titolo" class="titolo-sezione">Scegli la tua giornata in mare</h2>
+        </div>
+        <p class="intestazione__lato">Quattro uscite in maxi gommone, tutte prenotabili con un messaggio WhatsApp.</p>
+      </div>
+      <SchedaEscursione e={tour} grande />
+      <div class="griglia-schede">
+        {altre.map((e) => <SchedaEscursione e={e} />)}
+      </div>
+    </div>
+  </section>
+
+  <section id="gommone" class="sezione" aria-labelledby="gommone-titolo">
+    <div class="contenitore">
+      <Gommone />
+    </div>
+  </section>
+
+  <Recensioni />
+
+  <section id="info" class="sezione" aria-labelledby="info-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione" style="gap:16px 48px">
+        <div class="intestazione__testo">
+          <p class="occhiello">Info utili</p>
+          <h2 id="info-titolo" class="titolo-sezione">Prima di salire a bordo</h2>
+        </div>
+        <a href="/domande-frequenti/" class="link-freccia">Tutte le domande frequenti<Icona nome="destra" size={18} /></a>
+      </div>
+      <BoxInfo />
+    </div>
+  </section>
+
+  <SezioneRichiesta />
+</Base>

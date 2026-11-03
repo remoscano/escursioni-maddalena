@@ -1,0 +1,148 @@
+---
+// Mini-modulo che apre WhatsApp con il messaggio già scritto.
+// Nessun dato passa dal sito: il testo viene composto nel browser e aperto in WhatsApp.
+import Icona from './Icona.astro';
+import { escursioni } from '../data/escursioni.js';
+import { sito } from '../data/sito.js';
+
+interface Props {
+  escursione?: string;   // slug: se presente, l'escursione è già scelta e il menu non compare
+  titolo?: string;
+  chiaro?: boolean;      // stile per sfondo chiaro
+  id?: string;
+}
+const { escursione, titolo = 'Richiesta di disponibilità', chiaro = false, id = 'modulo' } = Astro.props;
+const fissa = escursione ? escursioni.find((e) => e.slug === escursione) : undefined;
+---
+<form
+  class={`modulo ${chiaro ? 'modulo--chiaro' : ''}`}
+  data-modulo-wa
+  data-numero={sito.contatti.whatsapp}
+  data-nome-sito={sito.nome}
+  aria-labelledby={`${id}-titolo`}
+  novalidate
+>
+  <h3 id={`${id}-titolo`}>{titolo}</h3>
+
+  {fissa ? (
+    <input type="hidden" name="escursione" value={fissa.titolo} />
+  ) : (
+    <div class="campo">
+      <label for={`${id}-escursione`}>Escursione</label>
+      <select id={`${id}-escursione`} name="escursione">
+        {escursioni.map((e) => <option value={e.titolo} data-slug={e.slug}>{e.titolo}</option>)}
+      </select>
+    </div>
+  )}
+
+  <div class="campi-3">
+    <div class="campo">
+      <label for={`${id}-data`}>Data</label>
+      <input id={`${id}-data`} name="data" type="date" />
+    </div>
+    <div class="campo">
+      <label for={`${id}-adulti`}>Adulti</label>
+      <input id={`${id}-adulti`} name="adulti" type="number" inputmode="numeric" min="1" max="99" value="2" />
+    </div>
+    <div class="campo">
+      <label for={`${id}-bambini`}>Bambini</label>
+      <input id={`${id}-bambini`} name="bambini" type="number" inputmode="numeric" min="0" max="99" value="0" />
+    </div>
+  </div>
+
+  <fieldset>
+    <legend>Imbarco</legend>
+    <div class="scelte">
+      <label class="scelta"><input type="radio" name="imbarco" value="Palau" checked />Palau</label>
+      <label class="scelta"><input type="radio" name="imbarco" value="La Maddalena" />La Maddalena</label>
+    </div>
+  </fieldset>
+
+  <div class="campo">
+    <label for={`${id}-nome`}>Nome</label>
+    <input id={`${id}-nome`} name="nome" type="text" autocomplete="given-name" placeholder="Come ti chiami?" />
+  </div>
+
+  <div class="anteprima">
+    <p class="anteprima__titolo"><Icona nome="whatsapp" size={16} />Il messaggio che arriverà</p>
+    <div class="anteprima__messaggio" data-anteprima aria-live="polite"></div>
+  </div>
+
+  <p class="avviso" data-avviso hidden></p>
+
+  <button type="submit" class="btn btn--wa btn--grande btn--pieno"><Icona nome="whatsapp" />Apri WhatsApp con il messaggio pronto</button>
+  <p class="modulo__nota">Controlli il testo e premi Invia: nessun pagamento online. <a href="/privacy/">Privacy</a></p>
+</form>
+
+<script>
+  const formatoData = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+  document.querySelectorAll<HTMLFormElement>('form[data-modulo-wa]').forEach((form) => {
+    const anteprima = form.querySelector<HTMLElement>('[data-anteprima]')!;
+    const avviso = form.querySelector<HTMLElement>('[data-avviso]')!;
+    const nomeSito = form.dataset.nomeSito ?? '';
+    const campoData = form.querySelector<HTMLInputElement>('input[name="data"]');
+    const select = form.querySelector<HTMLSelectElement>('select[name="escursione"]');
+
+    // Niente date passate
+    if (campoData) {
+      const oggi = new Date();
+      oggi.setMinutes(oggi.getMinutes() - oggi.getTimezoneOffset());
+      campoData.min = oggi.toISOString().slice(0, 10);
+    }
+
+    // /richiesta/?escursione=slug preseleziona l'escursione
+    if (select) {
+      const slug = new URLSearchParams(location.search).get('escursione');
+      const opzione = slug ? select.querySelector<HTMLOptionElement>(`option[data-slug="${CSS.escape(slug)}"]`) : null;
+      if (opzione) opzione.selected = true;
+    }
+
+    const intero = (nome: string, minimo: number) => {
+      const v = parseInt((form.elements.namedItem(nome) as HTMLInputElement)?.value ?? '', 10);
+      return Number.isFinite(v) ? Math.min(99, Math.max(minimo, v)) : minimo;
+    };
+
+    const messaggio = () => {
+      const dati = new FormData(form);
+      const escursione = String(dati.get('escursione') ?? '');
+      const valoreData = String(dati.get('data') ?? '');
+      let testoData = 'da concordare';
+      if (valoreData) {
+        const d = new Date(valoreData + 'T12:00:00');
+        if (!isNaN(d.getTime())) testoData = formatoData.format(d);
+      }
+      const adulti = intero('adulti', 1);
+      const bambini = intero('bambini', 0);
+      const persone = `${adulti} ${adulti === 1 ? 'adulto' : 'adulti'}` +
+        (bambini > 0 ? `, ${bambini} ${bambini === 1 ? 'bambino' : 'bambini'}` : '');
+      const nome = String(dati.get('nome') ?? '').trim();
+      return [
+        `Ciao ${nomeSito}! Vorrei prenotare:`,
+        `• ${escursione}`,
+        `• Data: ${testoData}`,
+        `• Persone: ${persone}`,
+        `• Imbarco: ${dati.get('imbarco')}`,
+        nome ? `Sono ${nome}, grazie!` : 'Grazie!',
+      ].join('\n');
+    };
+
+    const aggiorna = () => { anteprima.textContent = messaggio(); };
+    form.addEventListener('input', aggiorna);
+    form.addEventListener('change', aggiorna);
+    aggiorna();
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const numero = (form.dataset.numero ?? '').replace(/\D/g, '');
+      if (!numero) {
+        avviso.hidden = false;
+        avviso.textContent = 'Il numero WhatsApp non è ancora stato inserito nel sito (src/data/sito.js).';
+        return;
+      }
+      avviso.hidden = true;
+      const url = `https://wa.me/${numero}?text=${encodeURIComponent(messaggio())}`;
+      window.location.href = url;
+    });
+  });
+</script>
