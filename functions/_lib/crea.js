@@ -1,13 +1,13 @@
 // Creazione di una prenotazione: dal sito (cliente o struttura) o dalla gestione (prenotazioni dalle altre piattaforme).
 
-import { offerte, turnoDi, regole, imbarchiPrenotazione, canaliEsterni, calcolaPrenotazione } from '../../src/data/prenotazioni.js';
+import { offerte, turnoDi, regole, imbarchiPrenotazione, canaliEsterni, calcolaPrenotazione, testoChiusuraOnline } from '../../src/data/prenotazioni.js';
 import { prima } from './db.js';
 import { caricaGiorni, situazioneTurno, inserisciPrenotazione, prenotabileOnline, prenotabileGestione } from './motore.js';
 import { Errore, testo, testoLungo, intero, email, telefono, dataValida, codicePrenotazione, tokenSicuro, adessoISO, traMinutiISO } from './util.js';
 
 const MOTIVI = {
   'fuori-stagione': 'In questa data non ci sono uscite: la stagione va dal 1° maggio al 31 ottobre.',
-  chiuso: 'Online si prenota fino alle 20 del giorno prima. Per domani o per oggi scrivici su WhatsApp.',
+  chiuso: `${testoChiusuraOnline} Per questa data scrivici su WhatsApp.`,
   passato: 'La data è già passata.',
 };
 

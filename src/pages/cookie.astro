@@ -1,24 +1,36 @@
 ---
+// Controllata l'8 novembre 2026 su quello che il sito usa davvero.
+// Se si aggiungono statistiche (es. Cloudflare Web Analytics, senza cookie) o un altro servizio esterno,
+// va scritto qui e nella pagina /privacy/.
 import Base from '../layouts/Base.astro';
-import Dato from '../components/Dato.astro';
 ---
-<Base titolo="Cookie" descrizione="Questo sito non usa cookie di profilazione né cookie di terze parti.">
+<Base titolo="Cookie" descrizione="Questo sito non usa cookie di profilazione né cookie di terze parti per pubblicità o statistiche.">
   <section class="testa-pagina">
     <div class="contenitore">
       <p class="occhiello">Cookie</p>
       <h1>Cookie</h1>
-      <p class="intro"><span class="dato">[BOZZA: da far verificare prima della pubblicazione]</span></p>
+      <p class="intro">Niente pubblicità, niente tracciamento: usiamo solo quello che serve a far funzionare il sito.</p>
     </div>
   </section>
   <section class="sezione" style="padding-top:40px">
     <div class="contenitore testo-lungo">
-      <p>Questo sito non installa cookie di profilazione, né cookie di terze parti per pubblicità o statistiche. Per questo non ti chiediamo il consenso con un banner.</p>
-      <p><strong>Cookie tecnico di accesso.</strong> Solo chi entra nell'area strutture partner o nella gestione riceve un cookie tecnico (<code>em_sessione</code>) che serve a restare collegati. Dura al massimo 12 ore e si cancella uscendo.</p>
-      <p><strong>Prenotazione dal link di una struttura.</strong> Se arrivi dal link di un hotel o di una struttura partner, il browser ricorda il loro codice fino alla chiusura della scheda (memoria di sessione, non un cookie), per attribuire loro la prenotazione. Non viene usato per altro.</p>
-      <p><strong>Pagamenti.</strong> Quando paghi passi sulle pagine di SumUp o PayPal, che usano i propri cookie secondo le loro informative.</p>
-      <p>Caratteri tipografici e immagini sono ospitati sul nostro sito: aprendo le pagine non vengono contattati servizi di terzi come Google Fonts, YouTube o Google Maps. I link a Google Maps e WhatsApp si aprono solo se li tocchi tu.</p>
-      <p><Dato e="Se in futuro si aggiungono statistiche (es. Cloudflare Web Analytics, senza cookie) o altri servizi, aggiornare questa pagina" /></p>
-      <p class="testo-2">Ultimo aggiornamento: <Dato e="data" /></p>
+      <p>Questo sito non usa cookie di profilazione, né cookie o strumenti di terze parti per pubblicità o statistiche. Per questo non ti chiediamo il consenso con un banner: per gli strumenti solo tecnici basta informarti, come prevedono le linee guida del Garante privacy sui cookie (10 giugno 2021).</p>
+
+      <h2>Cosa usiamo</h2>
+      <ul>
+        <li><strong>Cookie tecnico di accesso</strong> (<code>em_sessione</code>): solo per chi entra nell'area strutture partner o nella gestione. Serve a restare collegati, dura al massimo 12 ore e si cancella uscendo.</li>
+        <li><strong>Codice della struttura partner</strong> (memoria di sessione del browser, <code>em_partner</code>): se arrivi dal link di un hotel o di una struttura partner, il browser ricorda il loro codice finché chiudi la scheda, per attribuire a loro la prenotazione. Non contiene dati su di te e non serve ad altro.</li>
+        <li><strong>Cookie di sicurezza di Cloudflare</strong>: Cloudflare, che ospita e protegge il sito, può impostare cookie tecnici (per esempio <code>__cf_bm</code> o <code>cf_clearance</code>) per distinguere le persone dai programmi automatici. Non servono a profilarti.</li>
+      </ul>
+
+      <h2>Pagamenti e link esterni</h2>
+      <p>Quando paghi passi sulle pagine di SumUp o PayPal, che usano i propri cookie secondo le loro informative.</p>
+      <p>Caratteri e immagini sono ospitati sul nostro sito: aprendo le pagine non vengono contattati servizi di terzi come Google Fonts, YouTube o Google Maps. I link a Google Maps e WhatsApp si aprono solo se li tocchi tu.</p>
+
+      <h2>Come cancellarli</h2>
+      <p>Puoi cancellare cookie e dati dei siti dalle impostazioni del browser quando vuoi. Senza il cookie di accesso le aree riservate non funzionano; il resto del sito sì.</p>
+
+      <p class="testo-2">Ultimo aggiornamento: 8 novembre 2026</p>
     </div>
   </section>
 </Base>

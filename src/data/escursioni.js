@@ -7,6 +7,8 @@ import { prezzoDa, offerte, gommoniPer } from './prenotazioni.js';
 // Prezzi "da" e posti arrivano da src/data/prenotazioni.js (listino unico per sito e prenotazioni).
 const da = (slug) => prezzoDa(slug) ?? {};
 const posti = (slug) => String(Math.max(...gommoniPer(slug).map((g) => g.posti)));
+// Partenza e rientro della Corsica, dall'orario del listino (es. '9:30 – 17:30').
+const [partenzaCorsica, rientroCorsica] = offerte['corsica-lavezzi-bonifacio'].turni[0].orario.split('–').map((x) => x.trim());
 
 export const escursioni = [
   {
@@ -64,17 +66,18 @@ export const escursioni = [
     slug: 'corsica-lavezzi-bonifacio',
     titolo: 'Corsica: Lavezzi e Bonifacio',
     titoloPagina: 'Corsica in maxi gommone: Lavezzi e Bonifacio',
-    etichette: ['Bocche di Bonifacio', "Documento per l'espatrio"],
-    breve: 'Si attraversano le Bocche di Bonifacio fino alle isole Lavezzi e alle bianche falesie di Bonifacio.',
+    etichette: ['Solo il vostro gruppo', 'Bocche di Bonifacio', "Documento per l'espatrio"],
+    breve: 'Il gommone solo per voi, una giornata intera oltre le Bocche di Bonifacio: le isole Lavezzi e le bianche falesie di Bonifacio.',
     intro:
-      'Si attraversano le Bocche di Bonifacio per raggiungere la Corsica: le acque trasparenti delle isole Lavezzi e le falesie bianche su cui è costruita Bonifacio.',
+      'Una giornata intera con il gommone solo per il vostro gruppo: si attraversano le Bocche di Bonifacio per raggiungere la Corsica, le acque trasparenti delle isole Lavezzi e le falesie bianche su cui è costruita Bonifacio.',
     durata: 'Giornata intera',
     orari: offerte['corsica-lavezzi-bonifacio'].turni[0].orario,
-    ore: '',
-    prezzoAdulti: String(da('corsica-lavezzi-bonifacio').adulto),
-    prezzoBambini: String(da('corsica-lavezzi-bonifacio').bambino),
+    ore: '8',
+    prezzoAdulti: String(da('corsica-lavezzi-bonifacio').barca),
+    prezzoBambini: null,
+    prezzoGommone: true,
     postiMax: posti('corsica-lavezzi-bonifacio'),
-    fatti: ['Imbarco a Palau o La Maddalena', "Serve un documento valido per l'espatrio"],
+    fatti: ['Gommone in esclusiva', 'Imbarco a Palau o La Maddalena', "Serve un documento valido per l'espatrio"],
     foto: {
       copertina: 'Le falesie di Bonifacio viste dal mare',
       galleria: [
@@ -88,16 +91,15 @@ export const escursioni = [
     mappa: false,
     numeri: [],
     programma: [
-      { tipo: 'imbarco', titolo: 'Ritrovo a Palau', testo: 'Primo imbarco al porto di Palau.', moloDi: 'palau' },
-      { tipo: 'sosta', n: '1', titolo: 'Porto di La Maddalena', luogo: 'Secondo imbarco', testo: "Sale a bordo chi dorme sull'isola." },
-      { tipo: 'sosta', n: '2', titolo: 'Traversata delle Bocche di Bonifacio', luogo: 'Verso la Corsica', testo: '', mancante: 'Durata della traversata e cosa si vede' },
-      { tipo: 'sosta', n: '3', titolo: 'Isole Lavezzi', luogo: 'Bagno', testo: '', mancante: 'Dove si fa il bagno e quanto dura la sosta' },
-      { tipo: 'sosta', n: '4', titolo: 'Bonifacio', luogo: 'Falesie e porto', testo: '', mancante: 'Giro sotto le falesie, sosta in paese, pranzo' },
-      { tipo: 'rientro', titolo: 'Rientro a La Maddalena e Palau', testo: 'Si scende dove si è saliti.' },
+      { tipo: 'imbarco', ora: partenzaCorsica, titolo: 'Ritrovo dove preferite', luogo: 'Palau o La Maddalena', testo: 'Si parte dal porto che scegliete.' },
+      { tipo: 'sosta', n: '1', titolo: 'Traversata delle Bocche di Bonifacio', luogo: 'Verso la Corsica', testo: '', mancante: 'Durata della traversata e cosa si vede' },
+      { tipo: 'sosta', n: '2', titolo: 'Isole Lavezzi', luogo: 'Bagno', testo: '', mancante: 'Dove si fa il bagno e quanto dura la sosta' },
+      { tipo: 'sosta', n: '3', titolo: 'Bonifacio', luogo: 'Falesie e porto', testo: '', mancante: 'Giro sotto le falesie, sosta in paese, pranzo' },
+      { tipo: 'rientro', ora: rientroCorsica, titolo: 'Rientro', testo: 'Si scende dove si è saliti.' },
     ],
-    incluso: ['Skipper per tutta la giornata'],
+    incluso: ['Il gommone e lo skipper solo per il vostro gruppo'],
     inclusoMancante: 'Da confermare',
-    nonIncluso: [],
+    nonIncluso: ['Carburante'],
     nonInclusoMancante: 'Pranzo? Tasse di sbarco?',
     note: [
       "Si entra in Francia: ognuno deve avere con sé carta d'identità valida per l'espatrio o passaporto, anche i bambini.",
@@ -174,7 +176,7 @@ export const escursioni = [
     numeri: [],
     programma: [
       { tipo: 'imbarco', titolo: 'Ritrovo dove preferite', luogo: 'Palau o La Maddalena', testo: "Orario da concordare." },
-      { tipo: 'sosta', n: '1', titolo: 'Le soste che scegliete voi', luogo: 'Su misura', testo: "Il giro delle 7 isole, la Corsica, solo le cale più tranquille: lo skipper vi propone l'itinerario in base al vento del giorno." },
+      { tipo: 'sosta', n: '1', titolo: 'Le soste che scegliete voi', luogo: 'Su misura', testo: "Il giro delle 7 isole o solo le cale più tranquille: lo skipper vi propone l'itinerario in base al vento del giorno. Per la Corsica c'è l'escursione dedicata, anche quella solo per voi." },
       { tipo: 'rientro', titolo: 'Rientro', testo: 'Quando volete, entro la durata concordata.' },
     ],
     incluso: ['Il gommone e lo skipper solo per il vostro gruppo'],

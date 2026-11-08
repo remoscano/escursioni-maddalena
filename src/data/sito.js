@@ -22,10 +22,13 @@ export const sito = {
     orariRisposta: '', // es. 'tutti i giorni dalle 8 alle 21'
   },
 
+  // Dati obbligatori per legge sul sito e nelle condizioni (Codice del consumo art. 49, D.Lgs. 70/2003 art. 7).
   azienda: {
     ragioneSociale: '',
     partitaIva: '',
-    indirizzo: '',
+    indirizzo: '', // sede: via, numero, CAP, comune
+    rea: '', // numero di iscrizione al Registro delle imprese / REA (es. 'SS-123456')
+    autorizzazioni: '', // estremi di licenze o autorizzazioni per le escursioni (es. Ente Parco, Capitaneria), se previste
   },
 
   recensioniGoogle: '', // link alla scheda Google con le recensioni

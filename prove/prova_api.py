@@ -52,11 +52,21 @@ ok(t['pomeriggio']['max'] == 10 and t['tramonto']['max'] == 10, 'pomeriggio e tr
 g = giorno('tour-7-isole', '2027-06-11'); ok(g['stato'] == 'pieno', 'giornata intera impossibile: entrambi i gommoni hanno un\'uscita')
 s, r = prenota(pub, escursione='tramonto-mezza-giornata', turno='mattina', data='2027-06-11', adulti=1, bambini=1, neonati=1); ok(s == 200, 'mattina + pomeriggio sullo stesso gommone: possibile')
 
-# 4. tour privato
-s, r = prenota(pub, escursione='tour-privato', turno='giornata', data='2027-07-15', adulti=2, bambini=2); ok(s == 200, 'privato giornata intera 15 luglio')
+# 4. esclusive: si possono prenotare tutti e tre i gommoni, il sistema sceglie il più piccolo che basta
+s, r = prenota(pub, escursione='tour-privato', turno='giornata', data='2027-07-15', adulti=2, bambini=2); ok(s == 200, 'privato giornata intera 15 luglio, 4 persone')
 (s2, r2), q = paga(pub, r); s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['totale'] == 1500 and v['carburanteEscluso'], f'privato luglio = {v["totale"]} €, carburante escluso')
-g = giorno('tour-privato', '2027-07-15'); ok(g['stato'] == 'pieno', 'gommone esclusiva occupato tutto il giorno')
-s, r = prenota(pub, escursione='tour-privato', turno='mattina', data='2027-07-16', adulti=7); ok(s == 400, f'7 persone nel privato: {r.get("errore")}')
+t = {x['id']: x for x in giorno('tour-privato', '2027-07-15')['turni']}; ok(t['giornata']['disponibile'] and t['giornata']['max'] == 12, 'dopo il primo privato restano liberi i gommoni da 12')
+s, r = prenota(pub, data='2027-07-15', adulti=12); ok(s == 200, '7 isole 15 luglio, 12 persone: c\'è un gommone grande libero')
+s, r = prenota(pub, data='2027-07-15', adulti=12); ok(s == 200, '7 isole 15 luglio, altre 12: anche il secondo gommone grande era libero (il privato da 4 è sul gommone da 6)')
+ok(giorno('tour-privato', '2027-07-15')['stato'] == 'pieno', 'tutti e tre i gommoni occupati: niente più esclusive il 15 luglio')
+s, r = prenota(pub, escursione='tour-privato', turno='mattina', data='2027-07-16', adulti=7); ok(s == 200, 'privato da 7 persone → su un gommone da 12')
+t = {x['id']: x for x in giorno('tour-7-isole', '2027-07-16')['turni']}; ok(t['giornata']['max'] == 12, '7 isole 16 luglio: resta un solo gommone grande')
+t = {x['id']: x for x in giorno('tramonto-mezza-giornata', '2027-07-16')['turni']}; ok(t['pomeriggio']['max'] == 12, 'il pomeriggio è libero anche sul gommone del privato del mattino')
+s, r = prenota(pub, escursione='tour-privato', turno='mattina', data='2027-07-17', adulti=13); ok(s == 400, f'13 persone in esclusiva: {r.get("errore")}')
+s, r = prenota(pub, escursione='corsica-lavezzi-bonifacio', turno='giornata', data='2027-08-12', adulti=3); (s2, r2), q = paga(pub, r)
+s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['totale'] == 1620 and v['privato'] and v['carburanteEscluso'] and v['documento'] and v['orario'] == '9:30 – 17:30', f'Corsica in esclusiva ad agosto = {v["totale"]} €, carburante escluso, documento, {v["orario"]}')
+s, r = prenota(pub, escursione='tramonto-mezza-giornata', turno='tramonto', data='2027-07-20', adulti=2, bambini=1); (s2, r2), q = paga(pub, r)
+s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['totale'] == 75*2+70, f'tramonto a luglio come la mezza giornata: {v["totale"]} €')
 s, r = prenota(pub, escursione='tour-7-isole', data='2027-08-05', adulti=2, bambini=1); (s2, r2), q = paga(pub, r); s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['totale'] == 135*2+125, f'agosto 2 interi + 1 ridotto = {v["totale"]} €')
 
 # 5. prenotazioni in contemporanea per gli ultimi posti (12 richieste da 2 persone su 2×12 posti liberi = solo 12 possono entrare... 24 posti → 12 richieste da 2 = 24, poi altre 4 devono fallire)

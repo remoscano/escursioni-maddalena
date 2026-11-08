@@ -173,14 +173,18 @@ export async function calendarioMese(db, slug, mese, { gestione = false } = {}) 
   return giorni;
 }
 
-// Le prenotazioni in attesa scadute diventano "scadute" (pulizia, non indispensabile per il calcolo dei posti).
+// Le prenotazioni in attesa scadute diventano "scadute" (pulizia, non indispensabile per il calcolo dei posti)
+// e l'impronta dell'indirizzo internet si cancella appena non serve più (lo promette l'informativa privacy).
 export async function pulisciScadute(db) {
+  const ora = new Date().toISOString();
   await esegui(db, `UPDATE prenotazioni SET stato = 'scaduta', aggiornata_il = :ora
                     WHERE stato = 'in_attesa' AND scade_il <= :limite`, {
-    ora: new Date().toISOString(),
+    ora,
     // margine di 15 minuti: chi sta finendo di pagare non viene toccato
     limite: new Date(Date.now() - 15 * 60000).toISOString(),
   });
+  await esegui(db, `UPDATE prenotazioni SET ip_hash = NULL
+                    WHERE ip_hash IS NOT NULL AND (stato != 'in_attesa' OR scade_il <= :ora)`, { ora });
 }
 
 export { istruzione };

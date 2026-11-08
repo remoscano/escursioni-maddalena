@@ -10,7 +10,7 @@ import SezioneRichiesta from '../../components/SezioneRichiesta.astro';
 import { escursioni } from '../../data/escursioni.js';
 import { domande } from '../../data/faq.js';
 import { sito } from '../../data/sito.js';
-import { regole, offerte } from '../../data/prenotazioni.js';
+import { regole, offerte, testoChiusuraOnline, testoDopoChiusura } from '../../data/prenotazioni.js';
 
 export function getStaticPaths() {
   return escursioni.map((e) => ({ params: { slug: e.slug }, props: { e } }));
@@ -23,7 +23,7 @@ const toni = ['acqua', 'rosa', 'acqua', 'sabbia', 'acqua'] as const;
 
 const faqPerEscursione: Record<string, string[]> = {
   'tour-7-isole': ['maestrale', 'cancellare', 'minimo', 'pranzo', 'spiaggia-rosa', 'bambini', 'pagare', 'animali'],
-  'corsica-lavezzi-bonifacio': ['maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
+  'corsica-lavezzi-bonifacio': ['pagare', 'maestrale', 'cancellare', 'bambini', 'animali'],
   'tramonto-mezza-giornata': ['maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
   'tour-privato': ['pagare', 'maestrale', 'cancellare', 'bambini', 'animali'],
 };
@@ -212,7 +212,7 @@ const durata = e.ore ? `${e.ore} ore` : '';
     escursione={e.slug}
     titolo={prenotabile ? 'Hai una domanda? Scrivici su WhatsApp' : `${e.titolo}: scegli la data`}
     titoloModulo={e.titolo}
-    testo={prenotabile ? "Per gruppi oltre 12 persone, per domani o per qualsiasi dubbio: WhatsApp si apre con il messaggio pronto e ti rispondiamo noi. Per prenotare e pagare subito usa Vedi i posti e prenota." : "Scegli data, persone e punto d'imbarco: WhatsApp si apre con il messaggio pronto e ti rispondiamo con posti e orari."}
+    testo={prenotabile ? `${testoChiusuraOnline} ${testoDopoChiusura} Anche per qualsiasi dubbio: WhatsApp si apre con il messaggio pronto e ti rispondiamo noi.` : "Scegli data, persone e punto d'imbarco: WhatsApp si apre con il messaggio pronto e ti rispondiamo con posti e orari."}
   />
 
   <section class="sezione" aria-labelledby="altre-titolo" style="padding:96px 0">

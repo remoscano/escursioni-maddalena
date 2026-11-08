@@ -37,7 +37,7 @@ const tono = e.slug === 'tramonto-mezza-giornata' ? 'rosa' : 'acqua';
       <h3><a href={href}>{e.titolo}</a></h3>
       <p>{e.breve}</p>
       <p class="scheda__info">
-        {e.slug === 'tour-privato'
+        {e.prezzoGommone
           ? <Fragment>Fino a <Dato v={e.postiMax} e="N" /> persone · da <Dato v={e.prezzoAdulti} e="PREZZO" /> € a gommone</Fragment>
           : <Fragment><Dato v={e.orari} e="orari" /> · da <Dato v={e.prezzoAdulti} e="PREZZO" /> €</Fragment>}
       </p>

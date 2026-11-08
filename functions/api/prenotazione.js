@@ -1,7 +1,7 @@
 // GET  /api/prenotazione?codice=EM-XXXXXX&t=...  → stato della prenotazione (pagina di esito)
 // POST /api/prenotazione { codice, t, azione: 'rinuncia' } → il cliente torna indietro dal pagamento: i posti si liberano
 import { esegui } from '../_lib/db.js';
-import { prenotazioneDaCodice, vistaCliente, confermaPagamento } from '../_lib/prenotazioni.js';
+import { prenotazioneDaCodice, vistaCliente, confermaPagamento, emailAttive } from '../_lib/prenotazioni.js';
 import { statoSumup } from '../_lib/pagamenti.js';
 import { Errore, json, leggiJson, controllaOrigine, adessoISO } from '../_lib/util.js';
 
@@ -19,6 +19,8 @@ export async function onRequestGet(contesto) {
   }
   const vista = vistaCliente(p);
   if (p.stato === 'in_attesa' && p.scade_il <= adessoISO()) vista.stato = 'scaduta';
+  // La pagina di conferma dice "ti mandiamo un'email" solo se le email sono attive.
+  vista.email = emailAttive(env) && Boolean(p.email);
   return json(vista);
 }
 
@@ -28,7 +30,7 @@ export async function onRequestPost({ request, env }) {
   const p = await prenotazioneDaCodice(env.DB, b.codice, b.t);
   if (!p) throw new Errore(404, 'Prenotazione non trovata.');
   if (b.azione === 'rinuncia' && p.stato === 'in_attesa') {
-    await esegui(env.DB, "UPDATE prenotazioni SET stato = 'annullata', aggiornata_il = :ora WHERE id = :id AND stato = 'in_attesa'", { ora: adessoISO(), id: p.id });
+    await esegui(env.DB, "UPDATE prenotazioni SET stato = 'annullata', ip_hash = NULL, aggiornata_il = :ora WHERE id = :id AND stato = 'in_attesa'", { ora: adessoISO(), id: p.id });
   }
   return json({ ok: true });
 }

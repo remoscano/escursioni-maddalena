@@ -6,8 +6,12 @@
 // - gruppo:    adulto = prezzo intero a persona, bambino = ridotto (4–10 anni); 0–3 anni gratis
 // - esclusiva: barca  = prezzo del gommone solo per il gruppo
 //
-// Listino giornata intera e mezza giornata: dal cliente (8 novembre 2026).
-// Corsica e tramonto: proposta da analisi dei concorrenti (mediana meno 5%), confermata "per il resto va bene".
+// Listini dal cliente (8 novembre 2026):
+// - giornata intera e mezza giornata, a persona e in esclusiva;
+// - tramonto: stesso prezzo della mezza giornata;
+// - Corsica: solo in esclusiva, stesso prezzo delle altre giornate intere in esclusiva;
+// - a tutte le esclusive si aggiunge il carburante.
+// Tutti e tre i gommoni si possono prenotare in esclusiva (quello da 6 posti fa solo esclusive).
 
 export const regole = {
   // false = i bottoni "Prenota" tornano alla richiesta su WhatsApp (utile finché i conti di pagamento non sono attivi)
@@ -23,7 +27,19 @@ export const regole = {
   provvigioneStrutture: 15,
   // Fasce d'età: 0–3 gratis, 4–10 ridotto, da 11 anni intero.
   eta: { neonatiFinoA: 3, bambiniFinoA: 10 },
+  // Esclusive: il carburante si paga a parte. La legge chiede di dire prima come si calcola e quando si paga
+  // (es. 'a consumo, si paga a bordo a fine uscita'). Finché è vuoto, sul sito e nelle email compare un segnaposto.
+  carburante: '',
 };
+
+// Testo unico sul carburante delle esclusive (riepilogo, conferma, email, condizioni).
+// "segnaposto" decide come mostrare il dato che manca: [testo] nelle email, riquadro rosa sul sito.
+export const CARBURANTE_MANCA = 'come si calcola e quando si paga';
+export const testoCarburante = (segnaposto = (e) => `[${e}]`) =>
+  `Il carburante non è compreso e si paga a parte: ${regole.carburante || segnaposto(CARBURANTE_MANCA)}.`;
+
+// Frase unica su chiusura online e gruppi grandi (pagina Prenota, FAQ, condizioni, pagine escursione).
+export const testoChiusuraOnline = `Online puoi prenotare fino alle ${regole.chiusuraOnline.ora} del giorno prima della partenza.`;
 
 // I gommoni. "posti" conta tutte le persone a bordo, neonati compresi.
 export const gommoni = [
@@ -31,6 +47,14 @@ export const gommoni = [
   { id: 'gruppo-2', nome: 'Gommone 2', tipo: 'gruppo', posti: 12 },
   { id: 'esclusiva', nome: 'Gommone esclusiva', tipo: 'esclusiva', posti: 6 },
 ];
+
+// Le esclusive possono usare tutti i gommoni: il sistema sceglie il più piccolo che basta,
+// così i gommoni da 12 restano liberi per le uscite di gruppo finché possibile.
+const tuttiIGommoni = gommoni.map((g) => g.id);
+
+// Persone massime su un gommone: oltre si scrive su WhatsApp.
+export const postiMassimi = Math.max(...gommoni.map((g) => g.posti));
+export const testoDopoChiusura = `Dopo quell'ora, o per gruppi di più di ${postiMassimi} persone, scrivici su WhatsApp.`;
 
 // Listini usati da più turni.
 const giornataPersona = [
@@ -71,12 +95,14 @@ export const offerte = {
       { id: 'giornata', nome: 'Giornata intera', orario: '9:30 – 17:30', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataPersona },
     ],
   },
+  // Corsica: solo in esclusiva, giornata intera con gli orari e i prezzi delle altre giornate in esclusiva.
   'corsica-lavezzi-bonifacio': {
-    tipo: 'gruppo',
-    minimo: 6,
+    tipo: 'esclusiva',
+    carburanteEscluso: true,
     documento: true,
+    gommoni: tuttiIGommoni,
     turni: [
-      { id: 'giornata', nome: 'Giornata intera', orario: '', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: [{ dal: '05-01', al: '10-31', adulto: 104, bambino: 78 }] },
+      { id: 'giornata', nome: 'Giornata intera', orario: '9:30 – 17:30', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataEsclusiva },
     ],
   },
   'tramonto-mezza-giornata': {
@@ -85,21 +111,18 @@ export const offerte = {
     turni: [
       { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '9:30 – 13:30', blocchi: ['mattina'], prezzi: mezzaPersona },
       { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:00 – 18:00', blocchi: ['pomeriggio', 'sera'], prezzi: mezzaPersona },
-      { id: 'tramonto', nome: 'Tramonto con aperitivo', orario: '18:00 – 20:30', blocchi: ['sera'], prezzi: [{ dal: '05-01', al: '10-31', adulto: 46, bambino: 35 }] },
+      { id: 'tramonto', nome: 'Tramonto con aperitivo', orario: '18:00 – 20:30', blocchi: ['sera'], prezzi: mezzaPersona },
     ],
   },
   'tour-privato': {
     tipo: 'esclusiva',
     carburanteEscluso: true,
-    // Gommoni usati per i tour privati. Per far prenotare in esclusiva anche un gommone da 12
-    // basta aggiungere 'gruppo-1' e 'gruppo-2' (il sistema sceglie il più piccolo che basta).
-    gommoni: ['esclusiva'],
+    gommoni: tuttiIGommoni,
     turni: [
       { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '9:30 – 13:30', blocchi: ['mattina'], prezzi: mezzaEsclusiva },
       { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:00 – 18:00', blocchi: ['pomeriggio', 'sera'], prezzi: mezzaEsclusiva },
-      { id: 'tramonto', nome: 'Tramonto con aperitivo', orario: '18:00 – 20:30', blocchi: ['sera'], prezzi: [{ dal: '05-01', al: '10-31', barca: 380 }] },
+      { id: 'tramonto', nome: 'Tramonto con aperitivo', orario: '18:00 – 20:30', blocchi: ['sera'], prezzi: mezzaEsclusiva },
       { id: 'giornata', nome: 'Giornata intera', orario: '9:30 – 17:30', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataEsclusiva },
-      { id: 'corsica', nome: 'Giornata in Corsica', orario: '', blocchi: ['mattina', 'pomeriggio', 'sera'], documento: true, prezzi: [{ dal: '05-01', al: '10-31', barca: 805 }] },
     ],
   },
 };
@@ -164,7 +187,7 @@ export function calcolaPrenotazione(slug, turnoId, data, persone) {
   const capienza = Math.max(...gommoniPer(slug).map((g) => g.posti));
 
   if (o.tipo === 'esclusiva') {
-    if (totPersone > capienza) return { errore: `Il tour privato è per massimo ${capienza} persone, neonati compresi.` };
+    if (totPersone > capienza) return { errore: `In esclusiva il gommone porta al massimo ${capienza} persone, neonati compresi: per gruppi più grandi scrivici su WhatsApp.` };
     // "posti" viene poi portato alla capienza del gommone scelto: in esclusiva il gommone è tutto vostro.
     return {
       adulti, bambini, neonati, persone: totPersone, paganti, posti: totPersone, totale: riga.barca,

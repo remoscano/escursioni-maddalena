@@ -91,6 +91,8 @@ export async function richiedi(db, request, ruolo) {
 export async function controllaTentativi(db, request, emailInserita) {
   const ip = await sha256(`ip|${indirizzoIp(request)}`);
   const da = new Date(Date.now() - 15 * 60000).toISOString();
+  // I tentativi sbagliati si tengono al massimo 24 ore (lo dice l'informativa privacy).
+  await esegui(db, 'DELETE FROM tentativi_accesso WHERE quando < :vecchio', { vecchio: new Date(Date.now() - 86400000).toISOString() });
   const r = await prima(db, `SELECT
       SUM(CASE WHEN chiave = :e THEN 1 ELSE 0 END) AS per_email,
       SUM(CASE WHEN chiave = :i THEN 1 ELSE 0 END) AS per_ip
@@ -100,7 +102,6 @@ export async function controllaTentativi(db, request, emailInserita) {
     sbagliato: async () => {
       const ora = new Date().toISOString();
       await esegui(db, 'INSERT INTO tentativi_accesso (chiave, quando) VALUES (:e, :q), (:i, :q)', { e: `email|${emailInserita}`, i: ip, q: ora });
-      await esegui(db, 'DELETE FROM tentativi_accesso WHERE quando < :vecchio', { vecchio: new Date(Date.now() - 86400000).toISOString() });
     },
     riuscito: () => esegui(db, 'DELETE FROM tentativi_accesso WHERE chiave = :e', { e: `email|${emailInserita}` }),
   };

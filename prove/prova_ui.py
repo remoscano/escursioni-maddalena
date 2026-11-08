@@ -45,6 +45,10 @@ async def prenota_cliente(b, w):
     await larghezza(pg, w, 'esito')
     await pg.screenshot(path=f'{OUT}/esito-{w}.png', full_page=True)
     ok(await pg.locator('[data-ics]').count() == 1, f'{w}px conferma con "Aggiungi al calendario"')
+    ics = await pg.evaluate("fetch(document.querySelector('[data-ics]').href).then((r) => r.text())")
+    righe = ics.split('\r\n')
+    ok(f'DTSTART;TZID=Europe/Rome:{giorno.replace("-", "")}T093000' in righe and 'BEGIN:VTIMEZONE' in righe and any(r.startswith('DTSTAMP:') for r in righe)
+       and 'TRIGGER:-P1D' in righe and all(len(r.encode()) <= 75 for r in righe), f'{w}px file del calendario: ora di Roma, promemoria il giorno prima, righe a norma')
     await ctx.close()
 
 async def tramonto(b):
@@ -57,7 +61,7 @@ async def tramonto(b):
     await pg.wait_for_selector('[data-turno="tramonto"]')
     ok(await pg.locator('[data-riepilogo]').is_hidden(), 'più orari: il riepilogo aspetta la scelta')
     await pg.click('[data-turno="tramonto"]')
-    t = await pg.inner_text('[data-righe]'); ok('92 €' in t and 'Tramonto' in t, 'tramonto 12 giugno, 2 adulti = 92 €')
+    t = await pg.inner_text('[data-righe]'); ok('130 €' in t and 'Tramonto' in t, 'tramonto 12 giugno, 2 adulti = 130 € (come la mezza giornata)')
     await pg.click('[data-turno="mattina"]')
     t = await pg.inner_text('[data-righe]'); ok('130 €' in t, 'mezza giornata mattina, 2 adulti = 130 €')
     await pg.screenshot(path=f'{OUT}/prenota-turni-390.png', full_page=True)
@@ -70,11 +74,26 @@ async def privato(b):
     for _ in range(3): await pg.click('[data-mese="1"]')
     await pg.click('[data-data="2027-08-10"]'); await pg.click('[data-turno="giornata"]')
     t = await pg.inner_text('[data-righe]'); ok('1620 €' in t and 'carburante' in t.lower(), 'privato giornata 10 agosto = 1620 €, carburante escluso')
-    for _ in range(6):
+    for _ in range(12):
         if await pg.locator('[data-piu="adulti"]').is_disabled(): break
         await pg.click('[data-piu="adulti"]')
     n = await pg.inner_text('[data-num="adulti"]'); dis = await pg.locator('[data-piu="adulti"]').is_disabled()
-    ok(n == '6' and dis, f'privato: massimo 6 persone (adulti fermi a {n}, + disattivato)')
+    ok(n == '12' and dis, f'privato: massimo 12 persone su un gommone grande (adulti fermi a {n}, + disattivato)')
+    t = await pg.inner_text('[data-righe]'); ok('1620 €' in t, 'privato da 12: il prezzo resta quello del gommone (1620 €)')
+    await ctx.close()
+
+async def corsica(b):
+    ctx = await b.new_context(viewport={'width': 390, 'height': 900}); pg = await ctx.new_page()
+    await pg.goto(f'{B}/prenota/?escursione=corsica-lavezzi-bonifacio', wait_until='networkidle')
+    await pg.wait_for_selector('.cal__giorno:not([disabled])')
+    await pg.click('[data-mese="1"]'); await pg.wait_for_selector('[data-data="2027-06-15"]')
+    await pg.click('[data-data="2027-06-15"]')
+    await pg.wait_for_selector('[data-riepilogo]:not([hidden])')
+    t = await pg.inner_text('[data-righe]')
+    ok('1200 €' in t and 'gommone solo per voi' in t and 'espatrio' in t and 'carburante' in t.lower(), 'Corsica 15 giugno: 1200 € il gommone, documento e carburante nel riepilogo')
+    ok(await pg.locator('[data-righe] .dato').count() >= 1, 'manca come si calcola il carburante: segnaposto rosa nel riepilogo')
+    await larghezza(pg, 390, 'prenota Corsica')
+    await pg.screenshot(path=f'{OUT}/prenota-corsica-390.png', full_page=True)
     await ctx.close()
 
 async def strutture_e_gestione(b):
@@ -148,7 +167,7 @@ async def strutture_e_gestione(b):
 async def pagine(b):
     for w in (1440, 390):
         ctx = await b.new_context(viewport={'width': w, 'height': 900}); pg = await ctx.new_page()
-        for path in ['/', '/escursioni/tour-7-isole/', '/escursioni/tour-privato/', '/escursioni/', '/condizioni/', '/domande-frequenti/']:
+        for path in ['/', '/escursioni/tour-7-isole/', '/escursioni/tour-privato/', '/escursioni/corsica-lavezzi-bonifacio/', '/escursioni/tramonto-mezza-giornata/', '/escursioni/', '/prenota/', '/condizioni/', '/privacy/', '/cookie/', '/domande-frequenti/']:
             await pg.goto(B + path, wait_until='networkidle')
             await larghezza(pg, w, path)
             nome = path.strip('/').replace('/', '_') or 'home'
@@ -163,6 +182,7 @@ async def main():
         await prenota_cliente(b, 390)
         await tramonto(b)
         await privato(b)
+        await corsica(b)
         await strutture_e_gestione(b)
         await pagine(b)
         await b.close()

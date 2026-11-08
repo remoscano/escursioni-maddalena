@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import ModuloRichiesta from '../components/ModuloRichiesta.astro';
 import Dato from '../components/Dato.astro';
 import { sito } from '../data/sito.js';
+import { regole } from '../data/prenotazioni.js';
 const { contatti } = sito;
 ---
 <Base
@@ -13,7 +14,9 @@ const { contatti } = sito;
     <div class="contenitore" style="max-width:760px">
       <p class="occhiello">Richiesta su WhatsApp</p>
       <h1>Tre scelte e il messaggio è pronto</h1>
-      <p class="intro">Ti rispondiamo su WhatsApp con disponibilità, orario di ritrovo e molo. Nessun pagamento online.</p>
+      <p class="intro">Ti rispondiamo su WhatsApp con disponibilità, orario di ritrovo e molo.{regole.attive
+        ? <Fragment> Per prenotare e pagare subito, senza aspettare la risposta: <a href="/prenota/">prenota online</a>.</Fragment>
+        : ' Nessun pagamento online.'}</p>
     </div>
   </section>
   <section class="sezione" style="padding-top:40px">

@@ -1,46 +1,69 @@
 ---
+// Informativa ai sensi dell'art. 13 del Regolamento UE 2016/679 (GDPR).
+// Controllata sulle norme e su quello che il sito fa davvero l'8 novembre 2026: se si aggiunge un servizio
+// o si raccoglie un dato nuovo, va aggiornata qui (e nella pagina /cookie/).
 import Base from '../layouts/Base.astro';
 import Dato from '../components/Dato.astro';
 import { sito } from '../data/sito.js';
+import { regole } from '../data/prenotazioni.js';
 const { azienda, contatti } = sito;
 ---
-<Base titolo="Informativa privacy" descrizione="Come Escursioni Maddalena tratta i dati personali di chi visita il sito e di chi chiede disponibilità su WhatsApp.">
+<Base titolo="Informativa privacy" descrizione="Come Escursioni Maddalena tratta i dati di chi visita il sito, scrive su WhatsApp o prenota online.">
   <section class="testa-pagina">
     <div class="contenitore">
       <p class="occhiello">Privacy</p>
       <h1>Informativa privacy</h1>
-      <p class="intro"><span class="dato">[BOZZA: testo da far verificare a chi segue la privacy dell'azienda prima della pubblicazione]</span></p>
+      <p class="intro"><span class="dato">[BOZZA: da completare con i dati in rosa prima della pubblicazione]</span></p>
     </div>
   </section>
   <section class="sezione" style="padding-top:40px">
     <div class="contenitore testo-lungo">
-      <h2>Titolare del trattamento</h2>
-      <p><Dato v={azienda.ragioneSociale} e="Ragione sociale" />, <Dato v={azienda.indirizzo} e="indirizzo" />, P. IVA <Dato v={azienda.partitaIva} e="numero" />. Email: <Dato v={contatti.email} e="indirizzo email" />.</p>
+      <h2>Chi tratta i tuoi dati</h2>
+      <p>Titolare del trattamento è <Dato v={azienda.ragioneSociale} e="Ragione sociale" />, con sede in <Dato v={azienda.indirizzo} e="indirizzo" />, P. IVA <Dato v={azienda.partitaIva} e="numero" />. Per qualsiasi domanda sui tuoi dati scrivi a <Dato v={contatti.email} e="indirizzo email" /> o su WhatsApp <Dato v={contatti.telefonoVisibile} e="numero" />.</p>
 
-      <h2>Quali dati raccogliamo</h2>
-      <p><strong>Navigazione del sito.</strong> Il sito non usa cookie di profilazione né strumenti di tracciamento pubblicitario. Il fornitore dell'hosting registra dati tecnici (indirizzo IP, browser, pagine richieste) per motivi di sicurezza e funzionamento.</p>
-      <p><strong>Richiesta di disponibilità.</strong> Il modulo di richiesta non invia dati al sito: compone un messaggio nel tuo browser e lo apre in WhatsApp. I dati (nome, data, numero di persone, punto d'imbarco) ci arrivano solo se decidi di inviare il messaggio, insieme al tuo numero di telefono. Il messaggio passa attraverso WhatsApp, che li tratta secondo la propria informativa.</p>
+      <h2>Quali dati trattiamo e perché</h2>
+      <p><strong>Quando visiti il sito.</strong> Cloudflare, che ospita il sito, registra dati tecnici come indirizzo IP, browser e pagine richieste, per farlo funzionare e proteggerlo da abusi. Base giuridica: il nostro legittimo interesse alla sicurezza del sito. Non usiamo cookie di profilazione né strumenti di pubblicità o di statistica che ti tracciano.</p>
+      <p><strong>Quando ci scrivi su WhatsApp o per email.</strong> Il modulo di richiesta non manda dati al sito: compone il messaggio nel tuo browser e lo apre in WhatsApp, e ci arriva solo se decidi di inviarlo, insieme al tuo numero. Usiamo quello che ci scrivi (nome, data, persone, imbarco, domande) per risponderti e organizzare l'escursione. Base giuridica: rispondere a una tua richiesta prima del contratto.</p>
+      <p><strong>Quando prenoti online.</strong> Ci dai nome e cognome, email, telefono, eventuali note e i dettagli dell'escursione (data, orario, numero di adulti, bambini e neonati, imbarco). Li usiamo per gestire la prenotazione, mandarti la conferma e avvisarti di cambi dovuti al meteo. Base giuridica: il contratto; per i dati di pagamento e contabili, gli obblighi di legge. Se ci comunichi un'esigenza legata alla salute (per esempio un'allergia per l'aperitivo), la usiamo solo per organizzare l'uscita: la base giuridica è il tuo consenso esplicito, che dai comunicandocela.</p>
+      <p><strong>Pagamenti.</strong> Paghi sulle pagine di SumUp (carta) o di PayPal: i dati della carta li inserisci lì e non passano dal nostro sito. Riceviamo solo l'esito, l'importo e un codice di riferimento. SumUp e PayPal trattano i dati del pagamento come titolari autonomi, secondo le loro informative.</p>
+      <p><strong>Strutture partner.</strong> Se prenoti tramite un hotel o una struttura partner, o dal loro link, la struttura vede nella sua area data, escursione, numero di persone e importo, per il calcolo della sua provvigione. Vede il tuo nome solo se la prenotazione l'ha fatta lei per te: in quel caso i tuoi dati ce li ha passati la struttura.</p>
+      <p><strong>Sicurezza delle prenotazioni.</strong> Per evitare che qualcuno blocchi i posti con tante prenotazioni non pagate, mentre paghi teniamo un'impronta del tuo indirizzo internet (non l'indirizzo in chiaro). La cancelliamo in automatico quando la prenotazione è pagata o il tempo per pagare è scaduto. Base giuridica: legittimo interesse alla sicurezza.</p>
+      <p><strong>Aree riservate.</strong> Per le strutture partner e per chi lavora con noi: nome, email, password (salvata solo come impronta non reversibile), data degli accessi e operazioni fatte. Servono a far funzionare l'area e a sapere chi ha fatto cosa. Base giuridica: il rapporto di collaborazione e il legittimo interesse alla sicurezza.</p>
 
-      <p><strong>Prenotazione online.</strong> Per prenotare ci dai nome e cognome, email, telefono, eventuali note e i dettagli dell'escursione (data, orario, persone, imbarco). Li usiamo per gestire la prenotazione, mandarti la conferma e avvisarti di cambi dovuti al meteo. Teniamo anche un'impronta anonima del tuo indirizzo internet, solo per limitare gli abusi (prenotazioni in attesa ripetute).</p>
-      <p><strong>Pagamenti.</strong> Il pagamento avviene sulle pagine di SumUp (carta) o di PayPal: i dati della carta li inserisci lì e non passano dal nostro sito. Riceviamo solo l'esito del pagamento e un codice di riferimento. SumUp e PayPal trattano i tuoi dati secondo le proprie informative.</p>
-      <p><strong>Strutture partner.</strong> Se prenoti tramite un hotel o una struttura nostra partner, o dal loro link, la struttura vede nella sua area la prenotazione (data, escursione, numero di persone, importo) per il calcolo della sua provvigione. Il tuo nome lo vede solo se la prenotazione l'ha fatta la struttura per te.</p>
-      <p><strong>Fornitori.</strong> Sito e database delle prenotazioni sono ospitati da Cloudflare. <Dato e="Servizio email per le conferme (es. Resend), se attivato" /></p>
-
-      <h2>Perché li usiamo</h2>
+      <h2>A chi li comunichiamo</h2>
+      <p>I dati li vedono solo le persone che lavorano con noi e ne hanno bisogno, e i fornitori che ci aiutano a offrire il servizio:</p>
       <ul>
-        <li>Rispondere alla tua richiesta e organizzare l'escursione (base giuridica: misure precontrattuali e contratto).</li>
-        <li>Avvisarti di cambi di orario o di programma dovuti al meteo.</li>
-        <li>Adempiere agli obblighi di legge, ad esempio fiscali.</li>
-        <li><Dato e="Eventuale richiesta di recensione dopo il tour: indicare la base giuridica" /></li>
+        <li>Cloudflare, Inc.: ospita il sito e il database delle prenotazioni.</li>
+        <li>SumUp e PayPal: pagamenti, come titolari autonomi.</li>
+        <li>Resend, Inc.: invio delle email di conferma.</li>
+        <li>WhatsApp (Meta) e Google (Gmail): quando ci scrivi su WhatsApp o per email, i messaggi passano e restano su questi servizi.</li>
+        <li>Le strutture partner, solo per quanto detto sopra.</li>
+        <li>Il nostro commercialista e le autorità, quando lo chiede la legge.</li>
+      </ul>
+      <p>Non vendiamo i tuoi dati e non li usiamo per pubblicità.</p>
+
+      <h2>Dati fuori dall'Unione europea</h2>
+      <p>Cloudflare, Resend, Google e Meta sono aziende con sede o server negli Stati Uniti. Il trasferimento è protetto dal Data Privacy Framework UE-USA, a cui aderiscono, e dalle clausole contrattuali standard approvate dalla Commissione europea.</p>
+
+      <h2>Per quanto tempo li conserviamo</h2>
+      <ul>
+        <li>Prenotazioni, pagamenti e provvigioni: 10 anni dalla data dell'escursione, come chiede la legge per i documenti contabili (art. 2220 del Codice civile) e per difenderci in caso di contestazioni.</li>
+        <li>Messaggi su WhatsApp ed email: per il tempo che serve a risponderti e a gestire l'eventuale prenotazione.</li>
+        <li>Impronta dell'indirizzo internet: fino al pagamento o alla scadenza della prenotazione in attesa ({regole.minutiPerPagare} minuti).</li>
+        <li>Tentativi di accesso sbagliati alle aree riservate: 24 ore. Sessione di accesso: al massimo 12 ore.</li>
+        <li>Account delle aree riservate: finché dura la collaborazione.</li>
+        <li>Registro delle operazioni: come i dati delle prenotazioni a cui si riferisce.</li>
       </ul>
 
-      <h2>Per quanto tempo</h2>
-      <p><Dato e="Tempi di conservazione delle conversazioni e dei dati di prenotazione" /></p>
+      <h2>Sono obbligatori?</h2>
+      <p>Nome, email e telefono servono per prenotare online e per avvisarti in caso di maltempo: senza non possiamo confermare la prenotazione. Le note sono facoltative.</p>
 
       <h2>I tuoi diritti</h2>
-      <p>Puoi chiedere in ogni momento di accedere ai tuoi dati, correggerli, cancellarli o limitarne l'uso, e opporti al trattamento, scrivendo a <Dato v={contatti.email} e="indirizzo email" />. Puoi anche presentare reclamo al Garante per la protezione dei dati personali.</p>
+      <p>Puoi chiederci in ogni momento di vedere i tuoi dati, correggerli, cancellarli, limitarne l'uso o riceverli in un formato leggibile, e opporti ai trattamenti basati sul nostro legittimo interesse. Se ci hai dato un consenso, puoi ritirarlo quando vuoi. Scrivi a <Dato v={contatti.email} e="indirizzo email" />.</p>
+      <p>Puoi anche presentare reclamo al Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it/">garanteprivacy.it</a>).</p>
+      <p>Non prendiamo decisioni automatiche su di te e non facciamo profilazione.</p>
 
-      <p class="testo-2">Ultimo aggiornamento: <Dato e="data" /></p>
+      <p class="testo-2">Ultimo aggiornamento: 8 novembre 2026</p>
     </div>
   </section>
 </Base>

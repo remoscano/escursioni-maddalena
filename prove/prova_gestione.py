@@ -56,6 +56,6 @@ s, r = hot('GET', '/api/partner/riepilogo'); ok(s in (401, 403), f'struttura dis
 s, r = anon('GET', f'/api/disponibilita?escursione=tour-7-isole&mese=2027-07&partner={codice}'); ok(r['partner'] is None, 'il link di una struttura disattivata non vale più')
 s, r = adm('DELETE', '/api/accesso', None); s, r = adm('GET', '/api/gestione/giorno?data=2027-06-10'); ok(s == 401, 'uscita: sessione chiusa')
 # troppi tentativi
-bad = client(ip='10.7.7.7'); esiti = [bad('POST', '/api/accesso', {'email': 'gestione@prova.it', 'password': 'no'})[0] for _ in range(6)]
+bad = client(ip='10.7.7.7'); esiti = [bad('POST', '/api/accesso', {'email': 'bloccato@prova.it', 'password': 'no'})[0] for _ in range(6)]
 ok(esiti[-1] == 429, f'5 tentativi sbagliati → blocco ({esiti})')
 print('TUTTO OK (gestione e strutture)')

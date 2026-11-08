@@ -94,7 +94,7 @@ const perOspite = area === 'struttura';
             <input id="pr-tel" name="telefono" type="tel" autocomplete={perOspite ? 'off' : 'tel'} maxlength="30" placeholder="+39 …" required />
           </div>
           <div class="campo campo--intero">
-            <label for="pr-note">Note <span class="testo-2" style="font-weight:400">(facoltative: allergie, esigenze, domande)</span></label>
+            <label for="pr-note">Note <span class="testo-2" style="font-weight:400">(facoltative: richieste o domande)</span></label>
             <textarea id="pr-note" name="note" rows="2" maxlength="1000"></textarea>
           </div>
         </div>
@@ -168,6 +168,7 @@ const perOspite = area === 'struttura';
   .riepilogo__voce { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; line-height: 1.5; padding: 6px 0; border-bottom: 1px solid var(--bordo); }
   .riepilogo__voce span:first-child { color: var(--testo-2); }
   .riepilogo__voce span:last-child { text-align: right; font-weight: 600; }
+  .riepilogo__voce .riepilogo__importo { white-space: nowrap; }
   .riepilogo__totale { display: flex; justify-content: space-between; align-items: baseline; padding-top: 12px; font-family: var(--font-titoli); font-weight: 800; font-size: 26px; }
   .riepilogo__info { list-style: none; padding: 0; margin-top: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.5; color: var(--testo-2); }
   .riepilogo__info li { padding-left: 14px; position: relative; }
@@ -179,7 +180,7 @@ const perOspite = area === 'struttura';
 </style>
 
 <script>
-  import { offerte, calcolaPrenotazione, rigaPrezzo, imbarchiPrenotazione } from '../data/prenotazioni.js';
+  import { offerte, regole, calcolaPrenotazione, rigaPrezzo, imbarchiPrenotazione, testoCarburante } from '../data/prenotazioni.js';
   import { api, ErroreApi, h, euro, dataLunga, oggiRoma, segnaposto, persone as testoPersone } from '../scripts/comune';
 
   const NOMI_MESI = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric', timeZone: 'UTC' });
@@ -372,21 +373,22 @@ const perOspite = area === 'struttura';
       const calcolo: any = calcolaPrenotazione(st.slug, st.turno, st.data, { adulti: st.adulti, bambini: st.bambini, neonati: st.neonati });
       const titolo = config.escursioni.find((e: any) => e.slug === st.slug)?.titolo ?? '';
       const nomeImbarco = imbarchiPrenotazione.find((i) => i.id === imbarco())?.nome ?? '';
+      // Note in HTML: i testi passano da h(), il segnaposto del carburante è già HTML.
       const info: string[] = [];
-      if (offerta.tipo === 'gruppo') info.push(`L'uscita parte con almeno ${offerta.minimo} persone: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`);
-      if (imbarco() === 'maddalena') info.push("L'orario indicato è la partenza da Palau: l'orario esatto di imbarco a La Maddalena te lo confermiamo noi.");
-      if (calcolo.carburanteEscluso) info.push('Il carburante non è compreso e si paga a parte.');
-      if (offerta.documento || turno.documento) info.push("Si va in Corsica: serve un documento valido per l'espatrio per ogni persona, anche per i bambini.");
-      info.push('Cancellazione gratuita fino a 48 ore prima. Con mare o vento non sicuri annulliamo noi: rimborso completo o nuova data, scegli tu.');
+      if (offerta.tipo === 'gruppo') info.push(h(`L'uscita parte con almeno ${offerta.minimo} persone paganti: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`));
+      if (imbarco() === 'maddalena') info.push(h("L'orario indicato è la partenza da Palau: l'orario esatto di imbarco a La Maddalena te lo confermiamo noi."));
+      if (calcolo.carburanteEscluso) info.push(regole.carburante ? h(testoCarburante()) : testoCarburante(segnaposto));
+      if (offerta.documento || turno.documento) info.push(h("Si va in Corsica: serve un documento valido per l'espatrio per ogni persona, anche per i bambini."));
+      info.push(h(`Cancellazione gratuita fino a ${regole.cancellazioneGratisOre} ore prima. Con mare o vento non sicuri annulliamo noi: rimborso completo o nuova data, scegli tu.`));
       $('[data-righe]').innerHTML = `
         <div class="riepilogo__voce"><span>Escursione</span><span>${h(titolo)}</span></div>
         <div class="riepilogo__voce"><span>Data</span><span>${h(dataLunga(st.data))}</span></div>
         <div class="riepilogo__voce"><span>Orario</span><span>${h(turno.nome)}<br>${turno.orario ? h(turno.orario) : segnaposto('da confermare')}</span></div>
         <div class="riepilogo__voce"><span>Imbarco</span><span>${h(nomeImbarco)}</span></div>
         <div class="riepilogo__voce"><span>Persone</span><span>${h(testoPersone(st.adulti, st.bambini, st.neonati))}</span></div>
-        ${calcolo.errore ? `<p class="avviso">${h(calcolo.errore)}</p>` : calcolo.righe.map((r: any) => `<div class="riepilogo__voce"><span>${h(r.testo)}</span><span>${euro(r.importo)}</span></div>`).join('')}
+        ${calcolo.errore ? `<p class="avviso">${h(calcolo.errore)}</p>` : calcolo.righe.map((r: any) => `<div class="riepilogo__voce"><span>${h(r.testo)}</span><span class="riepilogo__importo">${euro(r.importo)}</span></div>`).join('')}
         ${calcolo.errore ? '' : `<p class="riepilogo__totale"><span>Totale</span><span>${euro(calcolo.totale)}</span></p>`}
-        <ul class="riepilogo__info">${info.map((t) => `<li>${h(t)}</li>`).join('')}</ul>`;
+        <ul class="riepilogo__info">${info.map((t) => `<li>${t}</li>`).join('')}</ul>`;
       disegnaPagamenti(Boolean(calcolo.errore));
     }
 

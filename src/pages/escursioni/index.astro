@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import SchedaEscursione from '../../components/SchedaEscursione.astro';
 import SezioneRichiesta from '../../components/SezioneRichiesta.astro';
 import { escursioni } from '../../data/escursioni.js';
+import { regole } from '../../data/prenotazioni.js';
 const [evidenza, ...altre] = [...escursioni].sort((a, b) => Number(!!b.inEvidenza) - Number(!!a.inEvidenza));
 ---
 <Base
@@ -13,7 +14,9 @@ const [evidenza, ...altre] = [...escursioni].sort((a, b) => Number(!!b.inEvidenz
     <div class="contenitore">
       <p class="occhiello">Escursioni</p>
       <h1>Scegli la tua giornata in mare</h1>
-      <p class="intro">Quattro uscite in maxi gommone nell'Arcipelago di La Maddalena, tutte con imbarco a Palau o a La Maddalena e prenotabili con un messaggio WhatsApp.</p>
+      <p class="intro">{regole.attive
+        ? "Quattro uscite in maxi gommone nell'Arcipelago di La Maddalena, tutte con imbarco a Palau o a La Maddalena: vedi i posti liberi e prenoti online."
+        : "Quattro uscite in maxi gommone nell'Arcipelago di La Maddalena, tutte con imbarco a Palau o a La Maddalena e prenotabili con un messaggio WhatsApp."}</p>
     </div>
   </section>
   <section class="sezione" style="padding-top:48px">

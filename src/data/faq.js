@@ -2,6 +2,8 @@
 // sul sito compare un segnaposto rosa al posto del dato ancora da inserire.
 // "regola" collega la risposta a un campo di sito.regole: quando lo compili, il segnaposto sparisce.
 
+import { testoChiusuraOnline, testoDopoChiusura } from './prenotazioni.js';
+
 export const faq = [
   {
     gruppo: 'Prenotazione e pagamento',
@@ -10,7 +12,7 @@ export const faq = [
         id: 'prenotare',
         domanda: 'Come si prenota?',
         risposta:
-          "Online, dalla pagina Prenota: scegli escursione, giorno e orario, vedi subito i posti liberi e paghi con carta o PayPal. Ricevi il codice di prenotazione da mostrare all'imbarco. Per domande, per domani o per gruppi oltre 12 persone scrivici su WhatsApp.",
+          `Online, dalla pagina Prenota: scegli escursione, giorno e orario, vedi subito i posti liberi e paghi con carta o PayPal. Ricevi il codice di prenotazione da mostrare all'imbarco. ${testoChiusuraOnline} ${testoDopoChiusura}`,
       },
       {
         id: 'pagare',

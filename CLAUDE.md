@@ -7,7 +7,7 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 - **Cliente:** Escursioni Maddalena, escursioni in maxi gommone nell'Arcipelago di La Maddalena (Sardegna), con imbarco a Palau e a La Maddalena.
 - **Chi lavora sul sito:** Remo (web designer/consulente, non programmatore). Parla italiano: rispondi in italiano, in modo semplice, senza gergo tecnico se non serve.
 - **Obiettivo del sito:** trasformare le visite in prenotazioni online pagate (escursione, data, orario, persone, imbarco). WhatsApp resta per domande, ultimo minuto e gruppi oltre 12 persone. Le altre piattaforme (GetYourGuide, Viator, Click&Boat…) NON sono collegate al sito: una persona dedicata inserisce a mano le loro prenotazioni nella gestione.
-- **Flotta:** 2 gommoni di gruppo (12 posti, uscita confermata con almeno 6 paganti) e 1 gommone solo per le esclusive (6 posti). Stagione 2027: 1 maggio – 31 ottobre.
+- **Flotta:** 2 gommoni di gruppo (12 posti, uscita confermata con almeno 6 paganti) e 1 gommone solo per le esclusive (6 posti). Tutti e tre si possono prenotare in esclusiva, allo stesso prezzo: il sistema sceglie il più piccolo che basta (fino a 6 persone il gommone da 6, da 7 a 12 uno da 12). Stagione 2027: 1 maggio – 31 ottobre.
 - **Strutture partner:** hotel e B&B prenotano dalla loro area (/partner/) o danno ai clienti il loro link (/prenota/?p=CODICE). Provvigione 15% sul lordo, pagata dall'ufficio ogni 15 giorni (1–15 e 16–fine mese, in base alla data dell'escursione).
 - **Pubblico:** famiglie, gruppi di amici, turisti alla prima volta in Sardegna, spesso dal telefono e già in vacanza.
 - **Lingue:** italiano ora; poi inglese, quindi tedesco e francese.
@@ -27,10 +27,12 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 
 - Astro statico + funzioni di Cloudflare Pages in `functions/` (le API delle prenotazioni, su `/api/...`) + database D1. Nessun framework JS lato client: JavaScript solo per menu, modulo WhatsApp, prenotazione, area strutture e gestione.
 - Prenotazioni:
-  - `src/data/prenotazioni.js`: gommoni, turni con orari, listini per periodo, regole (chiusura online alle 20 del giorno prima, 48 ore di cancellazione gratuita, 15% alle strutture, fasce d'età). È l'unica fonte dei prezzi: la usano sito e server, e il server ricalcola sempre il totale.
+  - `src/data/prenotazioni.js`: gommoni, turni con orari, listini per periodo, regole (chiusura online alle 20 del giorno prima, 48 ore di cancellazione gratuita, 15% alle strutture, fasce d'età, come si calcola il carburante delle esclusive). È l'unica fonte dei prezzi: la usano sito e server, e il server ricalcola sempre il totale.
+  - `src/data/condizioni.js`: testo delle condizioni di prenotazione, usato dalla pagina `/condizioni/` e copiato per intero nell'email di conferma (la legge chiede la conferma con le condizioni su supporto durevole).
   - `functions/_lib/motore.js`: posti liberi e scelta del gommone. Ogni turno occupa blocchi della giornata (mattina, pomeriggio, sera); l'inserimento controlla i posti nella stessa istruzione SQL, così due clienti non prendono lo stesso posto. Durante il pagamento i posti restano tenuti per 30 minuti.
   - `functions/_lib/pagamenti.js`: SumUp (pagina di pagamento ospitata) e PayPal (ordini v2), sempre con reindirizzamento e verifica dal server: sul sito non si carica nessuno script di terze parti. `PAGAMENTI_PROVA=1` (solo anteprime) aggiunge un pagamento simulato.
-  - `functions/_lib/accessi.js`: accessi per gestione e strutture (password PBKDF2, sessione in cookie tecnico `em_sessione`, blocco dopo 5 tentativi).
+  - `functions/_lib/accessi.js`: accessi per gestione e strutture (password PBKDF2, sessione in cookie tecnico `em_sessione`, blocco dopo 5 tentativi; tentativi sbagliati cancellati dopo 24 ore).
+  - Impronta dell'indirizzo internet (`ip_hash`, limite di 5 prenotazioni in attesa): si cancella appena la prenotazione è pagata, annullata o scaduta. L'informativa privacy lo promette.
   - Pagine: `/prenota/` (+ `esito/`, `prova/`), `/partner/`, `/gestione/`, `/condizioni/`.
   - Prove automatiche in `prove/` (vedi `prove/LEGGIMI.md`): prima di ogni push che tocca le prenotazioni devono passare tutte.
 - I contenuti stanno in `src/data/` (`sito.js`, `escursioni.js`, `faq.js`, `menu.js`). Prima di scrivere testo dentro una pagina, chiediti se va in un file dati.
@@ -54,12 +56,12 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 
 - **Mai inventare dati:** prezzi, orari, numeri, nomi, capienza, regole. Se mancano, usa `Dato` con un segnaposto chiaro.
 - **Mai recensioni inventate.** Solo recensioni vere copiate da Google o TripAdvisor, con nome e data come pubblicati.
-- Fatti da rispettare: alla Spiaggia Rosa di Budelli niente sbarco né bagno (si vede dal mare); il pranzo del Tour delle 7 isole è libero a La Maddalena e non incluso; per la Corsica serve un documento valido per l'espatrio.
+- Fatti da rispettare: alla Spiaggia Rosa di Budelli niente sbarco né bagno (si vede dal mare); il pranzo del Tour delle 7 isole è libero a La Maddalena e non incluso; la Corsica si fa solo in esclusiva (giornata intera, prezzi delle giornate in esclusiva) e serve un documento valido per l'espatrio; nelle esclusive il carburante è a parte; il tramonto costa come la mezza giornata.
 - Tono: diretto, caldo, concreto. Frasi brevi, seconda persona singolare ("scrivici", "scegli").
 - Niente servizi esterni che caricano cookie o tracciano (YouTube, Google Maps incorporata, Google Fonts, pixel pubblicitari). Se servono statistiche, Cloudflare Web Analytics. Ogni nuovo servizio va riportato nella pagina `/cookie/` e in `/privacy/`.
 - Alle strutture partner non si mostra il nome dell'ospite che ha prenotato dal loro link (solo data, escursione, persone, importo).
-- Condizioni di prenotazione, privacy e cookie sono bozze da far verificare.
-- Privacy e cookie sono bozze: segnalare a Remo che vanno fatte verificare, non presentarle come definitive.
+- Condizioni, privacy e cookie: controllate sulle norme l'8 novembre 2026, su richiesta di Remo (Codice del consumo, D.Lgs. 70/2003, GDPR, linee guida cookie del Garante). Non è un parere legale: dirlo a Remo se chiede se sono definitive. Restano da compilare i dati in rosa. Se il sito raccoglie un dato nuovo o usa un servizio nuovo, aggiornare privacy e cookie.
+- Prima del pagamento il cliente deve vedere il prezzo totale e come si calcolano i costi in più (carburante, eventuale ticket del Parco): art. 49 del Codice del consumo. Se mancano, il cliente può rifiutarsi di pagarli.
 - Niente video: la home usa una foto di apertura (scelta di Remo).
 
 ## Stato e prossimi passi
@@ -69,14 +71,15 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Prima versione in italiano online su pages.dev
 - [x] WhatsApp (+39 331 505 5736) ed email (maddalena.escursioni@gmail.com) nel sito
 - [x] Sistema di prenotazione interno con area strutture e gestione: ramo `prenotazioni`, anteprima con pagamento simulato (8 novembre 2026)
-- [ ] Decisioni aperte su prezzi e orari: prezzo e orari della Corsica (ora 104 € / 78 € ridotto, privato 805 €: proposta dall'analisi dei concorrenti), prezzo del tramonto (ora 46 € / 35 €, privato 380 €), se "gommone in esclusiva" vale anche per i gommoni da 12 (in `offerte['tour-privato'].gommoni`)
+- [x] Prezzi decisi da Remo (8 novembre 2026): tramonto come la mezza giornata, Corsica solo in esclusiva con i prezzi della giornata intera, esclusiva possibile su tutti e tre i gommoni
+- [x] Condizioni, privacy e cookie controllati sulle norme e su quello che fa il sito (8 novembre 2026); migrazione `0002_impronta_ip.sql` applicata a entrambi i database
+- [ ] Da confermare: orari della Corsica (ora 9:30 – 17:30, come le altre giornate intere); come si calcola e quando si paga il carburante delle esclusive (`regole.carburante` in `src/data/prenotazioni.js`)
 - [ ] Conti SumUp e PayPal → chiavi in Cloudflare Pages (Production): `SUMUP_API_KEY`, `SUMUP_MERCHANT_CODE`, `PAYPAL_CLIENT_ID`, `PAYPAL_SECRET`. Provare prima PayPal in sandbox (`PAYPAL_AMBIENTE=sandbox` nelle anteprime)
-- [ ] Email di conferma: servono dominio e un servizio di invio (predisposto Resend: `RESEND_API_KEY`, `EMAIL_MITTENTE`)
+- [ ] Email di conferma, obbligatorie prima di aprire le prenotazioni vere (art. 51, comma 7, Codice del consumo): servono dominio e un servizio di invio (predisposto Resend: `RESEND_API_KEY`, `EMAIL_MITTENTE`). L'email contiene già riepilogo e copia delle condizioni
 - [ ] Unire `prenotazioni` in `main` quando Remo dà l'ok (se i pagamenti non sono ancora attivi: `regole.attive: false`)
-- [ ] Dati del cliente rimasti: ragione sociale, P. IVA, indirizzo, moli e orari di ritrovo, gommoni (modello, motori), skipper, ticket del Parco, animali
+- [ ] Dati del cliente rimasti: ragione sociale, P. IVA, indirizzo, REA, autorizzazioni (Parco, Capitaneria), moli e orari di ritrovo, minuti di anticipo al molo, gommoni (modello, motori), skipper, ticket del Parco, animali
 - [ ] Foto (le note sui segnaposto indicano gli scatti)
 - [ ] Dominio: acquistato su GoDaddy, da spostare su Cloudflare (DNS) e collegare in Pages → Custom domains. Poi aggiornare `site` in `astro.config.mjs` e `url` in `src/data/sito.js`, e far rimandare `www` alla versione senza `www`
 - [ ] Testi delle escursioni Corsica, Tramonto e Tour privato (programma ancora a segnaposto)
-- [ ] Revisione di condizioni, privacy e cookie da parte di chi segue il cliente
 - [ ] Lancio: `inCostruzione: false` in `src/data/sito.js`, `public/robots.txt` aperto (con le esclusioni già scritte nel commento), sitemap, dati strutturati (LocalBusiness e TouristTrip)
 - [ ] Inglese (`/en/`) con hreflang, poi tedesco e francese

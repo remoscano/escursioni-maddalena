@@ -1,8 +1,9 @@
 // Operazioni sulle prenotazioni condivise da più API: lettura, conferma dopo il pagamento, email.
 
-import { offerte, turnoDi, regole, imbarchiPrenotazione, gommoni } from '../../src/data/prenotazioni.js';
+import { offerte, turnoDi, regole, imbarchiPrenotazione, gommoni, testoCarburante } from '../../src/data/prenotazioni.js';
 import { escursioni } from '../../src/data/escursioni.js';
 import { sito } from '../../src/data/sito.js';
+import { condizioniInTesto } from '../../src/data/condizioni.js';
 import { prima, esegui, registra } from './db.js';
 import { riattivaSeLibero } from './motore.js';
 import { dataLeggibile, euroDaCent, ugualeSicuro } from './util.js';
@@ -74,14 +75,19 @@ export async function confermaPagamento(contesto, p, { importo, rif, chi }) {
     }
   }
   await registra(db, chi, stato === 'confermata' ? 'pagamento-confermato' : 'pagamento-senza-posto', { codice: p.codice, importo, rif });
+  // Pagata: l'impronta dell'indirizzo internet non serve più.
+  await esegui(db, 'UPDATE prenotazioni SET ip_hash = NULL WHERE id = :id', { id: p.id });
   const aggiornata = await prima(db, 'SELECT * FROM prenotazioni WHERE id = :id', { id: p.id });
   contesto.waitUntil?.(inviaEmailConferma(contesto.env, aggiornata, new URL(contesto.request.url).origin));
   return aggiornata.stato;
 }
 
-// ---------- Email (facoltative) ----------
+// ---------- Email ----------
 // Funzionano quando ci sono RESEND_API_KEY ed EMAIL_MITTENTE (es. "Escursioni Maddalena <prenotazioni@dominio.it>").
-// Serve il dominio collegato: finché manca, la conferma si vede a schermo e nella gestione.
+// Serve il dominio collegato. Prima di aprire le prenotazioni vere sono necessarie: la legge chiede di mandare
+// al cliente la conferma con le condizioni su un supporto durevole (art. 51, comma 7, Codice del consumo).
+
+export const emailAttive = (env) => Boolean(env.RESEND_API_KEY && env.EMAIL_MITTENTE);
 
 export async function inviaEmail(env, { a, oggetto, testo }) {
   if (!env.RESEND_API_KEY || !env.EMAIL_MITTENTE || !a) return false;
@@ -107,28 +113,35 @@ export async function inviaEmailConferma(env, p, origine) {
     v.neonati && `${v.neonati} ${v.neonati === 1 ? 'neonato' : 'neonati'}`,
   ].filter(Boolean).join(', ');
   const link = `${origine}/prenota/esito/?codice=${encodeURIComponent(p.codice)}&t=${encodeURIComponent(p.token)}`;
+  const { azienda } = sito;
+  // null = riga che non serve per questa prenotazione; '' = riga vuota tra un blocco e l'altro.
   const righe = [
     `Ciao ${p.nome},`,
     p.stato === 'confermata' ? 'la tua prenotazione è confermata.' : 'abbiamo ricevuto il tuo pagamento: ti contattiamo a breve per confermare il posto.',
     '',
     `Codice: ${p.codice}`,
-    `${v.escursione} · ${v.turno}`,
+    `${v.escursione} · ${v.turno}${v.privato ? ' · gommone solo per voi' : ''}`,
     `Data: ${v.dataLeggibile}`,
     `Imbarco: ${v.imbarco}`,
-    v.orario ? `Orario: ${v.orario}${p.imbarco === 'maddalena' ? ' (partenza da Palau: l’orario di imbarco a La Maddalena te lo confermiamo noi)' : ''}` : 'Orario: te lo confermiamo noi',
+    v.orario ? `Orario: ${v.orario}${p.imbarco === 'maddalena' ? " (partenza da Palau: l'orario di imbarco a La Maddalena te lo confermiamo noi)" : ''}` : 'Orario: te lo confermiamo noi',
     `Persone: ${persone}`,
-    `Totale pagato: ${euroDaCent(p.pagato || p.totale)} €`,
-    v.carburanteEscluso ? 'Il carburante non è compreso e si paga a parte.' : '',
+    `Totale pagato: ${euroDaCent(p.pagato || p.totale)} € (IVA inclusa)`,
+    v.carburanteEscluso ? testoCarburante() : null,
     '',
-    v.documento ? 'Si va in Corsica: porta un documento valido per l’espatrio per ogni persona, anche per i bambini.' : '',
-    !v.privato && v.minimo ? `L’uscita parte con almeno ${v.minimo} persone: se non si raggiungono ti proponiamo un’altra data o ti rimborsiamo per intero.` : '',
+    v.documento ? "Si va in Corsica: porta un documento valido per l'espatrio per ogni persona, anche per i bambini." : null,
+    !v.privato && v.minimo ? `L'uscita parte con almeno ${v.minimo} persone paganti: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.` : null,
     `Cancellazione gratuita fino a ${v.cancellazioneGratisOre} ore prima. Con mare o vento non sicuri annulliamo noi e scegli tu: rimborso completo o nuova data.`,
     '',
     `La tua prenotazione: ${link}`,
-    sito.contatti.telefonoVisibile ? `Per qualsiasi cosa scrivici su WhatsApp: ${sito.contatti.telefonoVisibile}` : '',
+    sito.contatti.telefonoVisibile ? `Per qualsiasi cosa scrivici su WhatsApp: ${sito.contatti.telefonoVisibile}` : null,
     '',
-    sito.nome,
-  ].filter((r) => r !== '');
+    `${azienda.ragioneSociale || sito.nome}${azienda.indirizzo ? ` · ${azienda.indirizzo}` : ''}${azienda.partitaIva ? ` · P. IVA ${azienda.partitaIva}` : ''}`,
+    '',
+    '----------',
+    'CONDIZIONI DI PRENOTAZIONE (la tua copia)',
+    '',
+    condizioniInTesto(),
+  ].filter((r) => r !== null);
   await inviaEmail(env, { a: p.email, oggetto: `Prenotazione ${p.codice} · ${v.escursione}`, testo: righe.join('\n') });
   if (sito.contatti.email) {
     await inviaEmail(env, {

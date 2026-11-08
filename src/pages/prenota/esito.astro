@@ -28,6 +28,7 @@ import { sito } from '../../data/sito.js';
 
 <script>
   import { api, h, euro, segnaposto, persone } from '../../scripts/comune';
+  import { regole, testoCarburante } from '../../data/prenotazioni.js';
 
   const box = document.querySelector<HTMLElement>('[data-esito]')!;
   const q = new URLSearchParams(location.search);
@@ -38,13 +39,44 @@ import { sito } from '../../data/sito.js';
 
   const wa = (testo: string) => whatsapp ? `<a class="btn btn--bordo" href="https://wa.me/${h(whatsapp)}?text=${encodeURIComponent(testo)}">Scrivici su WhatsApp</a>` : '';
 
+  // "Aggiungi al calendario": file .ics (standard RFC 5545) con data, orario, imbarco e un promemoria il giorno prima.
+  // Contiene la definizione dell'ora di Roma, così l'orario è giusto anche in Outlook e per chi ha il telefono su un altro fuso.
+  const ORA_ROMA = ['BEGIN:VTIMEZONE', 'TZID:Europe/Rome',
+    'BEGIN:DAYLIGHT', 'TZOFFSETFROM:+0100', 'TZOFFSETTO:+0200', 'TZNAME:CEST', 'DTSTART:19700329T020000', 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU', 'END:DAYLIGHT',
+    'BEGIN:STANDARD', 'TZOFFSETFROM:+0200', 'TZOFFSETTO:+0100', 'TZNAME:CET', 'DTSTART:19701025T030000', 'RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU', 'END:STANDARD',
+    'END:VTIMEZONE'];
+  const testoIcs = (s: string) => String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  const codifica = new TextEncoder();
+  // Righe lunghe piegate a 75 byte, come chiede lo standard.
+  function piega(riga: string) {
+    let fuori = '';
+    let lunghezza = 0;
+    for (const c of riga) {
+      const byte = codifica.encode(c).length;
+      if (lunghezza + byte > 74) { fuori += '\r\n '; lunghezza = 1; }
+      fuori += c;
+      lunghezza += byte;
+    }
+    return fuori;
+  }
+
   function ics(p: any) {
     const giorno = p.data.replace(/-/g, '');
     const [ini, fin] = String(p.orario || '').split('–').map((s: string) => s.trim().replace(':', '').padStart(4, '0'));
-    const tempo = ini && fin ? `DTSTART;TZID=Europe/Rome:${giorno}T${ini}00\r\nDTEND;TZID=Europe/Rome:${giorno}T${fin}00` : `DTSTART;VALUE=DATE:${giorno}`;
-    const testo = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Escursioni Maddalena//IT', 'BEGIN:VEVENT', `UID:${p.codice}@escursioni-maddalena`, tempo,
-      `SUMMARY:${p.escursione} (${p.codice})`, `LOCATION:Imbarco ${p.imbarco}`, `DESCRIPTION:${p.turno}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
-    return URL.createObjectURL(new Blob([testo], { type: 'text/calendar' }));
+    const conOrario = Boolean(ini && fin);
+    const adesso = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    const dettagli = [`Codice ${p.codice}`, p.turno, persone(p.adulti, p.bambini, p.neonati),
+      p.documento ? "Porta un documento valido per l'espatrio per ogni persona, anche per i bambini." : ''].filter(Boolean).join('\n');
+    const righe = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Escursioni Maddalena//IT', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+      ...(conOrario ? ORA_ROMA : []),
+      'BEGIN:VEVENT', `UID:${p.codice}@escursioni-maddalena`, `DTSTAMP:${adesso}`,
+      ...(conOrario ? [`DTSTART;TZID=Europe/Rome:${giorno}T${ini}00`, `DTEND;TZID=Europe/Rome:${giorno}T${fin}00`] : [`DTSTART;VALUE=DATE:${giorno}`]),
+      `SUMMARY:${testoIcs(`${p.escursione} (${p.codice})`)}`,
+      `LOCATION:${testoIcs(`Imbarco ${p.imbarco}`)}`,
+      `DESCRIPTION:${testoIcs(dettagli)}`,
+      'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${testoIcs(`Domani: ${p.escursione}`)}`, 'TRIGGER:-P1D', 'END:VALARM',
+      'END:VEVENT', 'END:VCALENDAR'];
+    return URL.createObjectURL(new Blob([righe.map(piega).join('\r\n') + '\r\n'], { type: 'text/calendar;charset=utf-8' }));
   }
 
   function riepilogo(p: any) {
@@ -61,19 +93,21 @@ import { sito } from '../../data/sito.js';
   function mostra(p: any) {
     const riprova = `<a class="btn btn--wa" href="/prenota/?escursione=${encodeURIComponent(p.slug)}">Scegli di nuovo</a>`;
     if (p.stato === 'confermata') {
+      // Note in HTML: i testi sono protetti con h(), il segnaposto del carburante è già HTML.
       const note = [
-        p.documento && "Si va in Corsica: porta un documento valido per l'espatrio per ogni persona, anche per i bambini.",
-        p.imbarco === 'La Maddalena' && "L'orario indicato è la partenza da Palau: l'orario esatto di imbarco a La Maddalena te lo confermiamo noi su WhatsApp.",
-        p.carburanteEscluso && 'Il carburante non è compreso e si paga a parte.',
-        !p.privato && p.minimo && `L'uscita parte con almeno ${p.minimo} persone: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`,
-        `Cancellazione gratuita fino a ${p.cancellazioneGratisOre} ore prima: scrivici su WhatsApp. Con mare o vento non sicuri annulliamo noi e scegli tu tra rimborso completo e nuova data.`,
+        p.documento && h("Si va in Corsica: porta un documento valido per l'espatrio per ogni persona, anche per i bambini."),
+        p.imbarco === 'La Maddalena' && h("L'orario indicato è la partenza da Palau: l'orario esatto di imbarco a La Maddalena te lo confermiamo noi su WhatsApp."),
+        p.carburanteEscluso && (regole.carburante ? h(testoCarburante()) : testoCarburante(segnaposto)),
+        !p.privato && p.minimo && h(`L'uscita parte con almeno ${p.minimo} persone paganti: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`),
+        h(`Cancellazione gratuita fino a ${p.cancellazioneGratisOre} ore prima: scrivici su WhatsApp. Con mare o vento non sicuri annulliamo noi e scegli tu tra rimborso completo e nuova data.`),
       ].filter(Boolean);
       box.className = 'esito esito--ok';
       box.innerHTML = `<p class="esito__codice">${h(p.codice)}</p>
         <h1>Prenotazione confermata</h1>
-        <p>Grazie ${h(p.nome)}! Conserva questa pagina o il codice: ti servirà all'imbarco.</p>
+        <p>Grazie ${h(p.nome)}! Conserva il codice: ti servirà all'imbarco.${p.email ? " Ti mandiamo anche un'email con il riepilogo e la copia delle condizioni." : ' Salva o stampa questa pagina.'}</p>
         ${riepilogo(p)}
-        <ul>${note.map((n) => `<li>${h(n)}</li>`).join('')}</ul>
+        <ul>${note.map((n) => `<li>${n}</li>`).join('')}</ul>
+        <p class="testo-2" style="font-size:15px">Valgono le <a href="/condizioni/">condizioni di prenotazione</a>.</p>
         <div class="esito__azioni"><a class="btn btn--wa" data-ics download="${h(p.codice)}.ics">Aggiungi al calendario</a>${wa(`Ciao! Ho la prenotazione ${p.codice}.`)}</div>`;
       box.querySelector<HTMLAnchorElement>('[data-ics]')!.href = ics(p);
       return;

@@ -2,12 +2,14 @@
 // Calendario del mese con lo stato di ogni giorno e di ogni turno.
 import { offerte, regole } from '../../src/data/prenotazioni.js';
 import { prima } from '../_lib/db.js';
-import { calendarioMese } from '../_lib/motore.js';
+import { calendarioMese, pulisciScadute } from '../_lib/motore.js';
 import { metodiDisponibili } from '../_lib/pagamenti.js';
 import { utenteCollegato } from '../_lib/accessi.js';
 import { Errore, json } from '../_lib/util.js';
 
-export async function onRequestGet({ request, env }) {
+export async function onRequestGet(contesto) {
+  const { request, env } = contesto;
+  contesto.waitUntil?.(pulisciScadute(env.DB).catch((e) => console.error('Pulizia non riuscita', e)));
   const url = new URL(request.url);
   const slug = url.searchParams.get('escursione') || '';
   const mese = url.searchParams.get('mese') || '';
