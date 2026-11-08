@@ -15,10 +15,10 @@ export const sito = {
 
   contatti: {
     // Solo cifre, con prefisso internazionale e senza "+": es. '393331234567'
-    whatsapp: '',
+    whatsapp: '393315055736',
     // Come va mostrato a video: es. '+39 333 123 4567'
-    telefonoVisibile: '',
-    email: '',
+    telefonoVisibile: '+39 331 505 5736',
+    email: 'maddalena.escursioni@gmail.com',
     orariRisposta: '', // es. 'tutti i giorni dalle 8 alle 21'
   },
 
