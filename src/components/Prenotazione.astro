@@ -374,6 +374,7 @@ const perOspite = area === 'struttura';
       const nomeImbarco = imbarchiPrenotazione.find((i) => i.id === imbarco())?.nome ?? '';
       const info: string[] = [];
       if (offerta.tipo === 'gruppo') info.push(`L'uscita parte con almeno ${offerta.minimo} persone: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`);
+      if (imbarco() === 'maddalena') info.push("L'orario indicato è la partenza da Palau: l'orario esatto di imbarco a La Maddalena te lo confermiamo noi.");
       if (calcolo.carburanteEscluso) info.push('Il carburante non è compreso e si paga a parte.');
       if (offerta.documento || turno.documento) info.push("Si va in Corsica: serve un documento valido per l'espatrio per ogni persona, anche per i bambini.");
       info.push('Cancellazione gratuita fino a 48 ore prima. Con mare o vento non sicuri annulliamo noi: rimborso completo o nuova data, scegli tu.');

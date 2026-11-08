@@ -115,7 +115,7 @@ export async function inviaEmailConferma(env, p, origine) {
     `${v.escursione} · ${v.turno}`,
     `Data: ${v.dataLeggibile}`,
     `Imbarco: ${v.imbarco}`,
-    v.orario ? `Orario: ${v.orario}` : 'Orario: te lo confermiamo noi',
+    v.orario ? `Orario: ${v.orario}${p.imbarco === 'maddalena' ? ' (partenza da Palau: l’orario di imbarco a La Maddalena te lo confermiamo noi)' : ''}` : 'Orario: te lo confermiamo noi',
     `Persone: ${persone}`,
     `Totale pagato: ${euroDaCent(p.pagato || p.totale)} €`,
     v.carburanteEscluso ? 'Il carburante non è compreso e si paga a parte.' : '',

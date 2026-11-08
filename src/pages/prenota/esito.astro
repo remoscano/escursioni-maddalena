@@ -63,6 +63,7 @@ import { sito } from '../../data/sito.js';
     if (p.stato === 'confermata') {
       const note = [
         p.documento && "Si va in Corsica: porta un documento valido per l'espatrio per ogni persona, anche per i bambini.",
+        p.imbarco === 'La Maddalena' && "L'orario indicato è la partenza da Palau: l'orario esatto di imbarco a La Maddalena te lo confermiamo noi su WhatsApp.",
         p.carburanteEscluso && 'Il carburante non è compreso e si paga a parte.',
         !p.privato && p.minimo && `L'uscita parte con almeno ${p.minimo} persone: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`,
         `Cancellazione gratuita fino a ${p.cancellazioneGratisOre} ore prima: scrivici su WhatsApp. Con mare o vento non sicuri annulliamo noi e scegli tu tra rimborso completo e nuova data.`,
