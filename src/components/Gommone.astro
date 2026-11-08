@@ -3,24 +3,30 @@ import Foto from './Foto.astro';
 import Dato from './Dato.astro';
 import Icona from './Icona.astro';
 import { sito } from '../data/sito.js';
+import { gommoni } from '../data/prenotazioni.js';
 interface Props { titoloLivello?: 'h1' | 'h2'; link?: boolean }
 const { titoloLivello = 'h2', link = true } = Astro.props;
-const { gommone, skipper } = sito;
+const { gommone, skipper, flotta } = sito;
+const posti = (id: string) => gommoni.find((g) => g.id === id)?.posti;
+const uso = (id: string) => gommoni.find((g) => g.id === id)?.tipo === 'esclusiva' ? 'Solo esclusive' : 'Gruppo ed esclusive';
 const Titolo = titoloLivello;
 ---
 <div class="due-colonne">
-  <Foto nota="Il gommone di profilo, all'ancora in acqua turchese" class="gommone__foto" />
+  <Foto nota="I gommoni di profilo, all'ancora in acqua turchese" class="gommone__foto" />
   <div style="display:flex;flex-direction:column;gap:28px">
     <div style="display:flex;flex-direction:column;gap:16px">
-      <p class="occhiello">Il gommone</p>
-      <Titolo id="gommone-titolo" class="titolo-sezione">Il maxi gommone e chi lo guida</Titolo>
-      <p class="testo-2"><Dato v={gommone.descrizione} e="Presenta il gommone in due righe: modello, comodità, perché è adatto a famiglie e gruppi" /></p>
+      <p class="occhiello">I gommoni</p>
+      <Titolo id="gommone-titolo" class="titolo-sezione">I maxi gommoni e chi li guida</Titolo>
+      <p class="testo-2"><Dato v={gommone.descrizione} e="Presenta i gommoni in due righe: comodità, perché sono adatti a famiglie e gruppi" /></p>
     </div>
     <dl class="dati-barca">
-      <div><dt>Lunghezza</dt><dd><Dato v={gommone.lunghezza} e="—" /> metri</dd></div>
-      <div><dt>Motori</dt><dd><Dato v={gommone.motori} e="—" /> cv</dd></div>
-      <div><dt>Passeggeri</dt><dd>fino a <Dato v={gommone.passeggeri} e="N" /></dd></div>
-      <div><dt>A bordo</dt><dd class="testo"><Dato v={gommone.dotazioni} e="tendalino, scaletta bagno, doccetta…" /></dd></div>
+      {flotta.map((g) => (
+        <div>
+          <dt>{uso(g.id)}</dt>
+          <dd>{g.modello}</dd>
+          <dd class="testo">Fino a {posti(g.id)} persone · {g.motori} · {g.dotazioni}</dd>
+        </div>
+      ))}
     </dl>
     <div class="skipper">
       <span class="skipper__foto" aria-hidden="true"></span>
@@ -29,7 +35,7 @@ const Titolo = titoloLivello;
         <p class="testo-2" style="font-size:15px;line-height:1.5"><Dato v={skipper.descrizione} e="Una riga su di te: anni di mare nell'arcipelago, lingue parlate" /></p>
       </div>
     </div>
-    {link && <a href="/gommone/" class="link-freccia">Il gommone e lo skipper<Icona nome="destra" size={18} /></a>}
+    {link && <a href="/gommone/" class="link-freccia">I gommoni e lo skipper<Icona nome="destra" size={18} /></a>}
   </div>
 </div>
 

@@ -57,9 +57,10 @@ export const testoChiusuraOnline = `Online puoi prenotare fino alle ${regole.chi
 
 // I gommoni. "posti" conta tutte le persone a bordo, neonati compresi.
 export const gommoni = [
-  { id: 'gruppo-1', nome: 'Gommone 1', tipo: 'gruppo', posti: 12 },
-  { id: 'gruppo-2', nome: 'Gommone 2', tipo: 'gruppo', posti: 12 },
-  { id: 'esclusiva', nome: 'Gommone esclusiva', tipo: 'esclusiva', posti: 6 },
+  { id: 'gruppo-1', nome: 'Joker Clubman 28', tipo: 'gruppo', posti: 12 },
+  { id: 'gruppo-2', nome: 'BWA 30', tipo: 'gruppo', posti: 12 },
+  // Joker 35: il più grande, ma fa solo esclusive con massimo 6 persone (Remo, 8 novembre 2026).
+  { id: 'esclusiva', nome: 'Joker 35', tipo: 'esclusiva', posti: 6 },
 ];
 
 // Le esclusive possono usare tutti i gommoni: il sistema sceglie il più piccolo che basta,

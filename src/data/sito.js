@@ -40,6 +40,12 @@ export const sito = {
       parcheggio: '',
       mappa: '', // link Google Maps del punto di ritrovo
     },
+    // Cannigione: molo del quarto gommone. Non compare sul sito finché il gommone non è prenotabile.
+    cannigione: {
+      nome: 'Cannigione',
+      molo: 'Pontile La Sciumara, Via Lungomare A. Doria 7, 07021 Cannigione (SS)',
+      ritrovo: '',
+    },
     maddalena: {
       nome: 'La Maddalena',
       molo: '',
@@ -48,13 +54,17 @@ export const sito = {
     },
   },
 
+  // I gommoni (Remo, 8 novembre 2026). "id" collega ogni gommone a quello del sistema di prenotazione
+  // (src/data/prenotazioni.js), da cui arrivano i posti.
+  flotta: [
+    { id: 'gruppo-1', modello: 'Joker Clubman 28', motori: '2 motori Suzuki da 200 cv', dotazioni: 'bagno, T-top' },
+    { id: 'gruppo-2', modello: 'BWA 30', motori: '2 motori Mercury da 250 cv', dotazioni: 'bagno, cabina, T-top' },
+    { id: 'esclusiva', modello: 'Joker 35', motori: '2 motori Suzuki da 300 cv', dotazioni: 'cabina, bagno' },
+    // In arrivo: Honda 9.50 con 1 motore Honda da 350 cv, dedicato a chi parte da Cannigione.
+    // Si aggiunge (anche in prenotazioni.js) quando si sanno posti, escursioni, orari e prezzi.
+  ],
   gommone: {
-    modello: '',
-    lunghezza: '', // metri
-    motori: '', // cv
-    passeggeri: '', // numero massimo
-    dotazioni: '', // es. 'tendalino, scaletta bagno, doccetta'
-    descrizione: '',
+    descrizione: '', // due righe di presentazione della flotta
   },
 
   skipper: {

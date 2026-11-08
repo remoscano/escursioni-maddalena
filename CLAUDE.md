@@ -7,7 +7,7 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 - **Cliente:** Escursioni Maddalena, escursioni in maxi gommone nell'Arcipelago di La Maddalena (Sardegna), con imbarco a Palau e a La Maddalena.
 - **Chi lavora sul sito:** Remo (web designer/consulente, non programmatore). Parla italiano: rispondi in italiano, in modo semplice, senza gergo tecnico se non serve.
 - **Obiettivo del sito:** trasformare le visite in prenotazioni online pagate (escursione, data, orario, persone, imbarco). WhatsApp resta per domande, ultimo minuto e gruppi oltre 12 persone. Le altre piattaforme (GetYourGuide, Viator, Click&Boat…) NON sono collegate al sito: una persona dedicata inserisce a mano le loro prenotazioni nella gestione.
-- **Flotta:** 2 gommoni di gruppo (12 posti, uscita confermata con almeno 6 paganti) e 1 gommone solo per le esclusive (6 posti). Tutti e tre si possono prenotare in esclusiva, allo stesso prezzo: il sistema sceglie il più piccolo che basta (fino a 6 persone il gommone da 6, da 7 a 12 uno da 12). Stagione 2027: 1 maggio – 31 ottobre.
+- **Flotta:** 2 gommoni di gruppo, Joker Clubman 28 e BWA 30 (12 posti, uscita confermata con almeno 6 paganti), e il Joker 35 solo per le esclusive (6 posti). Modelli e motori in `sito.flotta`. In arrivo un quarto gommone, Honda 9.50, dedicato a chi parte da Cannigione (Pontile La Sciumara, Via Lungomare A. Doria 7): non ancora sul sito né nelle prenotazioni. Tutti e tre si possono prenotare in esclusiva, allo stesso prezzo: il sistema sceglie il più piccolo che basta (fino a 6 persone il gommone da 6, da 7 a 12 uno da 12). Stagione 2027: 1 maggio – 31 ottobre.
 - **Strutture partner:** hotel e B&B prenotano dalla loro area (/partner/) o danno ai clienti il loro link (/prenota/?p=CODICE). Provvigione 15% sul lordo, pagata dall'ufficio ogni 15 giorni (1–15 e 16–fine mese, in base alla data dell'escursione).
 - **Pubblico:** famiglie, gruppi di amici, turisti alla prima volta in Sardegna, spesso dal telefono e già in vacanza.
 - **Lingue:** italiano ora; poi inglese, quindi tedesco e francese.
@@ -75,13 +75,16 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Prezzi decisi da Remo (8 novembre 2026): tramonto come la mezza giornata, Corsica solo in esclusiva con i prezzi della giornata intera, esclusiva possibile su tutti e tre i gommoni
 - [x] Condizioni, privacy e cookie controllati sulle norme e su quello che fa il sito (8 novembre 2026); migrazione `0002_impronta_ip.sql` applicata a entrambi i database
 - [x] Carburante delle esclusive: a consumo, si paga a bordo a fine uscita. Ticket del Parco incluso nel prezzo (Remo, 8 novembre 2026)
+- [x] Gommoni: modelli, motori e posti confermati, pagina "I gommoni e lo skipper" aggiornata (8 novembre 2026)
 - [x] Confermati da Remo (8 novembre 2026): Corsica 9:30 – 17:30 con Lavezzi, isola di Cavallo e Bonifacio; le due regole aggiunte alle condizioni (guasto = regola del maltempo; altre piattaforme = loro condizioni); nessuna autorizzazione da indicare; ritrovo 15 minuti prima della partenza a Palau e a La Maddalena (9:15 per le uscite delle 9:30)
 
 ### Da decidere o da avere dal cliente (Remo)
+- [ ] Gommone di Cannigione (Honda 9.50, 1 × Honda 350 cv): quante persone porta, quali escursioni fa, orari e ritrovo, prezzi, minimo di partecipanti, se fa il giro da solo. Poi: Cannigione come terzo imbarco nelle prenotazioni (assegnato a quel gommone) e nelle pagine
+- [ ] Molo di Palau (ancora da sapere)
 - [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA
-- [ ] Imbarchi: moli con indirizzo, parcheggio a Palau, link Google Maps dei punti di ritrovo
+- [ ] Imbarchi: molo di La Maddalena, parcheggio a Palau, link Google Maps dei punti di ritrovo
 - [ ] Regole: animali a bordo, età minima e giubbotti per i bambini, cosa è incluso (maschere, acqua)
-- [ ] Gommoni (modello, lunghezza, motori, dotazioni) e skipper (nome, esperienza, lingue)
+- [ ] Skipper (nome, esperienza, lingue) e due righe di presentazione dei gommoni
 - [ ] Testi delle escursioni Corsica (traversata, Lavezzi, Cavallo, Bonifacio, pranzo), Tramonto e Tour privato
 - [ ] Foto (le note sui segnaposto indicano gli scatti) ed eventuale logo
 - [ ] Recensioni vere da Google o TripAdvisor e link alla scheda Google
