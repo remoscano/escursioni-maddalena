@@ -32,7 +32,7 @@ export const gommoni = [
     slug: 'gommone-mezze-giornate',
     nome: '',
     nomeProvvisorio: 'Il gommone delle mezze giornate',
-    ruolo: 'Dedicato alle uscite di mezza giornata e all\'aperitivo al tramonto.',
+    ruolo: 'Dedicato alla mezza giornata intorno a Caprera e all\'aperitivo al tramonto. Parte da La Maddalena.',
     postiMin: 6,
     postiMax: 12,
     formule: ['posto', 'esclusiva'],

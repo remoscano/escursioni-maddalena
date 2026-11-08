@@ -5,6 +5,7 @@ import Foto from '../../components/Foto.astro';
 import Icona from '../../components/Icona.astro';
 import Dato from '../../components/Dato.astro';
 import Mappa from '../../components/Mappa.astro';
+import MappaRotte from '../../components/MappaRotte.astro';
 import Faq from '../../components/Faq.astro';
 import SezioneRichiesta from '../../components/SezioneRichiesta.astro';
 import { escursioni, soloEsclusiva } from '../../data/escursioni.js';
@@ -34,11 +35,19 @@ const esclusivaSola = soloEsclusiva(e);
 const gommoniPosto = gommoniPer(e.slug);
 const maxEsclusiva = postiMaxEsclusiva();
 const privato = gommoni.find((g) => !g.formule.includes('posto'));
+// Punti d'imbarco: di base Palau e La Maddalena; la mezza giornata parte da La Maddalena
+// e su richiesta passa a prendere a Palau o Cannigione.
+const puntiImbarco: string[] = e.imbarchi ?? ['palau', 'maddalena'];
+const nomiImbarco = puntiImbarco.map((k) => imbarchi[k as 'palau'].nome);
+const testoImbarco = e.imbarchi
+  ? `${nomiImbarco[0]} (su richiesta anche ${nomiImbarco.slice(1).join(' o ')})`
+  : nomiImbarco.join(' o ');
+const senzaOre = e.slug === 'tour-privato' || e.mappaRotte;
 const durata = e.ore ? `${e.ore} ore` : '';
 ---
 <Base
   titolo={e.titoloPagina}
-  descrizione={`${e.breve} Imbarco a Palau o La Maddalena, richiesta di disponibilità su WhatsApp.`.slice(0, 160)}
+  descrizione={`${e.breve} Imbarco a ${testoImbarco}, richiesta di disponibilità su WhatsApp.`.slice(0, 160)}
 >
   <section class="testa-tour" aria-labelledby="tour-titolo">
     <div class="contenitore">
@@ -106,23 +115,24 @@ const durata = e.ore ? `${e.ore} ore` : '';
       <div class="intestazione">
         <div class="intestazione__testo">
           <p class="occhiello">Il programma</p>
-          <h2 id="programma-titolo" class="titolo-sezione">La giornata, ora per ora</h2>
+          <h2 id="programma-titolo" class="titolo-sezione">{e.mappaRotte ? 'Due rotte, scelte dal vento' : 'La giornata, ora per ora'}</h2>
         </div>
         <p class="intestazione__lato">{e.notaProgramma ?? "Orari indicativi. Con vento e mare lo skipper può cambiare l'ordine delle soste."}</p>
       </div>
-      <div class={e.mappa ? 'percorso' : 'due-colonne due-colonne--alto'}>
+      <div class={e.mappa || e.mappaRotte ? 'percorso' : 'due-colonne due-colonne--alto'}>
         <ol class="programma">
           {e.programma.map((t: any) => (
-            <li class="tappa">
-              <span class="tappa__ora">{e.slug !== 'tour-privato' && <Dato v={t.ora} e="ora" />}</span>
+            <li class={`tappa ${t.tipo === 'rotta' ? 'tappa--rotta' : ''}`}>
+              <span class="tappa__ora">{!senzaOre && <Dato v={t.ora} e="ora" />}</span>
               <span class="tappa__linea" aria-hidden="true">
-                {t.tipo === 'sosta' && <span class="tappa__punto">{t.n}</span>}
+                {t.tipo === 'rotta' && <span class={`tappa__punto tappa__punto--rotta tappa__punto--${t.titolo.includes('rossa') ? 'rossa' : 'gialla'}`}></span>}
+                {t.tipo === 'sosta' && <span class={`tappa__punto ${t.rotta ? `tappa__punto--${t.rotta}` : ''}`}>{t.n}</span>}
                 {t.tipo === 'vista' && <span class="tappa__punto tappa__punto--rosa"><Icona nome="occhio" size={18} /></span>}
                 {(t.tipo === 'imbarco' || t.tipo === 'rientro') && <span class="tappa__punto tappa__punto--imbarco"><Icona nome="ancora" size={18} /></span>}
               </span>
               <div class="tappa__corpo">
                 <div class="sosta__riga">
-                  <h3>{t.titolo}</h3>
+                  {t.tipo === 'rotta' ? <h3 class="tappa__rotta">{t.titolo}</h3> : <h3>{t.titolo}</h3>}
                   {t.luogo && <span class={`sosta__luogo ${t.tipo === 'vista' ? 'sosta__luogo--rosa' : ''}`}>{t.luogo}</span>}
                 </div>
                 <p>
@@ -136,11 +146,11 @@ const durata = e.ore ? `${e.ore} ore` : '';
         </ol>
         <div style="display:flex;flex-direction:column;gap:20px">
           {e.mappa && <Mappa didascalia="Percorso indicativo. Il punto rosa è la Spiaggia Rosa, che si vede solo dal mare." />}
-          {e.mappaRotte && <Foto nota={e.mappaRotte} tono="sabbia" class="mappa-rotte" />}
+          {e.mappaRotte && <MappaRotte />}
           <dl class="numeri">
             {e.numeri.map((n: any) => <div><dt>{n.etichetta}</dt><dd>{n.valore}</dd></div>)}
             <div><dt>Durata</dt><dd><Dato v={durata} e="ore" /></dd></div>
-            <div><dt>Imbarco</dt><dd>Palau o La Maddalena</dd></div>
+            <div><dt>{e.imbarchi ? 'Partenza' : 'Imbarco'}</dt><dd>{e.imbarchi ? nomiImbarco[0] : testoImbarco}</dd></div>
           </dl>
           {e.note.length > 0 && (
             <ul class="note">
@@ -183,16 +193,31 @@ const durata = e.ore ? `${e.ore} ore` : '';
             {e.slug === 'tour-7-isole' && <li>Contanti o carta per il pranzo</li>}
           </ul>
         </div>
-        <div class="box">
-          <h3>Imbarco a Palau</h3>
-          <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.palau.ritrovo} e="ora" />.</p>
-          <p>Comodo se dormi in Gallura. Parcheggio: <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" />.</p>
-        </div>
-        <div class="box">
-          <h3>Imbarco a La Maddalena</h3>
-          <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" />.</p>
-          <p>Comodo se dormi sull'isola: il gommone passa a prenderti dopo Palau.</p>
-        </div>
+        {e.imbarchi ? (
+          <Fragment>
+            <div class="box">
+              <h3>Partenza da La Maddalena</h3>
+              <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" />.</p>
+            </div>
+            <div class="box">
+              <h3>Ti veniamo a prendere</h3>
+              <p>Dormi in Gallura? Su richiesta il gommone passa a prenderti a Palau o a Cannigione. Scegli il punto nel modulo e ti diciamo orario e molo.</p>
+            </div>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <div class="box">
+              <h3>Imbarco a Palau</h3>
+              <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.palau.ritrovo} e="ora" />.</p>
+              <p>Comodo se dormi in Gallura. Parcheggio: <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" />.</p>
+            </div>
+            <div class="box">
+              <h3>Imbarco a La Maddalena</h3>
+              <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" />.</p>
+              <p>Comodo se dormi sull'isola: il gommone passa a prenderti dopo Palau.</p>
+            </div>
+          </Fragment>
+        )}
         <div class="box box--acqua">
           <h3>Con quale gommone</h3>
           {gommoniPosto.length > 0 && (

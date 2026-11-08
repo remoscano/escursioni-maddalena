@@ -9,7 +9,8 @@ Viene pubblicato su Cloudflare Pages a ogni modifica salvata su GitHub.
 |---|---|
 | Numero WhatsApp, telefono, email, P. IVA, moli, orari di ritrovo, regole (maltempo, pagamento, bambini, animali, minimo persone) | `src/data/sito.js` |
 | I 3 gommoni: nome, capienza, formule (posto singolo / esclusiva), escursioni che fanno, dati tecnici, skipper | `src/data/gommoni.js` |
-| Le 5 escursioni: titoli, prezzi (posto singolo ed esclusiva), orari, programma, incluso/non incluso | `src/data/escursioni.js` |
+| Le 5 escursioni: titoli, prezzi (posto singolo ed esclusiva), orari, punti d'imbarco, programma, incluso/non incluso | `src/data/escursioni.js` |
+| Mappa delle due rotte della mezza giornata | `src/components/MappaRotte.astro` |
 | Domande frequenti | `src/data/faq.js` |
 | Voci del menu | `src/data/menu.js` |
 | Colori, caratteri, spaziature | `src/styles/global.css` |

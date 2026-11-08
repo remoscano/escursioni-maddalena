@@ -44,6 +44,13 @@ export const sito = {
       ritrovo: '',
       mappa: '',
     },
+    // Solo su richiesta, per la mezza giornata: il gommone passa a prendere i clienti.
+    cannigione: {
+      nome: 'Cannigione',
+      molo: '',
+      ritrovo: '',
+      mappa: '',
+    },
   },
 
   // I dati dei tre gommoni e dei loro skipper sono in src/data/gommoni.js

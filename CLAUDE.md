@@ -58,9 +58,10 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [ ] Foto (le note sui segnaposto indicano gli scatti)
 - [ ] Dominio: acquistato su GoDaddy, da spostare su Cloudflare (DNS) e collegare in Pages → Custom domains. Poi aggiornare `site` in `astro.config.mjs` e `url` in `src/data/sito.js`, e far rimandare `www` alla versione senza `www`
 - [x] Struttura a 3 gommoni: pagine `/gommoni/`, escursioni Mezza giornata e Aperitivo al tramonto separate, scelta posto singolo/esclusiva nel modulo
-- [ ] Mappa delle due rotte della mezza giornata (gialla e rossa): oggi è un segnaposto
+- [x] Mappa delle due rotte della mezza giornata (`MappaRotte.astro`): rossa = giro di Caprera (Cala Coticcio, Cala Napoletana, Giardinelli); gialla = con maestrale oltre 15 nodi (Cala Corsara a Spargi, Cala Gavetta a La Maddalena, Giardinelli). Partenza da La Maddalena, su richiesta presa a Palau o Cannigione
+- [ ] Da chiarire con Remo: la partenza principale da La Maddalena vale anche per le altre escursioni? (oggi le altre dicono Palau, poi La Maddalena)
 - [ ] Nomi/modelli dei 3 gommoni e loro skipper in `gommoni.js`
-- [ ] Testi delle escursioni Mezza giornata, Aperitivo al tramonto, Corsica e Tour privato (programma ancora a segnaposto)
+- [ ] Testi delle escursioni Aperitivo al tramonto, Corsica e Tour privato (programma ancora a segnaposto)
 - [ ] Revisione di privacy e cookie da parte di chi segue il cliente
 - [ ] Lancio: `inCostruzione: false` in `src/data/sito.js`, `public/robots.txt` aperto, sitemap, dati strutturati (LocalBusiness e TouristTrip)
 - [ ] Inglese (`/en/`) con hreflang, poi tedesco e francese

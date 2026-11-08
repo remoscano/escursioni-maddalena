@@ -1,0 +1,62 @@
+---
+// Mappa illustrata delle due rotte della mezza giornata: rossa (Giro di Caprera) e gialla (Spargi e La Maddalena).
+// Coordinate nello spazio della mappa (1000 × 1076). Le etichette sono in percentuale.
+import Icona from './Icona.astro';
+
+const rossa = 'M523 716 C575 718 612 738 619 790 C626 850 612 920 640 990 C670 1040 760 1050 850 1036 C920 1022 956 960 958 890 C960 820 950 740 934 680 C922 630 905 590 880 545 C850 495 800 470 770 492 C745 512 728 548 712 590 C690 640 620 705 523 716';
+const gialla = 'M523 716 C470 742 420 760 380 748 C330 730 290 670 262 612 M262 612 C300 680 360 745 430 752 C480 755 505 730 523 716 M523 716 C590 705 640 690 664 650 C676 630 684 612 692 596 M692 596 C676 640 640 700 523 716';
+
+const isole = [
+  { nome: 'La Maddalena', x: 51, y: 47 },
+  { nome: 'Caprera', x: 84, y: 72 },
+  { nome: 'Santo<br>Stefano', x: 53, y: 75.5 },
+  { nome: 'Spargi', x: 21.5, y: 48 },
+  { nome: 'Palau', x: 37, y: 88 },
+];
+// n: numero della sosta nella sua rotta (i Giardinelli sono l'ultima sosta di entrambe)
+const soste = [
+  { n: '1', rotta: 'rossa', x: 91.5, y: 61.5, nome: 'Cala Coticcio' },
+  { n: '2', rotta: 'rossa', x: 79, y: 45.5, nome: 'Cala Napoletana' },
+  { n: '1', rotta: 'gialla', x: 25.5, y: 57, nome: 'Cala Corsara' },
+  { n: '2', rotta: 'gialla', x: 52.3, y: 60.5, nome: 'Cala Gavetta' },
+  { n: '3', rotta: 'entrambe', x: 69.2, y: 55.4, nome: 'Giardinelli' },
+];
+const etichette = [
+  { testo: 'Cala Coticcio', x: 89.5, y: 57 },
+  { testo: 'Cala Napoletana', x: 72, y: 41.5 },
+  { testo: 'Cala Corsara', x: 23, y: 61.5 },
+  { testo: 'Cala Gavetta', x: 40.5, y: 68.5 },
+  { testo: 'Giardinelli', x: 60.5, y: 50.5 },
+];
+---
+<figure class="mappa mappa-rotte">
+  <div class="mappa__area">
+    <img
+      src="/img/mappa-arcipelago-base.svg"
+      width="1000"
+      height="1076"
+      loading="lazy"
+      alt="Mappa delle due rotte della mezza giornata. Rotta rossa: giro dell'isola di Caprera con bagno a Cala Coticcio, Cala Napoletana e ai Giardinelli. Rotta gialla, con maestrale forte: bagno a Cala Corsara a Spargi, passeggiata a Cala Gavetta a La Maddalena e ultimo bagno ai Giardinelli."
+    />
+    <svg class="mappa-rotte__linee" viewBox="0 0 1000 1076" aria-hidden="true">
+      <path d={gialla} class="rotta rotta--gialla" />
+      <path d={rossa} class="rotta rotta--rossa" />
+    </svg>
+    <div class="mappa__segni" aria-hidden="true">
+      <span class="mappa__nord">
+        <span style="display:inline-flex;align-items:center;gap:4px"><Icona nome="su" size={14} tratto={2.4} />N</span>
+        <span style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="display:block;width:56px;height:6px;border:2px solid #0A3A51;border-top:0"></span>2 km</span>
+      </span>
+      {isole.map((i) => <span class="mappa__isola" style={`left:${i.x}%;top:${i.y}%`} set:html={i.nome} />)}
+      {etichette.map((e) => <span class="mappa-rotte__nome" style={`left:${e.x}%;top:${e.y}%`}>{e.testo}</span>)}
+      <span class="mappa__punto mappa__punto--imbarco" style="left:52.3%;top:67.5%"><Icona nome="ancora" size={16} tratto={2.4} /></span>
+      {soste.map((s) => <span class={`mappa__punto mappa-rotte__punto--${s.rotta}`} style={`left:${s.x}%;top:${s.y}%`}>{s.n}</span>)}
+    </div>
+  </div>
+  <figcaption class="mappa__legenda">
+    <span><span class="linea-rotta linea-rotta--rossa" aria-hidden="true"></span>Rotta rossa: giro di Caprera</span>
+    <span><span class="linea-rotta linea-rotta--gialla" aria-hidden="true"></span>Rotta gialla: Spargi e La Maddalena, con maestrale</span>
+    <span><span class="pallino pallino--imbarco" aria-hidden="true"></span>Partenza da La Maddalena</span>
+    <span style="flex-basis:100%">Percorsi indicativi: lo skipper sceglie la rotta in base al vento del giorno.</span>
+  </figcaption>
+</figure>

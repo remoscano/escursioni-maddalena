@@ -412,6 +412,8 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   border: 1.5px solid var(--bordo-campo); border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;
 }
 .scelta:has(input:checked) { border: 2px solid var(--mare); background: var(--acqua); }
+.scelte--imbarco { grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr)); }
+.scelta[hidden] { display: none; }
 .scelta[data-spenta] { opacity: 0.5; cursor: not-allowed; }
 .modulo__aiuto { margin-top: 8px; font-size: 14px; line-height: 1.45; }
 .scelta input { width: 18px; height: 18px; accent-color: var(--mare); margin: 0; }
@@ -475,6 +477,10 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   display: flex; align-items: center; justify-content: center; font-family: var(--font-titoli); font-weight: 800; font-size: 16px;
 }
 .tappa__punto--rosa { background: var(--granito); color: var(--mare); }
+.tappa__punto--rossa { background: #D2432F; color: #FFFFFF; }
+.tappa__punto--gialla { background: #F2B705; color: var(--mare); }
+.tappa__punto--rotta { width: 22px; height: 22px; min-width: 0; border: 3px solid var(--sabbia-calda); box-shadow: 0 0 0 2px var(--mare); }
+.tappa--rotta .tappa__rotta { font-size: 20px; color: var(--turchese); }
 .tappa__punto--imbarco { background: var(--bianco); border: 2px solid var(--mare); color: var(--mare); }
 .tappa__corpo { padding: 4px 0 28px; display: flex; flex-direction: column; gap: 6px; }
 .tappa__corpo h3 { font-size: 21px; line-height: 1.25; font-weight: 700; }
@@ -583,4 +589,16 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   .modulo { padding: 24px; border-radius: 24px; }
   .percorso, .due-colonne { gap: 36px; }
 }
-.mappa-rotte { aspect-ratio: 1000 / 1076; }
+
+/* Mappa delle due rotte (mezza giornata) */
+.mappa-rotte__linee { position: absolute; inset: 0; width: 100%; height: 100%; }
+.rotta { fill: none; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.rotta--rossa { stroke: #D2432F; }
+.rotta--gialla { stroke: #F2B705; stroke-dasharray: 2 14; stroke-width: 9; }
+.mappa-rotte__punto--rossa { background: #D2432F; border-color: #8E2A1D; color: #FFFFFF; }
+.mappa-rotte__punto--gialla { background: #F2B705; border-color: #8A6800; color: var(--mare); }
+.mappa-rotte__punto--entrambe { background: linear-gradient(135deg, #D2432F 50%, #F2B705 50%); border-color: var(--mare); color: var(--mare); text-shadow: 0 0 3px #fff, 0 0 3px #fff; }
+.mappa-rotte__nome { font-size: 13px; font-weight: 700; line-height: 1.1; color: var(--mare); background: rgba(255, 255, 255, 0.85); padding: 3px 7px; border-radius: 6px; white-space: nowrap; }
+.linea-rotta { width: 28px; height: 0; border-top: 5px solid #D2432F; border-radius: 3px; flex: none; }
+.linea-rotta--gialla { border-top: 5px dotted #F2B705; }
+@media (max-width: 760px) { .mappa-rotte__nome { font-size: 10px; padding: 2px 5px; } }

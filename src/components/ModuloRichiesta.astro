@@ -19,6 +19,9 @@ const g = gommone ? trovaGommone(gommone) : undefined;
 // Il posto singolo si può chiedere solo se l'escursione lo prevede
 // e, se il gommone è già scelto, solo per le uscite che quel gommone fa a posto singolo.
 const postoPossibile = (e: any) => !soloEsclusiva(e) && (!g || g.escursioni.includes(e.slug));
+const imbarchiDi = (e: any): string[] => e.imbarchi ?? ['palau', 'maddalena'];
+const tuttiImbarchi = ['palau', 'maddalena', 'cannigione'];
+const imbarchiMostrati = fissa ? imbarchiDi(fissa) : tuttiImbarchi;
 const nomiGommoni = Object.fromEntries(gommoni.map((x) => [x.slug, nomeGommone(x)]));
 ---
 <form
@@ -35,12 +38,12 @@ const nomiGommoni = Object.fromEntries(gommoni.map((x) => [x.slug, nomeGommone(x
   <input type="hidden" name="gommone" value={g ? nomeGommone(g) : ''} />
 
   {fissa ? (
-    <input type="hidden" name="escursione" value={fissa.titolo} data-posto={postoPossibile(fissa) ? '1' : '0'} />
+    <input type="hidden" name="escursione" value={fissa.titolo} data-posto={postoPossibile(fissa) ? '1' : '0'} data-imbarchi={imbarchiDi(fissa).join(' ')} />
   ) : (
     <div class="campo">
       <label for={`${id}-escursione`}>Escursione</label>
       <select id={`${id}-escursione`} name="escursione">
-        {escursioni.map((e) => <option value={e.titolo} data-slug={e.slug} data-posto={postoPossibile(e) ? '1' : '0'}>{e.titolo}</option>)}
+        {escursioni.map((e) => <option value={e.titolo} data-slug={e.slug} data-posto={postoPossibile(e) ? '1' : '0'} data-imbarchi={imbarchiDi(e).join(' ')}>{e.titolo}</option>)}
       </select>
     </div>
   )}
@@ -71,9 +74,10 @@ const nomiGommoni = Object.fromEntries(gommoni.map((x) => [x.slug, nomeGommone(x
 
   <fieldset>
     <legend>Imbarco</legend>
-    <div class="scelte">
-      <label class="scelta"><input type="radio" name="imbarco" value="Palau" checked />Palau</label>
-      <label class="scelta"><input type="radio" name="imbarco" value="La Maddalena" />La Maddalena</label>
+    <div class="scelte scelte--imbarco">
+      {imbarchiMostrati.map((k, i) => (
+        <label class="scelta" data-imbarco={k}><input type="radio" name="imbarco" value={sito.imbarchi[k as 'palau'].nome} checked={i === 0} />{sito.imbarchi[k as 'palau'].nome}</label>
+      ))}
     </div>
   </fieldset>
 
@@ -123,6 +127,17 @@ const nomiGommoni = Object.fromEntries(gommoni.map((x) => [x.slug, nomeGommone(x
       radioPosto.closest('label')!.toggleAttribute('data-spenta', !posto);
       if (!posto) radioEsclusiva.checked = true;
       notaFormula.hidden = posto;
+      // Punti d'imbarco previsti dall'escursione: gli altri si nascondono
+      const ammessi = (scelta?.dataset.imbarchi ?? '').split(' ').filter(Boolean);
+      const etichette = [...form.querySelectorAll<HTMLLabelElement>('[data-imbarco]')];
+      etichette.forEach((l) => { l.hidden = ammessi.length > 0 && !ammessi.includes(l.dataset.imbarco!); });
+      const visibili = etichette.filter((l) => !l.hidden);
+      // il primo punto previsto è quello principale
+      const ordinate = ammessi.length ? ammessi.map((k) => visibili.find((l) => l.dataset.imbarco === k)!).filter(Boolean) : visibili;
+      if (!visibili.some((l) => l.querySelector('input')!.checked) || select) {
+        const prima = ordinate[0]?.querySelector('input');
+        if (prima) prima.checked = true;
+      }
     };
 
     // Niente date passate
