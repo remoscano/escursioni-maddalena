@@ -18,7 +18,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
 ---
 <Base
   titolo="Escursioni Maddalena · Tour delle 7 isole in maxi gommone"
-  descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, mezza giornata, aperitivo al tramonto, Corsica e tour privati. Imbarco a Palau o La Maddalena, prenoti su WhatsApp."
+  descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, mezza giornata, aperitivo al tramonto, Corsica e tour privati. Partenza da La Maddalena, prenoti su WhatsApp."
   testataScura
 >
   <section slot="hero" class="hero" aria-label="Apertura">
@@ -32,8 +32,8 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
     <Testata scura />
     <div class="hero__contenuto">
       <p class="hero__occhiello">Tour delle 7 isole · Arcipelago di La Maddalena</p>
-      <h1 class="hero__titolo">Sette isole, sette soste, un giorno in maxi gommone.</h1>
-      <p class="hero__testo">Dalla Spiaggia Rosa di Budelli a Cala Corsara: il giro completo dell'arcipelago, con imbarco a Palau o a La Maddalena.</p>
+      <h1 class="hero__titolo">Sette isole in un giorno di maxi gommone.</h1>
+      <p class="hero__testo">Dalla Spiaggia Rosa di Budelli a Cala Corsara: il giro completo dell'arcipelago, con partenza da La Maddalena.</p>
       <div class="hero__azioni">
         <a href="/richiesta/?escursione=tour-7-isole" class="btn btn--wa btn--grande"><Icona nome="whatsapp" />Chiedi disponibilità su WhatsApp</a>
         <a href="#percorso" class="btn btn--bordo-chiaro btn--grande">Guarda il percorso<Icona nome="giu" /></a>
@@ -42,7 +42,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
     <div class="hero__fatti">
       <dl>
         <div><dt><Icona nome="orologio" size={18} />Durata</dt><dd>Giornata intera, <Dato v={tour.orari} e="orari" /></dd></div>
-        <div><dt><Icona nome="ancora" size={18} />Imbarco</dt><dd>Palau o La Maddalena</dd></div>
+        <div><dt><Icona nome="ancora" size={18} />Partenza</dt><dd>La Maddalena</dd></div>
         <div><dt><Icona nome="persone" size={18} />A bordo</dt><dd>Da {tour.postiMin} a {tour.postiMax} persone</dd></div>
         <div><dt><Icona nome="euro" size={18} />Prezzo</dt><dd>Da <Dato v={tour.prezzoAdulti} e="PREZZO" /> € a persona</dd></div>
       </dl>
@@ -56,7 +56,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
           <p class="occhiello">Il percorso</p>
           <h2 id="percorso-titolo" class="titolo-sezione">Il giro dell'arcipelago, sosta per sosta</h2>
         </div>
-        <p class="intestazione__lato">Imbarco a Palau o a La Maddalena, rientro alle <Dato v={tour.oraRientro} e="ora" />. L'ordine delle soste può cambiare in base a vento e mare.</p>
+        <p class="intestazione__lato">Partenza da La Maddalena, rientro alle <Dato v={tour.oraRientro} e="ora" />. L'ordine delle soste può cambiare in base a vento e mare.</p>
       </div>
       <div class="percorso">
         <Mappa />

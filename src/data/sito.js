@@ -30,25 +30,30 @@ export const sito = {
 
   recensioniGoogle: '', // link alla scheda Google con le recensioni
 
+  // Si parte sempre da La Maddalena. Palau e Cannigione sono un servizio su richiesta:
+  // il gommone passa a prendere i clienti prima della partenza (in esclusiva si concorda).
+  // L'orario esatto si comunica al cliente quando prenota, per questo sul sito non ci sono orari di passaggio.
   imbarchi: {
-    palau: {
-      nome: 'Palau',
-      molo: '', // es. 'Porto turistico, banchina ...'
-      ritrovo: '', // es. '9:00'
-      parcheggio: '',
-      mappa: '', // link Google Maps del punto di ritrovo
-    },
     maddalena: {
       nome: 'La Maddalena',
+      molo: '', // es. 'Cala Gavetta, banchina ...'
+      ritrovo: '', // es. '9:15' (se è uguale per tutte le uscite)
+      mappa: '', // link Google Maps del punto di ritrovo
+    },
+    palau: {
+      nome: 'Palau',
+      suRichiesta: true,
+      navigazione: 'circa 15 minuti', // da La Maddalena
       molo: '',
-      ritrovo: '',
+      parcheggio: '',
       mappa: '',
     },
-    // Solo su richiesta, per la mezza giornata: il gommone passa a prendere i clienti.
     cannigione: {
       nome: 'Cannigione',
+      suRichiesta: true,
+      navigazione: 'circa 30 minuti',
       molo: '',
-      ritrovo: '',
+      parcheggio: '',
       mappa: '',
     },
   },

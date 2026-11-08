@@ -11,7 +11,7 @@ const tappe = programma.filter((t) => t.tipo !== 'imbarco');
     t.tipo === 'rientro' ? (
       <li class="sosta">
         <span class="sosta__n sosta__n--imbarco" aria-hidden="true"><Icona nome="ancora" /></span>
-        <p><strong style="color:var(--mare)">Rientro</strong> a La Maddalena e a Palau, alle <Dato v={rientro} e="ora" />.</p>
+        <p><strong style="color:var(--mare)">Rientro</strong> a La Maddalena (e a Palau o Cannigione per chi è salito lì), alle <Dato v={rientro} e="ora" />.</p>
       </li>
     ) : (
       <li class="sosta">

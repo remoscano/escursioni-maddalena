@@ -33,6 +33,12 @@ export const faq = [
         mancante: 'Cosa succede se non si arriva a 6: altra data, rimborso?',
       },
       {
+        id: 'imbarco',
+        domanda: 'Da dove si parte?',
+        risposta:
+          "Da La Maddalena. Se dormi in Gallura, su richiesta ti passiamo a prendere a Palau o a Cannigione: lì il ritrovo è un po' prima della partenza e l'orario esatto te lo scriviamo quando prenoti.",
+      },
+      {
         id: 'anticipo',
         domanda: 'Con quanto anticipo conviene scrivere?',
         risposta: '',

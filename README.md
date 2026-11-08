@@ -7,7 +7,7 @@ Viene pubblicato su Cloudflare Pages a ogni modifica salvata su GitHub.
 
 | Cosa | File |
 |---|---|
-| Numero WhatsApp, telefono, email, P. IVA, moli, orari di ritrovo, regole (maltempo, pagamento, bambini, animali, minimo persone) | `src/data/sito.js` |
+| Numero WhatsApp, telefono, email, P. IVA, molo di partenza (La Maddalena) e punti di passaggio su richiesta (Palau, Cannigione), orario di ritrovo, regole (maltempo, pagamento, bambini, animali, minimo persone) | `src/data/sito.js` |
 | I 3 gommoni: nome, capienza, formule (posto singolo / esclusiva), escursioni che fanno, dati tecnici, skipper | `src/data/gommoni.js` |
 | Le 5 escursioni: titoli, prezzi (posto singolo ed esclusiva), orari, punti d'imbarco, programma, incluso/non incluso | `src/data/escursioni.js` |
 | Mappa delle due rotte della mezza giornata | `src/components/MappaRotte.astro` |

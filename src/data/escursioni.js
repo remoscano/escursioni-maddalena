@@ -13,7 +13,7 @@ export const escursioni = [
     titolo: 'Tour delle 7 isole',
     titoloPagina: 'Tour delle 7 isole in maxi gommone',
     inEvidenza: true,
-    etichette: ['Giornata intera', '7 soste', 'Pranzo libero a La Maddalena'],
+    etichette: ['Giornata intera', '5 soste bagno', 'Pranzo libero a La Maddalena'],
     breve:
       'La Maddalena, Santo Stefano, Caprera, Spargi, Budelli, Razzoli e Santa Maria in una giornata, con la Spiaggia Rosa vista dal mare.',
     intro:
@@ -28,7 +28,7 @@ export const escursioni = [
     prezzoEsclusiva: '',
     postiMin: 6,
     postiMax: 12,
-    fatti: ['Imbarco a Palau o La Maddalena', 'Pranzo libero a La Maddalena', 'Spiaggia Rosa dal mare'],
+    fatti: ['Partenza da La Maddalena', 'Pranzo libero a La Maddalena', 'Spiaggia Rosa dal mare'],
     foto: {
       copertina: "Cala Corsara dall'alto, con il gommone all'ancora",
       galleria: [
@@ -42,19 +42,18 @@ export const escursioni = [
     mappa: true,
     numeri: [
       { etichetta: 'Isole', valore: '7' },
-      { etichetta: 'Soste', valore: '7 + 1 dal mare' },
+      { etichetta: 'Soste', valore: '6 + 1 dal mare' },
     ],
     programma: [
-      { tipo: 'imbarco', titolo: 'Ritrovo a Palau', testo: 'Primo imbarco al porto di Palau.', moloDi: 'palau' },
-      { tipo: 'sosta', n: '1', titolo: 'Porto di La Maddalena', luogo: 'Secondo imbarco', testo: "Sale a bordo chi dorme sull'isola, poi rotta verso sud." },
-      { tipo: 'sosta', n: '2', titolo: 'Cala Villa Marina', luogo: 'Santo Stefano · bagno', testo: 'Una cala riparata dal maestrale sulla costa sud di Santo Stefano: il primo tuffo della giornata.' },
-      { tipo: 'sosta', n: '3', titolo: 'Cala Garibaldi', luogo: 'Caprera · bagno', testo: "Sabbia dorata, rocce chiare e macchia mediterranea sulla costa nord-ovest di Caprera, l'isola di Garibaldi." },
-      { tipo: 'sosta', n: '4', titolo: 'Pranzo a La Maddalena', luogo: 'Pranzo libero', testo: 'Tempo libero nel centro storico per pranzare dove preferisci, a carico dei partecipanti.' },
-      { tipo: 'sosta', n: '5', titolo: 'Cala Corsara', luogo: 'Spargi · bagno', testo: 'Quattro spiaggette di sabbia bianca finissima tra graniti modellati da vento e mare. Si arriva solo dal mare.' },
+      { tipo: 'imbarco', titolo: 'Partenza da La Maddalena', testo: 'Su richiesta ti passiamo a prendere a Palau o a Cannigione.', moloDi: 'maddalena' },
+      { tipo: 'sosta', n: '1', titolo: 'Cala Villa Marina', luogo: 'Santo Stefano · bagno', testo: 'Una cala riparata dal maestrale sulla costa sud di Santo Stefano: il primo tuffo della giornata.' },
+      { tipo: 'sosta', n: '2', titolo: 'Cala Garibaldi', luogo: 'Caprera · bagno', testo: "Sabbia dorata, rocce chiare e macchia mediterranea sulla costa nord-ovest di Caprera, l'isola di Garibaldi." },
+      { tipo: 'sosta', n: '3', titolo: 'Pranzo a La Maddalena', luogo: 'Pranzo libero', testo: 'Tempo libero nel centro storico per pranzare dove preferisci, a carico dei partecipanti.' },
+      { tipo: 'sosta', n: '4', titolo: 'Cala Corsara', luogo: 'Spargi · bagno', testo: 'Quattro spiaggette di sabbia bianca finissima tra graniti modellati da vento e mare. Si arriva solo dal mare.' },
       { tipo: 'vista', titolo: 'Spiaggia Rosa', luogo: 'Budelli · senza sosta', testo: 'Passaggio lento davanti alla spiaggia. Per proteggerla il Parco vieta sbarco e bagno: la si ammira dal mare.' },
-      { tipo: 'sosta', n: '6', titolo: 'Manto della Madonna', luogo: 'Porto della Madonna · bagno', testo: "Lo specchio d'acqua chiuso tra Budelli, Razzoli e Santa Maria, riparato dalle correnti: l'effetto è quello di una piscina naturale." },
-      { tipo: 'sosta', n: '7', titolo: 'Lagunetta della Madonna', luogo: 'Ultimo bagno', testo: '', mancante: 'Una riga sulla Lagunetta: dove si trova e cosa la rende speciale' },
-      { tipo: 'rientro', titolo: 'Rientro a La Maddalena e Palau', testo: 'Si scende dove si è saliti.' },
+      { tipo: 'sosta', n: '5', titolo: 'Manto della Madonna', luogo: 'Porto della Madonna · bagno', testo: "Lo specchio d'acqua chiuso tra Budelli, Razzoli e Santa Maria, riparato dalle correnti: l'effetto è quello di una piscina naturale." },
+      { tipo: 'sosta', n: '6', titolo: 'Lagunetta della Madonna', luogo: 'Ultimo bagno', testo: '', mancante: 'Una riga sulla Lagunetta: dove si trova e cosa la rende speciale' },
+      { tipo: 'rientro', titolo: 'Rientro', testo: 'Si scende dove si è saliti.' },
     ],
     incluso: ['Skipper per tutta la giornata'],
     inclusoMancante: 'Da confermare: carburante, ticket del Parco, maschere, acqua a bordo',
@@ -79,9 +78,7 @@ export const escursioni = [
     prezzoEsclusiva: '',
     postiMin: 6,
     postiMax: 12,
-    // Partenza da La Maddalena; su richiesta il gommone passa a prendere a Palau o Cannigione.
-    imbarchi: ['maddalena', 'palau', 'cannigione'],
-    fatti: ['Partenza da La Maddalena', 'Si può salire anche a Palau o Cannigione', '3 soste bagno'],
+    fatti: ['Partenza da La Maddalena', '3 soste bagno'],
     foto: {
       copertina: 'Cala Coticcio a Caprera, acqua turchese tra i graniti',
       galleria: [
@@ -99,7 +96,7 @@ export const escursioni = [
       { etichetta: 'Soste bagno', valore: '3' },
     ],
     programma: [
-      { tipo: 'imbarco', titolo: 'Partenza da La Maddalena', testo: "Se dormi in Gallura, il gommone può passare a prenderti a Palau o a Cannigione: indicalo nella richiesta.", moloDi: 'maddalena' },
+      { tipo: 'imbarco', titolo: 'Partenza da La Maddalena', testo: 'Su richiesta ti passiamo a prendere a Palau o a Cannigione.', moloDi: 'maddalena' },
       { tipo: 'rotta', titolo: 'Rotta rossa: il giro di Caprera', luogo: 'Rotta principale', testo: "Il giro completo dell'isola di Caprera, tra calette selvagge e rocce granitiche modellate dal vento." },
       { tipo: 'sosta', n: '1', titolo: 'Cala Coticcio', luogo: 'Caprera · bagno', rotta: 'rossa', testo: "Sulla costa est di Caprera, la cala conosciuta anche come Tahiti." },
       { tipo: 'sosta', n: '2', titolo: 'Cala Napoletana', luogo: 'Caprera · bagno', rotta: 'rossa', testo: 'Sulla punta nord di Caprera.' },
@@ -134,7 +131,7 @@ export const escursioni = [
     prezzoEsclusiva: '',
     postiMin: 6,
     postiMax: 12,
-    fatti: ['Imbarco a Palau o La Maddalena', 'Aperitivo a bordo'],
+    fatti: ['Partenza da La Maddalena', 'Aperitivo a bordo'],
     foto: {
       copertina: 'Il gommone controluce al tramonto',
       galleria: [
@@ -148,7 +145,7 @@ export const escursioni = [
     mappa: false,
     numeri: [],
     programma: [
-      { tipo: 'imbarco', titolo: 'Ritrovo a Palau o a La Maddalena', testo: '', mancante: 'Orario di partenza (cambia con la stagione?)' },
+      { tipo: 'imbarco', titolo: 'Partenza da La Maddalena', testo: 'Su richiesta ti passiamo a prendere a Palau o a Cannigione.', moloDi: 'maddalena' },
       { tipo: 'sosta', n: '1', titolo: 'Giro tra le isole', luogo: 'Prima del tramonto', testo: '', mancante: 'Dove andate, c\'è un bagno?' },
       { tipo: 'vista', titolo: 'Il tramonto dal mare', luogo: 'Aperitivo a bordo', testo: '', mancante: 'Dove vi fermate a guardare il tramonto' },
       { tipo: 'rientro', titolo: 'Rientro', testo: 'Si scende dove si è saliti.' },
@@ -174,7 +171,7 @@ export const escursioni = [
     prezzoAdulti: null,
     prezzoBambini: null,
     prezzoEsclusiva: '',
-    fatti: ['Imbarco a Palau o La Maddalena', "Serve un documento valido per l'espatrio"],
+    fatti: ['Partenza da La Maddalena', "Serve un documento valido per l'espatrio"],
     foto: {
       copertina: 'Le falesie di Bonifacio viste dal mare',
       galleria: [
@@ -188,12 +185,11 @@ export const escursioni = [
     mappa: false,
     numeri: [],
     programma: [
-      { tipo: 'imbarco', titolo: 'Ritrovo a Palau', testo: 'Primo imbarco al porto di Palau.', moloDi: 'palau' },
-      { tipo: 'sosta', n: '1', titolo: 'Porto di La Maddalena', luogo: 'Secondo imbarco', testo: "Sale a bordo chi dorme sull'isola." },
-      { tipo: 'sosta', n: '2', titolo: 'Traversata delle Bocche di Bonifacio', luogo: 'Verso la Corsica', testo: '', mancante: 'Durata della traversata e cosa si vede' },
-      { tipo: 'sosta', n: '3', titolo: 'Isole Lavezzi', luogo: 'Bagno', testo: '', mancante: 'Dove si fa il bagno e quanto dura la sosta' },
-      { tipo: 'sosta', n: '4', titolo: 'Bonifacio', luogo: 'Falesie e porto', testo: '', mancante: 'Giro sotto le falesie, sosta in paese, pranzo' },
-      { tipo: 'rientro', titolo: 'Rientro a La Maddalena e Palau', testo: 'Si scende dove si è saliti.' },
+      { tipo: 'imbarco', titolo: 'Partenza da La Maddalena', testo: 'Su richiesta ti passiamo a prendere a Palau o a Cannigione.', moloDi: 'maddalena' },
+      { tipo: 'sosta', n: '1', titolo: 'Traversata delle Bocche di Bonifacio', luogo: 'Verso la Corsica', testo: '', mancante: 'Durata della traversata e cosa si vede' },
+      { tipo: 'sosta', n: '2', titolo: 'Isole Lavezzi', luogo: 'Bagno', testo: '', mancante: 'Dove si fa il bagno e quanto dura la sosta' },
+      { tipo: 'sosta', n: '3', titolo: 'Bonifacio', luogo: 'Falesie e porto', testo: '', mancante: 'Giro sotto le falesie, sosta in paese, pranzo' },
+      { tipo: 'rientro', titolo: 'Rientro', testo: 'Si scende dove si è saliti.' },
     ],
     incluso: ['Skipper per tutta la giornata'],
     inclusoMancante: 'Da confermare',
@@ -219,7 +215,7 @@ export const escursioni = [
     prezzoAdulti: null,
     prezzoBambini: null,
     prezzoEsclusiva: 'su richiesta',
-    fatti: ['Imbarco a Palau o La Maddalena', 'Itinerario su misura'],
+    fatti: ['Partenza da La Maddalena', 'Itinerario su misura'],
     foto: {
       copertina: 'Una famiglia a bordo, tuffo dalla prua',
       galleria: [
@@ -233,7 +229,7 @@ export const escursioni = [
     mappa: false,
     numeri: [],
     programma: [
-      { tipo: 'imbarco', titolo: 'Ritrovo dove preferite', luogo: 'Palau o La Maddalena', testo: "Orario da concordare." },
+      { tipo: 'imbarco', titolo: 'Partenza da La Maddalena', luogo: 'Oppure Palau o Cannigione', testo: "Punto e orario di partenza si concordano insieme." },
       { tipo: 'sosta', n: '1', titolo: 'Le soste che scegliete voi', luogo: 'Su misura', testo: "Il giro delle 7 isole, la mezza giornata, il tramonto, la Corsica o solo le cale più tranquille: lo skipper vi propone l'itinerario in base al vento del giorno." },
       { tipo: 'rientro', titolo: 'Rientro', testo: 'Quando volete, entro la durata concordata.' },
     ],

@@ -4,7 +4,7 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 
 ## Il progetto
 
-- **Cliente:** Escursioni Maddalena, escursioni in maxi gommone nell'Arcipelago di La Maddalena (Sardegna), con imbarco a Palau e a La Maddalena.
+- **Cliente:** Escursioni Maddalena, escursioni in maxi gommone nell'Arcipelago di La Maddalena (Sardegna). Si parte sempre da La Maddalena; su richiesta il gommone passa a prendere i clienti a Palau (circa 15 min di navigazione) o a Cannigione (circa 30 min), con ritrovo un po' prima. Sul sito niente orari di passaggio d'esempio: l'orario esatto si comunica alla prenotazione (testo comune in `Passaggio.astro`).
 - **Chi lavora sul sito:** Remo (web designer/consulente, non programmatore). Parla italiano: rispondi in italiano, in modo semplice, senza gergo tecnico se non serve.
 - **Obiettivo del sito:** trasformare le visite in richieste WhatsApp complete (escursione, data, persone, imbarco). Niente prenotazione né pagamento online.
 - **Pubblico:** famiglie, gruppi di amici, turisti alla prima volta in Sardegna, spesso dal telefono e già in vacanza.
@@ -59,7 +59,7 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [ ] Dominio: acquistato su GoDaddy, da spostare su Cloudflare (DNS) e collegare in Pages → Custom domains. Poi aggiornare `site` in `astro.config.mjs` e `url` in `src/data/sito.js`, e far rimandare `www` alla versione senza `www`
 - [x] Struttura a 3 gommoni: pagine `/gommoni/`, escursioni Mezza giornata e Aperitivo al tramonto separate, scelta posto singolo/esclusiva nel modulo
 - [x] Mappa delle due rotte della mezza giornata (`MappaRotte.astro`): rossa = giro di Caprera (Cala Coticcio, Cala Napoletana, Giardinelli); gialla = con maestrale oltre 15 nodi (Cala Corsara a Spargi, Cala Gavetta a La Maddalena, Giardinelli). Partenza da La Maddalena, su richiesta presa a Palau o Cannigione
-- [ ] Da chiarire con Remo: la partenza principale da La Maddalena vale anche per le altre escursioni? (oggi le altre dicono Palau, poi La Maddalena)
+- [x] Partenza unica da La Maddalena per tutte le escursioni, Palau e Cannigione come passaggio su richiesta (modulo, pagine, mappa del Tour delle 7 isole, FAQ)
 - [ ] Nomi/modelli dei 3 gommoni e loro skipper in `gommoni.js`
 - [ ] Testi delle escursioni Aperitivo al tramonto, Corsica e Tour privato (programma ancora a segnaposto)
 - [ ] Revisione di privacy e cookie da parte di chi segue il cliente

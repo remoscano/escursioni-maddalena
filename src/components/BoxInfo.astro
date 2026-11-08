@@ -8,9 +8,9 @@ const { imbarchi, regole } = sito;
 <div class="griglia-info">
   <div class="box">
     <span class="box__icona"><Icona nome="luogo" size={24} tratto={1.8} /></span>
-    <h3>Due punti d'imbarco</h3>
-    <p><strong>Palau</strong> · <Dato v={imbarchi.palau.molo} e="molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.palau.ritrovo} e="ora" /></p>
-    <p><strong>La Maddalena</strong> · <Dato v={imbarchi.maddalena.molo} e="molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" /></p>
+    <h3>Partenza da La Maddalena</h3>
+    <p><Dato v={imbarchi.maddalena.molo} e="molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" />.</p>
+    <p>Su richiesta ti passiamo a prendere a Palau o a Cannigione. <a href="/info-utili/#imbarchi-titolo">Come funziona</a></p>
   </div>
   <div class="box">
     <span class="box__icona"><Icona nome="borsa" size={24} tratto={1.8} /></span>

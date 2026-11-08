@@ -8,6 +8,7 @@ import Mappa from '../../components/Mappa.astro';
 import MappaRotte from '../../components/MappaRotte.astro';
 import Faq from '../../components/Faq.astro';
 import SezioneRichiesta from '../../components/SezioneRichiesta.astro';
+import Passaggio from '../../components/Passaggio.astro';
 import { escursioni, soloEsclusiva } from '../../data/escursioni.js';
 import { gommoniPer, nomeGommone, postiMaxEsclusiva, gommoni } from '../../data/gommoni.js';
 import { domande } from '../../data/faq.js';
@@ -30,24 +31,18 @@ const faqPerEscursione: Record<string, string[]> = {
   'tour-privato': ['esclusiva', 'pagare', 'maestrale', 'bambini', 'animali'],
 };
 faqPerEscursione['tour-7-isole'].splice(1, 0, 'minimo');
+Object.values(faqPerEscursione).forEach((l) => l.splice(1, 0, 'imbarco'));
 faqPerEscursione['corsica-lavezzi-bonifacio'].unshift('esclusiva');
 const esclusivaSola = soloEsclusiva(e);
 const gommoniPosto = gommoniPer(e.slug);
 const maxEsclusiva = postiMaxEsclusiva();
 const privato = gommoni.find((g) => !g.formule.includes('posto'));
-// Punti d'imbarco: di base Palau e La Maddalena; la mezza giornata parte da La Maddalena
-// e su richiesta passa a prendere a Palau o Cannigione.
-const puntiImbarco: string[] = e.imbarchi ?? ['palau', 'maddalena'];
-const nomiImbarco = puntiImbarco.map((k) => imbarchi[k as 'palau'].nome);
-const testoImbarco = e.imbarchi
-  ? `${nomiImbarco[0]} (su richiesta anche ${nomiImbarco.slice(1).join(' o ')})`
-  : nomiImbarco.join(' o ');
 const senzaOre = e.slug === 'tour-privato' || e.mappaRotte;
 const durata = e.ore ? `${e.ore} ore` : '';
 ---
 <Base
   titolo={e.titoloPagina}
-  descrizione={`${e.breve} Imbarco a ${testoImbarco}, richiesta di disponibilità su WhatsApp.`.slice(0, 160)}
+  descrizione={`${e.breve} Partenza da La Maddalena, richiesta di disponibilità su WhatsApp.`.slice(0, 160)}
 >
   <section class="testa-tour" aria-labelledby="tour-titolo">
     <div class="contenitore">
@@ -150,7 +145,7 @@ const durata = e.ore ? `${e.ore} ore` : '';
           <dl class="numeri">
             {e.numeri.map((n: any) => <div><dt>{n.etichetta}</dt><dd>{n.valore}</dd></div>)}
             <div><dt>Durata</dt><dd><Dato v={durata} e="ore" /></dd></div>
-            <div><dt>{e.imbarchi ? 'Partenza' : 'Imbarco'}</dt><dd>{e.imbarchi ? nomiImbarco[0] : testoImbarco}</dd></div>
+            <div><dt>Partenza</dt><dd>La Maddalena</dd></div>
           </dl>
           {e.note.length > 0 && (
             <ul class="note">
@@ -193,31 +188,15 @@ const durata = e.ore ? `${e.ore} ore` : '';
             {e.slug === 'tour-7-isole' && <li>Contanti o carta per il pranzo</li>}
           </ul>
         </div>
-        {e.imbarchi ? (
-          <Fragment>
-            <div class="box">
-              <h3>Partenza da La Maddalena</h3>
-              <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" />.</p>
-            </div>
-            <div class="box">
-              <h3>Ti veniamo a prendere</h3>
-              <p>Dormi in Gallura? Su richiesta il gommone passa a prenderti a Palau o a Cannigione. Scegli il punto nel modulo e ti diciamo orario e molo.</p>
-            </div>
-          </Fragment>
-        ) : (
-          <Fragment>
-            <div class="box">
-              <h3>Imbarco a Palau</h3>
-              <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.palau.ritrovo} e="ora" />.</p>
-              <p>Comodo se dormi in Gallura. Parcheggio: <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" />.</p>
-            </div>
-            <div class="box">
-              <h3>Imbarco a La Maddalena</h3>
-              <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" />.</p>
-              <p>Comodo se dormi sull'isola: il gommone passa a prenderti dopo Palau.</p>
-            </div>
-          </Fragment>
-        )}
+        <div class="box">
+          <h3>Partenza da La Maddalena</h3>
+          <p>Molo: <Dato v={imbarchi.maddalena.molo} e="molo e indirizzo" />.</p>
+          <p>Ritrovo: <Dato v={imbarchi.maddalena.ritrovo} e="ora" />, qualche minuto prima della partenza.</p>
+        </div>
+        <div class="box">
+          <h3>Ti passiamo a prendere</h3>
+          <Passaggio />
+        </div>
         <div class="box box--acqua">
           <h3>Con quale gommone</h3>
           {gommoniPosto.length > 0 && (

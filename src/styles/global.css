@@ -412,8 +412,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   border: 1.5px solid var(--bordo-campo); border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;
 }
 .scelta:has(input:checked) { border: 2px solid var(--mare); background: var(--acqua); }
-.scelte--imbarco { grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr)); }
-.scelta[hidden] { display: none; }
+.scelte--imbarco { grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr)); }
 .scelta[data-spenta] { opacity: 0.5; cursor: not-allowed; }
 .modulo__aiuto { margin-top: 8px; font-size: 14px; line-height: 1.45; }
 .scelta input { width: 18px; height: 18px; accent-color: var(--mare); margin: 0; }

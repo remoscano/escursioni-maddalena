@@ -1,0 +1,18 @@
+---
+// Spiega il passaggio su richiesta da Palau e Cannigione, in modo semplice e senza orari d'esempio.
+// L'orario esatto si comunica al cliente quando prenota.
+import Dato from './Dato.astro';
+import { sito } from '../data/sito.js';
+interface Props { parcheggio?: boolean }
+const { parcheggio = false } = Astro.props;
+const { palau, cannigione } = sito.imbarchi;
+---
+<p>Dormi in Gallura? Su richiesta ti passiamo a prendere a <strong>Palau</strong> o a <strong>Cannigione</strong>. Sceglilo nel modulo di richiesta.</p>
+<p>Da La Maddalena Palau è a {palau.navigazione} di navigazione e Cannigione a {cannigione.navigazione}: lì il ritrovo è un po' prima della partenza. L'orario esatto te lo scriviamo quando prenoti.</p>
+<p>Prenoti il gommone in esclusiva? Punto e orario di partenza si decidono insieme.</p>
+{parcheggio && (
+  <Fragment>
+    <p><strong>Palau</strong> · <Dato v={palau.molo} e="molo" /> · parcheggio: <Dato v={palau.parcheggio} e="dove lasciare l'auto" /></p>
+    <p><strong>Cannigione</strong> · <Dato v={cannigione.molo} e="molo" /> · parcheggio: <Dato v={cannigione.parcheggio} e="dove lasciare l'auto" /></p>
+  </Fragment>
+)}
