@@ -1,0 +1,459 @@
+---
+// Prenotazione online: escursione → data (calendario con i posti) → turno → persone → imbarco → dati → pagamento.
+// Prezzi e regole arrivano da src/data/prenotazioni.js; i posti dal server (/api/disponibilita).
+import { escursioni } from '../data/escursioni.js';
+import { offerte, regole } from '../data/prenotazioni.js';
+import { sito } from '../data/sito.js';
+
+interface Props {
+  escursione?: string;              // escursione già scelta
+  area?: 'cliente' | 'struttura';   // 'struttura' = una struttura partner prenota per un ospite
+}
+const { escursione = '', area = 'cliente' } = Astro.props;
+const config = {
+  escursioni: escursioni.filter((e) => offerte[e.slug]).map((e) => ({ slug: e.slug, titolo: e.titolo, breve: e.breve })),
+  whatsapp: sito.contatti.whatsapp,
+  stagione: regole.stagione,
+  area,
+};
+const perOspite = area === 'struttura';
+---
+<div class="prenota" data-prenota data-escursione={escursione}>
+  <script type="application/json" data-config set:html={JSON.stringify(config)} />
+
+  <div class="prenota__colonne">
+    <div class="prenota__passi">
+      <p class="prenota__partner" data-partner hidden></p>
+
+      <section class="prenota__passo" aria-labelledby="pr-esc">
+        <h2 id="pr-esc" class="prenota__titolo"><span class="prenota__n">1</span>Escursione</h2>
+        <div class="prenota__escursioni" data-escursioni role="radiogroup" aria-labelledby="pr-esc"></div>
+      </section>
+
+      <section class="prenota__passo" aria-labelledby="pr-data" data-passo-data hidden>
+        <h2 id="pr-data" class="prenota__titolo"><span class="prenota__n">2</span>Data</h2>
+        <div class="cal" data-calendario>
+          <div class="cal__testa">
+            <button type="button" class="cal__freccia" data-mese="-1" aria-label="Mese precedente">‹</button>
+            <p class="cal__mese" data-nome-mese aria-live="polite"></p>
+            <button type="button" class="cal__freccia" data-mese="1" aria-label="Mese successivo">›</button>
+          </div>
+          <div class="cal__settimana" aria-hidden="true"><span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span></div>
+          <div class="cal__giorni" data-giorni></div>
+          <ul class="cal__legenda">
+            <li><span class="cal__punto cal__punto--libero"></span>Posti liberi</li>
+            <li><span class="cal__punto cal__punto--pochi"></span>Ultimi posti</li>
+            <li><span class="cal__punto cal__punto--pieno"></span>Pieno o chiuso</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="prenota__passo" aria-labelledby="pr-turno" data-passo-turno hidden>
+        <h2 id="pr-turno" class="prenota__titolo"><span class="prenota__n">3</span>Orario</h2>
+        <div class="prenota__turni" data-turni role="radiogroup" aria-labelledby="pr-turno"></div>
+      </section>
+
+      <section class="prenota__passo" aria-labelledby="pr-persone" data-passo-dettagli hidden>
+        <h2 id="pr-persone" class="prenota__titolo"><span class="prenota__n">4</span>Persone</h2>
+        <div class="prenota__persone">
+          {[
+            ['adulti', 'Adulti', `da ${regole.eta.bambiniFinoA + 1} anni`],
+            ['bambini', 'Bambini', `da ${regole.eta.neonatiFinoA + 1} a ${regole.eta.bambiniFinoA} anni`],
+            ['neonati', 'Neonati', `fino a ${regole.eta.neonatiFinoA} anni, gratis`],
+          ].map(([id, nome, nota]) => (
+            <div class="contatore">
+              <p class="contatore__nome" id={`pr-n-${id}`}>{nome}<span>{nota}</span></p>
+              <div class="contatore__comandi">
+                <button type="button" data-meno={id} aria-label={`Togli ${nome.toLowerCase()}`}>−</button>
+                <output data-num={id} aria-labelledby={`pr-n-${id}`} aria-live="polite">0</output>
+                <button type="button" data-piu={id} aria-label={`Aggiungi ${nome.toLowerCase()}`}>+</button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p class="prenota__nota" data-nota-persone></p>
+
+        <h2 class="prenota__titolo" id="pr-imbarco" style="margin-top:28px"><span class="prenota__n">5</span>Imbarco</h2>
+        <div class="scelte" role="radiogroup" aria-labelledby="pr-imbarco">
+          <label class="scelta"><input type="radio" name="pr-imbarco" value="palau" checked />Palau</label>
+          <label class="scelta"><input type="radio" name="pr-imbarco" value="maddalena" />La Maddalena</label>
+        </div>
+
+        <h2 class="prenota__titolo" style="margin-top:28px"><span class="prenota__n">6</span>{perOspite ? "Dati dell'ospite" : 'I tuoi dati'}</h2>
+        <div class="prenota__dati">
+          <div class="campo">
+            <label for="pr-nome">Nome e cognome</label>
+            <input id="pr-nome" name="nome" type="text" autocomplete={perOspite ? 'off' : 'name'} maxlength="100" required />
+          </div>
+          <div class="campo">
+            <label for="pr-email">Email{perOspite ? " dell'ospite" : ''}</label>
+            <input id="pr-email" name="email" type="email" autocomplete={perOspite ? 'off' : 'email'} maxlength="160" required />
+          </div>
+          <div class="campo">
+            <label for="pr-tel">Telefono (WhatsApp)</label>
+            <input id="pr-tel" name="telefono" type="tel" autocomplete={perOspite ? 'off' : 'tel'} maxlength="30" placeholder="+39 …" required />
+          </div>
+          <div class="campo campo--intero">
+            <label for="pr-note">Note <span class="testo-2" style="font-weight:400">(facoltative: allergie, esigenze, domande)</span></label>
+            <textarea id="pr-note" name="note" rows="2" maxlength="1000"></textarea>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="prenota__riepilogo" aria-labelledby="pr-riepilogo" data-riepilogo hidden>
+      <h2 id="pr-riepilogo" class="prenota__titolo">Riepilogo</h2>
+      <div data-righe aria-live="polite"></div>
+      <label class="prenota__accetto">
+        <input type="checkbox" data-accetto />
+        <span>Ho letto le <a href="/condizioni/" target="_blank" rel="noopener">condizioni di prenotazione</a> e l'<a href="/privacy/" target="_blank" rel="noopener">informativa privacy</a>.</span>
+      </label>
+      <p class="avviso" data-errore role="alert" hidden></p>
+      <div class="prenota__paga" data-pagamenti></div>
+      <p class="prenota__sicuro">Paghi sulla pagina sicura di SumUp o PayPal: i dati della carta non passano dal nostro sito.</p>
+    </aside>
+  </div>
+</div>
+
+<style is:global>
+  .prenota__colonne { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 400px); gap: 32px; align-items: start; }
+  @media (max-width: 960px) { .prenota__colonne { grid-template-columns: 1fr; } }
+  .prenota__passi { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+  .prenota__passo, .prenota__riepilogo { background: var(--bianco); border: 1px solid var(--bordo); border-radius: var(--raggio-m); padding: 28px; display: flex; flex-direction: column; gap: 16px; }
+  .prenota__riepilogo { position: sticky; top: 24px; box-shadow: var(--ombra-grande); }
+  .prenota__titolo { display: flex; align-items: center; gap: 12px; font-size: 22px; line-height: 1.2; font-weight: 800; }
+  .prenota__n { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--acqua); color: var(--turchese); display: inline-flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; font-family: var(--font-testo); }
+  .prenota__partner { background: var(--acqua); border-radius: 14px; padding: 12px 16px; font-size: 15px; font-weight: 600; }
+  .prenota__escursioni, .prenota__turni { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 10px; }
+  .opzione { display: flex; flex-direction: column; gap: 4px; text-align: left; min-height: 64px; padding: 14px 16px; border: 1.5px solid var(--bordo-campo); border-radius: 14px; background: var(--bianco); font: inherit; color: var(--mare); cursor: pointer; }
+  .opzione strong { font-size: 16px; line-height: 1.3; }
+  .opzione span { font-size: 14px; line-height: 1.45; color: var(--testo-2); }
+  .opzione .opzione__stato { font-weight: 700; color: var(--turchese); }
+  .opzione[aria-checked="true"] { border: 2px solid var(--mare); background: var(--acqua); }
+  .opzione:disabled { opacity: .55; cursor: not-allowed; }
+  .opzione:disabled .opzione__stato { color: var(--testo-2); }
+  .cal { display: flex; flex-direction: column; gap: 10px; }
+  .cal__testa { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .cal__mese { font-family: var(--font-titoli); font-weight: 800; font-size: 20px; text-transform: capitalize; }
+  .cal__freccia { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--bordo-campo); background: var(--bianco); font-size: 24px; line-height: 1; color: var(--mare); cursor: pointer; }
+  .cal__freccia:disabled { opacity: .35; cursor: not-allowed; }
+  .cal__settimana, .cal__giorni { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+  .cal__settimana span { text-align: center; font-size: 12px; font-weight: 700; color: var(--testo-2); text-transform: uppercase; letter-spacing: .04em; }
+  .cal__giorno { position: relative; min-height: 46px; border-radius: 10px; border: 1.5px solid var(--bordo-campo); background: var(--bianco); font: inherit; font-size: 16px; font-weight: 700; color: var(--mare); cursor: pointer; padding: 0; }
+  .cal__giorno--pochi::after { content: ''; position: absolute; left: 50%; bottom: 5px; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--granito-scuro); }
+  .cal__giorno:disabled { background: #F4F1EA; border-color: transparent; color: #9AA9B0; cursor: not-allowed; font-weight: 500; }
+  .cal__giorno--pieno:disabled { text-decoration: line-through; }
+  .cal__giorno[aria-pressed="true"] { background: var(--mare); border-color: var(--mare); color: var(--bianco); }
+  .cal__vuoto { min-height: 46px; }
+  .cal__legenda { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--testo-2); }
+  .cal__legenda li { display: inline-flex; align-items: center; gap: 6px; }
+  .cal__punto { width: 12px; height: 12px; border-radius: 4px; border: 1.5px solid var(--bordo-campo); background: var(--bianco); }
+  .cal__punto--pochi { background: var(--granito-scuro); border-color: var(--granito-scuro); border-radius: 50%; }
+  .cal__punto--pieno { background: #F4F1EA; border-color: transparent; }
+  .prenota__persone { display: flex; flex-direction: column; gap: 10px; }
+  .contatore { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--bordo); }
+  .contatore:last-child { border-bottom: 0; }
+  .contatore__nome { display: flex; flex-direction: column; font-weight: 700; font-size: 16px; line-height: 1.3; }
+  .contatore__nome span { font-weight: 400; font-size: 14px; color: var(--testo-2); }
+  .contatore__comandi { display: flex; align-items: center; gap: 10px; }
+  .contatore__comandi button { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--mare); background: var(--bianco); color: var(--mare); font-size: 22px; line-height: 1; cursor: pointer; }
+  .contatore__comandi button:disabled { border-color: var(--bordo-campo); color: #9AA9B0; cursor: not-allowed; }
+  .contatore__comandi output { min-width: 28px; text-align: center; font-size: 18px; font-weight: 800; }
+  .prenota__nota { font-size: 14px; line-height: 1.5; color: var(--testo-2); }
+  .prenota__nota:empty { display: none; }
+  .prenota__dati { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 14px; }
+  .campo--intero { grid-column: 1 / -1; }
+  .campo textarea { width: 100%; border: 1.5px solid var(--bordo-campo); border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 16px; color: var(--mare); resize: vertical; }
+  .campo textarea:focus { border-color: var(--mare); outline: 2px solid var(--laguna); outline-offset: 1px; }
+  .riepilogo__voce { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; line-height: 1.5; padding: 6px 0; border-bottom: 1px solid var(--bordo); }
+  .riepilogo__voce span:first-child { color: var(--testo-2); }
+  .riepilogo__voce span:last-child { text-align: right; font-weight: 600; }
+  .riepilogo__totale { display: flex; justify-content: space-between; align-items: baseline; padding-top: 12px; font-family: var(--font-titoli); font-weight: 800; font-size: 26px; }
+  .riepilogo__info { list-style: none; padding: 0; margin-top: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.5; color: var(--testo-2); }
+  .riepilogo__info li { padding-left: 14px; position: relative; }
+  .riepilogo__info li::before { content: ''; position: absolute; left: 0; top: .6em; width: 6px; height: 6px; border-radius: 50%; background: var(--laguna); }
+  .prenota__accetto { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; cursor: pointer; }
+  .prenota__accetto input { width: 20px; height: 20px; margin-top: 1px; accent-color: var(--mare); flex: none; }
+  .prenota__paga { display: flex; flex-direction: column; gap: 10px; }
+  .prenota__sicuro { font-size: 13px; line-height: 1.5; color: var(--testo-2); text-align: center; }
+</style>
+
+<script>
+  import { offerte, calcolaPrenotazione, rigaPrezzo, imbarchiPrenotazione } from '../data/prenotazioni.js';
+  import { api, ErroreApi, h, euro, dataLunga, oggiRoma, segnaposto, persone as testoPersone } from '../scripts/comune';
+
+  const NOMI_MESI = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const ETICHETTE_PAGA: Record<string, string> = { sumup: 'Paga con carta', paypal: 'Paga con PayPal', prova: 'Pagamento di prova (anteprima)' };
+
+  document.querySelectorAll<HTMLElement>('[data-prenota]').forEach((radice) => {
+    const config = JSON.parse(radice.querySelector('[data-config]')!.textContent || '{}');
+    const $ = <T extends Element = HTMLElement>(s: string) => radice.querySelector<T>(s)!;
+    const parametri = new URLSearchParams(location.search);
+
+    // Codice della struttura dal link (?p=CODICE): resta per tutta la visita.
+    let partnerCodice = '';
+    try {
+      if (parametri.get('p')) sessionStorage.setItem('em_partner', parametri.get('p')!.toUpperCase());
+      partnerCodice = sessionStorage.getItem('em_partner') || '';
+    } catch { partnerCodice = parametri.get('p')?.toUpperCase() || ''; }
+    if (config.area === 'struttura') partnerCodice = '';
+
+    const st = {
+      slug: '' as string,
+      mese: '' as string,
+      giorni: {} as Record<string, any>,
+      data: '' as string,
+      turno: '' as string,
+      adulti: 2, bambini: 0, neonati: 0,
+      pagamenti: [] as string[],
+      invio: false,
+    };
+
+    const iniziale = radice.dataset.escursione || parametri.get('escursione') || '';
+    const primoMese = () => {
+      const oggi = oggiRoma();
+      if (oggi < config.stagione.dal) return config.stagione.dal.slice(0, 7);
+      if (oggi > config.stagione.al) return config.stagione.al.slice(0, 7);
+      return oggi.slice(0, 7);
+    };
+
+    // ---------- 1. Escursione ----------
+    function disegnaEscursioni() {
+      $('[data-escursioni]').innerHTML = config.escursioni.map((e: any) => `
+        <button type="button" class="opzione" role="radio" aria-checked="${e.slug === st.slug}" data-slug="${h(e.slug)}">
+          <strong>${h(e.titolo)}</strong><span>${h(e.breve)}</span>
+        </button>`).join('');
+    }
+    $('[data-escursioni]').addEventListener('click', (ev) => {
+      const b = (ev.target as Element).closest<HTMLElement>('[data-slug]');
+      if (b) scegliEscursione(b.dataset.slug!);
+    });
+
+    async function scegliEscursione(slug: string) {
+      if (!offerte[slug]) return;
+      st.slug = slug; st.data = ''; st.turno = '';
+      if (!st.mese) st.mese = primoMese();
+      disegnaEscursioni();
+      $('[data-passo-data]').hidden = false;
+      $('[data-passo-turno]').hidden = true;
+      $('[data-passo-dettagli]').hidden = true;
+      $('[data-riepilogo]').hidden = true;
+      await caricaMese();
+    }
+
+    // ---------- 2. Calendario ----------
+    async function caricaMese() {
+      const giorni = $('[data-giorni]');
+      giorni.setAttribute('aria-busy', 'true');
+      $('[data-nome-mese]').textContent = NOMI_MESI.format(new Date(`${st.mese}-15T12:00:00Z`));
+      try {
+        const q = new URLSearchParams({ escursione: st.slug, mese: st.mese });
+        if (partnerCodice) q.set('partner', partnerCodice);
+        const d = await api(`/api/disponibilita?${q}`);
+        st.giorni = d.giorni;
+        st.pagamenti = d.pagamenti;
+        mostraPartner(d.partner);
+      } catch (e) {
+        st.giorni = {};
+        errore(e);
+      }
+      giorni.removeAttribute('aria-busy');
+      disegnaCalendario();
+    }
+
+    function disegnaCalendario() {
+      const [a, m] = st.mese.split('-').map(Number);
+      const primo = new Date(Date.UTC(a, m - 1, 1));
+      const vuoti = (primo.getUTCDay() + 6) % 7;
+      const quanti = new Date(Date.UTC(a, m, 0)).getUTCDate();
+      let html = '<span class="cal__vuoto"></span>'.repeat(vuoti);
+      for (let g = 1; g <= quanti; g++) {
+        const data = `${st.mese}-${String(g).padStart(2, '0')}`;
+        const info = st.giorni[data] || { stato: 'chiuso' };
+        const aperto = info.stato === 'libero' || info.stato === 'pochi';
+        const desc = { libero: 'posti liberi', pochi: 'ultimi posti', pieno: 'pieno', chiuso: 'non prenotabile online' }[info.stato as string] || '';
+        html += `<button type="button" class="cal__giorno cal__giorno--${info.stato}" data-data="${data}" ${aperto ? '' : 'disabled'}
+                  aria-pressed="${data === st.data}" aria-label="${h(dataLunga(data))}, ${desc}">${g}</button>`;
+      }
+      $('[data-giorni]').innerHTML = html;
+      radice.querySelector<HTMLButtonElement>('[data-mese="-1"]')!.disabled = st.mese <= config.stagione.dal.slice(0, 7);
+      radice.querySelector<HTMLButtonElement>('[data-mese="1"]')!.disabled = st.mese >= config.stagione.al.slice(0, 7);
+    }
+
+    radice.querySelectorAll<HTMLButtonElement>('[data-mese]').forEach((b) => b.addEventListener('click', () => {
+      const [a, m] = st.mese.split('-').map(Number);
+      const d = new Date(Date.UTC(a, m - 1 + Number(b.dataset.mese), 1));
+      st.mese = d.toISOString().slice(0, 7);
+      caricaMese();
+    }));
+
+    $('[data-giorni]').addEventListener('click', (ev) => {
+      const b = (ev.target as Element).closest<HTMLButtonElement>('[data-data]');
+      if (!b || b.disabled) return;
+      st.data = b.dataset.data!;
+      st.turno = '';
+      disegnaCalendario();
+      disegnaTurni();
+      $('[data-passo-turno]').hidden = false;
+      const turni = st.giorni[st.data].turni.filter((t: any) => t.disponibile);
+      if (offerte[st.slug].turni.length === 1 && turni.length === 1) scegliTurno(turni[0].id);
+      else { $('[data-passo-dettagli]').hidden = true; $('[data-riepilogo]').hidden = true; }
+    });
+
+    // ---------- 3. Turno ----------
+    function disegnaTurni() {
+      const offerta = offerte[st.slug];
+      const info = st.giorni[st.data];
+      $('[data-turni]').innerHTML = offerta.turni.map((t: any) => {
+        const s = info.turni.find((x: any) => x.id === t.id) || { disponibile: false };
+        const riga = rigaPrezzo(t.prezzi, st.data);
+        const prezzo = !riga ? '' : offerta.tipo === 'esclusiva' ? `${euro(riga.barca)} il gommone` : `${euro(riga.adulto)} a persona · ridotto ${euro(riga.bambino)}`;
+        let disponibilita = 'Esaurito';
+        if (s.disponibile) {
+          if (offerta.tipo === 'esclusiva') disponibilita = `Gommone libero · fino a ${s.max} persone`;
+          else disponibilita = (s.max <= 4 ? `Ultimi ${s.max} posti` : `${s.max} posti liberi`) + (s.confermata ? ' · uscita confermata' : '');
+        }
+        return `<button type="button" class="opzione" role="radio" aria-checked="${t.id === st.turno}" data-turno="${h(t.id)}" ${s.disponibile ? '' : 'disabled'}>
+          <strong>${h(t.nome)}</strong>
+          <span>${t.orario ? h(t.orario) : segnaposto('orario da confermare')}</span>
+          <span>${prezzo}</span>
+          <span class="opzione__stato">${disponibilita}</span>
+        </button>`;
+      }).join('');
+    }
+    $('[data-turni]').addEventListener('click', (ev) => {
+      const b = (ev.target as Element).closest<HTMLButtonElement>('[data-turno]');
+      if (b && !b.disabled) scegliTurno(b.dataset.turno!);
+    });
+
+    function scegliTurno(id: string) {
+      st.turno = id;
+      disegnaTurni();
+      $('[data-passo-dettagli]').hidden = false;
+      $('[data-riepilogo]').hidden = false;
+      sistemaPersone();
+      aggiorna();
+    }
+
+    // ---------- 4. Persone ----------
+    const maxTurno = () => st.giorni[st.data]?.turni.find((t: any) => t.id === st.turno)?.max ?? 0;
+    function sistemaPersone() {
+      const max = maxTurno();
+      while (st.adulti + st.bambini + st.neonati > max && st.neonati > 0) st.neonati--;
+      while (st.adulti + st.bambini + st.neonati > max && st.bambini > 0) st.bambini--;
+      while (st.adulti + st.bambini + st.neonati > max && st.adulti > 1) st.adulti--;
+      for (const k of ['adulti', 'bambini', 'neonati'] as const) {
+        radice.querySelector(`[data-num="${k}"]`)!.textContent = String(st[k]);
+        radice.querySelector<HTMLButtonElement>(`[data-meno="${k}"]`)!.disabled = st[k] <= (k === 'adulti' ? 1 : 0);
+        radice.querySelector<HTMLButtonElement>(`[data-piu="${k}"]`)!.disabled = st.adulti + st.bambini + st.neonati >= max;
+      }
+      const offerta = offerte[st.slug];
+      $('[data-nota-persone]').textContent = offerta.tipo === 'esclusiva'
+        ? `Il gommone è solo per voi: fino a ${max} persone, neonati compresi.`
+        : `Posti liberi su questa uscita: ${max}. I neonati non pagano ma occupano un posto a bordo.`;
+    }
+    radice.addEventListener('click', (ev) => {
+      const t = ev.target as HTMLElement;
+      const piu = t.closest<HTMLElement>('[data-piu]')?.dataset.piu as 'adulti' | 'bambini' | 'neonati' | undefined;
+      const meno = t.closest<HTMLElement>('[data-meno]')?.dataset.meno as 'adulti' | 'bambini' | 'neonati' | undefined;
+      if (piu && st.adulti + st.bambini + st.neonati < maxTurno()) st[piu]++;
+      if (meno && st[meno] > (meno === 'adulti' ? 1 : 0)) st[meno]--;
+      if (piu || meno) { sistemaPersone(); aggiorna(); }
+    });
+
+    // ---------- Riepilogo e pagamento ----------
+    const imbarco = () => radice.querySelector<HTMLInputElement>('input[name="pr-imbarco"]:checked')?.value || 'palau';
+    radice.addEventListener('change', (ev) => { if ((ev.target as HTMLInputElement).name === 'pr-imbarco' || (ev.target as HTMLElement).matches('[data-accetto]')) aggiorna(); });
+
+    function aggiorna() {
+      if (!st.slug || !st.data || !st.turno) return;
+      const offerta = offerte[st.slug];
+      const turno = offerta.turni.find((t: any) => t.id === st.turno);
+      const calcolo: any = calcolaPrenotazione(st.slug, st.turno, st.data, { adulti: st.adulti, bambini: st.bambini, neonati: st.neonati });
+      const titolo = config.escursioni.find((e: any) => e.slug === st.slug)?.titolo ?? '';
+      const nomeImbarco = imbarchiPrenotazione.find((i) => i.id === imbarco())?.nome ?? '';
+      const info: string[] = [];
+      if (offerta.tipo === 'gruppo') info.push(`L'uscita parte con almeno ${offerta.minimo} persone: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`);
+      if (calcolo.carburanteEscluso) info.push('Il carburante non è compreso e si paga a parte.');
+      if (offerta.documento || turno.documento) info.push("Si va in Corsica: serve un documento valido per l'espatrio per ogni persona, anche per i bambini.");
+      info.push('Cancellazione gratuita fino a 48 ore prima. Con mare o vento non sicuri annulliamo noi: rimborso completo o nuova data, scegli tu.');
+      $('[data-righe]').innerHTML = `
+        <div class="riepilogo__voce"><span>Escursione</span><span>${h(titolo)}</span></div>
+        <div class="riepilogo__voce"><span>Data</span><span>${h(dataLunga(st.data))}</span></div>
+        <div class="riepilogo__voce"><span>Orario</span><span>${h(turno.nome)}<br>${turno.orario ? h(turno.orario) : segnaposto('da confermare')}</span></div>
+        <div class="riepilogo__voce"><span>Imbarco</span><span>${h(nomeImbarco)}</span></div>
+        <div class="riepilogo__voce"><span>Persone</span><span>${h(testoPersone(st.adulti, st.bambini, st.neonati))}</span></div>
+        ${calcolo.errore ? `<p class="avviso">${h(calcolo.errore)}</p>` : calcolo.righe.map((r: any) => `<div class="riepilogo__voce"><span>${h(r.testo)}</span><span>${euro(r.importo)}</span></div>`).join('')}
+        ${calcolo.errore ? '' : `<p class="riepilogo__totale"><span>Totale</span><span>${euro(calcolo.totale)}</span></p>`}
+        <ul class="riepilogo__info">${info.map((t) => `<li>${h(t)}</li>`).join('')}</ul>`;
+      disegnaPagamenti(Boolean(calcolo.errore));
+    }
+
+    function disegnaPagamenti(bloccato: boolean) {
+      const box = $('[data-pagamenti]');
+      if (!st.pagamenti.length) {
+        const testo = encodeURIComponent(`Ciao! Vorrei prenotare ${config.escursioni.find((e: any) => e.slug === st.slug)?.titolo ?? ''} il ${st.data ? dataLunga(st.data) : ''}.`);
+        box.innerHTML = `<p class="avviso">I pagamenti online non sono ancora attivi.</p>${config.whatsapp ? `<a class="btn btn--wa btn--grande btn--pieno" href="https://wa.me/${h(config.whatsapp)}?text=${testo}">Prenota su WhatsApp</a>` : ''}`;
+        return;
+      }
+      const accettato = radice.querySelector<HTMLInputElement>('[data-accetto]')!.checked;
+      box.innerHTML = st.pagamenti.map((m, i) => `
+        <button type="button" class="btn ${i === 0 ? 'btn--wa' : 'btn--scuro'} btn--grande btn--pieno" data-paga="${h(m)}" ${bloccato || st.invio ? 'disabled' : ''}>
+          ${h(ETICHETTE_PAGA[m] || m)}</button>`).join('')
+        + (accettato ? '' : '<p class="prenota__nota" style="text-align:center">Per continuare spunta la casella delle condizioni.</p>');
+    }
+
+    function errore(e: unknown) {
+      const box = $('[data-errore]');
+      box.textContent = e instanceof Error ? e.message : String(e);
+      box.hidden = false;
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function controllaDati() {
+      const campi = ['pr-nome', 'pr-email', 'pr-tel'].map((id) => radice.querySelector<HTMLInputElement>(`#${id}`)!);
+      for (const c of campi) {
+        c.value = c.value.trim();
+        if (!c.checkValidity() || !c.value) { c.reportValidity(); c.focus(); return null; }
+      }
+      if (!radice.querySelector<HTMLInputElement>('[data-accetto]')!.checked) throw new Error('Per prenotare spunta la casella delle condizioni di prenotazione.');
+      return { nome: campi[0].value, email: campi[1].value, telefono: campi[2].value, note: radice.querySelector<HTMLTextAreaElement>('#pr-note')!.value.trim() };
+    }
+
+    $('[data-pagamenti]').addEventListener('click', async (ev) => {
+      const b = (ev.target as Element).closest<HTMLButtonElement>('[data-paga]');
+      if (!b || b.disabled || st.invio) return;
+      $('[data-errore]').hidden = true;
+      let dati;
+      try { dati = controllaDati(); } catch (e) { errore(e); return; }
+      if (!dati) return;
+      st.invio = true;
+      const testoBottone = b.textContent;
+      b.textContent = 'Un momento…';
+      radice.querySelectorAll<HTMLButtonElement>('[data-paga]').forEach((x) => (x.disabled = true));
+      try {
+        const r = await api('/api/prenota', { corpo: {
+          escursione: st.slug, turno: st.turno, data: st.data, adulti: st.adulti, bambini: st.bambini, neonati: st.neonati,
+          imbarco: imbarco(), ...dati, metodo: b.dataset.paga, accetto: true, partner: partnerCodice || undefined,
+        } });
+        location.assign(r.redirect);
+      } catch (e) {
+        st.invio = false;
+        b.textContent = testoBottone;
+        errore(e);
+        if (e instanceof ErroreApi && e.stato === 409) { await caricaMese(); if (st.data && st.giorni[st.data]) disegnaTurni(); }
+        aggiorna();
+      }
+    });
+
+    function mostraPartner(p: any) {
+      const box = $('[data-partner]');
+      if (config.area === 'struttura' || !p) { box.hidden = true; return; }
+      box.textContent = `Stai prenotando tramite ${p.nome}.`;
+      box.hidden = false;
+    }
+
+    disegnaEscursioni();
+    if (iniziale && offerte[iniziale]) scegliEscursione(iniziale);
+  });
+</script>

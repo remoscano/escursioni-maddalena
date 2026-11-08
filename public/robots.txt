@@ -2,5 +2,10 @@
 # Al lancio sostituire con:
 #   User-agent: *
 #   Allow: /
+#   Disallow: /gestione/
+#   Disallow: /partner/
+#   Disallow: /prenota/esito/
+#   Disallow: /prenota/prova/
+#   Disallow: /api/
 User-agent: *
 Disallow: /

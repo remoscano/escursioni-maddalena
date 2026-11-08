@@ -1,0 +1,66 @@
+---
+import Base from '../layouts/Base.astro';
+import Dato from '../components/Dato.astro';
+import { sito } from '../data/sito.js';
+import { regole } from '../data/prenotazioni.js';
+const { azienda, contatti } = sito;
+---
+<Base titolo="Condizioni di prenotazione" descrizione="Come funzionano prenotazione, pagamento, cancellazione e maltempo per le escursioni in maxi gommone di Escursioni Maddalena.">
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Prenotazioni</p>
+      <h1>Condizioni di prenotazione</h1>
+      <p class="intro"><span class="dato">[BOZZA: testo da far verificare a chi segue l'azienda (consulente o legale) prima della pubblicazione]</span></p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:40px">
+    <div class="contenitore testo-lungo">
+      <h2>Chi organizza</h2>
+      <p>Le escursioni sono organizzate da <Dato v={azienda.ragioneSociale} e="Ragione sociale" />, <Dato v={azienda.indirizzo} e="indirizzo" />, P. IVA <Dato v={azienda.partitaIva} e="numero" />. Contatti: WhatsApp {contatti.telefonoVisibile || <Dato e="numero" />}, email {contatti.email || <Dato e="email" />}.</p>
+
+      <h2>Prenotazione e conferma</h2>
+      <p>Scegli escursione, giorno, orario e numero di persone. Mentre paghi i posti restano tenuti da parte per {regole.minutiPerPagare} minuti. La prenotazione è confermata quando il pagamento va a buon fine: ricevi un codice di prenotazione da mostrare all'imbarco.</p>
+      <p>Online si prenota fino alle {regole.chiusuraOnline.ora} del giorno prima dell'escursione. Per l'ultimo minuto e per gruppi oltre 12 persone scrivici su WhatsApp.</p>
+
+      <h2>Prezzi e pagamento</h2>
+      <ul>
+        <li>I prezzi sono in euro e comprendono l'IVA. Si paga l'intero importo al momento della prenotazione, con carta (tramite SumUp) o con PayPal, sulle loro pagine sicure.</li>
+        <li>Bambini fino a {regole.eta.neonatiFinoA} anni gratis; da {regole.eta.neonatiFinoA + 1} a {regole.eta.bambiniFinoA} anni prezzo ridotto; da {regole.eta.bambiniFinoA + 1} anni prezzo intero. Anche i bambini che non pagano occupano un posto a bordo e vanno indicati nella prenotazione.</li>
+        <li>Nei tour privati in esclusiva il carburante non è compreso e si paga a parte.</li>
+        <li>Cosa è compreso in ogni escursione è indicato nella sua pagina. <Dato e="Ticket del Parco: incluso o da pagare" /></li>
+      </ul>
+
+      <h2>Numero minimo di partecipanti</h2>
+      <p>Le uscite di gruppo partono con almeno 6 persone paganti. Se la sera prima dell'escursione il minimo non è raggiunto ti avvisiamo e scegli tu: un'altra data, un'altra escursione o il rimborso completo.</p>
+
+      <h2>Se annulli tu</h2>
+      <ul>
+        <li>Fino a {regole.cancellazioneGratisOre} ore prima della partenza: rimborso completo. Scrivici su WhatsApp o per email indicando il codice di prenotazione.</li>
+        <li>Dopo, o se non ti presenti all'imbarco, l'importo non è rimborsabile.</li>
+        <li>Per le escursioni prenotate per una data precisa non si applica il diritto di recesso di 14 giorni (art. 59, comma 1, lettera n, del Codice del Consumo): valgono le regole di cancellazione qui sopra.</li>
+      </ul>
+
+      <h2>Maltempo e sicurezza</h2>
+      <p>La sicurezza viene prima di tutto: è lo skipper a decidere se e dove si può navigare. L'itinerario può cambiare in base a vento e mare, scegliendo le cale più riparate. Se le condizioni non permettono di uscire annulliamo noi e scegli tu: rimborso completo o un'altra data.</p>
+      <p>Per proteggerla, alla Spiaggia Rosa di Budelli il Parco vieta sbarco e bagno: si ammira dal mare.</p>
+
+      <h2>Corsica</h2>
+      <p>Per le escursioni in Corsica ogni partecipante, bambini compresi, deve avere un documento valido per l'espatrio (carta d'identità o passaporto). Chi ne è sprovvisto non può imbarcarsi e la quota non è rimborsabile.</p>
+
+      <h2>A bordo</h2>
+      <ul>
+        <li>Presentati all'imbarco con puntualità: l'uscita non può aspettare i ritardatari. <Dato e="Quanti minuti prima presentarsi al molo" /></li>
+        <li>I minori partecipano accompagnati da un adulto.</li>
+        <li>Animali: <Dato v={sito.regole.animali} e="la vostra regola sugli animali a bordo" /></li>
+      </ul>
+
+      <h2>Prenotazioni tramite strutture partner</h2>
+      <p>Se prenoti tramite il tuo hotel o la tua struttura (o dal loro link), il contratto è sempre con noi e valgono queste stesse condizioni. La struttura riceve da noi una provvigione: per te il prezzo non cambia.</p>
+
+      <h2>Reclami e contatti</h2>
+      <p>Per qualsiasi problema scrivici a {contatti.email || <Dato e="email" />} o su WhatsApp {contatti.telefonoVisibile || <Dato e="numero" />}: rispondiamo il prima possibile. Per eventuali controversie vale la legge italiana. <Dato e="Foro competente e altre clausole da far verificare" /></p>
+
+      <p class="testo-2">Ultimo aggiornamento: <Dato e="data" /></p>
+    </div>
+  </section>
+</Base>

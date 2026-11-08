@@ -1,0 +1,547 @@
+---
+// Gestione interna: uscite del giorno, prenotazioni dalle altre piattaforme, maltempo, strutture partner, provvigioni.
+import Base from '../../layouts/Base.astro';
+import { escursioni } from '../../data/escursioni.js';
+import { offerte } from '../../data/prenotazioni.js';
+import '../../styles/area.css';
+const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map((e) => [e.slug, e.titolo]));
+---
+<Base titolo="Gestione prenotazioni" descrizione="Area riservata." nascosta senzaBarra>
+  <section class="area">
+    <div class="contenitore">
+      <script type="application/json" data-titoli set:html={JSON.stringify(titoli)} />
+      <div data-schermo="carico"><p class="testo-2">Un momento…</p></div>
+
+      <div data-schermo="accesso" hidden>
+        <div class="area-scheda accesso">
+          <p class="occhiello">Area riservata</p>
+          <h1 style="font-weight:800;font-size:36px;line-height:1.1">Gestione prenotazioni</h1>
+          <form data-modulo-accesso class="pila" style="gap:14px" novalidate>
+            <div class="campo"><label for="acc-email">Email</label><input id="acc-email" type="email" autocomplete="username" required /></div>
+            <div class="campo"><label for="acc-pw">Password</label><input id="acc-pw" type="password" autocomplete="current-password" required /></div>
+            <p class="avviso" data-errore-accesso hidden></p>
+            <button class="btn btn--wa btn--grande btn--pieno" type="submit">Entra</button>
+          </form>
+        </div>
+      </div>
+
+      <div data-schermo="password" hidden>
+        <div class="area-scheda accesso">
+          <h1 style="font-weight:800;font-size:32px;line-height:1.1">Scegli la tua password</h1>
+          <p class="testo-2">Al primo accesso sostituisci la password provvisoria con una tua (almeno 10 caratteri).</p>
+          <form data-modulo-password class="pila" style="gap:14px" novalidate>
+            <div class="campo"><label for="pw-att">Password attuale</label><input id="pw-att" type="password" autocomplete="current-password" required /></div>
+            <div class="campo"><label for="pw-nuova">Nuova password</label><input id="pw-nuova" type="password" autocomplete="new-password" minlength="10" required /></div>
+            <p class="avviso" data-errore-password hidden></p>
+            <button class="btn btn--wa btn--grande btn--pieno" type="submit">Salva la password</button>
+          </form>
+        </div>
+      </div>
+
+      <div data-schermo="area" hidden>
+        <div class="area-testa">
+          <div><p class="occhiello">Gestione</p><h1>Prenotazioni</h1></div>
+          <button class="btn btn--bordo" type="button" data-esci>Esci</button>
+        </div>
+        <div class="schede-area" role="tablist" aria-label="Sezioni">
+          <button role="tab" type="button" data-scheda="giorno" aria-selected="true">Giornata</button>
+          <button role="tab" type="button" data-scheda="nuova" aria-selected="false">Inserisci prenotazione</button>
+          <button role="tab" type="button" data-scheda="elenco" aria-selected="false">Prenotazioni</button>
+          <button role="tab" type="button" data-scheda="strutture" aria-selected="false">Strutture</button>
+          <button role="tab" type="button" data-scheda="provvigioni" aria-selected="false">Provvigioni</button>
+          <button role="tab" type="button" data-scheda="account" aria-selected="false">Account</button>
+        </div>
+        <p class="avviso" data-errore role="alert" hidden></p>
+
+        <!-- Giornata -->
+        <div role="tabpanel" data-pannello="giorno">
+          <div class="area-scheda non-stampare">
+            <div class="riga-campi">
+              <div class="campo"><label for="g-data">Giorno</label><input id="g-data" type="date" /></div>
+              <div class="azioni-riga">
+                <button class="btn btn--bordo btn--piccolo" type="button" data-giorno="-1">← Giorno prima</button>
+                <button class="btn btn--bordo btn--piccolo" type="button" data-giorno="1">Giorno dopo →</button>
+                <button class="btn btn--bordo btn--piccolo" type="button" onclick="window.print()">Stampa</button>
+              </div>
+            </div>
+          </div>
+          <div data-giornata class="pila" style="gap:16px;margin-top:20px"></div>
+        </div>
+
+        <!-- Inserisci prenotazione -->
+        <div role="tabpanel" data-pannello="nuova" hidden>
+          <form class="area-scheda" data-modulo-nuova novalidate>
+            <h2>Prenotazione da un'altra piattaforma, dal telefono o al molo</h2>
+            <p class="testo-2">Inseriscila qui appena arriva: così i posti si aggiornano anche sul sito e non si rischiano doppie prenotazioni.</p>
+            <div class="riga-campi">
+              <div class="campo"><label for="n-canale">Da dove arriva</label><select id="n-canale" name="canale" required></select></div>
+              <div class="campo" data-campo-struttura hidden><label for="n-struttura">Struttura</label><select id="n-struttura" name="partnerId"></select></div>
+              <div class="campo"><label for="n-rif">Codice della piattaforma</label><input id="n-rif" name="rifEsterno" maxlength="80" /></div>
+            </div>
+            <div class="riga-campi">
+              <div class="campo"><label for="n-esc">Escursione</label><select id="n-esc" name="escursione" required></select></div>
+              <div class="campo"><label for="n-data">Data</label><input id="n-data" name="data" type="date" required /></div>
+              <div class="campo"><label for="n-turno">Orario</label><select id="n-turno" name="turno" required></select></div>
+            </div>
+            <p class="testo-2" data-disponibilita aria-live="polite"></p>
+            <div class="riga-campi">
+              <div class="campo"><label for="n-adulti">Adulti</label><input id="n-adulti" name="adulti" type="number" min="1" max="20" value="2" required /></div>
+              <div class="campo"><label for="n-bambini">Bambini 4–10</label><input id="n-bambini" name="bambini" type="number" min="0" max="20" value="0" /></div>
+              <div class="campo"><label for="n-neonati">Neonati 0–3</label><input id="n-neonati" name="neonati" type="number" min="0" max="20" value="0" /></div>
+              <div class="campo"><label for="n-imbarco">Imbarco</label><select id="n-imbarco" name="imbarco"><option value="palau">Palau</option><option value="maddalena">La Maddalena</option></select></div>
+            </div>
+            <div class="riga-campi">
+              <div class="campo"><label for="n-nome">Nome e cognome</label><input id="n-nome" name="nome" maxlength="100" required /></div>
+              <div class="campo"><label for="n-tel">Telefono</label><input id="n-tel" name="telefono" type="tel" maxlength="30" /></div>
+              <div class="campo"><label for="n-email">Email</label><input id="n-email" name="email" type="email" maxlength="160" /></div>
+            </div>
+            <div class="riga-campi">
+              <div class="campo"><label for="n-importo">Importo (€)</label><input id="n-importo" name="importo" inputmode="decimal" /></div>
+              <label class="spunta-riga"><input type="checkbox" name="pagato" /><span>Già pagato (sulla piattaforma o al molo)</span></label>
+            </div>
+            <div class="campo"><label for="n-note">Note</label><textarea id="n-note" name="note" rows="2" maxlength="1000"></textarea></div>
+            <p class="messaggio-ok" data-esito-nuova hidden></p>
+            <button class="btn btn--wa btn--grande" type="submit">Inserisci prenotazione</button>
+          </form>
+        </div>
+
+        <!-- Elenco -->
+        <div role="tabpanel" data-pannello="elenco" hidden>
+          <form class="area-scheda non-stampare" data-filtri>
+            <div class="riga-campi">
+              <div class="campo"><label for="f-q">Cerca</label><input id="f-q" name="q" placeholder="Codice, nome, telefono, email" /></div>
+              <div class="campo"><label for="f-stato">Stato</label><select id="f-stato" name="stato"><option value="">Tutte</option><option value="confermata">Confermate</option><option value="da_verificare">Da verificare</option><option value="rimborsi">Rimborsi da fare</option><option value="annullata">Annullate</option></select></div>
+              <div class="campo"><label for="f-dal">Dal</label><input id="f-dal" name="dal" type="date" /></div>
+              <div class="campo"><label for="f-al">Al</label><input id="f-al" name="al" type="date" /></div>
+            </div>
+            <div class="azioni-riga"><button class="btn btn--scuro btn--piccolo" type="submit">Cerca</button><button class="btn btn--bordo btn--piccolo" type="button" data-csv="elenco">Scarica CSV</button></div>
+          </form>
+          <div class="tabella-box" style="margin-top:20px"><table class="tabella" data-tabella-elenco>
+            <thead><tr><th>Data</th><th>Codice</th><th>Escursione</th><th>Cliente</th><th class="num">Persone</th><th class="num">Totale</th><th>Canale</th><th>Stato</th><th>Azioni</th></tr></thead>
+            <tbody data-elenco></tbody>
+          </table></div>
+        </div>
+
+        <!-- Strutture -->
+        <div role="tabpanel" data-pannello="strutture" hidden>
+          <div class="area-scheda">
+            <h2>Strutture partner</h2>
+            <div class="tabella-box"><table class="tabella">
+              <thead><tr><th>Struttura</th><th>Contatti</th><th class="num">%</th><th class="num">Venduto</th><th class="num">Maturato</th><th class="num">Pagato</th><th class="num">Da pagare</th><th>Azioni</th></tr></thead>
+              <tbody data-strutture></tbody>
+            </table></div>
+          </div>
+          <form class="area-scheda" data-modulo-struttura novalidate>
+            <h2>Nuova struttura</h2>
+            <div class="riga-campi">
+              <div class="campo"><label for="s-nome">Nome della struttura</label><input id="s-nome" name="nome" maxlength="100" required /></div>
+              <div class="campo"><label for="s-email">Email (per l'accesso)</label><input id="s-email" name="email" type="email" maxlength="160" required /></div>
+              <div class="campo"><label for="s-tel">Telefono</label><input id="s-tel" name="telefono" type="tel" maxlength="30" /></div>
+              <div class="campo"><label for="s-ref">Referente</label><input id="s-ref" name="referente" maxlength="100" /></div>
+              <div class="campo"><label for="s-pct">Provvigione %</label><input id="s-pct" name="provvigione" type="number" min="0" max="50" step="0.5" value="15" /></div>
+            </div>
+            <div data-esito-struttura></div>
+            <button class="btn btn--wa btn--grande" type="submit">Crea struttura e accesso</button>
+          </form>
+        </div>
+
+        <!-- Provvigioni -->
+        <div role="tabpanel" data-pannello="provvigioni" hidden>
+          <div class="area-scheda">
+            <h2>Provvigioni per quindicina</h2>
+            <p class="testo-2">Contano le escursioni confermate fatte nella quindicina. Quando hai fatto il bonifico, segna la quindicina come pagata: la struttura lo vede nella sua area.</p>
+            <div class="riga-campi">
+              <div class="campo"><label for="p-periodo">Quindicina</label><select id="p-periodo"></select></div>
+              <div class="azioni-riga"><button class="btn btn--bordo btn--piccolo" type="button" data-csv="provvigioni">Scarica CSV</button></div>
+            </div>
+            <div class="tabella-box"><table class="tabella" data-tabella-provvigioni>
+              <thead><tr><th>Struttura</th><th class="num">Prenotazioni</th><th class="num">Venduto</th><th class="num">Provvigione</th><th>Stato</th></tr></thead>
+              <tbody data-provvigioni></tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <!-- Account -->
+        <div role="tabpanel" data-pannello="account" hidden>
+          <form class="area-scheda accesso" data-modulo-password2 novalidate style="margin:0">
+            <h2>Cambia password</h2>
+            <div class="campo"><label for="pw2-att">Password attuale</label><input id="pw2-att" type="password" autocomplete="current-password" required /></div>
+            <div class="campo"><label for="pw2-nuova">Nuova password</label><input id="pw2-nuova" type="password" autocomplete="new-password" minlength="10" required /></div>
+            <p class="messaggio-ok" data-ok-password hidden>Password cambiata.</p>
+            <button class="btn btn--wa" type="submit">Salva</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { offerte, canaliEsterni, calcolaPrenotazione } from '../../data/prenotazioni.js';
+  import { api, ErroreApi, h, euro, dataBreve, dataLunga, oggiRoma, aggiungiGiorni, persone } from '../../scripts/comune';
+
+  const titoli: Record<string, string> = JSON.parse(document.querySelector('[data-titoli]')!.textContent || '{}');
+  const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+  const schermi = document.querySelectorAll<HTMLElement>('[data-schermo]');
+  const mostra = (nome: string) => schermi.forEach((s) => (s.hidden = s.dataset.schermo !== nome));
+  const STATI: Record<string, string> = { confermata: 'Confermata', annullata: 'Annullata', da_verificare: 'Da verificare', in_attesa: 'In pagamento' };
+  const BLOCCHI: Record<string, string> = { mattina: 'Mattina', pomeriggio: 'Pomeriggio', sera: 'Sera' };
+  let strutture: any[] = [];
+
+  function errore(e: unknown) {
+    const box = $('[data-errore]');
+    box.textContent = e instanceof Error ? e.message : String(e);
+    box.hidden = false;
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  const pulisciErrore = () => { $('[data-errore]').hidden = true; };
+  const wa = (tel: string, testo = '') => {
+    const n = String(tel || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^00/, '');
+    const numero = n.length <= 10 ? `39${n}` : n;
+    return n ? `<a href="https://wa.me/${numero}${testo ? `?text=${encodeURIComponent(testo)}` : ''}" target="_blank" rel="noopener">WhatsApp</a>` : '';
+  };
+
+  // ---------- Avvio e accesso ----------
+  async function avvio() {
+    try {
+      const u = await api('/api/accesso');
+      if (u.ruolo !== 'gestione') { mostra('accesso'); $('[data-errore-accesso]').textContent = 'Questo accesso è di una struttura: la sua area è su /partner/.'; $('[data-errore-accesso]').hidden = false; return; }
+      if (u.deveCambiare) { mostra('password'); return; }
+      entra();
+    } catch (e) {
+      mostra('accesso');
+      if (!(e instanceof ErroreApi && e.stato === 401)) { $('[data-errore-accesso]').textContent = (e as Error).message; $('[data-errore-accesso]').hidden = false; }
+    }
+  }
+
+  function entra() {
+    mostra('area');
+    const oggi = oggiRoma();
+    const inizio = oggi < '2027-05-01' ? '2027-05-01' : oggi;
+    $<HTMLInputElement>('#g-data').value = inizio;
+    $<HTMLInputElement>('#n-data').value = inizio;
+    preparaNuova();
+    caricaGiorno();
+  }
+
+  $('[data-modulo-accesso]').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const err = $('[data-errore-accesso]');
+    err.hidden = true;
+    try {
+      const u = await api('/api/accesso', { corpo: { email: $<HTMLInputElement>('#acc-email').value, password: $<HTMLInputElement>('#acc-pw').value } });
+      $<HTMLInputElement>('#acc-pw').value = '';
+      if (u.ruolo !== 'gestione') { err.textContent = 'Questo accesso è di una struttura: la sua area è su /partner/.'; err.hidden = false; return; }
+      if (u.deveCambiare) mostra('password'); else entra();
+    } catch (e) { err.textContent = (e as Error).message; err.hidden = false; }
+  });
+
+  async function cambiaPassword(att: string, nuova: string) {
+    await api('/api/accesso/password', { corpo: { attuale: $<HTMLInputElement>(att).value, nuova: $<HTMLInputElement>(nuova).value } });
+    $<HTMLInputElement>(att).value = ''; $<HTMLInputElement>(nuova).value = '';
+  }
+  $('[data-modulo-password]').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    try { await cambiaPassword('#pw-att', '#pw-nuova'); entra(); }
+    catch (e) { $('[data-errore-password]').textContent = (e as Error).message; $('[data-errore-password]').hidden = false; }
+  });
+  $('[data-modulo-password2]').addEventListener('submit', async (ev) => {
+    ev.preventDefault(); pulisciErrore();
+    try { await cambiaPassword('#pw2-att', '#pw2-nuova'); $('[data-ok-password]').hidden = false; } catch (e) { errore(e); }
+  });
+  $('[data-esci]').addEventListener('click', async () => { await api('/api/accesso', { metodo: 'DELETE', corpo: {} }).catch(() => {}); location.reload(); });
+
+  // ---------- Schede ----------
+  document.querySelectorAll<HTMLButtonElement>('[data-scheda]').forEach((b) => b.addEventListener('click', () => {
+    document.querySelectorAll<HTMLButtonElement>('[data-scheda]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+    document.querySelectorAll<HTMLElement>('[data-pannello]').forEach((p) => (p.hidden = p.dataset.pannello !== b.dataset.scheda));
+    pulisciErrore();
+    ({ giorno: caricaGiorno, nuova: () => {}, elenco: caricaElenco, strutture: caricaStrutture, provvigioni: caricaProvvigioni, account: () => {} } as Record<string, () => void>)[b.dataset.scheda!]();
+  }));
+
+  // ---------- Giornata ----------
+  async function caricaGiorno() {
+    const data = $<HTMLInputElement>('#g-data').value;
+    const box = $('[data-giornata]');
+    if (!data) return;
+    box.innerHTML = '<p class="testo-2">Carico…</p>';
+    try {
+      const d = await api(`/api/gestione/giorno?data=${data}`);
+      box.innerHTML = `<h2 style="font-size:24px;font-weight:800;text-transform:capitalize">${h(dataLunga(data))}</h2>` + d.gommoni.map((g: any) => `
+        <div class="gommone-giorno">
+          <div class="uscita__testa"><h3 style="font-size:20px;font-weight:800">${h(g.nome)} <span class="testo-2" style="font-weight:500;font-size:15px">· ${g.posti} posti · ${g.tipo === 'esclusiva' ? 'esclusiva' : 'gruppo'}</span></h3></div>
+          ${g.chiusure.length ? `<div class="azioni-riga">${g.chiusure.map((c: any) => `<span class="stato stato--attenzione">Chiuso ${h(BLOCCHI[c.blocco])}${c.barca === '*' ? ' (tutti)' : ''}${c.motivo ? ` · ${h(c.motivo)}` : ''}</span><button class="btn btn--bordo btn--piccolo non-stampare" type="button" data-riapri="${c.id}">Riapri</button>`).join('')}</div>` : ''}
+          ${g.uscite.length ? g.uscite.map((u: any) => `
+            <div class="uscita">
+              <div class="uscita__testa">
+                <strong>${h(u.escursione)} · ${h(u.turno)}${u.orario ? ` · ${h(u.orario)}` : ''}</strong>
+                <span class="stato ${u.confermata ? 'stato--ok' : 'stato--attenzione'}">${u.persone}/${g.posti} a bordo${u.privato ? ' · privato' : ` · ${u.paganti} paganti · ${u.confermata ? 'confermata' : `mancano ${u.minimo - u.paganti} per il minimo`}`}</span>
+              </div>
+              <div class="tabella-box"><table class="tabella">
+                <thead><tr><th>Codice</th><th>Nome</th><th>Contatti</th><th class="num">Persone</th><th>Imbarco</th><th>Canale</th><th>Note</th><th class="non-stampare"></th></tr></thead>
+                <tbody>${u.prenotazioni.map((p: any) => `<tr>
+                  <td>${h(p.codice)}${p.stato !== 'confermata' ? `<br><span class="stato stato--${h(p.stato)}">${h(STATI[p.stato] || p.stato)}</span>` : ''}</td>
+                  <td>${h(p.nome)}</td>
+                  <td>${p.telefono ? `<a href="tel:${h(p.telefono)}">${h(p.telefono)}</a><br>${wa(p.telefono)}` : ''}${p.email ? `<br><span class="testo-2">${h(p.email)}</span>` : ''}</td>
+                  <td class="num">${h(persone(p.adulti, p.bambini, p.neonati))}</td>
+                  <td>${h(p.imbarco)}</td>
+                  <td>${h(p.canale)}${p.struttura ? `<br><span class="testo-2">${h(p.struttura)}</span>` : ''}${p.rifEsterno ? `<br><span class="testo-2">${h(p.rifEsterno)}</span>` : ''}<br><span class="testo-2">${p.pagato ? `pagato ${euro(p.pagato)}` : `da pagare ${euro(p.totale)}`}</span></td>
+                  <td>${h(p.note || '')}</td>
+                  <td class="non-stampare">${p.stato === 'confermata' || p.stato === 'da_verificare' ? `<button class="btn btn--avviso btn--piccolo" type="button" data-annulla="${p.id}" data-codice="${h(p.codice)}">Annulla</button>` : ''}</td></tr>`).join('')}</tbody>
+              </table></div>
+              <details class="azione-extra non-stampare">
+                <summary>Annulla questa uscita (maltempo)</summary>
+                <div class="riga-campi" style="margin-top:8px">
+                  <div class="campo"><label>Motivo</label><input data-motivo placeholder="Es. maestrale forte" maxlength="200" /></div>
+                  <button class="btn btn--avviso btn--piccolo" type="button" data-annulla-uscita data-barca="${h(g.id)}" data-escursione="${h(u.escursioneSlug)}" data-turno="${h(u.turnoId)}">Annulla l'uscita e chiudi il gommone</button>
+                </div>
+                <div data-avvisi></div>
+              </details>
+            </div>`).join('') : '<p class="testo-2">Nessuna uscita prenotata.</p>'}
+          <details class="azione-extra non-stampare">
+            <summary>Chiudi questo gommone</summary>
+            <div class="spunte" style="margin-top:8px">${Object.entries(BLOCCHI).map(([k, v]) => `<label><input type="checkbox" value="${k}" data-blocco />${v}</label>`).join('')}</div>
+            <div class="riga-campi">
+              <div class="campo"><label>Motivo</label><input data-motivo placeholder="Es. manutenzione" maxlength="200" /></div>
+              <button class="btn btn--scuro btn--piccolo" type="button" data-chiudi="${h(g.id)}">Chiudi</button>
+            </div>
+          </details>
+        </div>`).join('') + (d.annullate.length ? `
+        <div class="gommone-giorno"><h3 style="font-size:18px;font-weight:800">Annullate</h3>
+          <div class="tabella-box"><table class="tabella"><thead><tr><th>Codice</th><th>Nome</th><th>Escursione</th><th>Contatti</th><th>Rimborso</th></tr></thead><tbody>
+          ${d.annullate.map((p: any) => `<tr><td>${h(p.codice)}</td><td>${h(p.nome)}</td><td>${h(p.escursione)} · ${h(p.turno)}</td><td>${p.telefono ? `${h(p.telefono)} ${wa(p.telefono)}` : ''}</td>
+            <td>${p.rimborso === 'da_fare' ? `<span class="stato stato--attenzione">Da fare: ${euro(p.pagato)} (${h(p.metodo)})</span> <button class="btn btn--bordo btn--piccolo non-stampare" type="button" data-rimborsata="${p.id}">Fatto</button>` : p.rimborso === 'fatto' ? '<span class="stato stato--ok">Fatto</span>' : '—'}</td></tr>`).join('')}
+          </tbody></table></div></div>` : '');
+    } catch (e) { box.innerHTML = ''; errore(e); }
+  }
+
+  $<HTMLInputElement>('#g-data').addEventListener('change', caricaGiorno);
+  document.querySelectorAll<HTMLButtonElement>('[data-giorno]').forEach((b) => b.addEventListener('click', () => {
+    const c = $<HTMLInputElement>('#g-data');
+    c.value = aggiungiGiorni(c.value || oggiRoma(), Number(b.dataset.giorno));
+    caricaGiorno();
+  }));
+
+  $('[data-giornata]').addEventListener('click', async (ev) => {
+    const t = ev.target as HTMLElement;
+    const data = $<HTMLInputElement>('#g-data').value;
+    pulisciErrore();
+    try {
+      const riapri = t.closest<HTMLElement>('[data-riapri]');
+      if (riapri) { await api(`/api/gestione/chiusure?id=${riapri.dataset.riapri}`, { metodo: 'DELETE', corpo: {} }); return caricaGiorno(); }
+      const chiudi = t.closest<HTMLElement>('[data-chiudi]');
+      if (chiudi) {
+        const box = chiudi.closest('details')!;
+        const blocchi = [...box.querySelectorAll<HTMLInputElement>('[data-blocco]:checked')].map((x) => x.value);
+        await api('/api/gestione/chiusure', { corpo: { azione: 'chiudi', data, barca: chiudi.dataset.chiudi, blocchi, motivo: box.querySelector<HTMLInputElement>('[data-motivo]')!.value } });
+        return caricaGiorno();
+      }
+      const uscita = t.closest<HTMLElement>('[data-annulla-uscita]');
+      if (uscita) {
+        const box = uscita.closest('details')!;
+        const motivo = box.querySelector<HTMLInputElement>('[data-motivo]')!.value;
+        uscita.setAttribute('disabled', '');
+        const r = await api('/api/gestione/chiusure', { corpo: { azione: 'annulla-uscita', data, barca: uscita.dataset.barca, escursione: uscita.dataset.escursione, turno: uscita.dataset.turno, motivo } });
+        await caricaGiorno();
+        if (r.annullate.length) {
+          const testo = (p: any) => `Ciao ${p.nome}, purtroppo l'uscita del ${dataLunga(data)} è annullata per le condizioni del mare${motivo ? ` (${motivo})` : ''}. Preferisci il rimborso completo o un'altra data? Prenotazione ${p.codice}.`;
+          $('[data-giornata]').insertAdjacentHTML('afterbegin', `<div class="area-scheda"><h3>Avvisa i clienti dell'uscita annullata</h3><ul>${r.annullate.map((p: any) => `<li>${h(p.nome)} (${h(p.codice)}) ${p.telefono ? wa(p.telefono, testo(p)) : ''} ${p.email ? `<a href="mailto:${h(p.email)}?subject=${encodeURIComponent(`Uscita annullata ${p.codice}`)}&body=${encodeURIComponent(testo(p))}">Email</a>` : ''}</li>`).join('')}</ul></div>`);
+        }
+        return;
+      }
+      const annulla = t.closest<HTMLElement>('[data-annulla]');
+      if (annulla) {
+        const motivo = window.prompt(`Annullare la prenotazione ${annulla.dataset.codice}? Scrivi il motivo (facoltativo):`, '');
+        if (motivo === null) return;
+        await api('/api/gestione/prenotazione', { corpo: { id: Number(annulla.dataset.annulla), azione: 'annulla', motivo } });
+        return caricaGiorno();
+      }
+      const fatto = t.closest<HTMLElement>('[data-rimborsata]');
+      if (fatto) { await api('/api/gestione/prenotazione', { corpo: { id: Number(fatto.dataset.rimborsata), azione: 'rimborsata' } }); return caricaGiorno(); }
+    } catch (e) { errore(e); }
+  });
+
+  // ---------- Inserisci prenotazione ----------
+  function preparaNuova() {
+    $<HTMLSelectElement>('#n-canale').innerHTML = [...canaliEsterni, 'Struttura partner'].map((c) => `<option>${h(c)}</option>`).join('');
+    $<HTMLSelectElement>('#n-esc').innerHTML = Object.entries(titoli).map(([slug, t]) => `<option value="${h(slug)}">${h(t)}</option>`).join('');
+    aggiornaTurni();
+  }
+  function aggiornaTurni() {
+    const slug = $<HTMLSelectElement>('#n-esc').value;
+    $<HTMLSelectElement>('#n-turno').innerHTML = offerte[slug].turni.map((t: any) => `<option value="${h(t.id)}">${h(t.nome)}${t.orario ? ` · ${h(t.orario)}` : ''}</option>`).join('');
+    controllaPosti();
+  }
+  let richiestaPosti = 0;
+  async function controllaPosti() {
+    const mia = ++richiestaPosti;
+    const slug = $<HTMLSelectElement>('#n-esc').value, data = $<HTMLInputElement>('#n-data').value, turno = $<HTMLSelectElement>('#n-turno').value;
+    const box = $('[data-disponibilita]');
+    const f = $<HTMLFormElement>('[data-modulo-nuova]');
+    const calcolo: any = calcolaPrenotazione(slug, turno, data, { adulti: Number(f.adulti.value), bambini: Number(f.bambini.value), neonati: Number(f.neonati.value) });
+    $<HTMLInputElement>('#n-importo').placeholder = calcolo.errore ? '' : `listino: ${calcolo.totale}`;
+    if (!data) { box.textContent = ''; return; }
+    try {
+      const d = await api(`/api/disponibilita?escursione=${slug}&mese=${data.slice(0, 7)}&gestione=1`);
+      if (mia !== richiestaPosti) return; // è arrivata una risposta vecchia: si ignora
+      const g = d.giorni[data];
+      const t = g?.turni?.find((x: any) => x.id === turno);
+      box.textContent = !g || g.stato === 'chiuso' ? 'Data fuori stagione o nel passato.'
+        : !t?.disponibile ? 'Nessun posto libero per questo orario.'
+        : offerte[slug].tipo === 'esclusiva' ? `Gommone libero (fino a ${t.max} persone).` : `Posti liberi: ${t.max}${t.confermata ? ' · uscita già confermata' : ` · mancano ${t.mancano} persone al minimo`}.`;
+    } catch (e) { box.textContent = (e as Error).message; }
+  }
+  $('#n-esc').addEventListener('change', aggiornaTurni);
+  ['#n-data', '#n-turno', '#n-adulti', '#n-bambini', '#n-neonati'].forEach((s) => $(s).addEventListener('change', controllaPosti));
+  $('#n-canale').addEventListener('change', async () => {
+    const struttura = $<HTMLSelectElement>('#n-canale').value === 'Struttura partner';
+    $('[data-campo-struttura]').hidden = !struttura;
+    if (struttura) {
+      if (!strutture.length) strutture = (await api('/api/gestione/strutture')).strutture;
+      $<HTMLSelectElement>('#n-struttura').innerHTML = strutture.filter((s) => s.attivo).map((s) => `<option value="${s.id}">${h(s.nome)}</option>`).join('');
+    }
+  });
+  $('[data-modulo-nuova]').addEventListener('submit', async (ev) => {
+    ev.preventDefault(); pulisciErrore();
+    const f = ev.target as HTMLFormElement;
+    if (!f.nome.value.trim()) { f.nome.focus(); return errore(new Error('Inserisci il nome del cliente.')); }
+    const corpo: any = Object.fromEntries(new FormData(f).entries());
+    corpo.pagato = f.pagato.checked;
+    if (corpo.canale !== 'Struttura partner') delete corpo.partnerId;
+    try {
+      const r = await api('/api/gestione/prenotazioni', { corpo });
+      const ok = $('[data-esito-nuova]');
+      ok.textContent = `Inserita: ${r.codice} su ${r.gommone}.`;
+      ok.hidden = false;
+      ['nome', 'telefono', 'email', 'rifEsterno', 'importo', 'note'].forEach((k) => (f[k].value = ''));
+      f.pagato.checked = false;
+      controllaPosti();
+    } catch (e) { errore(e); }
+  });
+
+  // ---------- Elenco ----------
+  let ultimeRighe: any[] = [];
+  async function caricaElenco() {
+    const f = $<HTMLFormElement>('[data-filtri]');
+    const q = new URLSearchParams(Object.entries(Object.fromEntries(new FormData(f).entries())).filter(([, v]) => v) as [string, string][]);
+    try {
+      const d = await api(`/api/gestione/prenotazioni?${q}`);
+      if (!f.dal.value) f.dal.value = d.dal;
+      if (!f.al.value) f.al.value = d.al;
+      ultimeRighe = d.prenotazioni;
+      $('[data-elenco]').innerHTML = d.prenotazioni.length ? d.prenotazioni.map((p: any) => `<tr>
+        <td>${h(dataBreve(p.data))}</td><td>${h(p.codice)}</td>
+        <td>${h(p.escursione)}<br><span class="testo-2">${h(p.turno)} · ${h(p.gommone)}</span></td>
+        <td>${h(p.nome)}${p.telefono ? `<br>${h(p.telefono)} ${wa(p.telefono)}` : ''}</td>
+        <td class="num">${p.adulti + p.bambini + p.neonati}</td>
+        <td class="num">${euro(p.totale)}${p.pagato && p.pagato !== p.totale ? `<br><span class="testo-2">pagato ${euro(p.pagato)}</span>` : ''}</td>
+        <td>${h(p.canale)}${p.struttura ? `<br><span class="testo-2">${h(p.struttura)}</span>` : ''}</td>
+        <td><span class="stato stato--${h(p.stato)}">${h(STATI[p.stato] || p.stato)}</span>${p.rimborso === 'da_fare' ? '<br><span class="stato stato--attenzione">Rimborso da fare</span>' : p.rimborso === 'fatto' ? '<br><span class="stato stato--ok">Rimborsata</span>' : ''}</td>
+        <td><div class="azioni-riga">
+          ${p.stato === 'confermata' || p.stato === 'da_verificare' ? `<button class="btn btn--avviso btn--piccolo" type="button" data-azione="annulla" data-id="${p.id}" data-codice="${h(p.codice)}">Annulla</button>` : ''}
+          ${p.stato === 'da_verificare' ? `<button class="btn btn--scuro btn--piccolo" type="button" data-azione="conferma" data-id="${p.id}">Conferma</button>` : ''}
+          ${p.rimborso === 'da_fare' ? `<button class="btn btn--bordo btn--piccolo" type="button" data-azione="rimborsata" data-id="${p.id}">Rimborso fatto</button>` : ''}
+        </div></td></tr>`).join('') : '<tr><td class="vuota" colspan="9">Nessuna prenotazione.</td></tr>';
+    } catch (e) { errore(e); }
+  }
+  $('[data-filtri]').addEventListener('submit', (ev) => { ev.preventDefault(); caricaElenco(); });
+  $('[data-elenco]').addEventListener('click', async (ev) => {
+    const b = (ev.target as Element).closest<HTMLElement>('[data-azione]');
+    if (!b) return;
+    let motivo: string | null = '';
+    if (b.dataset.azione === 'annulla') { motivo = window.prompt(`Annullare la prenotazione ${b.dataset.codice}? Scrivi il motivo (facoltativo):`, ''); if (motivo === null) return; }
+    try { await api('/api/gestione/prenotazione', { corpo: { id: Number(b.dataset.id), azione: b.dataset.azione, motivo } }); caricaElenco(); } catch (e) { errore(e); }
+  });
+
+  // ---------- Strutture ----------
+  async function caricaStrutture() {
+    try {
+      strutture = (await api('/api/gestione/strutture')).strutture;
+      $('[data-strutture]').innerHTML = strutture.length ? strutture.map((s) => `<tr>
+        <td><strong>${h(s.nome)}</strong><br><span class="testo-2">${h(s.codice)}${s.attivo ? '' : ' · disattivata'}</span></td>
+        <td>${h(s.referente || '')}${s.telefono ? `<br>${h(s.telefono)}` : ''}<br><span class="testo-2">${h(s.email || '')}</span></td>
+        <td class="num">${s.provvigione}</td><td class="num">${euro(s.venduto)}<br><span class="testo-2">${s.numero} pren.</span></td>
+        <td class="num">${euro(s.maturata)}</td><td class="num">${euro(s.liquidata)}</td><td class="num"><strong>${euro(s.daPagare)}</strong></td>
+        <td><div class="azioni-riga">
+          <button class="btn btn--bordo btn--piccolo" type="button" data-struttura="${s.attivo ? 'disattiva' : 'riattiva'}" data-id="${s.id}">${s.attivo ? 'Disattiva' : 'Riattiva'}</button>
+          <button class="btn btn--bordo btn--piccolo" type="button" data-struttura="nuova-password" data-id="${s.id}">Nuova password</button>
+        </div><div data-pw="${s.id}"></div></td></tr>`).join('') : '<tr><td class="vuota" colspan="8">Nessuna struttura ancora.</td></tr>';
+    } catch (e) { errore(e); }
+  }
+  const messaggioAccesso = (nome: string, email: string, password: string, codice: string) =>
+    `Ciao! Ecco l'accesso all'area strutture di Escursioni Maddalena per ${nome}.\nIndirizzo: ${location.origin}/partner/\nEmail: ${email}\nPassword provvisoria: ${password} (al primo accesso ne sceglierai una tua)\nLink per i vostri ospiti: ${location.origin}/prenota/?p=${codice}`;
+  $('[data-strutture]').addEventListener('click', async (ev) => {
+    const b = (ev.target as Element).closest<HTMLElement>('[data-struttura]');
+    if (!b) return;
+    const s = strutture.find((x) => x.id === Number(b.dataset.id));
+    try {
+      if (b.dataset.struttura === 'nuova-password') {
+        const r = await api('/api/gestione/strutture', { corpo: { azione: 'nuova-password', id: s.id } });
+        document.querySelector(`[data-pw="${s.id}"]`)!.innerHTML = `<p style="margin-top:8px">Nuova password, da mandare alla struttura:</p><p class="password-nuova">${h(r.password)}</p>`;
+        return;
+      }
+      await api('/api/gestione/strutture', { corpo: { azione: 'modifica', id: s.id, nome: s.nome, telefono: s.telefono || '', referente: s.referente || '', provvigione: s.provvigione, attivo: b.dataset.struttura === 'riattiva' } });
+      caricaStrutture();
+    } catch (e) { errore(e); }
+  });
+  $('[data-modulo-struttura]').addEventListener('submit', async (ev) => {
+    ev.preventDefault(); pulisciErrore();
+    const f = ev.target as HTMLFormElement;
+    try {
+      const corpo: any = Object.fromEntries(new FormData(f).entries());
+      const r = await api('/api/gestione/strutture', { corpo: { azione: 'crea', ...corpo } });
+      const testo = messaggioAccesso(corpo.nome, r.email, r.password, r.codice);
+      $('[data-esito-struttura]').innerHTML = `<div class="messaggio-ok">Struttura creata. Manda questi dati alla struttura (la password non sarà più visibile):</div>
+        <textarea rows="6" readonly>${h(testo)}</textarea>
+        <div class="azioni-riga"><a class="btn btn--bordo btn--piccolo" href="mailto:${h(r.email)}?subject=${encodeURIComponent('Accesso area strutture Escursioni Maddalena')}&body=${encodeURIComponent(testo)}">Manda per email</a></div>`;
+      f.reset();
+      caricaStrutture();
+    } catch (e) { errore(e); }
+  });
+
+  // ---------- Provvigioni ----------
+  let righeProvvigioni: any[] = [];
+  let periodoCorrente: any = null;
+  async function caricaProvvigioni(dal?: string) {
+    try {
+      const d = await api(`/api/gestione/provvigioni${dal ? `?dal=${dal}` : ''}`);
+      periodoCorrente = d.periodo;
+      righeProvvigioni = d.strutture;
+      const sel = $<HTMLSelectElement>('#p-periodo');
+      sel.innerHTML = d.quindicine.map((q: any) => `<option value="${q.dal}" ${q.dal === d.periodo.dal ? 'selected' : ''}>${h(dataBreve(q.dal))} – ${h(dataBreve(q.al))}</option>`).join('');
+      if (!d.quindicine.some((q: any) => q.dal === d.periodo.dal)) sel.insertAdjacentHTML('afterbegin', `<option value="${d.periodo.dal}" selected>${h(dataBreve(d.periodo.dal))} – ${h(dataBreve(d.periodo.al))}</option>`);
+      $('[data-provvigioni]').innerHTML = d.strutture.length ? d.strutture.map((s: any) => `<tr>
+        <td><strong>${h(s.nome)}</strong><br><span class="testo-2">${h(s.email || '')}</span></td>
+        <td class="num">${s.numero}</td><td class="num">${euro(s.venduto)}</td><td class="num"><strong>${euro(s.provvigione)}</strong></td>
+        <td>${s.pagato !== null ? `<span class="stato stato--ok">Pagata ${euro(s.pagato)} il ${h(new Date(s.pagataIl).toLocaleDateString('it-IT'))}</span>`
+          : !s.provvigione ? '—'
+          : d.concluso ? `<button class="btn btn--scuro btn--piccolo" type="button" data-liquida="${s.id}">Segna come pagata</button>`
+          : '<span class="stato">Quindicina in corso</span>'}</td></tr>`).join('') : '<tr><td class="vuota" colspan="5">Nessuna struttura.</td></tr>';
+    } catch (e) { errore(e); }
+  }
+  $('#p-periodo').addEventListener('change', () => caricaProvvigioni($<HTMLSelectElement>('#p-periodo').value));
+  $('[data-provvigioni]').addEventListener('click', async (ev) => {
+    const b = (ev.target as Element).closest<HTMLElement>('[data-liquida]');
+    if (!b) return;
+    if (!window.confirm('Confermi di aver pagato la provvigione di questa quindicina?')) return;
+    try { await api('/api/gestione/provvigioni', { corpo: { partnerId: Number(b.dataset.liquida), dal: periodoCorrente.dal } }); caricaProvvigioni(periodoCorrente.dal); } catch (e) { errore(e); }
+  });
+
+  // ---------- CSV ----------
+  function scaricaCsv(nome: string, intestazione: string[], righe: (string | number)[][]) {
+    const cella = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const testo = '﻿' + [intestazione, ...righe].map((r) => r.map(cella).join(';')).join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([testo], { type: 'text/csv;charset=utf-8' }));
+    a.download = nome;
+    a.click();
+  }
+  document.querySelectorAll<HTMLButtonElement>('[data-csv]').forEach((b) => b.addEventListener('click', () => {
+    if (b.dataset.csv === 'elenco') scaricaCsv('prenotazioni.csv', ['Data', 'Codice', 'Escursione', 'Orario', 'Gommone', 'Nome', 'Telefono', 'Email', 'Adulti', 'Bambini', 'Neonati', 'Imbarco', 'Totale', 'Pagato', 'Provvigione', 'Canale', 'Struttura', 'Stato', 'Rimborso', 'Note'],
+      ultimeRighe.map((p) => [p.data, p.codice, p.escursione, p.turno, p.gommone, p.nome, p.telefono, p.email, p.adulti, p.bambini, p.neonati, p.imbarco, String(p.totale).replace('.', ','), String(p.pagato).replace('.', ','), String(p.provvigione).replace('.', ','), p.canale, p.struttura, p.stato, p.rimborso, p.note]));
+    else scaricaCsv(`provvigioni-${periodoCorrente?.dal}.csv`, ['Struttura', 'Email', 'Prenotazioni', 'Venduto', 'Provvigione', 'Pagata il'],
+      righeProvvigioni.map((s) => [s.nome, s.email, s.numero, String(s.venduto).replace('.', ','), String(s.provvigione).replace('.', ','), s.pagataIl ? new Date(s.pagataIl).toLocaleDateString('it-IT') : '']));
+  }));
+
+  avvio();
+</script>

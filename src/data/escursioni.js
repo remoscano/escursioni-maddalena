@@ -2,6 +2,12 @@
 // con lo stesso modello della pagina "Tour delle 7 isole".
 // I valori vuoti ('') diventano segnaposto rosa sul sito.
 
+import { prezzoDa, offerte, gommoniPer } from './prenotazioni.js';
+
+// Prezzi "da" e posti arrivano da src/data/prenotazioni.js (listino unico per sito e prenotazioni).
+const da = (slug) => prezzoDa(slug) ?? {};
+const posti = (slug) => String(Math.max(...gommoniPer(slug).map((g) => g.posti)));
+
 export const escursioni = [
   {
     slug: 'tour-7-isole',
@@ -14,12 +20,12 @@ export const escursioni = [
     intro:
       'Una giornata intera tra La Maddalena, Santo Stefano, Caprera, Spargi, Budelli, Razzoli e Santa Maria, con la Spiaggia Rosa vista dal mare.',
     durata: 'Giornata intera',
-    orari: '', // es. '9:00 – 17:30'
-    ore: '', // es. '8'
-    oraRientro: '', // es. '17:30'
-    prezzoAdulti: '',
-    prezzoBambini: '',
-    postiMax: '',
+    orari: offerte['tour-7-isole'].turni[0].orario,
+    ore: '8',
+    oraRientro: '17:30',
+    prezzoAdulti: String(da('tour-7-isole').adulto),
+    prezzoBambini: String(da('tour-7-isole').bambino),
+    postiMax: posti('tour-7-isole'),
     fatti: ['Imbarco a Palau o La Maddalena', 'Pranzo libero a La Maddalena', 'Spiaggia Rosa dal mare'],
     foto: {
       copertina: "Cala Corsara dall'alto, con il gommone all'ancora",
@@ -62,12 +68,12 @@ export const escursioni = [
     breve: 'Si attraversano le Bocche di Bonifacio fino alle isole Lavezzi e alle bianche falesie di Bonifacio.',
     intro:
       'Si attraversano le Bocche di Bonifacio per raggiungere la Corsica: le acque trasparenti delle isole Lavezzi e le falesie bianche su cui è costruita Bonifacio.',
-    durata: '',
-    orari: '',
+    durata: 'Giornata intera',
+    orari: offerte['corsica-lavezzi-bonifacio'].turni[0].orario,
     ore: '',
-    prezzoAdulti: '',
-    prezzoBambini: '',
-    postiMax: '',
+    prezzoAdulti: String(da('corsica-lavezzi-bonifacio').adulto),
+    prezzoBambini: String(da('corsica-lavezzi-bonifacio').bambino),
+    postiMax: posti('corsica-lavezzi-bonifacio'),
     fatti: ['Imbarco a Palau o La Maddalena', "Serve un documento valido per l'espatrio"],
     foto: {
       copertina: 'Le falesie di Bonifacio viste dal mare',
@@ -107,11 +113,11 @@ export const escursioni = [
     intro:
       "Per chi ha poco tempo o vuole vedere l'arcipelago con la luce più bella: qualche ora tra le cale più vicine, al mattino, al pomeriggio o fino al tramonto.",
     durata: 'Mezza giornata',
-    orari: '',
-    ore: '',
-    prezzoAdulti: '',
-    prezzoBambini: '',
-    postiMax: '',
+    orari: '9:30–13:30 · 14:00–18:00 · tramonto 18:00–20:30',
+    ore: '4',
+    prezzoAdulti: String(da('tramonto-mezza-giornata').adulto),
+    prezzoBambini: String(da('tramonto-mezza-giornata').bambino),
+    postiMax: posti('tramonto-mezza-giornata'),
     fatti: ['Imbarco a Palau o La Maddalena', 'Mattina, pomeriggio o tramonto'],
     foto: {
       copertina: 'Il gommone controluce al tramonto',
@@ -126,14 +132,14 @@ export const escursioni = [
     mappa: false,
     numeri: [],
     programma: [
-      { tipo: 'imbarco', titolo: 'Ritrovo a Palau o a La Maddalena', testo: '', mancante: 'Orari delle uscite: mattina, pomeriggio, tramonto' },
+      { tipo: 'imbarco', titolo: 'Ritrovo a Palau o a La Maddalena', testo: 'Mattina 9:30–13:30, pomeriggio 14:00–18:00, tramonto 18:00–20:30 con aperitivo.' },
       { tipo: 'sosta', n: '1', titolo: 'Prima cala', luogo: 'Bagno', testo: '', mancante: 'Quali cale si visitano di solito' },
       { tipo: 'sosta', n: '2', titolo: 'Seconda cala', luogo: 'Bagno', testo: '', mancante: 'Quali cale si visitano di solito' },
       { tipo: 'vista', titolo: 'Il tramonto dal mare', luogo: 'Solo uscita del tramonto', testo: '', mancante: 'Dove vi fermate a guardare il tramonto' },
       { tipo: 'rientro', titolo: 'Rientro', testo: 'Si scende dove si è saliti.' },
     ],
-    incluso: ['Skipper'],
-    inclusoMancante: 'Da confermare: aperitivo a bordo?',
+    incluso: ['Skipper', 'Aperitivo a bordo nell\'uscita al tramonto'],
+    inclusoMancante: "Da confermare: cos'altro è incluso",
     nonIncluso: [],
     nonInclusoMancante: 'Altro da segnalare',
     note: [],
@@ -146,12 +152,13 @@ export const escursioni = [
     breve: 'Il gommone solo per voi, famiglie, amici o aziende, con itinerario e orari da concordare.',
     intro:
       "Il maxi gommone solo per il vostro gruppo: famiglie, amici, aziende o un'occasione speciale. Itinerario, orari e soste si decidono insieme allo skipper.",
-    durata: 'Da concordare',
-    orari: 'da concordare',
+    durata: 'Mezza giornata, giornata o tramonto',
+    orari: 'mezza giornata, giornata intera o tramonto',
     ore: '',
-    prezzoAdulti: 'su richiesta',
+    prezzoAdulti: String(da('tour-privato').barca),
     prezzoBambini: null,
-    postiMax: '',
+    prezzoGommone: true,
+    postiMax: posti('tour-privato'),
     fatti: ['Imbarco a Palau o La Maddalena', 'Itinerario su misura'],
     foto: {
       copertina: 'Una famiglia a bordo, tuffo dalla prua',
@@ -172,7 +179,7 @@ export const escursioni = [
     ],
     incluso: ['Il gommone e lo skipper solo per il vostro gruppo'],
     inclusoMancante: 'Da confermare',
-    nonIncluso: [],
+    nonIncluso: ['Carburante'],
     nonInclusoMancante: 'Altro da segnalare',
     note: [],
   },

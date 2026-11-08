@@ -24,10 +24,29 @@ Appena si compila il campo, il segnaposto sparisce in tutte le pagine.
 - `/richiesta/` modulo WhatsApp (accetta `?escursione=<slug>` per preselezionare l'escursione)
 - `/gommone/`, `/info-utili/`, `/domande-frequenti/`, `/contatti/`, `/privacy/`, `/cookie/`
 
+## Prenotazioni online
+
+| Cosa | Dove |
+|---|---|
+| Prezzi per periodo, orari dei turni, gommoni e posti, regole (chiusura online, cancellazione, provvigione strutture) | `src/data/prenotazioni.js` |
+| Prenotazione per i clienti | `/prenota/` (anche `/prenota/?escursione=tour-7-isole`) |
+| Area delle strutture partner | `/partner/` (link per i loro ospiti: `/prenota/?p=CODICE`) |
+| Gestione interna: giornata per gommone, inserimento prenotazioni dalle altre piattaforme, maltempo, strutture, provvigioni | `/gestione/` |
+| Condizioni di prenotazione | `/condizioni/` |
+
+Le prenotazioni girano su Cloudflare: funzioni in `functions/`, database D1 (struttura in `migrations/`), collegamenti in `wrangler.toml`.
+
+**Pagamenti.** Si attivano inserendo le chiavi in Cloudflare Pages → progetto → Impostazioni → Variabili e segreti (ambiente Production, tipo "segreto"):
+`SUMUP_API_KEY` e `SUMUP_MERCHANT_CODE` (carta, dalla sezione sviluppatori di SumUp), `PAYPAL_CLIENT_ID` e `PAYPAL_SECRET` (app "Live" su developer.paypal.com). Senza chiavi il sito mostra "pagamenti non ancora attivi" e rimanda a WhatsApp. Nelle anteprime c'è il pagamento simulato.
+
+**Email di conferma.** Facoltative: con `RESEND_API_KEY` ed `EMAIL_MITTENTE` (serve il dominio) partono la conferma al cliente e l'avviso a `maddalena.escursioni@gmail.com`. Senza, la conferma si vede a schermo e nella gestione.
+
+**Nuovo accesso di gestione.** `node strumenti/impronta-password.mjs "password"` e inserire l'impronta nella tabella `utenti` (ruolo `gestione`). Le strutture si creano dalla gestione.
+
 ## Modulo WhatsApp
 
 Il modulo compone il messaggio nel browser e apre `https://wa.me/<numero>?text=…`.
-Nessun dato passa dal sito. Finché `sito.contatti.whatsapp` è vuoto, il bottone mostra un avviso invece di aprire WhatsApp.
+Nessun dato passa dal sito.
 
 ## Foto
 
@@ -48,8 +67,9 @@ Astro crea da solo le versioni WebP in più dimensioni.
 
 ```bash
 npm install
-npm run dev      # anteprima su http://localhost:4321
+npm run dev      # anteprima delle pagine su http://localhost:4321 (senza prenotazioni)
 npm run build    # crea il sito in dist/
+npx wrangler pages dev dist   # sito + prenotazioni con database locale (vedi prove/LEGGIMI.md)
 ```
 
 ## Cloudflare Pages

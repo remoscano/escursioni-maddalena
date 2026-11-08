@@ -10,14 +10,26 @@ export const faq = [
         id: 'prenotare',
         domanda: 'Come si prenota?',
         risposta:
-          "Con il modulo di richiesta: scegli escursione, data, persone e punto d'imbarco, e si apre WhatsApp con il messaggio già scritto. Ti rispondiamo con la disponibilità, l'orario di ritrovo e il molo.",
+          "Online, dalla pagina Prenota: scegli escursione, giorno e orario, vedi subito i posti liberi e paghi con carta o PayPal. Ricevi il codice di prenotazione da mostrare all'imbarco. Per domande, per domani o per gruppi oltre 12 persone scrivici su WhatsApp.",
       },
       {
         id: 'pagare',
         domanda: 'Come si paga?',
-        risposta: 'Nessun pagamento online.',
+        risposta: '',
         regola: 'pagamento',
         mancante: 'Pagamento: a bordo, in contanti o con carta? Serve un acconto?',
+      },
+      {
+        id: 'cancellare',
+        domanda: 'Posso annullare la prenotazione?',
+        risposta:
+          "Sì: se annulli almeno 48 ore prima ti rimborsiamo per intero. Scrivici su WhatsApp con il codice di prenotazione. Dopo, il rimborso non è previsto.",
+      },
+      {
+        id: 'minimo',
+        domanda: 'E se non si arriva al numero minimo?',
+        risposta:
+          "Le uscite di gruppo partono con almeno 6 persone. Se la sera prima non si raggiungono, ti proponiamo un'altra data o un altro tour, oppure ti rimborsiamo per intero.",
       },
       {
         id: 'anticipo',
@@ -34,7 +46,7 @@ export const faq = [
         id: 'maestrale',
         domanda: "E se c'è maestrale?",
         risposta:
-          "L'itinerario si adatta al vento, scegliendo le cale più riparate. Se il mare non lo permette, l'uscita si sposta e ti avvisiamo su WhatsApp.",
+          "L'itinerario si adatta al vento, scegliendo le cale più riparate. Se il mare non lo permette ti avvisiamo su WhatsApp.",
         regola: 'maltempo',
         mancante: 'La vostra regola: rimborso o cambio data',
       },

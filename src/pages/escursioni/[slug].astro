@@ -10,6 +10,7 @@ import SezioneRichiesta from '../../components/SezioneRichiesta.astro';
 import { escursioni } from '../../data/escursioni.js';
 import { domande } from '../../data/faq.js';
 import { sito } from '../../data/sito.js';
+import { regole, offerte } from '../../data/prenotazioni.js';
 
 export function getStaticPaths() {
   return escursioni.map((e) => ({ params: { slug: e.slug }, props: { e } }));
@@ -21,12 +22,14 @@ const altre = escursioni.filter((x) => x.slug !== e.slug);
 const toni = ['acqua', 'rosa', 'acqua', 'sabbia', 'acqua'] as const;
 
 const faqPerEscursione: Record<string, string[]> = {
-  'tour-7-isole': ['maestrale', 'pranzo', 'spiaggia-rosa', 'bambini', 'pagare', 'animali'],
-  'corsica-lavezzi-bonifacio': ['maestrale', 'bambini', 'pagare', 'animali'],
-  'tramonto-mezza-giornata': ['maestrale', 'bambini', 'pagare', 'animali'],
-  'tour-privato': ['pagare', 'maestrale', 'bambini', 'animali'],
+  'tour-7-isole': ['maestrale', 'cancellare', 'minimo', 'pranzo', 'spiaggia-rosa', 'bambini', 'pagare', 'animali'],
+  'corsica-lavezzi-bonifacio': ['maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
+  'tramonto-mezza-giornata': ['maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
+  'tour-privato': ['pagare', 'maestrale', 'cancellare', 'bambini', 'animali'],
 };
 const suRichiesta = e.prezzoAdulti === 'su richiesta';
+const prenotabile = regole.attive && Boolean(offerte[e.slug]);
+const carburanteEscluso = Boolean(offerte[e.slug]?.carburanteEscluso);
 const durata = e.ore ? `${e.ore} ore` : '';
 ---
 <Base
@@ -55,19 +58,30 @@ const durata = e.ore ? `${e.ore} ore` : '';
           </ul>
         </div>
         <aside class="box-prezzo" aria-label="Prezzo e prenotazione">
-          <p class="box-prezzo__etichetta">Prezzo a persona</p>
+          <p class="box-prezzo__etichetta">{e.prezzoGommone ? 'Gommone solo per voi' : 'Prezzo a persona'}</p>
           {suRichiesta ? (
             <p class="box-prezzo__cifra">Su richiesta</p>
           ) : (
             <p>
               <span class="box-prezzo__cifra" style="display:block">da <Dato v={e.prezzoAdulti} e="PREZZO" /> €</span>
-              {e.prezzoBambini !== null && <span class="box-prezzo__bambini">bambini <Dato v={e.prezzoBambini} e="PREZZO" /> €</span>}
+              {e.prezzoBambini !== null && <span class="box-prezzo__bambini">ridotto 4–10 anni <Dato v={e.prezzoBambini} e="PREZZO" /> € · fino a 3 anni gratis</span>}
+              {e.prezzoGommone && <span class="box-prezzo__bambini">fino a {e.postiMax} persone{carburanteEscluso ? ' · carburante escluso' : ''}</span>}
             </p>
           )}
-          <a href="#richiesta" class="btn btn--wa btn--grande btn--pieno"><Icona nome="whatsapp" />Chiedi disponibilità su WhatsApp</a>
-          <p class="box-prezzo__nota">Nessun pagamento online. Oppure chiama {contatti.telefonoVisibile
-            ? <a href={`tel:+${contatti.whatsapp}`}>{contatti.telefonoVisibile}</a>
-            : <Dato e="+39 numero" />}</p>
+          {prenotabile ? (
+            <Fragment>
+              <a href={`/prenota/?escursione=${e.slug}`} class="btn btn--wa btn--grande btn--pieno">Vedi i posti e prenota</a>
+              <a href="#richiesta" class="btn btn--bordo-chiaro btn--pieno"><Icona nome="whatsapp" />Domande? Scrivici</a>
+              <p class="box-prezzo__nota">Paghi online con carta o PayPal. Cancellazione gratuita fino a {regole.cancellazioneGratisOre} ore prima.</p>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <a href="#richiesta" class="btn btn--wa btn--grande btn--pieno"><Icona nome="whatsapp" />Chiedi disponibilità su WhatsApp</a>
+              <p class="box-prezzo__nota">Nessun pagamento online. Oppure chiama {contatti.telefonoVisibile
+                ? <a href={`tel:+${contatti.whatsapp}`}>{contatti.telefonoVisibile}</a>
+                : <Dato e="+39 numero" />}</p>
+            </Fragment>
+          )}
         </aside>
       </div>
     </div>
@@ -196,9 +210,9 @@ const durata = e.ore ? `${e.ore} ore` : '';
 
   <SezioneRichiesta
     escursione={e.slug}
-    titolo={`${e.titolo}: scegli la data`}
+    titolo={prenotabile ? 'Hai una domanda? Scrivici su WhatsApp' : `${e.titolo}: scegli la data`}
     titoloModulo={e.titolo}
-    testo="Scegli data, persone e punto d'imbarco: WhatsApp si apre con il messaggio pronto e ti rispondiamo con posti e orari."
+    testo={prenotabile ? "Per gruppi oltre 12 persone, per domani o per qualsiasi dubbio: WhatsApp si apre con il messaggio pronto e ti rispondiamo noi. Per prenotare e pagare subito usa Vedi i posti e prenota." : "Scegli data, persone e punto d'imbarco: WhatsApp si apre con il messaggio pronto e ti rispondiamo con posti e orari."}
   />
 
   <section class="sezione" aria-labelledby="altre-titolo" style="padding:96px 0">

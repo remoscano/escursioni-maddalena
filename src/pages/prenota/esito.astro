@@ -1,0 +1,108 @@
+---
+// Pagina di ritorno dal pagamento: mostra lo stato della prenotazione (letto dal server).
+import Base from '../../layouts/Base.astro';
+import { sito } from '../../data/sito.js';
+---
+<Base titolo="La tua prenotazione" descrizione="Stato della tua prenotazione con Escursioni Maddalena." nascosta senzaBarra>
+  <section class="sezione" style="padding-top:56px">
+    <div class="contenitore" style="max-width:760px">
+      <div class="esito" data-esito data-whatsapp={sito.contatti.whatsapp} data-telefono={sito.contatti.telefonoVisibile}>
+        <p class="testo-2">Carico la tua prenotazione…</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  .esito { background: var(--bianco); border: 1px solid var(--bordo); border-radius: var(--raggio-l); padding: 40px; display: flex; flex-direction: column; gap: 20px; box-shadow: var(--ombra-grande); }
+  @media (max-width: 520px) { .esito { padding: 28px 20px; } }
+  .esito h1 { font-weight: 800; font-size: clamp(32px, 4.4vw, 48px); line-height: 1.05; letter-spacing: -0.02em; }
+  .esito__codice { display: inline-flex; align-self: flex-start; background: var(--acqua); border-radius: 999px; padding: 6px 14px; font-weight: 800; letter-spacing: .06em; }
+  .esito dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 20px; font-size: 16px; }
+  .esito dt { color: var(--testo-2); }
+  .esito dd { margin: 0; font-weight: 600; }
+  .esito ul { padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.55; color: var(--testo-2); }
+  .esito__azioni { display: flex; flex-wrap: wrap; gap: 12px; }
+  .esito--ok h1 { color: var(--turchese); }
+</style>
+
+<script>
+  import { api, h, euro, segnaposto, persone } from '../../scripts/comune';
+
+  const box = document.querySelector<HTMLElement>('[data-esito]')!;
+  const q = new URLSearchParams(location.search);
+  const codice = q.get('codice') || '';
+  const t = q.get('t') || '';
+  const whatsapp = box.dataset.whatsapp || '';
+  let tentativi = 0;
+
+  const wa = (testo: string) => whatsapp ? `<a class="btn btn--bordo" href="https://wa.me/${h(whatsapp)}?text=${encodeURIComponent(testo)}">Scrivici su WhatsApp</a>` : '';
+
+  function ics(p: any) {
+    const giorno = p.data.replace(/-/g, '');
+    const [ini, fin] = String(p.orario || '').split('–').map((s: string) => s.trim().replace(':', '').padStart(4, '0'));
+    const tempo = ini && fin ? `DTSTART;TZID=Europe/Rome:${giorno}T${ini}00\r\nDTEND;TZID=Europe/Rome:${giorno}T${fin}00` : `DTSTART;VALUE=DATE:${giorno}`;
+    const testo = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Escursioni Maddalena//IT', 'BEGIN:VEVENT', `UID:${p.codice}@escursioni-maddalena`, tempo,
+      `SUMMARY:${p.escursione} (${p.codice})`, `LOCATION:Imbarco ${p.imbarco}`, `DESCRIPTION:${p.turno}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    return URL.createObjectURL(new Blob([testo], { type: 'text/calendar' }));
+  }
+
+  function riepilogo(p: any) {
+    return `<dl>
+      <dt>Escursione</dt><dd>${h(p.escursione)}</dd>
+      <dt>Data</dt><dd>${h(p.dataLeggibile)}</dd>
+      <dt>Orario</dt><dd>${h(p.turno)} · ${p.orario ? h(p.orario) : segnaposto('te lo confermiamo')}</dd>
+      <dt>Imbarco</dt><dd>${h(p.imbarco)}</dd>
+      <dt>Persone</dt><dd>${h(persone(p.adulti, p.bambini, p.neonati))}</dd>
+      <dt>Totale</dt><dd>${euro(p.totale)}</dd>
+    </dl>`;
+  }
+
+  function mostra(p: any) {
+    const riprova = `<a class="btn btn--wa" href="/prenota/?escursione=${encodeURIComponent(p.slug)}">Scegli di nuovo</a>`;
+    if (p.stato === 'confermata') {
+      const note = [
+        p.documento && "Si va in Corsica: porta un documento valido per l'espatrio per ogni persona, anche per i bambini.",
+        p.carburanteEscluso && 'Il carburante non è compreso e si paga a parte.',
+        !p.privato && p.minimo && `L'uscita parte con almeno ${p.minimo} persone: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`,
+        `Cancellazione gratuita fino a ${p.cancellazioneGratisOre} ore prima: scrivici su WhatsApp. Con mare o vento non sicuri annulliamo noi e scegli tu tra rimborso completo e nuova data.`,
+      ].filter(Boolean);
+      box.className = 'esito esito--ok';
+      box.innerHTML = `<p class="esito__codice">${h(p.codice)}</p>
+        <h1>Prenotazione confermata</h1>
+        <p>Grazie ${h(p.nome)}! Conserva questa pagina o il codice: ti servirà all'imbarco.</p>
+        ${riepilogo(p)}
+        <ul>${note.map((n) => `<li>${h(n)}</li>`).join('')}</ul>
+        <div class="esito__azioni"><a class="btn btn--wa" data-ics download="${h(p.codice)}.ics">Aggiungi al calendario</a>${wa(`Ciao! Ho la prenotazione ${p.codice}.`)}</div>`;
+      box.querySelector<HTMLAnchorElement>('[data-ics]')!.href = ics(p);
+      return;
+    }
+    if (q.get('annullato') === '1' && (p.stato === 'in_attesa' || p.stato === 'annullata')) {
+      if (p.stato === 'in_attesa') api('/api/prenotazione', { corpo: { codice, t, azione: 'rinuncia' } }).catch(() => {});
+      box.innerHTML = `<h1>Pagamento annullato</h1><p>Nessun addebito: i posti sono di nuovo disponibili.</p>${riepilogo(p)}<div class="esito__azioni">${riprova}${wa('Ciao! Avrei bisogno di aiuto con una prenotazione.')}</div>`;
+      return;
+    }
+    if (p.stato === 'in_attesa') {
+      box.innerHTML = `<h1>Aspettiamo la conferma del pagamento…</h1><p class="testo-2" aria-live="polite">Di solito bastano pochi secondi. Non chiudere la pagina.</p>${riepilogo(p)}`;
+      if (tentativi++ < 20) setTimeout(carica, 3000);
+      else box.insertAdjacentHTML('beforeend', `<p class="avviso">Il pagamento non risulta ancora arrivato. Se hai pagato, ti confermiamo noi a breve; altrimenti puoi riprovare.</p><div class="esito__azioni">${riprova}${wa(`Ciao! Ho pagato la prenotazione ${p.codice} ma non vedo la conferma.`)}</div>`);
+      return;
+    }
+    if (p.stato === 'da_verificare') {
+      box.innerHTML = `<p class="esito__codice">${h(p.codice)}</p><h1>Pagamento ricevuto</h1><p>Il tempo per pagare era scaduto e stiamo controllando i posti: ti contattiamo a breve per confermare o, se non c'è più posto, per rimborsarti.</p>${riepilogo(p)}<div class="esito__azioni">${wa(`Ciao! Ho pagato la prenotazione ${p.codice}.`)}</div>`;
+      return;
+    }
+    if (p.stato === 'scaduta') {
+      box.innerHTML = `<h1>Tempo scaduto</h1><p>Il pagamento non è stato completato in tempo: nessun addebito e i posti sono tornati disponibili.</p>${riepilogo(p)}<div class="esito__azioni">${riprova}</div>`;
+      return;
+    }
+    box.innerHTML = `<p class="esito__codice">${h(p.codice)}</p><h1>Prenotazione annullata</h1><p>Per qualsiasi domanda scrivici.</p>${riepilogo(p)}<div class="esito__azioni">${riprova}${wa(`Ciao! Ho una domanda sulla prenotazione ${p.codice}.`)}</div>`;
+  }
+
+  async function carica() {
+    if (!codice || !t) { box.innerHTML = `<h1>Prenotazione non trovata</h1><p>Il link non è completo.</p><div class="esito__azioni"><a class="btn btn--wa" href="/prenota/">Prenota</a>${wa('Ciao! Non trovo la mia prenotazione.')}</div>`; return; }
+    try { mostra(await api(`/api/prenotazione?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}`)); }
+    catch (e) { box.innerHTML = `<h1>Prenotazione non trovata</h1><p>${h((e as Error).message)}</p><div class="esito__azioni">${wa('Ciao! Non trovo la mia prenotazione.')}</div>`; }
+  }
+  carica();
+</script>

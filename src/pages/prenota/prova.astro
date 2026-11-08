@@ -1,0 +1,38 @@
+---
+// Pagamento simulato: esiste solo nell'anteprima (variabile PAGAMENTI_PROVA = 1). Sul sito pubblicato risponde "non disponibile".
+import Base from '../../layouts/Base.astro';
+---
+<Base titolo="Pagamento di prova" descrizione="Pagamento simulato per provare le prenotazioni." nascosta senzaBarra>
+  <section class="sezione" style="padding-top:56px">
+    <div class="contenitore" style="max-width:640px">
+      <div class="esito" data-prova>
+        <p class="esito__codice">Solo anteprima</p>
+        <h1>Pagamento di prova</h1>
+        <p>Qui il cliente vedrebbe la pagina di SumUp o di PayPal. Nessun addebito: scegli cosa simulare.</p>
+        <div data-dati class="testo-2">Carico…</div>
+        <div class="esito__azioni">
+          <button type="button" class="btn btn--wa btn--grande" data-esito="ok">Simula pagamento riuscito</button>
+          <button type="button" class="btn btn--bordo btn--grande" data-esito="ko">Simula pagamento annullato</button>
+        </div>
+        <p class="avviso" data-errore hidden></p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { api, h, euro } from '../../scripts/comune';
+  const q = new URLSearchParams(location.search);
+  const codice = q.get('codice') || '', t = q.get('t') || '';
+  const err = document.querySelector<HTMLElement>('[data-errore]')!;
+  api(`/api/prenotazione?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}`)
+    .then((p) => { document.querySelector('[data-dati]')!.innerHTML = `${h(p.escursione)} · ${h(p.dataLeggibile)} · <strong>${euro(p.totale)}</strong> (${h(p.codice)})`; })
+    .catch((e) => { err.textContent = e.message; err.hidden = false; });
+  document.querySelectorAll<HTMLButtonElement>('[data-esito]').forEach((b) => b.addEventListener('click', async () => {
+    b.disabled = true;
+    try {
+      await api('/api/pagamento/prova', { corpo: { codice, t, esito: b.dataset.esito } });
+      location.assign(`/prenota/esito/?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}${b.dataset.esito === 'ko' ? '&annullato=1' : ''}`);
+    } catch (e) { err.textContent = (e as Error).message; err.hidden = false; b.disabled = false; }
+  }));
+</script>

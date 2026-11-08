@@ -1,0 +1,164 @@
+---
+// Area strutture partner: accesso, vendite e guadagni, link per gli ospiti, prenotazione per conto di un ospite.
+import Base from '../../layouts/Base.astro';
+import Prenotazione from '../../components/Prenotazione.astro';
+import { sito } from '../../data/sito.js';
+import { regole } from '../../data/prenotazioni.js';
+import '../../styles/area.css';
+---
+<Base titolo="Area strutture" descrizione="Area riservata alle strutture partner di Escursioni Maddalena." nascosta senzaBarra>
+  <section class="area">
+    <div class="contenitore">
+      <div data-schermo="carico"><p class="testo-2">Un momento…</p></div>
+
+      <div data-schermo="accesso" hidden>
+        <div class="area-scheda accesso">
+          <p class="occhiello">Strutture partner</p>
+          <h1 style="font-weight:800;font-size:36px;line-height:1.1">Area strutture</h1>
+          <p class="testo-2">Per hotel, B&amp;B e case vacanza che vendono le nostre escursioni: prenota per i tuoi ospiti, dai loro il tuo link e controlla vendite e provvigioni ({regole.provvigioneStrutture}% su ogni vendita).</p>
+          <form data-modulo-accesso class="pila" style="gap:14px" novalidate>
+            <div class="campo"><label for="acc-email">Email</label><input id="acc-email" type="email" autocomplete="username" required /></div>
+            <div class="campo"><label for="acc-pw">Password</label><input id="acc-pw" type="password" autocomplete="current-password" required /></div>
+            <p class="avviso" data-errore-accesso hidden></p>
+            <button class="btn btn--wa btn--grande btn--pieno" type="submit">Entra</button>
+          </form>
+          <p class="testo-2" style="font-size:15px">Non hai ancora un accesso? {sito.contatti.telefonoVisibile ? <Fragment>Scrivici su <a href={`https://wa.me/${sito.contatti.whatsapp}?text=${encodeURIComponent('Ciao! Gestisco una struttura e vorrei diventare partner.')}`}>WhatsApp</a> o a <a href={`mailto:${sito.contatti.email}`}>{sito.contatti.email}</a>.</Fragment> : 'Contattaci.'}</p>
+        </div>
+      </div>
+
+      <div data-schermo="password" hidden>
+        <div class="area-scheda accesso">
+          <h1 style="font-weight:800;font-size:32px;line-height:1.1">Scegli la tua password</h1>
+          <p class="testo-2">Al primo accesso sostituisci la password che ti abbiamo dato con una tua (almeno 10 caratteri).</p>
+          <form data-modulo-password class="pila" style="gap:14px" novalidate>
+            <div class="campo"><label for="pw-att">Password attuale</label><input id="pw-att" type="password" autocomplete="current-password" required /></div>
+            <div class="campo"><label for="pw-nuova">Nuova password</label><input id="pw-nuova" type="password" autocomplete="new-password" minlength="10" required /></div>
+            <p class="avviso" data-errore-password hidden></p>
+            <button class="btn btn--wa btn--grande btn--pieno" type="submit">Salva la password</button>
+          </form>
+        </div>
+      </div>
+
+      <div data-schermo="area" hidden>
+        <div class="area-testa">
+          <div>
+            <p class="occhiello" data-nome-struttura></p>
+            <h1>La tua area</h1>
+          </div>
+          <div class="azioni-riga">
+            <button class="btn btn--wa" type="button" data-apri-prenota>Prenota per un ospite</button>
+            <button class="btn btn--bordo" type="button" data-esci>Esci</button>
+          </div>
+        </div>
+
+        <div class="cifre" data-numeri></div>
+
+        <div class="area-scheda" data-sezione-prenota hidden>
+          <h2>Prenotazione per un ospite</h2>
+          <p class="testo-2">Inserisci i dati dell'ospite: riceverà la conferma all'email indicata. Il pagamento si fa subito, con carta o PayPal (anche dal telefono dell'ospite).</p>
+          <Prenotazione area="struttura" />
+        </div>
+
+        <div class="area-scheda">
+          <h2>Il tuo link per gli ospiti</h2>
+          <p class="testo-2">Chi prenota da questo link compare tra le tue vendite e ti fa guadagnare il {regole.provvigioneStrutture}%. Mettilo nelle email di benvenuto, su WhatsApp o stampalo alla reception.</p>
+          <div class="copia"><input data-link readonly aria-label="Il tuo link" /><button class="btn btn--scuro" type="button" data-copia>Copia link</button></div>
+          <p class="messaggio-ok" data-copiato hidden>Link copiato.</p>
+        </div>
+
+        <div class="area-scheda">
+          <h2>Le tue vendite</h2>
+          <div class="tabella-box"><table class="tabella">
+            <thead><tr><th>Data</th><th>Escursione</th><th>Ospite</th><th class="num">Persone</th><th class="num">Totale</th><th class="num">Tua provvigione</th><th>Stato</th></tr></thead>
+            <tbody data-vendite></tbody>
+          </table></div>
+        </div>
+
+        <div class="area-scheda">
+          <h2>Pagamenti ricevuti</h2>
+          <p class="testo-2">Le provvigioni maturano a escursione fatta e vengono pagate ogni 15 giorni (dal 1 al 15 e dal 16 a fine mese).</p>
+          <div class="tabella-box"><table class="tabella">
+            <thead><tr><th>Periodo</th><th class="num">Importo</th><th>Pagato il</th></tr></thead>
+            <tbody data-liquidazioni></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { api, ErroreApi, h, euro, dataBreve } from '../../scripts/comune';
+
+  const schermi = document.querySelectorAll<HTMLElement>('[data-schermo]');
+  const mostra = (nome: string) => schermi.forEach((s) => (s.hidden = s.dataset.schermo !== nome));
+  const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+
+  async function avvio() {
+    try {
+      const u = await api('/api/accesso');
+      if (u.ruolo !== 'partner') { mostra('accesso'); $('[data-errore-accesso]').textContent = 'Sei collegato come gestione: questa è l’area delle strutture.'; $('[data-errore-accesso]').hidden = false; return; }
+      if (u.deveCambiare) { mostra('password'); return; }
+      await area();
+    } catch (e) {
+      if (e instanceof ErroreApi && e.stato === 401) mostra('accesso');
+      else { mostra('accesso'); $('[data-errore-accesso]').textContent = (e as Error).message; $('[data-errore-accesso]').hidden = false; }
+    }
+  }
+
+  async function area() {
+    const d = await api('/api/partner/riepilogo');
+    mostra('area');
+    $('[data-nome-struttura]').textContent = d.struttura.nome;
+    $<HTMLInputElement>('[data-link]').value = `${location.origin}/prenota/?p=${encodeURIComponent(d.struttura.codice)}`;
+    const t = d.totali;
+    $('[data-numeri]').innerHTML = `
+      <div class="cifra cifra--evidenza"><span>Da ricevere</span><strong>${euro(t.daRicevere)}</strong><small>provvigioni maturate non ancora pagate</small></div>
+      <div class="cifra"><span>In arrivo</span><strong>${euro(t.inArrivo)}</strong><small>escursioni ancora da fare</small></div>
+      <div class="cifra"><span>Già ricevuto</span><strong>${euro(t.liquidata)}</strong><small>totale pagato finora</small></div>
+      <div class="cifra"><span>Venduto</span><strong>${euro(t.venduto)}</strong><small>${t.prenotazioni} ${t.prenotazioni === 1 ? "prenotazione" : "prenotazioni"} · ${d.struttura.provvigione}%</small></div>`;
+    const etichette: Record<string, string> = { confermata: 'Confermata', annullata: 'Annullata', da_verificare: 'In verifica' };
+    $('[data-vendite]').innerHTML = d.prenotazioni.length ? d.prenotazioni.map((p: any) => `<tr>
+        <td>${h(dataBreve(p.data))}</td>
+        <td>${h(p.escursione)}<br><span class="testo-2">${h(p.turno)}</span></td>
+        <td>${p.nome ? h(p.nome) : '<span class="testo-2">Dal tuo link</span>'}</td>
+        <td class="num">${p.persone}</td><td class="num">${euro(p.totale)}</td><td class="num"><strong>${euro(p.provvigione)}</strong></td>
+        <td><span class="stato stato--${h(p.stato)}">${h(etichette[p.stato] || p.stato)}</span></td></tr>`).join('')
+      : '<tr><td class="vuota" colspan="7">Ancora nessuna vendita: condividi il tuo link o prenota per un ospite.</td></tr>';
+    $('[data-liquidazioni]').innerHTML = d.liquidazioni.length ? d.liquidazioni.map((l: any) => `<tr>
+        <td>${h(dataBreve(l.dal))} – ${h(dataBreve(l.al))}</td><td class="num">${euro(l.importo)}</td><td>${h(new Date(l.pagata_il).toLocaleDateString('it-IT'))}</td></tr>`).join('')
+      : '<tr><td class="vuota" colspan="3">Nessun pagamento ancora.</td></tr>';
+  }
+
+  $('[data-modulo-accesso]').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const err = $('[data-errore-accesso]');
+    err.hidden = true;
+    try {
+      const u = await api('/api/accesso', { corpo: { email: $<HTMLInputElement>('#acc-email').value, password: $<HTMLInputElement>('#acc-pw').value } });
+      $<HTMLInputElement>('#acc-pw').value = '';
+      if (u.ruolo !== 'partner') { err.textContent = 'Questo accesso è per la gestione: vai su /gestione/.'; err.hidden = false; return; }
+      if (u.deveCambiare) mostra('password'); else await area();
+    } catch (e) { err.textContent = (e as Error).message; err.hidden = false; }
+  });
+
+  $('[data-modulo-password]').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const err = $('[data-errore-password]');
+    err.hidden = true;
+    try {
+      await api('/api/accesso/password', { corpo: { attuale: $<HTMLInputElement>('#pw-att').value, nuova: $<HTMLInputElement>('#pw-nuova').value } });
+      await area();
+    } catch (e) { err.textContent = (e as Error).message; err.hidden = false; }
+  });
+
+  $('[data-esci]').addEventListener('click', async () => { await api('/api/accesso', { metodo: 'DELETE', corpo: {} }).catch(() => {}); location.reload(); });
+  $('[data-apri-prenota]').addEventListener('click', () => { const s = $('[data-sezione-prenota]'); s.hidden = false; s.scrollIntoView({ behavior: 'smooth' }); });
+  $('[data-copia]').addEventListener('click', async () => {
+    const campo = $<HTMLInputElement>('[data-link]');
+    try { await navigator.clipboard.writeText(campo.value); } catch { campo.select(); document.execCommand('copy'); }
+    $('[data-copiato]').hidden = false;
+  });
+
+  avvio();
+</script>

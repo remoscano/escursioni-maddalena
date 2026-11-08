@@ -1,4 +1,5 @@
 ---
+import { regole } from '../data/prenotazioni.js';
 import Logo from './Logo.astro';
 import Icona from './Icona.astro';
 import { menu } from '../data/menu.js';
@@ -18,7 +19,9 @@ const attivo = (href: string) =>
       ))}
     </nav>
     <div class="testata__azioni">
-      <a href="/richiesta/" class="btn btn--wa"><Icona nome="whatsapp" />Scrivici su WhatsApp</a>
+      {regole.attive
+        ? <a href="/prenota/" class="btn btn--wa">Prenota online</a>
+        : <a href="/richiesta/" class="btn btn--wa"><Icona nome="whatsapp" />Scrivici su WhatsApp</a>}
       <button type="button" class="testata__apri" aria-expanded="false" aria-controls="menu-telefono" data-apri-menu>
         <span class="sr-only">Apri il menu</span>
         <Icona nome="menu" size={22} />
@@ -31,7 +34,8 @@ const attivo = (href: string) =>
       {menu.map((v) => (
         <a href={v.href} aria-current={attivo(v.href) ? 'page' : undefined}>{v.testo}</a>
       ))}
-      <a href="/richiesta/" class="btn btn--wa btn--grande"><Icona nome="whatsapp" />Chiedi disponibilità</a>
+      {regole.attive && <a href="/prenota/" class="btn btn--wa btn--grande">Prenota online</a>}
+      <a href="/richiesta/" class={`btn btn--grande ${regole.attive ? 'btn--bordo' : 'btn--wa'}`}><Icona nome="whatsapp" />{regole.attive ? 'Scrivici su WhatsApp' : 'Chiedi disponibilità'}</a>
     </nav>
   </div>
 </header>

@@ -1,4 +1,5 @@
 ---
+import { regole } from '../data/prenotazioni.js';
 import Base from '../layouts/Base.astro';
 import Testata from '../components/Testata.astro';
 import Foto from '../components/Foto.astro';
@@ -18,7 +19,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
 ---
 <Base
   titolo="Escursioni Maddalena · Tour delle 7 isole in maxi gommone"
-  descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, Corsica, tramonto e tour privati. Imbarco a Palau o La Maddalena, prenoti su WhatsApp."
+  descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, Corsica, tramonto e tour privati. Imbarco a Palau o La Maddalena, prenoti online."
   testataScura
 >
   <section slot="hero" class="hero" aria-label="Apertura">
@@ -35,7 +36,9 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
       <h1 class="hero__titolo">Sette isole, sette soste, un giorno in maxi gommone.</h1>
       <p class="hero__testo">Dalla Spiaggia Rosa di Budelli a Cala Corsara: il giro completo dell'arcipelago, con imbarco a Palau o a La Maddalena.</p>
       <div class="hero__azioni">
-        <a href="/richiesta/?escursione=tour-7-isole" class="btn btn--wa btn--grande"><Icona nome="whatsapp" />Chiedi disponibilità su WhatsApp</a>
+        {regole.attive
+          ? <a href="/prenota/?escursione=tour-7-isole" class="btn btn--wa btn--grande">Prenota il tour delle 7 isole</a>
+          : <a href="/richiesta/?escursione=tour-7-isole" class="btn btn--wa btn--grande"><Icona nome="whatsapp" />Chiedi disponibilità su WhatsApp</a>}
         <a href="#percorso" class="btn btn--bordo-chiaro btn--grande">Guarda il percorso<Icona nome="giu" /></a>
       </div>
     </div>
@@ -75,7 +78,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
           <p class="occhiello">Escursioni</p>
           <h2 id="escursioni-titolo" class="titolo-sezione">Scegli la tua giornata in mare</h2>
         </div>
-        <p class="intestazione__lato">Quattro uscite in maxi gommone, tutte prenotabili con un messaggio WhatsApp.</p>
+        <p class="intestazione__lato">{regole.attive ? 'Quattro uscite in maxi gommone: vedi i posti liberi e prenoti online in pochi minuti.' : 'Quattro uscite in maxi gommone, tutte prenotabili con un messaggio WhatsApp.'}</p>
       </div>
       <SchedaEscursione e={tour} grande />
       <div class="griglia-schede">

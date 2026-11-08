@@ -1,0 +1,27 @@
+# Configurazione di Cloudflare Pages (sito + funzioni delle prenotazioni).
+# Le chiavi dei pagamenti NON vanno qui: si inseriscono in Cloudflare Pages → Impostazioni → Variabili e segreti.
+name = "escursioni-maddalena"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-10-01"
+
+# Sito pubblicato (ramo main): pagamenti veri, database delle prenotazioni.
+[vars]
+PAGAMENTI_PROVA = "0"
+PAYPAL_AMBIENTE = "live"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "escursioni-prenotazioni"
+database_id = "802614c7-5793-4261-bb05-7552483aaa85"
+migrations_dir = "migrations"
+
+# Anteprime (tutti gli altri rami): pagamento simulato e database di prova separato.
+[env.preview.vars]
+PAGAMENTI_PROVA = "1"
+PAYPAL_AMBIENTE = "sandbox"
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "escursioni-prenotazioni-prova"
+database_id = "69bdeae8-bae3-4a1e-b576-2ff175cc7cdc"
+migrations_dir = "migrations"

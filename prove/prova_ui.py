@@ -1,0 +1,170 @@
+import asyncio, re, sys
+from playwright.async_api import async_playwright
+B = 'http://127.0.0.1:8788'
+import os, tempfile
+OUT = os.environ.get('SCHERMATE', os.path.join(tempfile.gettempdir(), 'schermate'))
+os.makedirs(OUT, exist_ok=True)
+errori = []
+def ok(c, m):
+    print(('OK  ' if c else 'ERR ') + m)
+    if not c: raise SystemExit(1)
+
+async def larghezza(pg, w, nome):
+    sw = await pg.evaluate('document.documentElement.scrollWidth')
+    ok(sw <= w, f'{w}px {nome}: nessuno scorrimento orizzontale ({sw})')
+
+async def prenota_cliente(b, w):
+    ctx = await b.new_context(viewport={'width': w, 'height': 900})
+    pg = await ctx.new_page()
+    pg.on('console', lambda m: errori.append(f'{w} console: {m.text}') if m.type == 'error' else None)
+    pg.on('pageerror', lambda e: errori.append(f'{w} pagina: {e}'))
+    await pg.goto(f'{B}/prenota/?escursione=tour-7-isole', wait_until='networkidle')
+    await pg.wait_for_selector('.cal__giorno:not([disabled])')
+    await larghezza(pg, w, 'prenota')
+    giorno = '2027-05-20' if w > 500 else '2027-05-21'
+    await pg.click(f'[data-data="{giorno}"]')
+    await pg.wait_for_selector('[data-riepilogo]:not([hidden])')
+    testo = await pg.inner_text('[data-righe]')
+    ok('200 €' in testo, f'{w}px riepilogo: 2 adulti a maggio = 200 €')
+    await pg.click('[data-piu="bambini"]')
+    testo = await pg.inner_text('[data-righe]')
+    ok('290 €' in testo, f'{w}px aggiungo un bambino → 290 €')
+    await pg.fill('#pr-nome', 'Giulia Bianchi'); await pg.fill('#pr-email', 'giulia@example.com'); await pg.fill('#pr-tel', '+39 340 1234567')
+    await pg.screenshot(path=f'{OUT}/prenota-{w}.png', full_page=True)
+    bott = pg.locator('[data-paga="prova"]')
+    await bott.click()
+    ok(await pg.locator('[data-errore]').is_visible(), f'{w}px senza spunta sulle condizioni compare l\'avviso')
+    await pg.check('[data-accetto]')
+    await pg.click('[data-paga="prova"]')
+    await pg.wait_for_url(re.compile(r'/prenota/prova/'))
+    await pg.wait_for_selector('[data-dati] strong')
+    await larghezza(pg, w, 'pagamento di prova')
+    await pg.click('[data-esito="ok"]')
+    await pg.wait_for_url(re.compile(r'/prenota/esito/'))
+    await pg.wait_for_selector('text=Prenotazione confermata')
+    await larghezza(pg, w, 'esito')
+    await pg.screenshot(path=f'{OUT}/esito-{w}.png', full_page=True)
+    ok(await pg.locator('[data-ics]').count() == 1, f'{w}px conferma con "Aggiungi al calendario"')
+    await ctx.close()
+
+async def tramonto(b):
+    ctx = await b.new_context(viewport={'width': 390, 'height': 900}); pg = await ctx.new_page()
+    await pg.goto(f'{B}/prenota/', wait_until='networkidle')
+    await pg.click('[data-slug="tramonto-mezza-giornata"]')
+    await pg.wait_for_selector('.cal__giorno:not([disabled])')
+    await pg.click('[data-mese="1"]'); await pg.wait_for_selector('[data-data="2027-06-12"]')
+    await pg.click('[data-data="2027-06-12"]')
+    await pg.wait_for_selector('[data-turno="tramonto"]')
+    ok(await pg.locator('[data-riepilogo]').is_hidden(), 'più orari: il riepilogo aspetta la scelta')
+    await pg.click('[data-turno="tramonto"]')
+    t = await pg.inner_text('[data-righe]'); ok('92 €' in t and 'Tramonto' in t, 'tramonto 12 giugno, 2 adulti = 92 €')
+    await pg.click('[data-turno="mattina"]')
+    t = await pg.inner_text('[data-righe]'); ok('130 €' in t, 'mezza giornata mattina, 2 adulti = 130 €')
+    await pg.screenshot(path=f'{OUT}/prenota-turni-390.png', full_page=True)
+    await ctx.close()
+
+async def privato(b):
+    ctx = await b.new_context(viewport={'width': 1440, 'height': 900}); pg = await ctx.new_page()
+    await pg.goto(f'{B}/prenota/?escursione=tour-privato', wait_until='networkidle')
+    await pg.wait_for_selector('.cal__giorno:not([disabled])')
+    for _ in range(3): await pg.click('[data-mese="1"]')
+    await pg.click('[data-data="2027-08-10"]'); await pg.click('[data-turno="giornata"]')
+    t = await pg.inner_text('[data-righe]'); ok('1620 €' in t and 'carburante' in t.lower(), 'privato giornata 10 agosto = 1620 €, carburante escluso')
+    for _ in range(6):
+        if await pg.locator('[data-piu="adulti"]').is_disabled(): break
+        await pg.click('[data-piu="adulti"]')
+    n = await pg.inner_text('[data-num="adulti"]'); dis = await pg.locator('[data-piu="adulti"]').is_disabled()
+    ok(n == '6' and dis, f'privato: massimo 6 persone (adulti fermi a {n}, + disattivato)')
+    await ctx.close()
+
+async def strutture_e_gestione(b):
+    ctx = await b.new_context(viewport={'width': 1440, 'height': 900}); pg = await ctx.new_page()
+    pg.on('dialog', lambda d: asyncio.ensure_future(d.accept('Prova annullamento')))
+    pg.on('pageerror', lambda e: errori.append(f'gestione: {e}'))
+    await pg.goto(f'{B}/gestione/', wait_until='networkidle')
+    await pg.fill('#acc-email', 'gestione@prova.it'); await pg.fill('#acc-pw', 'prova-gestione-123'); await pg.click('[data-modulo-accesso] button')
+    await pg.wait_for_selector('[data-schermo="area"]:not([hidden])')
+    await pg.fill('#g-data', '2027-05-20'); await pg.dispatch_event('#g-data', 'change')
+    await pg.wait_for_selector('text=Giulia Bianchi')
+    ok(True, 'gestione: la prenotazione del cliente compare nella giornata del 20 maggio')
+    await pg.screenshot(path=f'{OUT}/gestione-giorno-1440.png', full_page=True)
+    # struttura
+    await pg.click('[data-scheda="strutture"]')
+    await pg.fill('#s-nome', 'B&B Il Faro'); await pg.fill('#s-email', 'faro@prova.it'); await pg.fill('#s-ref', 'Luca')
+    await pg.click('[data-modulo-struttura] button[type="submit"]')
+    await pg.wait_for_selector('[data-esito-struttura] textarea')
+    msg = await pg.input_value('[data-esito-struttura] textarea')
+    pw = re.search(r'Password provvisoria: (\S+)', msg).group(1)
+    codice = re.search(r'\?p=(\S+)', msg).group(1)
+    ok(bool(pw and codice), f'struttura creata dalla gestione (codice {codice})')
+    # inserimento da piattaforma
+    await pg.click('[data-scheda="nuova"]')
+    await pg.select_option('#n-canale', 'GetYourGuide'); await pg.fill('#n-rif', 'GYG-998')
+    await pg.fill('#n-data', '2027-05-20'); await pg.dispatch_event('#n-data', 'change')
+    await pg.wait_for_function("document.querySelector('[data-disponibilita]').textContent.includes('mancano 3')")
+    disp = await pg.inner_text('[data-disponibilita]'); ok('Posti liberi: 12' in disp and 'mancano 3' in disp, f'gestione vede i posti del 20 maggio: {disp}')
+    await pg.fill('#n-nome', 'Turista GYG'); await pg.fill('#n-adulti', '3')
+    await pg.click('[data-modulo-nuova] button[type="submit"]')
+    await pg.wait_for_selector('[data-esito-nuova]:not([hidden])')
+    ok('Inserita' in await pg.inner_text('[data-esito-nuova]'), 'prenotazione GetYourGuide inserita a mano')
+    await pg.screenshot(path=f'{OUT}/gestione-nuova-1440.png', full_page=True)
+    # elenco e provvigioni
+    await pg.click('[data-scheda="elenco"]'); await pg.wait_for_selector('text=Turista GYG')
+    await pg.click('[data-scheda="provvigioni"]'); await pg.wait_for_selector('[data-provvigioni] tr')
+    ok(True, 'elenco prenotazioni e provvigioni si aprono')
+    await ctx.close()
+
+    # area struttura (telefono)
+    ctx = await b.new_context(viewport={'width': 390, 'height': 900}); pg = await ctx.new_page()
+    pg.on('pageerror', lambda e: errori.append(f'partner: {e}'))
+    await pg.goto(f'{B}/partner/', wait_until='networkidle')
+    await larghezza(pg, 390, 'accesso strutture')
+    await pg.fill('#acc-email', 'faro@prova.it'); await pg.fill('#acc-pw', pw); await pg.click('[data-modulo-accesso] button')
+    await pg.wait_for_selector('[data-schermo="password"]:not([hidden])')
+    await pg.fill('#pw-att', pw); await pg.fill('#pw-nuova', 'faro-password-sicura'); await pg.click('[data-modulo-password] button')
+    await pg.wait_for_selector('[data-schermo="area"]:not([hidden])')
+    link = await pg.input_value('[data-link]'); ok(link.endswith(f'?p={codice}'), f'link per gli ospiti: {link}')
+    await pg.click('[data-apri-prenota]')
+    await pg.click('[data-sezione-prenota] [data-slug="tour-7-isole"]')
+    await pg.wait_for_selector('[data-sezione-prenota] .cal__giorno:not([disabled])')
+    await pg.click('[data-sezione-prenota] [data-data="2027-05-27"]')
+    await pg.fill('[data-sezione-prenota] #pr-nome', 'Ospite del Faro'); await pg.fill('[data-sezione-prenota] #pr-email', 'ospite@example.com'); await pg.fill('[data-sezione-prenota] #pr-tel', '3471234567')
+    await pg.check('[data-sezione-prenota] [data-accetto]'); await pg.click('[data-sezione-prenota] [data-paga="prova"]')
+    await pg.wait_for_url(re.compile(r'/prenota/prova/')); await pg.wait_for_selector('[data-dati] strong'); await pg.click('[data-esito="ok"]')
+    await pg.wait_for_selector('text=Prenotazione confermata')
+    await pg.goto(f'{B}/partner/', wait_until='networkidle'); await pg.wait_for_selector('[data-vendite] tr td')
+    t = await pg.inner_text('[data-numeri]'); ok('30 €' in t, f'area struttura: provvigione in arrivo 30 € (15% di 200)')
+    await larghezza(pg, 390, 'area strutture')
+    await pg.screenshot(path=f'{OUT}/partner-390.png', full_page=True)
+    await ctx.close()
+
+    # ospite dal link della struttura
+    ctx = await b.new_context(viewport={'width': 390, 'height': 900}); pg = await ctx.new_page()
+    await pg.goto(f'{B}/prenota/?p={codice}&escursione=tour-7-isole', wait_until='networkidle')
+    await pg.wait_for_selector('[data-partner]:not([hidden])')
+    ok('B&B Il Faro' in await pg.inner_text('[data-partner]'), 'dal link: "Stai prenotando tramite B&B Il Faro"')
+    await ctx.close()
+
+async def pagine(b):
+    for w in (1440, 390):
+        ctx = await b.new_context(viewport={'width': w, 'height': 900}); pg = await ctx.new_page()
+        for path in ['/', '/escursioni/tour-7-isole/', '/escursioni/tour-privato/', '/escursioni/', '/condizioni/', '/domande-frequenti/']:
+            await pg.goto(B + path, wait_until='networkidle')
+            await larghezza(pg, w, path)
+            nome = path.strip('/').replace('/', '_') or 'home'
+            await pg.screenshot(path=f'{OUT}/{nome}-{w}.png', full_page=(path != '/'))
+        await ctx.close()
+
+async def main():
+    async with async_playwright() as p:
+        chrome = {'executable_path': '/usr/bin/google-chrome'} if os.path.exists('/usr/bin/google-chrome') else {}
+        b = await p.chromium.launch(args=['--no-sandbox'], **chrome)
+        await prenota_cliente(b, 1440)
+        await prenota_cliente(b, 390)
+        await tramonto(b)
+        await privato(b)
+        await strutture_e_gestione(b)
+        await pagine(b)
+        await b.close()
+    print('Errori JavaScript:', errori or 'nessuno')
+asyncio.run(main())

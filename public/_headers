@@ -1,0 +1,21 @@
+# Intestazioni di sicurezza (Cloudflare Pages)
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+
+/gestione/*
+  X-Robots-Tag: noindex, nofollow
+  X-Frame-Options: DENY
+  Cache-Control: no-store
+
+/partner/*
+  X-Robots-Tag: noindex, nofollow
+  X-Frame-Options: DENY
+
+/prenota/esito/*
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+
+/prenota/prova/*
+  X-Robots-Tag: noindex, nofollow

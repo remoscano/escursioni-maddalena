@@ -6,14 +6,17 @@ import Testata from '../components/Testata.astro';
 import Piede from '../components/Piede.astro';
 import Icona from '../components/Icona.astro';
 import { sito } from '../data/sito.js';
+import { regole } from '../data/prenotazioni.js';
 
 interface Props {
   titolo: string;          // titolo della pagina (senza il nome del sito)
   descrizione: string;     // 140–160 caratteri, per Google
   testataScura?: boolean;  // true se la testata è dentro un'immagine scura (home)
   senzaTestata?: boolean;
+  nascosta?: boolean;      // true = pagina da non indicizzare (esito pagamento, aree riservate)
+  senzaBarra?: boolean;    // true = niente barra in basso su telefono
 }
-const { titolo, descrizione, testataScura = false, senzaTestata = false } = Astro.props;
+const { titolo, descrizione, testataScura = false, senzaTestata = false, nascosta = false, senzaBarra = false } = Astro.props;
 const titoloCompleto = Astro.url.pathname === '/' ? titolo : `${titolo} · ${sito.nome}`;
 const canonico = new URL(Astro.url.pathname, sito.url).href;
 const telefono = sito.contatti.whatsapp ? `tel:+${sito.contatti.whatsapp}` : '/contatti/';
@@ -26,7 +29,7 @@ const telefono = sito.contatti.whatsapp ? `tel:+${sito.contatti.whatsapp}` : '/c
   <title>{titoloCompleto}</title>
   <meta name="description" content={descrizione} />
   <link rel="canonical" href={canonico} />
-  {sito.inCostruzione && <meta name="robots" content="noindex, nofollow" />}
+  {(sito.inCostruzione || nascosta) && <meta name="robots" content="noindex, nofollow" />}
   <meta name="theme-color" content="#0A3A51" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <meta property="og:type" content="website" />
@@ -45,9 +48,17 @@ const telefono = sito.contatti.whatsapp ? `tel:+${sito.contatti.whatsapp}` : '/c
     <slot />
   </main>
   <Piede />
-  <div class="barra-wa">
-    <a href="/richiesta/" class="btn btn--wa"><Icona nome="whatsapp" />Chiedi disponibilità</a>
-    <a href={telefono} class="btn btn--bordo" aria-label="Chiama"><Icona nome="telefono" /></a>
-  </div>
+  {!senzaBarra && (regole.attive ? (
+    <div class="barra-wa">
+      <a href="/prenota/" class="btn btn--wa">Prenota online</a>
+      <a href="/richiesta/" class="btn btn--bordo" aria-label="Scrivici su WhatsApp"><Icona nome="whatsapp" /></a>
+      <a href={telefono} class="btn btn--bordo" aria-label="Chiama"><Icona nome="telefono" /></a>
+    </div>
+  ) : (
+    <div class="barra-wa">
+      <a href="/richiesta/" class="btn btn--wa"><Icona nome="whatsapp" />Chiedi disponibilità</a>
+      <a href={telefono} class="btn btn--bordo" aria-label="Chiama"><Icona nome="telefono" /></a>
+    </div>
+  ))}
 </body>
 </html>
