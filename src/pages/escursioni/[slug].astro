@@ -181,13 +181,13 @@ const durata = e.ore ? `${e.ore} ore` : '';
         </div>
         <div class="box">
           <h3>Imbarco a Palau</h3>
-          <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.palau.ritrovo} e="ora" />.</p>
+          <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo} minuti prima della partenza (alle <Dato v={imbarchi.palau.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
           <p>Comodo se dormi in Gallura. Parcheggio: <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" />.</p>
         </div>
         <div class="box">
           <h3>Imbarco a La Maddalena</h3>
-          <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" />.</p>
-          <p>Comodo se dormi sull'isola: il gommone passa a prenderti dopo Palau.</p>
+          <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo} minuti prima della partenza (alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
+          <p>Comodo se dormi sull'isola.</p>
         </div>
         <div class="box">
           <h3>Regole del Parco</h3>

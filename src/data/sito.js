@@ -28,7 +28,6 @@ export const sito = {
     partitaIva: '',
     indirizzo: '', // sede: via, numero, CAP, comune
     rea: '', // numero di iscrizione al Registro delle imprese / REA (es. 'SS-123456')
-    autorizzazioni: '', // estremi di licenze o autorizzazioni per le escursioni (es. Ente Parco, Capitaneria), se previste
   },
 
   recensioniGoogle: '', // link alla scheda Google con le recensioni
@@ -37,14 +36,14 @@ export const sito = {
     palau: {
       nome: 'Palau',
       molo: '', // es. 'Porto turistico, banchina ...'
-      ritrovo: '', // es. '9:00'
+      ritrovo: '9:15', // uscite del mattino; in generale 15 minuti prima della partenza (regole.anticipoRitrovo)
       parcheggio: '',
       mappa: '', // link Google Maps del punto di ritrovo
     },
     maddalena: {
       nome: 'La Maddalena',
       molo: '',
-      ritrovo: '',
+      ritrovo: '9:15',
       mappa: '',
     },
   },

@@ -5,6 +5,7 @@ import Icona from '../components/Icona.astro';
 import Dato from '../components/Dato.astro';
 import SezioneRichiesta from '../components/SezioneRichiesta.astro';
 import { sito } from '../data/sito.js';
+import { regole } from '../data/prenotazioni.js';
 const { imbarchi } = sito;
 ---
 <Base
@@ -34,7 +35,7 @@ const { imbarchi } = sito;
           <span class="box__icona"><Icona nome="ancora" size={24} tratto={1.8} /></span>
           <h3>Palau</h3>
           <p><strong>Molo:</strong> <Dato v={imbarchi.palau.molo} e="molo e indirizzo" /></p>
-          <p><strong>Ritrovo:</strong> <Dato v={imbarchi.palau.ritrovo} e="ora" />, qualche minuto prima della partenza.</p>
+          <p><strong>Ritrovo:</strong> {regole.anticipoRitrovo} minuti prima della partenza (alle <Dato v={imbarchi.palau.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
           <p><strong>Parcheggio:</strong> <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" /></p>
           <p>Comodo se dormi in Gallura: Porto Cervo, Baja Sardinia, Cannigione, Santa Teresa.</p>
           {imbarchi.palau.mappa
@@ -45,8 +46,8 @@ const { imbarchi } = sito;
           <span class="box__icona"><Icona nome="ancora" size={24} tratto={1.8} /></span>
           <h3>La Maddalena</h3>
           <p><strong>Molo:</strong> <Dato v={imbarchi.maddalena.molo} e="molo e indirizzo" /></p>
-          <p><strong>Ritrovo:</strong> <Dato v={imbarchi.maddalena.ritrovo} e="ora" /></p>
-          <p>Comodo se dormi sull'isola: il gommone passa a prenderti dopo l'imbarco di Palau.</p>
+          <p><strong>Ritrovo:</strong> {regole.anticipoRitrovo} minuti prima della partenza (alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
+          <p>Comodo se dormi sull'isola.</p>
           <p>Da Palau a La Maddalena si arriva con i traghetti di linea, che partono di continuo e attraversano in pochi minuti.</p>
           {imbarchi.maddalena.mappa
             ? <a href={imbarchi.maddalena.mappa} class="link-freccia" rel="noopener">Apri in Google Maps<Icona nome="destra" size={18} /></a>

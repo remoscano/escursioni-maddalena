@@ -31,7 +31,6 @@ export const condizioni = [
       ['Le escursioni sono organizzate da ', v(azienda.ragioneSociale, 'Ragione sociale'), ', con sede in ', v(azienda.indirizzo, 'indirizzo'),
         ', P. IVA ', v(azienda.partitaIva, 'numero'), ', iscrizione REA ', v(azienda.rea, 'numero'), '.'],
       ['Contatti: WhatsApp e telefono ', v(contatti.telefonoVisibile, 'numero'), ', email ', v(contatti.email, 'email'), '.'],
-      ['Autorizzazioni: ', v(azienda.autorizzazioni, 'estremi delle autorizzazioni per le escursioni, se previste'), '.'],
     ],
   },
   {
@@ -96,7 +95,7 @@ export const condizioni = [
   {
     titolo: 'A bordo',
     punti: [
-      ["Presentati all'imbarco puntuale: l'uscita non può aspettare chi arriva in ritardo. Arriva al molo ", { manca: 'quanti minuti prima' }, ' della partenza.'],
+      [`Il ritrovo al molo, a Palau e a La Maddalena, è ${regole.anticipoRitrovo} minuti prima della partenza (alle 9:15 per le uscite delle 9:30). L'uscita non può aspettare chi arriva in ritardo.`],
       ["Segui le indicazioni dello skipper, che è responsabile della sicurezza a bordo."],
       ['I minori partecipano accompagnati da un adulto.'],
       ['Animali: ', v(sito.regole.animali, 'la vostra regola sugli animali a bordo'), '.'],

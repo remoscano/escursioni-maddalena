@@ -1,6 +1,6 @@
 // Operazioni sulle prenotazioni condivise da più API: lettura, conferma dopo il pagamento, email.
 
-import { offerte, turnoDi, regole, imbarchiPrenotazione, gommoni, testoCarburante } from '../../src/data/prenotazioni.js';
+import { offerte, turnoDi, regole, imbarchiPrenotazione, gommoni, testoCarburante, testoRitrovo } from '../../src/data/prenotazioni.js';
 import { escursioni } from '../../src/data/escursioni.js';
 import { sito } from '../../src/data/sito.js';
 import { condizioniInTesto } from '../../src/data/condizioni.js';
@@ -123,7 +123,8 @@ export async function inviaEmailConferma(env, p, origine) {
     `${v.escursione} · ${v.turno}${v.privato ? ' · gommone solo per voi' : ''}`,
     `Data: ${v.dataLeggibile}`,
     `Imbarco: ${v.imbarco}`,
-    v.orario ? `Orario: ${v.orario}${p.imbarco === 'maddalena' ? " (partenza da Palau: l'orario di imbarco a La Maddalena te lo confermiamo noi)" : ''}` : 'Orario: te lo confermiamo noi',
+    v.orario ? `Orario: ${v.orario}` : 'Orario: te lo confermiamo noi',
+    testoRitrovo(v.orario) || null,
     `Persone: ${persone}`,
     `Totale pagato: ${euroDaCent(p.pagato || p.totale)} € (IVA inclusa)`,
     v.carburanteEscluso ? testoCarburante() : null,

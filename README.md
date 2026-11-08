@@ -7,7 +7,7 @@ Viene pubblicato su Cloudflare Pages a ogni modifica salvata su GitHub.
 
 | Cosa | File |
 |---|---|
-| Numero WhatsApp, telefono, email, dati dell'azienda (ragione sociale, P. IVA, REA, autorizzazioni), moli, orari di ritrovo, dati del gommone e dello skipper, regole (maltempo, pagamento, bambini, animali, ticket del Parco) | `src/data/sito.js` |
+| Numero WhatsApp, telefono, email, dati dell'azienda (ragione sociale, P. IVA, REA), moli, orari di ritrovo, dati del gommone e dello skipper, regole (maltempo, pagamento, bambini, animali, ticket del Parco) | `src/data/sito.js` |
 | Le 4 escursioni: titoli, prezzi, orari, programma, incluso/non incluso | `src/data/escursioni.js` |
 | Domande frequenti | `src/data/faq.js` |
 | Voci del menu | `src/data/menu.js` |

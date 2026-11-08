@@ -19,6 +19,8 @@ export const regole = {
   stagione: { dal: '2027-05-01', al: '2027-10-31' },
   // Online si prenota fino alle 20 del giorno prima; per l'ultimo minuto si scrive su WhatsApp.
   chiusuraOnline: { giorniPrima: 1, ora: '20:00' },
+  // Ritrovo al molo: quanti minuti prima della partenza, a Palau e a La Maddalena (Remo, 8 novembre 2026).
+  anticipoRitrovo: 15,
   // Per quanti minuti i posti restano tenuti da parte mentre il cliente paga.
   minutiPerPagare: 30,
   // Rimborso completo se il cliente annulla almeno 48 ore prima.
@@ -37,6 +39,18 @@ export const regole = {
 export const CARBURANTE_MANCA = 'come si calcola e quando si paga';
 export const testoCarburante = (segnaposto = (e) => `[${e}]`) =>
   `Il carburante non è compreso e si paga a parte: ${regole.carburante || segnaposto(CARBURANTE_MANCA)}.`;
+
+// Ora di ritrovo al molo per un turno ('9:30 – 13:30' → '9:15').
+export function oraRitrovo(orario) {
+  const m = /^(\d{1,2}):(\d{2})/.exec(String(orario || '').trim());
+  if (!m) return '';
+  const minuti = Number(m[1]) * 60 + Number(m[2]) - regole.anticipoRitrovo;
+  return `${Math.floor(minuti / 60)}:${String(minuti % 60).padStart(2, '0')}`;
+}
+export const testoRitrovo = (orario) => {
+  const ora = oraRitrovo(orario);
+  return ora ? `Ritrovo al molo alle ${ora}, ${regole.anticipoRitrovo} minuti prima della partenza: l'uscita non può aspettare chi arriva in ritardo.` : '';
+};
 
 // Frase unica su chiusura online e gruppi grandi (pagina Prenota, FAQ, condizioni, pagine escursione).
 export const testoChiusuraOnline = `Online puoi prenotare fino alle ${regole.chiusuraOnline.ora} del giorno prima della partenza.`;

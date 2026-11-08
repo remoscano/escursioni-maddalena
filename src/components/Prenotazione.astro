@@ -180,7 +180,7 @@ const perOspite = area === 'struttura';
 </style>
 
 <script>
-  import { offerte, regole, calcolaPrenotazione, rigaPrezzo, imbarchiPrenotazione, testoCarburante } from '../data/prenotazioni.js';
+  import { offerte, regole, calcolaPrenotazione, rigaPrezzo, imbarchiPrenotazione, testoCarburante, testoRitrovo } from '../data/prenotazioni.js';
   import { api, ErroreApi, h, euro, dataLunga, oggiRoma, segnaposto, persone as testoPersone } from '../scripts/comune';
 
   const NOMI_MESI = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric', timeZone: 'UTC' });
@@ -376,7 +376,7 @@ const perOspite = area === 'struttura';
       // Note in HTML: i testi passano da h(), il segnaposto del carburante è già HTML.
       const info: string[] = [];
       if (offerta.tipo === 'gruppo') info.push(h(`L'uscita parte con almeno ${offerta.minimo} persone paganti: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`));
-      if (imbarco() === 'maddalena') info.push(h("L'orario indicato è la partenza da Palau: l'orario esatto di imbarco a La Maddalena te lo confermiamo noi."));
+      if (testoRitrovo(turno.orario)) info.push(h(testoRitrovo(turno.orario)));
       if (calcolo.carburanteEscluso) info.push(regole.carburante ? h(testoCarburante()) : testoCarburante(segnaposto));
       if (offerta.documento || turno.documento) info.push(h("Si va in Corsica: serve un documento valido per l'espatrio per ogni persona, anche per i bambini."));
       info.push(h(`Cancellazione gratuita fino a ${regole.cancellazioneGratisOre} ore prima. Con mare o vento non sicuri annulliamo noi: rimborso completo o nuova data, scegli tu.`));

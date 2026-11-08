@@ -28,7 +28,7 @@ import { sito } from '../../data/sito.js';
 
 <script>
   import { api, h, euro, segnaposto, persone } from '../../scripts/comune';
-  import { regole, testoCarburante } from '../../data/prenotazioni.js';
+  import { regole, testoCarburante, testoRitrovo } from '../../data/prenotazioni.js';
 
   const box = document.querySelector<HTMLElement>('[data-esito]')!;
   const q = new URLSearchParams(location.search);
@@ -96,7 +96,7 @@ import { sito } from '../../data/sito.js';
       // Note in HTML: i testi sono protetti con h(), il segnaposto del carburante è già HTML.
       const note = [
         p.documento && h("Si va in Corsica: porta un documento valido per l'espatrio per ogni persona, anche per i bambini."),
-        p.imbarco === 'La Maddalena' && h("L'orario indicato è la partenza da Palau: l'orario esatto di imbarco a La Maddalena te lo confermiamo noi su WhatsApp."),
+        testoRitrovo(p.orario) && h(testoRitrovo(p.orario)),
         p.carburanteEscluso && (regole.carburante ? h(testoCarburante()) : testoCarburante(segnaposto)),
         !p.privato && p.minimo && h(`L'uscita parte con almeno ${p.minimo} persone paganti: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`),
         h(`Cancellazione gratuita fino a ${p.cancellazioneGratisOre} ore prima: scrivici su WhatsApp. Con mare o vento non sicuri annulliamo noi e scegli tu tra rimborso completo e nuova data.`),

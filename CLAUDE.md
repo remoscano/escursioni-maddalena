@@ -75,15 +75,14 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Prezzi decisi da Remo (8 novembre 2026): tramonto come la mezza giornata, Corsica solo in esclusiva con i prezzi della giornata intera, esclusiva possibile su tutti e tre i gommoni
 - [x] Condizioni, privacy e cookie controllati sulle norme e su quello che fa il sito (8 novembre 2026); migrazione `0002_impronta_ip.sql` applicata a entrambi i database
 - [x] Carburante delle esclusive: a consumo, si paga a bordo a fine uscita. Ticket del Parco incluso nel prezzo (Remo, 8 novembre 2026)
+- [x] Confermati da Remo (8 novembre 2026): Corsica 9:30 – 17:30 con Lavezzi, isola di Cavallo e Bonifacio; le due regole aggiunte alle condizioni (guasto = regola del maltempo; altre piattaforme = loro condizioni); nessuna autorizzazione da indicare; ritrovo 15 minuti prima della partenza a Palau e a La Maddalena (9:15 per le uscite delle 9:30)
 
 ### Da decidere o da avere dal cliente (Remo)
-- [ ] Orari della Corsica: ora 9:30 – 17:30, come le altre giornate intere
-- [ ] Le due regole aggiunte nelle condizioni: se annulliamo noi per un guasto vale la regola del maltempo; chi prenota da altre piattaforme segue le loro condizioni
-- [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA, autorizzazioni (Parco, Capitaneria)
-- [ ] Imbarchi: moli, orari di ritrovo, quanti minuti prima presentarsi, orario di imbarco a La Maddalena
+- [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA
+- [ ] Imbarchi: moli con indirizzo, parcheggio a Palau, link Google Maps dei punti di ritrovo
 - [ ] Regole: animali a bordo, età minima e giubbotti per i bambini, cosa è incluso (maschere, acqua)
 - [ ] Gommoni (modello, lunghezza, motori, dotazioni) e skipper (nome, esperienza, lingue)
-- [ ] Testi delle escursioni Corsica, Tramonto e Tour privato (soste, durata della traversata, pranzo in Corsica)
+- [ ] Testi delle escursioni Corsica (traversata, Lavezzi, Cavallo, Bonifacio, pranzo), Tramonto e Tour privato
 - [ ] Foto (le note sui segnaposto indicano gli scatti) ed eventuale logo
 - [ ] Recensioni vere da Google o TripAdvisor e link alla scheda Google
 
