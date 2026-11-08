@@ -2,12 +2,15 @@
 import Foto from './Foto.astro';
 import Dato from './Dato.astro';
 import Icona from './Icona.astro';
+import { soloEsclusiva } from '../data/escursioni.js';
 
 interface Props { e: any; grande?: boolean }
 const { e, grande = false } = Astro.props;
 const href = `/escursioni/${e.slug}/`;
 const richiesta = `/richiesta/?escursione=${e.slug}`;
-const tono = e.slug === 'tramonto-mezza-giornata' ? 'rosa' : 'acqua';
+const tono = e.slug === 'aperitivo-tramonto' ? 'rosa' : 'acqua';
+const esclusiva = soloEsclusiva(e);
+const prezzoEsclusiva = e.prezzoEsclusiva === 'su richiesta' ? 'prezzo su richiesta' : null;
 ---
 {grande ? (
   <article class="scheda-grande">
@@ -20,6 +23,7 @@ const tono = e.slug === 'tramonto-mezza-giornata' ? 'rosa' : 'acqua';
         Da <Dato v={e.prezzoAdulti} e="PREZZO" /> € a persona
         {e.prezzoBambini !== null && <small>· bambini <Dato v={e.prezzoBambini} e="PREZZO" /> €</small>}
       </p>
+      <p class="testo-2" style="font-size:16px">Da {e.postiMin} a {e.postiMax} persone, oppure il gommone in esclusiva.</p>
       <div class="azioni">
         <a href={richiesta} class="btn btn--wa"><Icona nome="whatsapp" />Chiedi su WhatsApp</a>
         <a href={href} class="btn btn--bordo">Scopri il tour<Icona nome="destra" /></a>
@@ -34,9 +38,9 @@ const tono = e.slug === 'tramonto-mezza-giornata' ? 'rosa' : 'acqua';
       <h3><a href={href}>{e.titolo}</a></h3>
       <p>{e.breve}</p>
       <p class="scheda__info">
-        {e.slug === 'tour-privato'
-          ? <Fragment>Fino a <Dato v={e.postiMax} e="N" /> persone · prezzo su richiesta</Fragment>
-          : <Fragment><Dato v={e.orari} e="orari" /> · da <Dato v={e.prezzoAdulti} e="PREZZO" /> €</Fragment>}
+        {esclusiva
+          ? <Fragment>Solo in esclusiva · {prezzoEsclusiva ?? <Fragment>da <Dato v={e.prezzoEsclusiva} e="PREZZO" /> €</Fragment>}</Fragment>
+          : <Fragment><Dato v={e.orari} e="orari" /> · da <Dato v={e.prezzoAdulti} e="PREZZO" /> € a persona</Fragment>}
       </p>
       <span class="link-freccia" aria-hidden="true">Scopri l'escursione<Icona nome="destra" size={18} /></span>
     </div>

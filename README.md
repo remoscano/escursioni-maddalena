@@ -7,8 +7,9 @@ Viene pubblicato su Cloudflare Pages a ogni modifica salvata su GitHub.
 
 | Cosa | File |
 |---|---|
-| Numero WhatsApp, telefono, email, P. IVA, moli, orari di ritrovo, dati del gommone e dello skipper, regole (maltempo, pagamento, bambini, animali) | `src/data/sito.js` |
-| Le 4 escursioni: titoli, prezzi, orari, programma, incluso/non incluso | `src/data/escursioni.js` |
+| Numero WhatsApp, telefono, email, P. IVA, moli, orari di ritrovo, regole (maltempo, pagamento, bambini, animali, minimo persone) | `src/data/sito.js` |
+| I 3 gommoni: nome, capienza, formule (posto singolo / esclusiva), escursioni che fanno, dati tecnici, skipper | `src/data/gommoni.js` |
+| Le 5 escursioni: titoli, prezzi (posto singolo ed esclusiva), orari, programma, incluso/non incluso | `src/data/escursioni.js` |
 | Domande frequenti | `src/data/faq.js` |
 | Voci del menu | `src/data/menu.js` |
 | Colori, caratteri, spaziature | `src/styles/global.css` |
@@ -20,9 +21,11 @@ Appena si compila il campo, il segnaposto sparisce in tutte le pagine.
 
 - `/` home
 - `/escursioni/` catalogo
-- `/escursioni/tour-7-isole/`, `/escursioni/corsica-lavezzi-bonifacio/`, `/escursioni/tramonto-mezza-giornata/`, `/escursioni/tour-privato/` — tutte generate dallo stesso modello (`src/pages/escursioni/[slug].astro`)
-- `/richiesta/` modulo WhatsApp (accetta `?escursione=<slug>` per preselezionare l'escursione)
-- `/gommone/`, `/info-utili/`, `/domande-frequenti/`, `/contatti/`, `/privacy/`, `/cookie/`
+- `/escursioni/tour-7-isole/`, `/escursioni/mezza-giornata/`, `/escursioni/aperitivo-tramonto/`, `/escursioni/corsica-lavezzi-bonifacio/`, `/escursioni/tour-privato/` — tutte generate dallo stesso modello (`src/pages/escursioni/[slug].astro`)
+- `/gommoni/` e `/gommoni/gommone-7-isole/`, `/gommoni/gommone-mezze-giornate/`, `/gommoni/gommone-privato/` — generate da `src/pages/gommoni/[slug].astro`
+- `/richiesta/` modulo WhatsApp (accetta `?escursione=<slug>`, `?gommone=<slug>` e `?formula=esclusiva`)
+- I vecchi indirizzi `/gommone/` e `/escursioni/tramonto-mezza-giornata/` rimandano ai nuovi (`public/_redirects`)
+- `/info-utili/`, `/domande-frequenti/`, `/contatti/`, `/privacy/`, `/cookie/`
 
 ## Modulo WhatsApp
 

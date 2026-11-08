@@ -1,0 +1,58 @@
+---
+import Base from '../../layouts/Base.astro';
+import SchedaGommone from '../../components/SchedaGommone.astro';
+import Icona from '../../components/Icona.astro';
+import Dato from '../../components/Dato.astro';
+import SezioneRichiesta from '../../components/SezioneRichiesta.astro';
+import { gommoni, nomeGommone, postiMaxEsclusiva } from '../../data/gommoni.js';
+import { escursioni, soloEsclusiva } from '../../data/escursioni.js';
+import { sito } from '../../data/sito.js';
+
+const aPosto = escursioni.filter((e) => !soloEsclusiva(e));
+const privato = gommoni.find((g) => !g.formule.includes('posto'));
+---
+<Base
+  titolo="I nostri maxi gommoni"
+  descrizione="Tre maxi gommoni per esplorare l'Arcipelago di La Maddalena: prenota un posto a bordo o il gommone in esclusiva per il tuo gruppo. Imbarco a Palau o La Maddalena."
+>
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">I gommoni</p>
+      <h1>Tre maxi gommoni, ognuno con il suo giro</h1>
+      <p class="intro">Uno fa il Tour delle 7 isole, uno le mezze giornate, il terzo esce solo in esclusiva per piccoli gruppi. I primi due fanno anche l'aperitivo al tramonto.</p>
+    </div>
+  </section>
+
+  <section class="sezione" style="padding-top:48px" aria-label="I tre gommoni">
+    <div class="contenitore griglia-schede">
+      {gommoni.map((g) => <SchedaGommone g={g} titoloLivello="h2" />)}
+    </div>
+  </section>
+
+  <section class="sezione sezione--calda" aria-labelledby="formule-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione__testo">
+        <p class="occhiello">Come si prenota</p>
+        <h2 id="formule-titolo" class="titolo-sezione">Un posto a bordo o il gommone tutto per voi</h2>
+      </div>
+      <div class="griglia-info griglia-info--due">
+        <div class="box">
+          <span class="box__icona"><Icona nome="persone" size={24} tratto={1.8} /></span>
+          <h3>Posto singolo</h3>
+          <p>Prenoti solo i posti che ti servono e condividi il gommone con altri ospiti. L'uscita parte con almeno 6 persone, al massimo 12.</p>
+          <p>Si fa così: {aPosto.map((e, i) => <Fragment>{i > 0 && (i === aPosto.length - 1 ? ' e ' : ', ')}<a href={`/escursioni/${e.slug}/`}>{e.titolo}</a></Fragment>)}.</p>
+          <p>Se non si arriva a 6 persone: <Dato v={sito.regole.minimoPersone} e="cosa succede: altra data, rimborso?" /></p>
+        </div>
+        <div class="box box--acqua">
+          <span class="box__icona"><Icona nome="ancora" size={24} tratto={1.8} /></span>
+          <h3>In esclusiva</h3>
+          <p>Il gommone e lo skipper solo per il tuo gruppo, fino a {postiMaxEsclusiva()} persone. In esclusiva tutti e tre i gommoni fanno tutte le proposte, Corsica compresa, oppure un giro su misura.</p>
+          {privato && <p>Siete al massimo {privato.postiMax}? C'è anche <a href={`/gommoni/${privato.slug}/`}>{nomeGommone(privato).replace(/^Il /, 'il ')}</a>.</p>}
+          <p>Il prezzo in esclusiva lo trovi nella pagina di ogni escursione.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <SezioneRichiesta />
+</Base>

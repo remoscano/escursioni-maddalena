@@ -2,38 +2,57 @@
 // Mini-modulo che apre WhatsApp con il messaggio già scritto.
 // Nessun dato passa dal sito: il testo viene composto nel browser e aperto in WhatsApp.
 import Icona from './Icona.astro';
-import { escursioni } from '../data/escursioni.js';
+import { escursioni, soloEsclusiva } from '../data/escursioni.js';
+import { gommoni, trovaGommone, nomeGommone } from '../data/gommoni.js';
 import { sito } from '../data/sito.js';
 
 interface Props {
   escursione?: string;   // slug: se presente, l'escursione è già scelta e il menu non compare
+  gommone?: string;      // slug: se presente, la richiesta è per quel gommone
   titolo?: string;
   chiaro?: boolean;      // stile per sfondo chiaro
   id?: string;
 }
-const { escursione, titolo = 'Richiesta di disponibilità', chiaro = false, id = 'modulo' } = Astro.props;
+const { escursione, gommone, titolo = 'Richiesta di disponibilità', chiaro = false, id = 'modulo' } = Astro.props;
 const fissa = escursione ? escursioni.find((e) => e.slug === escursione) : undefined;
+const g = gommone ? trovaGommone(gommone) : undefined;
+// Il posto singolo si può chiedere solo se l'escursione lo prevede
+// e, se il gommone è già scelto, solo per le uscite che quel gommone fa a posto singolo.
+const postoPossibile = (e: any) => !soloEsclusiva(e) && (!g || g.escursioni.includes(e.slug));
+const nomiGommoni = Object.fromEntries(gommoni.map((x) => [x.slug, nomeGommone(x)]));
 ---
 <form
   class={`modulo ${chiaro ? 'modulo--chiaro' : ''}`}
   data-modulo-wa
   data-numero={sito.contatti.whatsapp}
   data-nome-sito={sito.nome}
+  data-gommoni={JSON.stringify(nomiGommoni)}
   aria-labelledby={`${id}-titolo`}
   novalidate
 >
   <h3 id={`${id}-titolo`}>{titolo}</h3>
 
+  <input type="hidden" name="gommone" value={g ? nomeGommone(g) : ''} />
+
   {fissa ? (
-    <input type="hidden" name="escursione" value={fissa.titolo} />
+    <input type="hidden" name="escursione" value={fissa.titolo} data-posto={postoPossibile(fissa) ? '1' : '0'} />
   ) : (
     <div class="campo">
       <label for={`${id}-escursione`}>Escursione</label>
       <select id={`${id}-escursione`} name="escursione">
-        {escursioni.map((e) => <option value={e.titolo} data-slug={e.slug}>{e.titolo}</option>)}
+        {escursioni.map((e) => <option value={e.titolo} data-slug={e.slug} data-posto={postoPossibile(e) ? '1' : '0'}>{e.titolo}</option>)}
       </select>
     </div>
   )}
+
+  <fieldset data-formula>
+    <legend>Formula</legend>
+    <div class="scelte">
+      <label class="scelta"><input type="radio" name="formula" value="posto singolo" checked />Posto singolo</label>
+      <label class="scelta"><input type="radio" name="formula" value="gommone in esclusiva" />In esclusiva</label>
+    </div>
+    <p class="modulo__aiuto" data-formula-nota hidden>Questa proposta si fa solo con il gommone in esclusiva.</p>
+  </fieldset>
 
   <div class="campi-3">
     <div class="campo">
@@ -83,6 +102,28 @@ const fissa = escursione ? escursioni.find((e) => e.slug === escursione) : undef
     const nomeSito = form.dataset.nomeSito ?? '';
     const campoData = form.querySelector<HTMLInputElement>('input[name="data"]');
     const select = form.querySelector<HTMLSelectElement>('select[name="escursione"]');
+    const fissa = form.querySelector<HTMLInputElement>('input[type="hidden"][name="escursione"]');
+    const radioPosto = form.querySelector<HTMLInputElement>('input[name="formula"][value="posto singolo"]')!;
+    const radioEsclusiva = form.querySelector<HTMLInputElement>('input[name="formula"][value="gommone in esclusiva"]')!;
+    const notaFormula = form.querySelector<HTMLElement>('[data-formula-nota]')!;
+    const campoGommone = form.querySelector<HTMLInputElement>('input[name="gommone"]')!;
+    const parametri = new URLSearchParams(location.search);
+
+    // /richiesta/?gommone=slug e ?formula=esclusiva
+    const nomiGommoni = JSON.parse(form.dataset.gommoni ?? '{}') as Record<string, string>;
+    const slugGommone = parametri.get('gommone');
+    if (!campoGommone.value && slugGommone && nomiGommoni[slugGommone]) campoGommone.value = nomiGommoni[slugGommone];
+    if (parametri.get('formula') === 'esclusiva') radioEsclusiva.checked = true;
+
+    // Se l'escursione scelta non prevede il posto singolo, resta solo l'esclusiva
+    const aggiornaFormula = () => {
+      const scelta = select ? select.selectedOptions[0] : fissa;
+      const posto = scelta?.dataset.posto === '1';
+      radioPosto.disabled = !posto;
+      radioPosto.closest('label')!.toggleAttribute('data-spenta', !posto);
+      if (!posto) radioEsclusiva.checked = true;
+      notaFormula.hidden = posto;
+    };
 
     // Niente date passate
     if (campoData) {
@@ -97,6 +138,8 @@ const fissa = escursione ? escursioni.find((e) => e.slug === escursione) : undef
       const opzione = slug ? select.querySelector<HTMLOptionElement>(`option[data-slug="${CSS.escape(slug)}"]`) : null;
       if (opzione) opzione.selected = true;
     }
+    aggiornaFormula();
+    select?.addEventListener('change', aggiornaFormula);
 
     const intero = (nome: string, minimo: number) => {
       const v = parseInt((form.elements.namedItem(nome) as HTMLInputElement)?.value ?? '', 10);
@@ -117,9 +160,12 @@ const fissa = escursione ? escursioni.find((e) => e.slug === escursione) : undef
       const persone = `${adulti} ${adulti === 1 ? 'adulto' : 'adulti'}` +
         (bambini > 0 ? `, ${bambini} ${bambini === 1 ? 'bambino' : 'bambini'}` : '');
       const nome = String(dati.get('nome') ?? '').trim();
+      const gommone = String(dati.get('gommone') ?? '');
       return [
         `Ciao ${nomeSito}! Vorrei prenotare:`,
         `• ${escursione}`,
+        `• Formula: ${dati.get('formula')}`,
+        ...(gommone ? [`• Gommone: ${gommone}`] : []),
         `• Data: ${testoData}`,
         `• Persone: ${persone}`,
         `• Imbarco: ${dati.get('imbarco')}`,

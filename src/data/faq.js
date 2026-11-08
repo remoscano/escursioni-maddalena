@@ -10,7 +10,7 @@ export const faq = [
         id: 'prenotare',
         domanda: 'Come si prenota?',
         risposta:
-          "Con il modulo di richiesta: scegli escursione, data, persone e punto d'imbarco, e si apre WhatsApp con il messaggio già scritto. Ti rispondiamo con la disponibilità, l'orario di ritrovo e il molo.",
+          "Con il modulo di richiesta: scegli escursione, posto singolo o esclusiva, data, persone e punto d'imbarco, e si apre WhatsApp con il messaggio già scritto. Ti rispondiamo con la disponibilità, l'orario di ritrovo e il molo.",
       },
       {
         id: 'pagare',
@@ -18,6 +18,19 @@ export const faq = [
         risposta: 'Nessun pagamento online.',
         regola: 'pagamento',
         mancante: 'Pagamento: a bordo, in contanti o con carta? Serve un acconto?',
+      },
+      {
+        id: 'esclusiva',
+        domanda: 'Possiamo avere il gommone solo per noi?',
+        risposta:
+          "Sì. Tutti e tre i gommoni si possono prenotare in esclusiva, per qualunque proposta, Corsica compresa: fino a 12 persone, o fino a 6 con il gommone privato. Nel modulo di richiesta scegli \"In esclusiva\".",
+      },
+      {
+        id: 'minimo',
+        domanda: 'Quante persone servono perché l\'uscita parta?',
+        risposta: 'A posto singolo le uscite partono con almeno 6 persone, al massimo 12.',
+        regola: 'minimoPersone',
+        mancante: 'Cosa succede se non si arriva a 6: altra data, rimborso?',
       },
       {
         id: 'anticipo',

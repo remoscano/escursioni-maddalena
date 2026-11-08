@@ -21,8 +21,9 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 ## Tecnica
 
 - Astro statico, nessun framework JS lato client. Il JavaScript serve solo per il menu su telefono e per il modulo WhatsApp.
-- I contenuti stanno in `src/data/` (`sito.js`, `escursioni.js`, `faq.js`, `menu.js`). Prima di scrivere testo dentro una pagina, chiediti se va in un file dati.
-- Le 4 pagine escursione nascono tutte da `src/pages/escursioni/[slug].astro`: una nuova escursione si aggiunge in `escursioni.js`, non con un file nuovo.
+- I contenuti stanno in `src/data/` (`sito.js`, `gommoni.js`, `escursioni.js`, `faq.js`, `menu.js`). Prima di scrivere testo dentro una pagina, chiediti se va in un file dati.
+- Le pagine escursione nascono tutte da `src/pages/escursioni/[slug].astro`, le pagine gommone da `src/pages/gommoni/[slug].astro`: una nuova escursione o un nuovo gommone si aggiungono nei file dati, non con un file nuovo.
+- **Tre gommoni:** (1) Tour delle 7 isole, 6–12 persone, posto singolo o esclusiva; (2) mezze giornate (due rotte, gialla e rossa), 6–12 persone, posto singolo o esclusiva, in esclusiva anche giornata intera; entrambi fanno l'aperitivo al tramonto; (3) solo esclusiva, max 6 persone. In esclusiva tutti e tre fanno tutte le proposte, Corsica compresa. Corsica e Tour privato sono solo in esclusiva.
 - Componenti riutilizzabili in `src/components/`. In particolare:
   - `Dato.astro`: mostra il valore o, se vuoto, un segnaposto rosa `[etichetta]`. Usalo per ogni dato non ancora fornito dal cliente.
   - `Foto.astro`: foto vera (con `src` importato da `src/assets/foto/`, ottimizzata da Astro) o segnaposto che dice quale scatto serve.
@@ -56,7 +57,10 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [ ] Dati del cliente nei file di `src/data/` (numero WhatsApp, prezzi, orari, moli, regole, gommone, skipper, P. IVA)
 - [ ] Foto (le note sui segnaposto indicano gli scatti)
 - [ ] Dominio: acquistato su GoDaddy, da spostare su Cloudflare (DNS) e collegare in Pages → Custom domains. Poi aggiornare `site` in `astro.config.mjs` e `url` in `src/data/sito.js`, e far rimandare `www` alla versione senza `www`
-- [ ] Testi delle escursioni Corsica, Tramonto e Tour privato (programma ancora a segnaposto)
+- [x] Struttura a 3 gommoni: pagine `/gommoni/`, escursioni Mezza giornata e Aperitivo al tramonto separate, scelta posto singolo/esclusiva nel modulo
+- [ ] Mappa delle due rotte della mezza giornata (gialla e rossa): oggi è un segnaposto
+- [ ] Nomi/modelli dei 3 gommoni e loro skipper in `gommoni.js`
+- [ ] Testi delle escursioni Mezza giornata, Aperitivo al tramonto, Corsica e Tour privato (programma ancora a segnaposto)
 - [ ] Revisione di privacy e cookie da parte di chi segue il cliente
 - [ ] Lancio: `inCostruzione: false` in `src/data/sito.js`, `public/robots.txt` aperto, sitemap, dati strutturati (LocalBusiness e TouristTrip)
 - [ ] Inglese (`/en/`) con hreflang, poi tedesco e francese

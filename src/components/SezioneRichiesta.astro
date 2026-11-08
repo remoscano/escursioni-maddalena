@@ -3,9 +3,10 @@ import ModuloRichiesta from './ModuloRichiesta.astro';
 import Dato from './Dato.astro';
 import { sito } from '../data/sito.js';
 
-interface Props { escursione?: string; titolo?: string; titoloModulo?: string; testo?: string }
+interface Props { escursione?: string; gommone?: string; titolo?: string; titoloModulo?: string; testo?: string }
 const {
   escursione,
+  gommone,
   titolo = 'Scegli la data, ti rispondiamo su WhatsApp',
   titoloModulo,
   testo,
@@ -20,7 +21,7 @@ const { contatti } = sito;
         <h2 id="richiesta-titolo" class="titolo-sezione">{titolo}</h2>
         {testo && <p style="font-size:18px;line-height:1.6;color:#D6E9EC">{testo}</p>}
         <ol class="passi">
-          <li><span class="passi__n">1</span><span>Scegli {escursione ? '' : 'escursione, '}data, persone e punto d'imbarco.</span></li>
+          <li><span class="passi__n">1</span><span>Scegli {escursione ? '' : 'escursione, '}formula, data, persone e punto d'imbarco.</span></li>
           <li><span class="passi__n">2</span><span>Si apre WhatsApp con il messaggio già scritto: premi Invia.</span></li>
           <li><span class="passi__n">3</span><span>Ti rispondiamo con disponibilità, orario di ritrovo e molo.</span></li>
         </ol>
@@ -31,7 +32,7 @@ const { contatti } = sito;
             : <Dato e="+39 numero" />}, rispondiamo <Dato v={contatti.orariRisposta} e="giorni e orari" />.
         </p>
       </div>
-      <ModuloRichiesta escursione={escursione} titolo={titoloModulo} />
+      <ModuloRichiesta escursione={escursione} gommone={gommone} titolo={titoloModulo} />
     </div>
   </div>
 </section>

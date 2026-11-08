@@ -18,7 +18,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
 ---
 <Base
   titolo="Escursioni Maddalena · Tour delle 7 isole in maxi gommone"
-  descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, Corsica, tramonto e tour privati. Imbarco a Palau o La Maddalena, prenoti su WhatsApp."
+  descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, mezza giornata, aperitivo al tramonto, Corsica e tour privati. Imbarco a Palau o La Maddalena, prenoti su WhatsApp."
   testataScura
 >
   <section slot="hero" class="hero" aria-label="Apertura">
@@ -43,7 +43,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
       <dl>
         <div><dt><Icona nome="orologio" size={18} />Durata</dt><dd>Giornata intera, <Dato v={tour.orari} e="orari" /></dd></div>
         <div><dt><Icona nome="ancora" size={18} />Imbarco</dt><dd>Palau o La Maddalena</dd></div>
-        <div><dt><Icona nome="persone" size={18} />A bordo</dt><dd>Massimo <Dato v={tour.postiMax} e="N" /> persone</dd></div>
+        <div><dt><Icona nome="persone" size={18} />A bordo</dt><dd>Da {tour.postiMin} a {tour.postiMax} persone</dd></div>
         <div><dt><Icona nome="euro" size={18} />Prezzo</dt><dd>Da <Dato v={tour.prezzoAdulti} e="PREZZO" /> € a persona</dd></div>
       </dl>
     </div>
@@ -75,7 +75,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
           <p class="occhiello">Escursioni</p>
           <h2 id="escursioni-titolo" class="titolo-sezione">Scegli la tua giornata in mare</h2>
         </div>
-        <p class="intestazione__lato">Quattro uscite in maxi gommone, tutte prenotabili con un messaggio WhatsApp.</p>
+        <p class="intestazione__lato">Cinque proposte in maxi gommone, a posto singolo o in esclusiva, tutte prenotabili con un messaggio WhatsApp.</p>
       </div>
       <SchedaEscursione e={tour} grande />
       <div class="griglia-schede">

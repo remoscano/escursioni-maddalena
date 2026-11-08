@@ -1,0 +1,28 @@
+---
+// Scheda di un gommone, per l'elenco in home e nella pagina /gommoni/.
+import Foto from './Foto.astro';
+import Icona from './Icona.astro';
+import { nomeGommone, personeGommone, etichetteFormule } from '../data/gommoni.js';
+import { trovaEscursione } from '../data/escursioni.js';
+
+interface Props { g: any; titoloLivello?: 'h2' | 'h3' }
+const { g, titoloLivello = 'h3' } = Astro.props;
+const Titolo = titoloLivello;
+const href = `/gommoni/${g.slug}/`;
+const uscite = g.escursioni.map((s: string) => trovaEscursione(s)?.titolo).filter(Boolean);
+---
+<article class="scheda">
+  <Foto nota={g.foto.copertina} tono={g.formule.includes('posto') ? 'acqua' : 'sabbia'} sizes="(max-width: 760px) 100vw, 33vw" />
+  <div class="scheda__corpo">
+    <div class="etichette">{g.formule.map((f: string) => <span class="etichetta">{etichetteFormule[f as 'posto']}</span>)}</div>
+    <Titolo><a href={href}>{nomeGommone(g)}</a></Titolo>
+    <p>{g.ruolo}</p>
+    <p class="scheda__info">
+      {personeGommone(g)}
+      {uscite.length > 0
+        ? <Fragment> · {uscite.join(', ')}</Fragment>
+        : <Fragment> · tutte le escursioni, solo per il tuo gruppo</Fragment>}
+    </p>
+    <span class="link-freccia" aria-hidden="true">Scopri il gommone<Icona nome="destra" size={18} /></span>
+  </div>
+</article>

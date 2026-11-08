@@ -46,19 +46,7 @@ export const sito = {
     },
   },
 
-  gommone: {
-    modello: '',
-    lunghezza: '', // metri
-    motori: '', // cv
-    passeggeri: '', // numero massimo
-    dotazioni: '', // es. 'tendalino, scaletta bagno, doccetta'
-    descrizione: '',
-  },
-
-  skipper: {
-    nome: '',
-    descrizione: '', // anni di mare, lingue parlate
-  },
+  // I dati dei tre gommoni e dei loro skipper sono in src/data/gommoni.js
 
   regole: {
     maltempo: '', // rimborso o cambio data
@@ -66,6 +54,7 @@ export const sito = {
     pagamento: '', // a bordo, contanti o carta?
     bambini: '', // età minima, giubbotti, prezzo ridotto
     animali: '',
+    minimoPersone: '', // cosa succede se non si arriva a 6 persone: es. 'ti avvisiamo il giorno prima e proponiamo un'altra data'
   },
 };
 

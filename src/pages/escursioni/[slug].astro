@@ -7,7 +7,8 @@ import Dato from '../../components/Dato.astro';
 import Mappa from '../../components/Mappa.astro';
 import Faq from '../../components/Faq.astro';
 import SezioneRichiesta from '../../components/SezioneRichiesta.astro';
-import { escursioni } from '../../data/escursioni.js';
+import { escursioni, soloEsclusiva } from '../../data/escursioni.js';
+import { gommoniPer, nomeGommone, postiMaxEsclusiva, gommoni } from '../../data/gommoni.js';
 import { domande } from '../../data/faq.js';
 import { sito } from '../../data/sito.js';
 
@@ -23,10 +24,16 @@ const toni = ['acqua', 'rosa', 'acqua', 'sabbia', 'acqua'] as const;
 const faqPerEscursione: Record<string, string[]> = {
   'tour-7-isole': ['maestrale', 'pranzo', 'spiaggia-rosa', 'bambini', 'pagare', 'animali'],
   'corsica-lavezzi-bonifacio': ['maestrale', 'bambini', 'pagare', 'animali'],
-  'tramonto-mezza-giornata': ['maestrale', 'bambini', 'pagare', 'animali'],
-  'tour-privato': ['pagare', 'maestrale', 'bambini', 'animali'],
+  'mezza-giornata': ['minimo', 'esclusiva', 'maestrale', 'bambini', 'pagare'],
+  'aperitivo-tramonto': ['minimo', 'esclusiva', 'maestrale', 'bambini', 'pagare'],
+  'tour-privato': ['esclusiva', 'pagare', 'maestrale', 'bambini', 'animali'],
 };
-const suRichiesta = e.prezzoAdulti === 'su richiesta';
+faqPerEscursione['tour-7-isole'].splice(1, 0, 'minimo');
+faqPerEscursione['corsica-lavezzi-bonifacio'].unshift('esclusiva');
+const esclusivaSola = soloEsclusiva(e);
+const gommoniPosto = gommoniPer(e.slug);
+const maxEsclusiva = postiMaxEsclusiva();
+const privato = gommoni.find((g) => !g.formule.includes('posto'));
 const durata = e.ore ? `${e.ore} ore` : '';
 ---
 <Base
@@ -50,19 +57,29 @@ const durata = e.ore ? `${e.ore} ore` : '';
           <p class="testa-tour__intro">{e.intro}</p>
           <ul class="fatti">
             <li><Icona nome="orologio" size={18} /><Dato v={e.durata} e="durata" />{e.orari !== 'da concordare' && <Fragment>, <Dato v={e.orari} e="orari" /></Fragment>}</li>
-            <li><Icona nome="persone" size={18} />Massimo <Dato v={e.postiMax} e="N" /> persone</li>
+            <li><Icona nome="persone" size={18} />{esclusivaSola
+              ? `Solo in esclusiva, fino a ${maxEsclusiva} persone`
+              : `Da ${e.postiMin} a ${e.postiMax} persone, anche in esclusiva`}</li>
             {e.fatti.map((f: string) => <li><Icona nome="spunta" size={18} />{f}</li>)}
           </ul>
         </div>
         <aside class="box-prezzo" aria-label="Prezzo e prenotazione">
-          <p class="box-prezzo__etichetta">Prezzo a persona</p>
-          {suRichiesta ? (
-            <p class="box-prezzo__cifra">Su richiesta</p>
+          {esclusivaSola ? (
+            <Fragment>
+              <p class="box-prezzo__etichetta">Gommone in esclusiva</p>
+              {e.prezzoEsclusiva === 'su richiesta'
+                ? <p class="box-prezzo__cifra">Su richiesta</p>
+                : <p class="box-prezzo__cifra">da <Dato v={e.prezzoEsclusiva} e="PREZZO" /> €</p>}
+            </Fragment>
           ) : (
-            <p>
-              <span class="box-prezzo__cifra" style="display:block">da <Dato v={e.prezzoAdulti} e="PREZZO" /> €</span>
-              {e.prezzoBambini !== null && <span class="box-prezzo__bambini">bambini <Dato v={e.prezzoBambini} e="PREZZO" /> €</span>}
-            </p>
+            <Fragment>
+              <p class="box-prezzo__etichetta">Posto singolo, a persona</p>
+              <p>
+                <span class="box-prezzo__cifra" style="display:block">da <Dato v={e.prezzoAdulti} e="PREZZO" /> €</span>
+                {e.prezzoBambini !== null && <span class="box-prezzo__bambini">bambini <Dato v={e.prezzoBambini} e="PREZZO" /> €</span>}
+              </p>
+              <p class="box-prezzo__bambini">In esclusiva: {e.prezzoEsclusiva === 'su richiesta' ? 'su richiesta' : <Fragment>da <Dato v={e.prezzoEsclusiva} e="PREZZO" /> €</Fragment>}</p>
+            </Fragment>
           )}
           <a href="#richiesta" class="btn btn--wa btn--grande btn--pieno"><Icona nome="whatsapp" />Chiedi disponibilità su WhatsApp</a>
           <p class="box-prezzo__nota">Nessun pagamento online. Oppure chiama {contatti.telefonoVisibile
@@ -91,7 +108,7 @@ const durata = e.ore ? `${e.ore} ore` : '';
           <p class="occhiello">Il programma</p>
           <h2 id="programma-titolo" class="titolo-sezione">La giornata, ora per ora</h2>
         </div>
-        <p class="intestazione__lato">Orari indicativi. Con vento e mare lo skipper può cambiare l'ordine delle soste.</p>
+        <p class="intestazione__lato">{e.notaProgramma ?? "Orari indicativi. Con vento e mare lo skipper può cambiare l'ordine delle soste."}</p>
       </div>
       <div class={e.mappa ? 'percorso' : 'due-colonne due-colonne--alto'}>
         <ol class="programma">
@@ -119,6 +136,7 @@ const durata = e.ore ? `${e.ore} ore` : '';
         </ol>
         <div style="display:flex;flex-direction:column;gap:20px">
           {e.mappa && <Mappa didascalia="Percorso indicativo. Il punto rosa è la Spiaggia Rosa, che si vede solo dal mare." />}
+          {e.mappaRotte && <Foto nota={e.mappaRotte} tono="sabbia" class="mappa-rotte" />}
           <dl class="numeri">
             {e.numeri.map((n: any) => <div><dt>{n.etichetta}</dt><dd>{n.valore}</dd></div>)}
             <div><dt>Durata</dt><dd><Dato v={durata} e="ore" /></dd></div>
@@ -174,6 +192,13 @@ const durata = e.ore ? `${e.ore} ore` : '';
           <h3>Imbarco a La Maddalena</h3>
           <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" />.</p>
           <p>Comodo se dormi sull'isola: il gommone passa a prenderti dopo Palau.</p>
+        </div>
+        <div class="box box--acqua">
+          <h3>Con quale gommone</h3>
+          {gommoniPosto.length > 0 && (
+            <p>A posto singolo: {gommoniPosto.map((g, i) => <Fragment>{i > 0 && ' o '}<a href={`/gommoni/${g.slug}/`}>{nomeGommone(g).replace(/^Il /, 'il ')}</a></Fragment>)}, da {e.postiMin} a {e.postiMax} persone.</p>
+          )}
+          <p>In esclusiva: uno dei <a href="/gommoni/">tre gommoni</a>, solo per il tuo gruppo, fino a {maxEsclusiva} persone{privato && <Fragment> (fino a {privato.postiMax} con <a href={`/gommoni/${privato.slug}/`}>il gommone privato</a>)</Fragment>}.</p>
         </div>
         <div class="box">
           <h3>Regole del Parco</h3>

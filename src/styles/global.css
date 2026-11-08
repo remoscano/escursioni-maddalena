@@ -363,6 +363,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 /* ---------- Box informativi ---------- */
 
 .griglia-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: 20px; }
+.griglia-info--due { grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); }
 .box {
   background: var(--bianco); border: 1px solid var(--bordo); border-radius: var(--raggio-m); padding: 28px;
   display: flex; flex-direction: column; gap: 14px;
@@ -411,6 +412,8 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   border: 1.5px solid var(--bordo-campo); border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;
 }
 .scelta:has(input:checked) { border: 2px solid var(--mare); background: var(--acqua); }
+.scelta[data-spenta] { opacity: 0.5; cursor: not-allowed; }
+.modulo__aiuto { margin-top: 8px; font-size: 14px; line-height: 1.45; }
 .scelta input { width: 18px; height: 18px; accent-color: var(--mare); margin: 0; }
 .anteprima { display: flex; flex-direction: column; gap: 8px; }
 .anteprima__titolo {
@@ -580,3 +583,4 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   .modulo { padding: 24px; border-radius: 24px; }
   .percorso, .due-colonne { gap: 36px; }
 }
+.mappa-rotte { aspect-ratio: 1000 / 1076; }

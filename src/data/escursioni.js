@@ -1,6 +1,11 @@
-// Le quattro escursioni. Ogni voce genera la sua pagina in /escursioni/<slug>/
+// Le escursioni. Ogni voce genera la sua pagina in /escursioni/<slug>/
 // con lo stesso modello della pagina "Tour delle 7 isole".
 // I valori vuoti ('') diventano segnaposto rosa sul sito.
+//
+// formule: 'posto' = si prenota il singolo posto, 'esclusiva' = il gommone solo per il gruppo.
+// prezzoAdulti / prezzoBambini = prezzo del posto singolo (null se l'escursione è solo in esclusiva).
+// prezzoEsclusiva = prezzo del gommone in esclusiva ('su richiesta' se si preventiva caso per caso).
+// Quali gommoni fanno l'escursione a posto singolo si decide in gommoni.js.
 
 export const escursioni = [
   {
@@ -17,9 +22,12 @@ export const escursioni = [
     orari: '', // es. '9:00 – 17:30'
     ore: '', // es. '8'
     oraRientro: '', // es. '17:30'
+    formule: ['posto', 'esclusiva'],
     prezzoAdulti: '',
     prezzoBambini: '',
-    postiMax: '',
+    prezzoEsclusiva: '',
+    postiMin: 6,
+    postiMax: 12,
     fatti: ['Imbarco a Palau o La Maddalena', 'Pranzo libero a La Maddalena', 'Spiaggia Rosa dal mare'],
     foto: {
       copertina: "Cala Corsara dall'alto, con il gommone all'ancora",
@@ -55,19 +63,107 @@ export const escursioni = [
     note: [],
   },
   {
+    slug: 'mezza-giornata',
+    titolo: 'Mezza giornata',
+    titoloPagina: 'Mezza giornata in maxi gommone',
+    etichette: ['Mezza giornata', 'Due rotte'],
+    breve: "Qualche ora tra le cale dell'arcipelago, su una delle due rotte scelte dallo skipper.",
+    intro:
+      "Per chi ha poco tempo ma non vuole rinunciare al mare dell'arcipelago: qualche ora di bagni e cale, su una delle due rotte della mezza giornata.",
+    durata: 'Mezza giornata',
+    orari: '', // es. 'mattina 9:30 – 13:00 · pomeriggio 14:30 – 18:00'
+    ore: '',
+    formule: ['posto', 'esclusiva'],
+    prezzoAdulti: '',
+    prezzoBambini: '',
+    prezzoEsclusiva: '',
+    postiMin: 6,
+    postiMax: 12,
+    fatti: ['Imbarco a Palau o La Maddalena'],
+    foto: {
+      copertina: 'Il gommone in una cala vicina, acqua turchese',
+      galleria: [
+        'Il gommone in una cala vicina',
+        'Tuffo in una cala di Santo Stefano o Caprera',
+        'Ospiti a prua',
+        'Maschera e boccaglio sugli scogli',
+        'Il gommone in navigazione',
+      ],
+    },
+    mappa: false,
+    // Mappa delle due rotte: finché non c'è il file, compare un segnaposto.
+    mappaRotte: 'Mappa delle due rotte della mezza giornata, gialla e rossa',
+    numeri: [{ etichetta: 'Rotte', valore: '2' }],
+    programma: [
+      { tipo: 'imbarco', titolo: 'Ritrovo a Palau o a La Maddalena', testo: '', mancante: 'Orari delle uscite: mattina e/o pomeriggio' },
+      { tipo: 'sosta', n: '1', titolo: 'Rotta gialla', luogo: 'Prima rotta', testo: '', mancante: 'Le soste della rotta gialla' },
+      { tipo: 'sosta', n: '2', titolo: 'Rotta rossa', luogo: 'Seconda rotta', testo: '', mancante: 'Le soste della rotta rossa' },
+      { tipo: 'rientro', titolo: 'Rientro', testo: 'Si scende dove si è saliti.' },
+    ],
+    notaProgramma: 'Lo skipper sceglie la rotta in base a vento e mare del giorno.',
+    incluso: ['Skipper'],
+    inclusoMancante: 'Da confermare: carburante, ticket del Parco, maschere, acqua a bordo',
+    nonIncluso: [],
+    nonInclusoMancante: 'Altro da segnalare',
+    note: [],
+  },
+  {
+    slug: 'aperitivo-tramonto',
+    titolo: 'Aperitivo al tramonto',
+    titoloPagina: 'Aperitivo al tramonto in maxi gommone',
+    etichette: ['Tramonto', 'Aperitivo a bordo'],
+    breve: "L'uscita della sera: il sole che scende sul mare dell'arcipelago e un aperitivo a bordo.",
+    intro:
+      "L'arcipelago con la luce più bella: si esce nel tardo pomeriggio e si guarda il sole scendere sul mare con un aperitivo a bordo.",
+    durata: '',
+    orari: '',
+    ore: '',
+    formule: ['posto', 'esclusiva'],
+    prezzoAdulti: '',
+    prezzoBambini: '',
+    prezzoEsclusiva: '',
+    postiMin: 6,
+    postiMax: 12,
+    fatti: ['Imbarco a Palau o La Maddalena', 'Aperitivo a bordo'],
+    foto: {
+      copertina: 'Il gommone controluce al tramonto',
+      galleria: [
+        'Il gommone al tramonto tra le isole',
+        "L'aperitivo a bordo",
+        'Il cielo arancione sul mare',
+        'Ospiti a prua con la luce della sera',
+        'Il rientro con le luci del porto',
+      ],
+    },
+    mappa: false,
+    numeri: [],
+    programma: [
+      { tipo: 'imbarco', titolo: 'Ritrovo a Palau o a La Maddalena', testo: '', mancante: 'Orario di partenza (cambia con la stagione?)' },
+      { tipo: 'sosta', n: '1', titolo: 'Giro tra le isole', luogo: 'Prima del tramonto', testo: '', mancante: 'Dove andate, c\'è un bagno?' },
+      { tipo: 'vista', titolo: 'Il tramonto dal mare', luogo: 'Aperitivo a bordo', testo: '', mancante: 'Dove vi fermate a guardare il tramonto' },
+      { tipo: 'rientro', titolo: 'Rientro', testo: 'Si scende dove si è saliti.' },
+    ],
+    incluso: ['Skipper', 'Aperitivo a bordo'],
+    inclusoMancante: "Cosa c'è nell'aperitivo: bevande, stuzzichini, analcolici per i bambini?",
+    nonIncluso: [],
+    nonInclusoMancante: 'Altro da segnalare',
+    note: [],
+  },
+  {
     slug: 'corsica-lavezzi-bonifacio',
     titolo: 'Corsica: Lavezzi e Bonifacio',
     titoloPagina: 'Corsica in maxi gommone: Lavezzi e Bonifacio',
-    etichette: ['Bocche di Bonifacio', "Documento per l'espatrio"],
+    etichette: ['Solo in esclusiva', 'Bocche di Bonifacio', "Documento per l'espatrio"],
     breve: 'Si attraversano le Bocche di Bonifacio fino alle isole Lavezzi e alle bianche falesie di Bonifacio.',
     intro:
       'Si attraversano le Bocche di Bonifacio per raggiungere la Corsica: le acque trasparenti delle isole Lavezzi e le falesie bianche su cui è costruita Bonifacio.',
     durata: '',
     orari: '',
     ore: '',
-    prezzoAdulti: '',
-    prezzoBambini: '',
-    postiMax: '',
+    formule: ['esclusiva'],
+    prezzoAdulti: null,
+    prezzoBambini: null,
+    prezzoEsclusiva: '',
     fatti: ['Imbarco a Palau o La Maddalena', "Serve un documento valido per l'espatrio"],
     foto: {
       copertina: 'Le falesie di Bonifacio viste dal mare',
@@ -99,59 +195,20 @@ export const escursioni = [
     ],
   },
   {
-    slug: 'tramonto-mezza-giornata',
-    titolo: 'Tramonto o mezza giornata',
-    titoloPagina: 'Tramonto o mezza giornata in maxi gommone',
-    etichette: ['Mezza giornata', 'Tramonto'],
-    breve: "Qualche ora tra le cale più vicine, oppure l'uscita che rientra con il sole basso sul mare.",
-    intro:
-      "Per chi ha poco tempo o vuole vedere l'arcipelago con la luce più bella: qualche ora tra le cale più vicine, al mattino, al pomeriggio o fino al tramonto.",
-    durata: 'Mezza giornata',
-    orari: '',
-    ore: '',
-    prezzoAdulti: '',
-    prezzoBambini: '',
-    postiMax: '',
-    fatti: ['Imbarco a Palau o La Maddalena', 'Mattina, pomeriggio o tramonto'],
-    foto: {
-      copertina: 'Il gommone controluce al tramonto',
-      galleria: [
-        'Il gommone al tramonto tra le isole',
-        'Tuffo in una cala vicina',
-        'Il cielo arancione sul mare',
-        'Ospiti a prua con la luce della sera',
-        "Una cala di Caprera o Santo Stefano",
-      ],
-    },
-    mappa: false,
-    numeri: [],
-    programma: [
-      { tipo: 'imbarco', titolo: 'Ritrovo a Palau o a La Maddalena', testo: '', mancante: 'Orari delle uscite: mattina, pomeriggio, tramonto' },
-      { tipo: 'sosta', n: '1', titolo: 'Prima cala', luogo: 'Bagno', testo: '', mancante: 'Quali cale si visitano di solito' },
-      { tipo: 'sosta', n: '2', titolo: 'Seconda cala', luogo: 'Bagno', testo: '', mancante: 'Quali cale si visitano di solito' },
-      { tipo: 'vista', titolo: 'Il tramonto dal mare', luogo: 'Solo uscita del tramonto', testo: '', mancante: 'Dove vi fermate a guardare il tramonto' },
-      { tipo: 'rientro', titolo: 'Rientro', testo: 'Si scende dove si è saliti.' },
-    ],
-    incluso: ['Skipper'],
-    inclusoMancante: 'Da confermare: aperitivo a bordo?',
-    nonIncluso: [],
-    nonInclusoMancante: 'Altro da segnalare',
-    note: [],
-  },
-  {
     slug: 'tour-privato',
     titolo: 'Tour privato in esclusiva',
     titoloPagina: 'Tour privato in maxi gommone',
     etichette: ['Solo il vostro gruppo', 'Su misura'],
-    breve: 'Il gommone solo per voi, famiglie, amici o aziende, con itinerario e orari da concordare.',
+    breve: 'Uno dei tre gommoni solo per voi, famiglie, amici o aziende, con itinerario e orari da concordare.',
     intro:
-      "Il maxi gommone solo per il vostro gruppo: famiglie, amici, aziende o un'occasione speciale. Itinerario, orari e soste si decidono insieme allo skipper.",
+      "Un gommone solo per il vostro gruppo: famiglie, amici, aziende o un'occasione speciale. Fino a 12 persone, oppure il gommone privato per gruppi fino a 6. Itinerario, orari e soste si decidono insieme allo skipper.",
     durata: 'Da concordare',
     orari: 'da concordare',
     ore: '',
-    prezzoAdulti: 'su richiesta',
+    formule: ['esclusiva'],
+    prezzoAdulti: null,
     prezzoBambini: null,
-    postiMax: '',
+    prezzoEsclusiva: 'su richiesta',
     fatti: ['Imbarco a Palau o La Maddalena', 'Itinerario su misura'],
     foto: {
       copertina: 'Una famiglia a bordo, tuffo dalla prua',
@@ -167,7 +224,7 @@ export const escursioni = [
     numeri: [],
     programma: [
       { tipo: 'imbarco', titolo: 'Ritrovo dove preferite', luogo: 'Palau o La Maddalena', testo: "Orario da concordare." },
-      { tipo: 'sosta', n: '1', titolo: 'Le soste che scegliete voi', luogo: 'Su misura', testo: "Il giro delle 7 isole, la Corsica, solo le cale più tranquille: lo skipper vi propone l'itinerario in base al vento del giorno." },
+      { tipo: 'sosta', n: '1', titolo: 'Le soste che scegliete voi', luogo: 'Su misura', testo: "Il giro delle 7 isole, la mezza giornata, il tramonto, la Corsica o solo le cale più tranquille: lo skipper vi propone l'itinerario in base al vento del giorno." },
       { tipo: 'rientro', titolo: 'Rientro', testo: 'Quando volete, entro la durata concordata.' },
     ],
     incluso: ['Il gommone e lo skipper solo per il vostro gruppo'],
@@ -179,3 +236,4 @@ export const escursioni = [
 ];
 
 export const trovaEscursione = (slug) => escursioni.find((e) => e.slug === slug);
+export const soloEsclusiva = (e) => !e.formule.includes('posto');

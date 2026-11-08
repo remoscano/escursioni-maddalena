@@ -1,0 +1,158 @@
+---
+// Modello unico per le pagine dei gommoni: un gommone nuovo si aggiunge in src/data/gommoni.js.
+import Base from '../../layouts/Base.astro';
+import Foto from '../../components/Foto.astro';
+import Icona from '../../components/Icona.astro';
+import Dato from '../../components/Dato.astro';
+import SchedaEscursione from '../../components/SchedaEscursione.astro';
+import SezioneRichiesta from '../../components/SezioneRichiesta.astro';
+import { gommoni, nomeGommone, personeGommone, etichetteFormule } from '../../data/gommoni.js';
+import { escursioni, trovaEscursione } from '../../data/escursioni.js';
+
+export function getStaticPaths() {
+  return gommoni.map((g) => ({ params: { slug: g.slug }, props: { g } }));
+}
+
+const { g } = Astro.props;
+const nome = nomeGommone(g);
+const aPosto = g.escursioni.map((s: string) => trovaEscursione(s)).filter(Boolean);
+const soloEsclusiva = !g.formule.includes('posto');
+const altri = gommoni.filter((x) => x.slug !== g.slug);
+const toni = ['acqua', 'sabbia', 'acqua', 'rosa'] as const;
+---
+<Base
+  titolo={`${nome}: maxi gommone a La Maddalena`}
+  descrizione={`${g.ruolo} ${personeGommone(g)}, imbarco a Palau o La Maddalena. Richiesta di disponibilità su WhatsApp.`.slice(0, 160)}
+>
+  <section class="testa-tour" aria-labelledby="gommone-titolo">
+    <div class="contenitore">
+      <nav class="briciole" aria-label="Sei qui">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li aria-hidden="true">›</li>
+          <li><a href="/gommoni/">Gommoni</a></li>
+          <li aria-hidden="true">›</li>
+          <li aria-current="page">{nome}</li>
+        </ol>
+      </nav>
+      <div class="due-colonne">
+        <Foto nota={g.foto.copertina} class="gommone__foto" priorita />
+        <div style="display:flex;flex-direction:column;gap:28px">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="etichette">{g.formule.map((f: string) => <span class="etichetta">{etichetteFormule[f as 'posto']}</span>)}</div>
+            <h1 id="gommone-titolo" class="titolo-sezione">{nome}</h1>
+            <p class="testa-tour__intro" style="margin:0">{g.ruolo}</p>
+            <p class="testo-2"><Dato v={g.descrizione} e="Presenta il gommone in due righe: comodità, perché è adatto a famiglie e gruppi" /></p>
+          </div>
+          <dl class="dati-barca">
+            <div><dt>Persone</dt><dd>{g.postiMin ? `${g.postiMin}–${g.postiMax}` : `fino a ${g.postiMax}`}</dd></div>
+            <div><dt>Modello</dt><dd class="testo"><Dato v={g.modello} e="modello" /></dd></div>
+            <div><dt>Lunghezza</dt><dd><Dato v={g.lunghezza} e="—" /> metri</dd></div>
+            <div><dt>Motori</dt><dd><Dato v={g.motori} e="—" /> cv</dd></div>
+          </dl>
+          <div class="skipper">
+            <span class="skipper__foto" aria-hidden="true"></span>
+            <div>
+              <p style="font-size:18px;line-height:1.3;font-weight:700"><Dato v={g.skipper.nome} e="Nome" />, skipper</p>
+              <p class="testo-2" style="font-size:15px;line-height:1.5"><Dato v={g.skipper.descrizione} e="Una riga sullo skipper: anni di mare nell'arcipelago, lingue parlate" /></p>
+            </div>
+          </div>
+          <a href="#richiesta" class="btn btn--wa btn--grande" style="align-self:flex-start"><Icona nome="whatsapp" />Chiedi disponibilità su WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sezione sezione--calda" aria-labelledby="uscite-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione">
+        <div class="intestazione__testo">
+          <p class="occhiello">Cosa puoi prenotare</p>
+          <h2 id="uscite-titolo" class="titolo-sezione">{soloEsclusiva ? 'Solo per il tuo gruppo' : 'Le uscite di questo gommone'}</h2>
+        </div>
+        <p class="intestazione__lato">
+          {soloEsclusiva
+            ? `Questo gommone esce solo in esclusiva, per gruppi fino a ${g.postiMax} persone.`
+            : `A posto singolo l'uscita parte con almeno ${g.postiMin} persone, al massimo ${g.postiMax}. Oppure prenoti tutto il gommone.`}
+        </p>
+      </div>
+      {aPosto.length > 0 && (
+        <div class="griglia-schede">
+          {aPosto.map((e: any) => <SchedaEscursione e={e} />)}
+        </div>
+      )}
+      <div class="box box--acqua">
+        <h3>In esclusiva</h3>
+        <p>
+          Il gommone e lo skipper solo per voi, fino a {g.postiMax} persone. Puoi scegliere qualunque proposta: {escursioni.filter((e) => e.slug !== 'tour-privato').map((e, i, a) => <Fragment>{i > 0 && (i === a.length - 1 ? ' o ' : ', ')}<a href={`/escursioni/${e.slug}/`}>{e.titolo.split(':')[0]}</a></Fragment>)}, oppure un <a href="/escursioni/tour-privato/">giro su misura</a>.
+          {g.notaEsclusiva && <Fragment> {g.notaEsclusiva}</Fragment>}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sezione" aria-labelledby="bordo-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione__testo">
+        <p class="occhiello">A bordo</p>
+        <h2 id="bordo-titolo" class="titolo-sezione">Comodi e sicuri</h2>
+      </div>
+      <div class="griglia-info">
+        <div class="box">
+          <span class="box__icona"><Icona nome="sole" size={24} tratto={1.8} /></span>
+          <h3>Ombra e comodità</h3>
+          <p><Dato v={g.dotazioni} e="Tendalino, sedute, prendisole: cosa c'è a bordo" /></p>
+        </div>
+        <div class="box">
+          <span class="box__icona"><Icona nome="persone" size={24} tratto={1.8} /></span>
+          <h3>Sicurezza</h3>
+          <p>Giubbotti di salvataggio per adulti e bambini e dotazioni di sicurezza previste per legge.</p>
+          <p><Dato e="Patente nautica, assicurazione, certificazioni" /></p>
+        </div>
+        <div class="box">
+          <span class="box__icona"><Icona nome="ancora" size={24} tratto={1.8} /></span>
+          <h3>Per fare il bagno</h3>
+          <p><Dato e="Scaletta, doccetta, maschere e boccagli?" /></p>
+        </div>
+        <div class="box">
+          <span class="box__icona"><Icona nome="borsa" size={24} tratto={1.8} /></span>
+          <h3>Bagagli</h3>
+          <p>Porta solo una borsa morbida: a bordo lo spazio è prezioso. <Dato e="Gavone stagno per telefoni e documenti?" /></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sezione" style="padding-top:0" aria-label="Foto di bordo">
+    <div class="contenitore galleria">
+      <Foto nota={g.foto.galleria[0]} class="galleria__grande" />
+      <div class="galleria__piccole">
+        {g.foto.galleria.slice(1, 5).map((n: string, i: number) => <Foto nota={n} tono={toni[i + 1]} />)}
+      </div>
+    </div>
+  </section>
+
+  <SezioneRichiesta
+    gommone={g.slug}
+    titolo={`${nome}: scegli la data`}
+    testo="Scegli escursione, data, persone e punto d'imbarco: WhatsApp si apre con il messaggio pronto e ti rispondiamo con posti e orari."
+  />
+
+  <section class="sezione" aria-labelledby="altri-titolo" style="padding:96px 0">
+    <div class="contenitore pila" style="gap:32px">
+      <h2 id="altri-titolo" class="titolo-medio">Gli altri gommoni</h2>
+      <div class="altre">
+        {altri.map((x) => (
+          <a href={`/gommoni/${x.slug}/`} class="altra">
+            <span class="altra__foto" aria-hidden="true"></span>
+            <span><strong>{nomeGommone(x)}</strong><span>{x.ruolo}</span></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  :global(.gommone__foto) { aspect-ratio: 5 / 4; }
+</style>
