@@ -46,10 +46,10 @@ export function analizzaGommone(gommone, giorno, slug, turno, escludiId = null) 
 }
 
 // Disponibilità di un turno in un giorno. "candidati" = gommoni su cui provare a inserire, in ordine.
-export function situazioneTurno(slug, turnoId, giorno, postiRichiesti = 1, escludiId = null) {
+export function situazioneTurno(slug, turnoId, giorno, postiRichiesti = 1, escludiId = null, imbarco = null) {
   const offerta = offerte[slug];
   const turno = turnoDi(slug, turnoId);
-  const adatti = gommoniPer(slug);
+  const adatti = gommoniPer(slug, imbarco);
   const stati = adatti.map((g) => ({ gommone: g, ...analizzaGommone(g, giorno, slug, turno, escludiId) }));
 
   if (offerta.tipo === 'esclusiva') {
@@ -149,7 +149,7 @@ export async function riattivaSeLibero(db, pren, nuovoStato, campiExtra = {}) {
 }
 
 // Calendario di un mese per un'escursione: stato di ogni giorno e di ogni turno.
-export async function calendarioMese(db, slug, mese, { gestione = false } = {}) {
+export async function calendarioMese(db, slug, mese, { gestione = false, imbarco = null } = {}) {
   const offerta = offerte[slug];
   const [anno, m] = mese.split('-').map(Number);
   const giorniNelMese = new Date(Date.UTC(anno, m, 0)).getUTCDate();
@@ -163,7 +163,7 @@ export async function calendarioMese(db, slug, mese, { gestione = false } = {}) 
     const ok = gestione ? prenotabileGestione(data) : prenotabileOnline(data);
     if (!ok.ok) { giorni[data] = { stato: 'chiuso', motivo: ok.motivo }; continue; }
     const turni = offerta.turni.map((t) => {
-      const s = situazioneTurno(slug, t.id, dati.giorno(data));
+      const s = situazioneTurno(slug, t.id, dati.giorno(data), 1, null, imbarco);
       return { id: t.id, disponibile: s.disponibile, max: s.maxPersone, confermata: s.confermata ?? null, mancano: s.mancano ?? null };
     });
     const maxGiorno = Math.max(0, ...turni.map((t) => t.max));

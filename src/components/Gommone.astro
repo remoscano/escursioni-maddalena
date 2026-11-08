@@ -8,7 +8,11 @@ interface Props { titoloLivello?: 'h1' | 'h2'; link?: boolean }
 const { titoloLivello = 'h2', link = true } = Astro.props;
 const { gommone, skipper, flotta } = sito;
 const posti = (id: string) => gommoni.find((g) => g.id === id)?.posti;
-const uso = (id: string) => gommoni.find((g) => g.id === id)?.tipo === 'esclusiva' ? 'Solo esclusive' : 'Gruppo ed esclusive';
+const uso = (id: string) => {
+  const g = gommoni.find((x) => x.id === id);
+  if (g?.imbarchi.includes('cannigione')) return 'Da Cannigione';
+  return g?.tipo === 'esclusiva' ? 'Solo esclusive' : 'Gruppo ed esclusive';
+};
 const Titolo = titoloLivello;
 ---
 <div class="due-colonne">
@@ -24,7 +28,7 @@ const Titolo = titoloLivello;
         <div>
           <dt>{uso(g.id)}</dt>
           <dd>{g.modello}</dd>
-          <dd class="testo">Fino a {posti(g.id)} persone · {g.motori} · {g.dotazioni}</dd>
+          <dd class="testo">{[`Fino a ${posti(g.id)} persone`, g.motori, g.dotazioni].filter(Boolean).join(' · ')}</dd>
         </div>
       ))}
     </dl>

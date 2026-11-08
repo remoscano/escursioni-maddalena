@@ -40,11 +40,12 @@ export const sito = {
       parcheggio: '',
       mappa: '', // link Google Maps del punto di ritrovo
     },
-    // Cannigione: molo del quarto gommone. Non compare sul sito finché il gommone non è prenotabile.
+    // Cannigione: molo del quarto gommone (Honda 9.50): mezze giornate, tramonto ed esclusive.
     cannigione: {
       nome: 'Cannigione',
       molo: 'Pontile La Sciumara, Via Lungomare A. Doria 7, 07021 Cannigione (SS)',
-      ritrovo: '',
+      ritrovo: '9:15',
+      mappa: '',
     },
     maddalena: {
       nome: 'La Maddalena',
@@ -60,8 +61,7 @@ export const sito = {
     { id: 'gruppo-1', modello: 'Joker Clubman 28', motori: '2 motori Suzuki da 200 cv', dotazioni: 'bagno, T-top' },
     { id: 'gruppo-2', modello: 'BWA 30', motori: '2 motori Mercury da 250 cv', dotazioni: 'bagno, cabina, T-top' },
     { id: 'esclusiva', modello: 'Joker 35', motori: '2 motori Suzuki da 300 cv', dotazioni: 'cabina, bagno' },
-    // In arrivo: Honda 9.50 con 1 motore Honda da 350 cv, dedicato a chi parte da Cannigione.
-    // Si aggiunge (anche in prenotazioni.js) quando si sanno posti, escursioni, orari e prezzi.
+    { id: 'cannigione', modello: 'Honda 9.50', motori: '1 motore Honda da 350 cv', dotazioni: '' },
   ],
   gommone: {
     descrizione: '', // due righe di presentazione della flotta

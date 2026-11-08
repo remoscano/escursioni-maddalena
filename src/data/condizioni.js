@@ -17,6 +17,7 @@ import {
 const { azienda, contatti } = sito;
 const v = (valore, etichetta) => (valore === undefined || valore === null || String(valore).trim() === '' ? { manca: etichetta } : String(valore));
 
+const nomiDa = (imbarco) => escursioni.filter((e) => offerte[e.slug]?.imbarchi.includes(imbarco)).map((e) => e.titolo).join(' e ');
 const nomi = (tipo) => escursioni.filter((e) => offerte[e.slug]?.tipo === tipo).map((e) => e.titolo).join(', ');
 const minimo = Math.min(...Object.values(offerte).filter((o) => o.tipo === 'gruppo').map((o) => o.minimo));
 const piuPiccolo = Math.min(...gommoni.map((g) => g.posti));
@@ -38,6 +39,7 @@ export const condizioni = [
     punti: [
       [`Uscite di gruppo (${nomi('gruppo')}): prenoti i posti per le persone del tuo gruppo, a bordo con altri ospiti, fino a ${postiMassimi} persone sul gommone.`],
       [`In esclusiva (${nomi('esclusiva')}): il gommone è solo per il tuo gruppo, fino a ${postiMassimi} persone. In base a quante siete vi assegniamo il gommone da ${piuPiccolo} posti o uno da ${postiMassimi}. Il prezzo è per gommone, non a persona.`],
+      [`Imbarco a Palau, La Maddalena o Cannigione. Da Cannigione parte un gommone dedicato, solo per ${nomiDa('cannigione')}.`],
       ["Con te c'è sempre lo skipper: non noleggiamo gommoni senza skipper."],
       ['Orari, programma e cosa è compreso sono nella pagina di ogni escursione e nel riepilogo prima di pagare.'],
     ],

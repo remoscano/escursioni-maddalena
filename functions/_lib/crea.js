@@ -31,6 +31,7 @@ export async function creaPrenotazione(contesto, b, { modo, utente = null, ipHas
   const calcolo = calcolaPrenotazione(slug, turnoId, b.data, persone);
   if (calcolo.errore) throw new Errore(400, calcolo.errore);
   if (!imbarchiPrenotazione.some((i) => i.id === b.imbarco)) throw new Errore(400, "Scegli il punto d'imbarco.");
+  if (!offerta.imbarchi.includes(b.imbarco)) throw new Errore(400, "Da questo punto d'imbarco l'escursione non parte: scegline un altro.");
 
   const nome = testo(b.nome, { campo: 'nome e cognome', massimo: 100, obbligatorio: true });
   const gestione = modo === 'gestione';
@@ -75,7 +76,7 @@ export async function creaPrenotazione(contesto, b, { modo, utente = null, ipHas
 
   const ora = adessoISO();
   const giorni = await caricaGiorni(db, b.data, b.data, ora);
-  const situazione = situazioneTurno(slug, turnoId, giorni.giorno(b.data), calcolo.posti);
+  const situazione = situazioneTurno(slug, turnoId, giorni.giorno(b.data), calcolo.posti, null, b.imbarco);
   if (!situazione.candidati.length) {
     throw new Errore(409, situazione.disponibile
       ? `Su questo turno restano posti per massimo ${situazione.maxPersone} persone.`

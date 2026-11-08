@@ -28,7 +28,7 @@ const { imbarchi } = sito;
     <div class="contenitore pila">
       <div class="intestazione__testo">
         <p class="occhiello">Gli imbarchi</p>
-        <h2 id="imbarchi-titolo" class="titolo-sezione">Palau o La Maddalena: scegli il più comodo</h2>
+        <h2 id="imbarchi-titolo" class="titolo-sezione">Palau, La Maddalena o Cannigione: scegli il più comodo</h2>
       </div>
       <div class="due-colonne due-colonne--alto">
         <div class="box">
@@ -37,7 +37,7 @@ const { imbarchi } = sito;
           <p><strong>Molo:</strong> <Dato v={imbarchi.palau.molo} e="molo e indirizzo" /></p>
           <p><strong>Ritrovo:</strong> {regole.anticipoRitrovo} minuti prima della partenza (alle <Dato v={imbarchi.palau.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
           <p><strong>Parcheggio:</strong> <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" /></p>
-          <p>Comodo se dormi in Gallura: Porto Cervo, Baja Sardinia, Cannigione, Santa Teresa.</p>
+          <p>Comodo se dormi in Gallura: Santa Teresa, Porto Pollo, Baja Sardinia.</p>
           {imbarchi.palau.mappa
             ? <a href={imbarchi.palau.mappa} class="link-freccia" rel="noopener">Apri in Google Maps<Icona nome="destra" size={18} /></a>
             : <p><Dato e="Link Google Maps del punto di ritrovo" /></p>}
@@ -51,6 +51,16 @@ const { imbarchi } = sito;
           <p>Da Palau a La Maddalena si arriva con i traghetti di linea, che partono di continuo e attraversano in pochi minuti.</p>
           {imbarchi.maddalena.mappa
             ? <a href={imbarchi.maddalena.mappa} class="link-freccia" rel="noopener">Apri in Google Maps<Icona nome="destra" size={18} /></a>
+            : <p><Dato e="Link Google Maps del punto di ritrovo" /></p>}
+        </div>
+        <div class="box">
+          <span class="box__icona"><Icona nome="ancora" size={24} tratto={1.8} /></span>
+          <h3>Cannigione</h3>
+          <p><strong>Molo:</strong> <Dato v={imbarchi.cannigione.molo} e="molo e indirizzo" /></p>
+          <p><strong>Ritrovo:</strong> {regole.anticipoRitrovo} minuti prima della partenza (alle <Dato v={imbarchi.cannigione.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
+          <p>Comodo se dormi a Cannigione, ad Arzachena o in Costa Smeralda. Da qui parte un gommone dedicato per mezze giornate, tramonto ed esclusive; il Tour delle 7 isole e la Corsica partono da Palau e La Maddalena.</p>
+          {imbarchi.cannigione.mappa
+            ? <a href={imbarchi.cannigione.mappa} class="link-freccia" rel="noopener">Apri in Google Maps<Icona nome="destra" size={18} /></a>
             : <p><Dato e="Link Google Maps del punto di ritrovo" /></p>}
         </div>
       </div>

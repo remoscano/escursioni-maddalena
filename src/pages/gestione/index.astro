@@ -88,7 +88,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
               <div class="campo"><label for="n-adulti">Adulti</label><input id="n-adulti" name="adulti" type="number" min="1" max="20" value="2" required /></div>
               <div class="campo"><label for="n-bambini">Bambini 4–10</label><input id="n-bambini" name="bambini" type="number" min="0" max="20" value="0" /></div>
               <div class="campo"><label for="n-neonati">Neonati 0–3</label><input id="n-neonati" name="neonati" type="number" min="0" max="20" value="0" /></div>
-              <div class="campo"><label for="n-imbarco">Imbarco</label><select id="n-imbarco" name="imbarco"><option value="palau">Palau</option><option value="maddalena">La Maddalena</option></select></div>
+              <div class="campo"><label for="n-imbarco">Imbarco</label><select id="n-imbarco" name="imbarco"><option value="palau">Palau</option><option value="maddalena">La Maddalena</option><option value="cannigione">Cannigione</option></select></div>
             </div>
             <div class="riga-campi">
               <div class="campo"><label for="n-nome">Nome e cognome</label><input id="n-nome" name="nome" maxlength="100" required /></div>
@@ -375,14 +375,15 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
   let richiestaPosti = 0;
   async function controllaPosti() {
     const mia = ++richiestaPosti;
-    const slug = $<HTMLSelectElement>('#n-esc').value, data = $<HTMLInputElement>('#n-data').value, turno = $<HTMLSelectElement>('#n-turno').value;
+    const slug = $<HTMLSelectElement>('#n-esc').value, data = $<HTMLInputElement>('#n-data').value, turno = $<HTMLSelectElement>('#n-turno').value, imbarco = $<HTMLSelectElement>('#n-imbarco').value;
     const box = $('[data-disponibilita]');
     const f = $<HTMLFormElement>('[data-modulo-nuova]');
     const calcolo: any = calcolaPrenotazione(slug, turno, data, { adulti: Number(f.adulti.value), bambini: Number(f.bambini.value), neonati: Number(f.neonati.value) });
     $<HTMLInputElement>('#n-importo').placeholder = calcolo.errore ? '' : `listino: ${calcolo.totale}`;
     if (!data) { box.textContent = ''; return; }
+    if (!offerte[slug].imbarchi.includes(imbarco)) { box.textContent = 'Da questo imbarco l\'escursione non parte.'; return; }
     try {
-      const d = await api(`/api/disponibilita?escursione=${slug}&mese=${data.slice(0, 7)}&gestione=1`);
+      const d = await api(`/api/disponibilita?escursione=${slug}&mese=${data.slice(0, 7)}&gestione=1&imbarco=${imbarco}`);
       if (mia !== richiestaPosti) return; // è arrivata una risposta vecchia: si ignora
       const g = d.giorni[data];
       const t = g?.turni?.find((x: any) => x.id === turno);
@@ -392,7 +393,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
     } catch (e) { box.textContent = (e as Error).message; }
   }
   $('#n-esc').addEventListener('change', aggiornaTurni);
-  ['#n-data', '#n-turno', '#n-adulti', '#n-bambini', '#n-neonati'].forEach((s) => $(s).addEventListener('change', controllaPosti));
+  ['#n-data', '#n-turno', '#n-adulti', '#n-bambini', '#n-neonati', '#n-imbarco'].forEach((s) => $(s).addEventListener('change', controllaPosti));
   $('#n-canale').addEventListener('change', async () => {
     const struttura = $<HTMLSelectElement>('#n-canale').value === 'Struttura partner';
     $('[data-campo-struttura]').hidden = !struttura;

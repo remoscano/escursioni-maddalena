@@ -189,6 +189,13 @@ const durata = e.ore ? `${e.ore} ore` : '';
           <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo} minuti prima della partenza (alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
           <p>Comodo se dormi sull'isola.</p>
         </div>
+        {offerte[e.slug]?.imbarchi.includes('cannigione') && (
+          <div class="box">
+            <h3>Imbarco a Cannigione</h3>
+            <p><Dato v={imbarchi.cannigione.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo} minuti prima della partenza (alle <Dato v={imbarchi.cannigione.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
+            <p>Comodo se dormi a Cannigione, ad Arzachena o in Costa Smeralda: da qui parte un gommone dedicato.</p>
+          </div>
+        )}
         <div class="box">
           <h3>Regole del Parco</h3>
           <p>Siamo nel Parco Nazionale dell'Arcipelago di La Maddalena. Alla Spiaggia Rosa niente sbarco né bagno; sabbia, sassi e conchiglie restano sulle spiagge.</p>

@@ -52,6 +52,19 @@ ok(t['pomeriggio']['max'] == 10 and t['tramonto']['max'] == 10, 'pomeriggio e tr
 g = giorno('tour-7-isole', '2027-06-11'); ok(g['stato'] == 'pieno', 'giornata intera impossibile: entrambi i gommoni hanno un\'uscita')
 s, r = prenota(pub, escursione='tramonto-mezza-giornata', turno='mattina', data='2027-06-11', adulti=1, bambini=1, neonati=1); ok(s == 200, 'mattina + pomeriggio sullo stesso gommone: possibile')
 
+# 3b. Cannigione: gommone dedicato (Honda 9.50), solo mezze giornate, tramonto ed esclusive
+def giorno_da(slug, data, imbarco):
+    s, d = pub('GET', f'/api/disponibilita?escursione={slug}&mese={data[:7]}&imbarco={imbarco}'); return d['giorni'][data]
+ok(giorno_da('tramonto-mezza-giornata', '2027-06-10', 'cannigione')['stato'] == 'libero', '10 giugno: da Palau tutto pieno, da Cannigione il gommone è libero')
+s, r = prenota(pub, escursione='tramonto-mezza-giornata', turno='mattina', data='2027-06-10', adulti=12, imbarco='cannigione'); ok(s == 200, 'mezza giornata da Cannigione, 12 persone sul gommone di Cannigione')
+s, r = prenota(pub, escursione='tramonto-mezza-giornata', turno='mattina', data='2027-06-10', adulti=1, imbarco='cannigione'); ok(s == 409, 'il gommone di Cannigione è pieno: non si va su quelli di Palau')
+s, r = prenota(pub, escursione='tour-7-isole', data='2027-06-20', adulti=2, imbarco='cannigione'); ok(s == 400, f'7 isole da Cannigione: {r.get("errore")}')
+s, r = prenota(pub, escursione='corsica-lavezzi-bonifacio', turno='giornata', data='2027-06-20', adulti=2, imbarco='cannigione'); ok(s == 400, 'Corsica da Cannigione: non parte')
+s, d = pub('GET', '/api/disponibilita?escursione=tour-7-isole&mese=2027-06&imbarco=cannigione'); ok(s == 400, 'calendario del 7 isole da Cannigione: non esiste')
+s, r = prenota(pub, escursione='tour-privato', turno='giornata', data='2027-06-21', adulti=3, imbarco='cannigione'); ok(s == 200, 'privato da Cannigione, 3 persone')
+s, r = prenota(pub, escursione='tour-privato', turno='giornata', data='2027-06-21', adulti=3, imbarco='cannigione'); ok(s == 409, 'secondo privato da Cannigione lo stesso giorno: gommone già occupato')
+t = {x['id']: x for x in giorno('tour-privato', '2027-06-21')['turni']}; ok(t['giornata']['disponibile'], 'da Palau il privato del 21 giugno è ancora libero')
+
 # 4. esclusive: si possono prenotare tutti e tre i gommoni, il sistema sceglie il più piccolo che basta
 s, r = prenota(pub, escursione='tour-privato', turno='giornata', data='2027-07-15', adulti=2, bambini=2); ok(s == 200, 'privato giornata intera 15 luglio, 4 persone')
 (s2, r2), q = paga(pub, r); s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['totale'] == 1500 and v['carburanteEscluso'], f'privato luglio = {v["totale"]} €, carburante escluso')

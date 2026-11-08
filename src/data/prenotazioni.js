@@ -56,11 +56,14 @@ export const testoRitrovo = (orario) => {
 export const testoChiusuraOnline = `Online puoi prenotare fino alle ${regole.chiusuraOnline.ora} del giorno prima della partenza.`;
 
 // I gommoni. "posti" conta tutte le persone a bordo, neonati compresi.
+// "imbarchi" = da dove parte: chi si imbarca a Cannigione va solo sul gommone di Cannigione, e viceversa.
 export const gommoni = [
-  { id: 'gruppo-1', nome: 'Joker Clubman 28', tipo: 'gruppo', posti: 12 },
-  { id: 'gruppo-2', nome: 'BWA 30', tipo: 'gruppo', posti: 12 },
+  { id: 'gruppo-1', nome: 'Joker Clubman 28', tipo: 'gruppo', posti: 12, imbarchi: ['palau', 'maddalena'] },
+  { id: 'gruppo-2', nome: 'BWA 30', tipo: 'gruppo', posti: 12, imbarchi: ['palau', 'maddalena'] },
   // Joker 35: il più grande, ma fa solo esclusive con massimo 6 persone (Remo, 8 novembre 2026).
-  { id: 'esclusiva', nome: 'Joker 35', tipo: 'esclusiva', posti: 6 },
+  { id: 'esclusiva', nome: 'Joker 35', tipo: 'esclusiva', posti: 6, imbarchi: ['palau', 'maddalena'] },
+  // Honda 9.50: parte da Cannigione e fa mezze giornate, tramonto ed esclusive, come gli altri (Remo, 8 novembre 2026).
+  { id: 'cannigione', nome: 'Honda 9.50', tipo: 'gruppo', posti: 12, imbarchi: ['cannigione'] },
 ];
 
 // Le esclusive possono usare tutti i gommoni: il sistema sceglie il più piccolo che basta,
@@ -106,6 +109,7 @@ export const offerte = {
   'tour-7-isole': {
     tipo: 'gruppo',
     minimo: 6,
+    imbarchi: ['palau', 'maddalena'],
     turni: [
       { id: 'giornata', nome: 'Giornata intera', orario: '9:30 – 17:30', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataPersona },
     ],
@@ -115,6 +119,7 @@ export const offerte = {
     tipo: 'esclusiva',
     carburanteEscluso: true,
     documento: true,
+    imbarchi: ['palau', 'maddalena'],
     gommoni: tuttiIGommoni,
     turni: [
       { id: 'giornata', nome: 'Giornata intera', orario: '9:30 – 17:30', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataEsclusiva },
@@ -123,6 +128,7 @@ export const offerte = {
   'tramonto-mezza-giornata': {
     tipo: 'gruppo',
     minimo: 6,
+    imbarchi: ['palau', 'maddalena', 'cannigione'],
     turni: [
       { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '9:30 – 13:30', blocchi: ['mattina'], prezzi: mezzaPersona },
       { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:00 – 18:00', blocchi: ['pomeriggio', 'sera'], prezzi: mezzaPersona },
@@ -132,6 +138,7 @@ export const offerte = {
   'tour-privato': {
     tipo: 'esclusiva',
     carburanteEscluso: true,
+    imbarchi: ['palau', 'maddalena', 'cannigione'],
     gommoni: tuttiIGommoni,
     turni: [
       { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '9:30 – 13:30', blocchi: ['mattina'], prezzi: mezzaEsclusiva },
@@ -151,6 +158,7 @@ export const canaliEsterni = [
 export const imbarchiPrenotazione = [
   { id: 'palau', nome: 'Palau' },
   { id: 'maddalena', nome: 'La Maddalena' },
+  { id: 'cannigione', nome: 'Cannigione' },
 ];
 
 // ---------- Calcoli usati sia dal sito sia dal server ----------
@@ -158,11 +166,16 @@ export const imbarchiPrenotazione = [
 export const offertaDi = (slug) => offerte[slug] ?? null;
 export const turnoDi = (slug, turno) => offerte[slug]?.turni.find((t) => t.id === turno) ?? null;
 
-// Gommoni che può usare un'offerta.
-export function gommoniPer(slug) {
+// Punti d'imbarco da cui parte un'offerta.
+export const imbarchiPer = (slug) => imbarchiPrenotazione.filter((i) => offerte[slug]?.imbarchi.includes(i.id));
+
+// Gommoni che può usare un'offerta (da un certo imbarco, se indicato).
+export function gommoniPer(slug, imbarco = null) {
   const o = offerte[slug];
   if (!o) return [];
-  return o.gommoni ? gommoni.filter((g) => o.gommoni.includes(g.id)) : gommoni.filter((g) => g.tipo === o.tipo);
+  const base = o.gommoni ? gommoni.filter((g) => o.gommoni.includes(g.id)) : gommoni.filter((g) => g.tipo === o.tipo);
+  const da = imbarco ? [imbarco] : o.imbarchi;
+  return base.filter((g) => g.imbarchi.some((i) => da.includes(i)));
 }
 
 // Riga di listino valida per una data 'AAAA-MM-GG'.

@@ -2,10 +2,12 @@
 // con lo stesso modello della pagina "Tour delle 7 isole".
 // I valori vuoti ('') diventano segnaposto rosa sul sito.
 
-import { prezzoDa, offerte, gommoniPer } from './prenotazioni.js';
+import { prezzoDa, offerte, gommoniPer, imbarchiPer } from './prenotazioni.js';
 
 // Prezzi "da" e posti arrivano da src/data/prenotazioni.js (listino unico per sito e prenotazioni).
 const da = (slug) => prezzoDa(slug) ?? {};
+// "Palau, La Maddalena o Cannigione": da dove parte un'escursione.
+const daDove = (slug) => { const n = imbarchiPer(slug).map((i) => i.nome); return n.length > 1 ? `${n.slice(0, -1).join(', ')} o ${n.at(-1)}` : n[0]; };
 const posti = (slug) => String(Math.max(...gommoniPer(slug).map((g) => g.posti)));
 // Partenza e rientro della Corsica, dall'orario del listino (es. '9:30 – 17:30').
 const [partenzaCorsica, rientroCorsica] = offerte['corsica-lavezzi-bonifacio'].turni[0].orario.split('–').map((x) => x.trim());
@@ -28,7 +30,7 @@ export const escursioni = [
     prezzoAdulti: String(da('tour-7-isole').adulto),
     prezzoBambini: String(da('tour-7-isole').bambino),
     postiMax: posti('tour-7-isole'),
-    fatti: ['Imbarco a Palau o La Maddalena', 'Pranzo libero a La Maddalena', 'Spiaggia Rosa dal mare'],
+    fatti: [`Imbarco a ${daDove('tour-7-isole')}`, 'Pranzo libero a La Maddalena', 'Spiaggia Rosa dal mare'],
     foto: {
       copertina: "Cala Corsara dall'alto, con il gommone all'ancora",
       galleria: [
@@ -77,7 +79,7 @@ export const escursioni = [
     prezzoBambini: null,
     prezzoGommone: true,
     postiMax: posti('corsica-lavezzi-bonifacio'),
-    fatti: ['Gommone in esclusiva', 'Imbarco a Palau o La Maddalena', "Serve un documento valido per l'espatrio"],
+    fatti: ['Gommone in esclusiva', `Imbarco a ${daDove('corsica-lavezzi-bonifacio')}`, "Serve un documento valido per l'espatrio"],
     foto: {
       copertina: 'Le falesie di Bonifacio viste dal mare',
       galleria: [
@@ -121,7 +123,7 @@ export const escursioni = [
     prezzoAdulti: String(da('tramonto-mezza-giornata').adulto),
     prezzoBambini: String(da('tramonto-mezza-giornata').bambino),
     postiMax: posti('tramonto-mezza-giornata'),
-    fatti: ['Imbarco a Palau o La Maddalena', 'Mattina, pomeriggio o tramonto'],
+    fatti: [`Imbarco a ${daDove('tramonto-mezza-giornata')}`, 'Mattina, pomeriggio o tramonto'],
     foto: {
       copertina: 'Il gommone controluce al tramonto',
       galleria: [
@@ -135,7 +137,7 @@ export const escursioni = [
     mappa: false,
     numeri: [],
     programma: [
-      { tipo: 'imbarco', titolo: 'Ritrovo a Palau o a La Maddalena', testo: 'Mattina 9:30–13:30, pomeriggio 14:00–18:00, tramonto 18:00–20:30 con aperitivo.' },
+      { tipo: 'imbarco', titolo: `Ritrovo a ${daDove('tramonto-mezza-giornata')}`, testo: 'Mattina 9:30–13:30, pomeriggio 14:00–18:00, tramonto 18:00–20:30 con aperitivo.' },
       { tipo: 'sosta', n: '1', titolo: 'Prima cala', luogo: 'Bagno', testo: '', mancante: 'Quali cale si visitano di solito' },
       { tipo: 'sosta', n: '2', titolo: 'Seconda cala', luogo: 'Bagno', testo: '', mancante: 'Quali cale si visitano di solito' },
       { tipo: 'vista', titolo: 'Il tramonto dal mare', luogo: 'Solo uscita del tramonto', testo: '', mancante: 'Dove vi fermate a guardare il tramonto' },
@@ -162,7 +164,7 @@ export const escursioni = [
     prezzoBambini: null,
     prezzoGommone: true,
     postiMax: posti('tour-privato'),
-    fatti: ['Imbarco a Palau o La Maddalena', 'Itinerario su misura'],
+    fatti: [`Imbarco a ${daDove('tour-privato')}`, 'Itinerario su misura'],
     foto: {
       copertina: 'Una famiglia a bordo, tuffo dalla prua',
       galleria: [
@@ -176,7 +178,7 @@ export const escursioni = [
     mappa: false,
     numeri: [],
     programma: [
-      { tipo: 'imbarco', titolo: 'Ritrovo dove preferite', luogo: 'Palau o La Maddalena', testo: "Orario da concordare." },
+      { tipo: 'imbarco', titolo: 'Ritrovo dove preferite', luogo: daDove('tour-privato'), testo: "Orario da concordare." },
       { tipo: 'sosta', n: '1', titolo: 'Le soste che scegliete voi', luogo: 'Su misura', testo: "Il giro delle 7 isole o solo le cale più tranquille: lo skipper vi propone l'itinerario in base al vento del giorno. Per la Corsica c'è l'escursione dedicata, anche quella solo per voi." },
       { tipo: 'rientro', titolo: 'Rientro', testo: 'Quando volete, entro la durata concordata.' },
     ],

@@ -30,8 +30,13 @@ const perOspite = area === 'struttura';
         <div class="prenota__escursioni" data-escursioni role="radiogroup" aria-labelledby="pr-esc"></div>
       </section>
 
+      <section class="prenota__passo" aria-labelledby="pr-imbarco" data-passo-imbarco hidden>
+        <h2 id="pr-imbarco" class="prenota__titolo"><span class="prenota__n">2</span>Imbarco</h2>
+        <div class="scelte" role="radiogroup" aria-labelledby="pr-imbarco" data-imbarchi></div>
+      </section>
+
       <section class="prenota__passo" aria-labelledby="pr-data" data-passo-data hidden>
-        <h2 id="pr-data" class="prenota__titolo"><span class="prenota__n">2</span>Data</h2>
+        <h2 id="pr-data" class="prenota__titolo"><span class="prenota__n">3</span>Data</h2>
         <div class="cal" data-calendario>
           <div class="cal__testa">
             <button type="button" class="cal__freccia" data-mese="-1" aria-label="Mese precedente">‹</button>
@@ -49,12 +54,12 @@ const perOspite = area === 'struttura';
       </section>
 
       <section class="prenota__passo" aria-labelledby="pr-turno" data-passo-turno hidden>
-        <h2 id="pr-turno" class="prenota__titolo"><span class="prenota__n">3</span>Orario</h2>
+        <h2 id="pr-turno" class="prenota__titolo"><span class="prenota__n">4</span>Orario</h2>
         <div class="prenota__turni" data-turni role="radiogroup" aria-labelledby="pr-turno"></div>
       </section>
 
       <section class="prenota__passo" aria-labelledby="pr-persone" data-passo-dettagli hidden>
-        <h2 id="pr-persone" class="prenota__titolo"><span class="prenota__n">4</span>Persone</h2>
+        <h2 id="pr-persone" class="prenota__titolo"><span class="prenota__n">5</span>Persone</h2>
         <div class="prenota__persone">
           {[
             ['adulti', 'Adulti', `da ${regole.eta.bambiniFinoA + 1} anni`],
@@ -72,12 +77,6 @@ const perOspite = area === 'struttura';
           ))}
         </div>
         <p class="prenota__nota" data-nota-persone></p>
-
-        <h2 class="prenota__titolo" id="pr-imbarco" style="margin-top:28px"><span class="prenota__n">5</span>Imbarco</h2>
-        <div class="scelte" role="radiogroup" aria-labelledby="pr-imbarco">
-          <label class="scelta"><input type="radio" name="pr-imbarco" value="palau" checked />Palau</label>
-          <label class="scelta"><input type="radio" name="pr-imbarco" value="maddalena" />La Maddalena</label>
-        </div>
 
         <h2 class="prenota__titolo" style="margin-top:28px"><span class="prenota__n">6</span>{perOspite ? "Dati dell'ospite" : 'I tuoi dati'}</h2>
         <div class="prenota__dati">
@@ -180,7 +179,7 @@ const perOspite = area === 'struttura';
 </style>
 
 <script>
-  import { offerte, regole, calcolaPrenotazione, rigaPrezzo, imbarchiPrenotazione, testoCarburante, testoRitrovo } from '../data/prenotazioni.js';
+  import { offerte, regole, calcolaPrenotazione, rigaPrezzo, imbarchiPrenotazione, imbarchiPer, testoCarburante, testoRitrovo } from '../data/prenotazioni.js';
   import { api, ErroreApi, h, euro, dataLunga, oggiRoma, segnaposto, persone as testoPersone } from '../scripts/comune';
 
   const NOMI_MESI = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric', timeZone: 'UTC' });
@@ -206,6 +205,7 @@ const perOspite = area === 'struttura';
       data: '' as string,
       turno: '' as string,
       adulti: 2, bambini: 0, neonati: 0,
+      imbarco: 'palau' as string,
       pagamenti: [] as string[],
       invio: false,
     };
@@ -235,6 +235,8 @@ const perOspite = area === 'struttura';
       st.slug = slug; st.data = ''; st.turno = '';
       if (!st.mese) st.mese = primoMese();
       disegnaEscursioni();
+      disegnaImbarchi();
+      $('[data-passo-imbarco]').hidden = false;
       $('[data-passo-data]').hidden = false;
       $('[data-passo-turno]').hidden = true;
       $('[data-passo-dettagli]').hidden = true;
@@ -242,13 +244,31 @@ const perOspite = area === 'struttura';
       await caricaMese();
     }
 
-    // ---------- 2. Calendario ----------
+    // ---------- 2. Imbarco (Palau e La Maddalena hanno gli stessi gommoni, Cannigione il suo: cambia il calendario) ----------
+    const imbarco = () => st.imbarco;
+    function disegnaImbarchi() {
+      const possibili = imbarchiPer(st.slug);
+      if (!possibili.some((i) => i.id === st.imbarco)) st.imbarco = possibili[0].id;
+      $('[data-imbarchi]').innerHTML = possibili.map((i) => `
+        <label class="scelta"><input type="radio" name="pr-imbarco" value="${h(i.id)}" ${i.id === st.imbarco ? 'checked' : ''} />${h(i.nome)}</label>`).join('');
+    }
+    $('[data-imbarchi]').addEventListener('change', (ev) => {
+      const v = (ev.target as HTMLInputElement).value;
+      if (!v || v === st.imbarco) return;
+      st.imbarco = v; st.data = ''; st.turno = '';
+      $('[data-passo-turno]').hidden = true;
+      $('[data-passo-dettagli]').hidden = true;
+      $('[data-riepilogo]').hidden = true;
+      caricaMese();
+    });
+
+    // ---------- 3. Calendario ----------
     async function caricaMese() {
       const giorni = $('[data-giorni]');
       giorni.setAttribute('aria-busy', 'true');
       $('[data-nome-mese]').textContent = NOMI_MESI.format(new Date(`${st.mese}-15T12:00:00Z`));
       try {
-        const q = new URLSearchParams({ escursione: st.slug, mese: st.mese });
+        const q = new URLSearchParams({ escursione: st.slug, mese: st.mese, imbarco: st.imbarco });
         if (partnerCodice) q.set('partner', partnerCodice);
         const d = await api(`/api/disponibilita?${q}`);
         st.giorni = d.giorni;
@@ -301,7 +321,7 @@ const perOspite = area === 'struttura';
       else { $('[data-passo-dettagli]').hidden = true; $('[data-riepilogo]').hidden = true; }
     });
 
-    // ---------- 3. Turno ----------
+    // ---------- 4. Turno ----------
     function disegnaTurni() {
       const offerta = offerte[st.slug];
       const info = st.giorni[st.data];
@@ -336,7 +356,7 @@ const perOspite = area === 'struttura';
       aggiorna();
     }
 
-    // ---------- 4. Persone ----------
+    // ---------- 5. Persone ----------
     const maxTurno = () => st.giorni[st.data]?.turni.find((t: any) => t.id === st.turno)?.max ?? 0;
     function sistemaPersone() {
       const max = maxTurno();
@@ -363,8 +383,7 @@ const perOspite = area === 'struttura';
     });
 
     // ---------- Riepilogo e pagamento ----------
-    const imbarco = () => radice.querySelector<HTMLInputElement>('input[name="pr-imbarco"]:checked')?.value || 'palau';
-    radice.addEventListener('change', (ev) => { if ((ev.target as HTMLInputElement).name === 'pr-imbarco' || (ev.target as HTMLElement).matches('[data-accetto]')) aggiorna(); });
+    radice.addEventListener('change', (ev) => { if ((ev.target as HTMLElement).matches('[data-accetto]')) aggiorna(); });
 
     function aggiorna() {
       if (!st.slug || !st.data || !st.turno) return;

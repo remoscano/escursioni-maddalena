@@ -17,12 +17,15 @@ export async function onRequestGet(contesto) {
   if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(mese)) throw new Errore(400, 'Mese non valido.');
   const utente = await utenteCollegato(env.DB, request);
   const gestione = url.searchParams.get('gestione') === '1' && utente?.ruolo === 'gestione';
-  const giorni = await calendarioMese(env.DB, slug, mese, { gestione });
+  // Imbarco: Palau e La Maddalena usano gli stessi gommoni, Cannigione il suo.
+  const imbarco = url.searchParams.get('imbarco') || 'palau';
+  if (!offerte[slug].imbarchi.includes(imbarco)) throw new Errore(400, 'Da questo imbarco l\'escursione non parte.');
+  const giorni = await calendarioMese(env.DB, slug, mese, { gestione, imbarco });
   let partner = null;
   if (utente?.ruolo === 'partner') partner = { nome: utente.partner_nome, collegato: true };
   else if (url.searchParams.get('partner')) {
     const p = await prima(env.DB, 'SELECT nome FROM partner WHERE codice = :c AND attivo = 1', { c: url.searchParams.get('partner').toUpperCase().slice(0, 20) });
     if (p) partner = { nome: p.nome, collegato: false };
   }
-  return json({ escursione: slug, mese, giorni, stagione: regole.stagione, pagamenti: metodiDisponibili(env), partner });
+  return json({ escursione: slug, mese, imbarco, giorni, stagione: regole.stagione, pagamenti: metodiDisponibili(env), partner });
 }
