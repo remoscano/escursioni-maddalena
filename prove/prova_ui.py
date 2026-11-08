@@ -91,7 +91,7 @@ async def corsica(b):
     await pg.wait_for_selector('[data-riepilogo]:not([hidden])')
     t = await pg.inner_text('[data-righe]')
     ok('1200 €' in t and 'gommone solo per voi' in t and 'espatrio' in t and 'carburante' in t.lower(), 'Corsica 15 giugno: 1200 € il gommone, documento e carburante nel riepilogo')
-    ok(await pg.locator('[data-righe] .dato').count() >= 1, 'manca come si calcola il carburante: segnaposto rosa nel riepilogo')
+    ok('a consumo, si paga a bordo a fine uscita' in t, 'nel riepilogo c\'è come si paga il carburante')
     await larghezza(pg, 390, 'prenota Corsica')
     await pg.screenshot(path=f'{OUT}/prenota-corsica-390.png', full_page=True)
     await ctx.close()

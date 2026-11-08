@@ -27,7 +27,7 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 
 - Astro statico + funzioni di Cloudflare Pages in `functions/` (le API delle prenotazioni, su `/api/...`) + database D1. Nessun framework JS lato client: JavaScript solo per menu, modulo WhatsApp, prenotazione, area strutture e gestione.
 - Prenotazioni:
-  - `src/data/prenotazioni.js`: gommoni, turni con orari, listini per periodo, regole (chiusura online alle 20 del giorno prima, 48 ore di cancellazione gratuita, 15% alle strutture, fasce d'età, come si calcola il carburante delle esclusive). È l'unica fonte dei prezzi: la usano sito e server, e il server ricalcola sempre il totale.
+  - `src/data/prenotazioni.js`: gommoni, turni con orari, listini per periodo, regole (chiusura online alle 20 del giorno prima, 48 ore di cancellazione gratuita, 15% alle strutture, fasce d'età, come si paga il carburante delle esclusive). È l'unica fonte dei prezzi: la usano sito e server, e il server ricalcola sempre il totale.
   - `src/data/condizioni.js`: testo delle condizioni di prenotazione, usato dalla pagina `/condizioni/` e copiato per intero nell'email di conferma (la legge chiede la conferma con le condizioni su supporto durevole).
   - `functions/_lib/motore.js`: posti liberi e scelta del gommone. Ogni turno occupa blocchi della giornata (mattina, pomeriggio, sera); l'inserimento controlla i posti nella stessa istruzione SQL, così due clienti non prendono lo stesso posto. Durante il pagamento i posti restano tenuti per 30 minuti.
   - `functions/_lib/pagamenti.js`: SumUp (pagina di pagamento ospitata) e PayPal (ordini v2), sempre con reindirizzamento e verifica dal server: sul sito non si carica nessuno script di terze parti. `PAGAMENTI_PROVA=1` (solo anteprime) aggiunge un pagamento simulato.
@@ -68,18 +68,40 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 
 Aggiorna questa sezione quando qualcosa viene completato.
 
+### Fatto
 - [x] Prima versione in italiano online su pages.dev
 - [x] WhatsApp (+39 331 505 5736) ed email (maddalena.escursioni@gmail.com) nel sito
 - [x] Sistema di prenotazione interno con area strutture e gestione: ramo `prenotazioni`, anteprima con pagamento simulato (8 novembre 2026)
 - [x] Prezzi decisi da Remo (8 novembre 2026): tramonto come la mezza giornata, Corsica solo in esclusiva con i prezzi della giornata intera, esclusiva possibile su tutti e tre i gommoni
 - [x] Condizioni, privacy e cookie controllati sulle norme e su quello che fa il sito (8 novembre 2026); migrazione `0002_impronta_ip.sql` applicata a entrambi i database
-- [ ] Da confermare: orari della Corsica (ora 9:30 – 17:30, come le altre giornate intere); come si calcola e quando si paga il carburante delle esclusive (`regole.carburante` in `src/data/prenotazioni.js`)
-- [ ] Conti SumUp e PayPal → chiavi in Cloudflare Pages (Production): `SUMUP_API_KEY`, `SUMUP_MERCHANT_CODE`, `PAYPAL_CLIENT_ID`, `PAYPAL_SECRET`. Provare prima PayPal in sandbox (`PAYPAL_AMBIENTE=sandbox` nelle anteprime)
-- [ ] Email di conferma, obbligatorie prima di aprire le prenotazioni vere (art. 51, comma 7, Codice del consumo): servono dominio e un servizio di invio (predisposto Resend: `RESEND_API_KEY`, `EMAIL_MITTENTE`). L'email contiene già riepilogo e copia delle condizioni
+- [x] Carburante delle esclusive: a consumo, si paga a bordo a fine uscita. Ticket del Parco incluso nel prezzo (Remo, 8 novembre 2026)
+
+### Da decidere o da avere dal cliente (Remo)
+- [ ] Orari della Corsica: ora 9:30 – 17:30, come le altre giornate intere
+- [ ] Le due regole aggiunte nelle condizioni: se annulliamo noi per un guasto vale la regola del maltempo; chi prenota da altre piattaforme segue le loro condizioni
+- [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA, autorizzazioni (Parco, Capitaneria)
+- [ ] Imbarchi: moli, orari di ritrovo, quanti minuti prima presentarsi, orario di imbarco a La Maddalena
+- [ ] Regole: animali a bordo, età minima e giubbotti per i bambini, cosa è incluso (maschere, acqua)
+- [ ] Gommoni (modello, lunghezza, motori, dotazioni) e skipper (nome, esperienza, lingue)
+- [ ] Testi delle escursioni Corsica, Tramonto e Tour privato (soste, durata della traversata, pranzo in Corsica)
+- [ ] Foto (le note sui segnaposto indicano gli scatti) ed eventuale logo
+- [ ] Recensioni vere da Google o TripAdvisor e link alla scheda Google
+
+### Da attivare prima di aprire le prenotazioni vere
+- [ ] Dominio: da GoDaddy a Cloudflare (DNS), collegarlo in Pages → Custom domains; poi `site` in `astro.config.mjs`, `url` in `src/data/sito.js`, `www` che rimanda alla versione senza `www`
+- [ ] Email di conferma, obbligatorie (art. 51, comma 7, Codice del consumo): account Resend, dominio verificato, `RESEND_API_KEY` ed `EMAIL_MITTENTE` in Cloudflare Pages
+- [ ] Conti SumUp e PayPal → chiavi in Cloudflare Pages (Production): `SUMUP_API_KEY`, `SUMUP_MERCHANT_CODE`, `PAYPAL_CLIENT_ID`, `PAYPAL_SECRET`
+- [ ] Accesso di gestione: Remo cambia la password provvisoria al primo accesso; creare le strutture partner vere dalla gestione
 - [ ] Unire `prenotazioni` in `main` quando Remo dà l'ok (se i pagamenti non sono ancora attivi: `regole.attive: false`)
-- [ ] Dati del cliente rimasti: ragione sociale, P. IVA, indirizzo, REA, autorizzazioni (Parco, Capitaneria), moli e orari di ritrovo, minuti di anticipo al molo, gommoni (modello, motori), skipper, ticket del Parco, animali
-- [ ] Foto (le note sui segnaposto indicano gli scatti)
-- [ ] Dominio: acquistato su GoDaddy, da spostare su Cloudflare (DNS) e collegare in Pages → Custom domains. Poi aggiornare `site` in `astro.config.mjs` e `url` in `src/data/sito.js`, e far rimandare `www` alla versione senza `www`
-- [ ] Testi delle escursioni Corsica, Tramonto e Tour privato (programma ancora a segnaposto)
-- [ ] Lancio: `inCostruzione: false` in `src/data/sito.js`, `public/robots.txt` aperto (con le esclusioni già scritte nel commento), sitemap, dati strutturati (LocalBusiness e TouristTrip)
+
+### Da provare con soldi veri o servizi veri (non si può fare in anteprima)
+- [ ] PayPal in sandbox nell'anteprima (`PAYPAL_AMBIENTE=sandbox` + chiavi sandbox), poi un pagamento vero da pochi euro e il suo rimborso
+- [ ] SumUp: un pagamento vero con carta, controllare che la prenotazione si confermi da sola, poi rimborso dal pannello SumUp
+- [ ] Email: arrivo al cliente (non nello spam) e copia a maddalena.escursioni@gmail.com
+- [ ] "Aggiungi al calendario" su iPhone e su Android
+- [ ] Una giornata di prova completa con la persona che inserisce le prenotazioni delle piattaforme e con una struttura partner vera
+
+### Lancio e dopo
+- [ ] `inCostruzione: false` in `src/data/sito.js`, `public/robots.txt` aperto (con le esclusioni già scritte nel commento), sitemap, dati strutturati (LocalBusiness e TouristTrip)
+- [ ] Se servono statistiche: Cloudflare Web Analytics (aggiornare privacy e cookie)
 - [ ] Inglese (`/en/`) con hreflang, poi tedesco e francese

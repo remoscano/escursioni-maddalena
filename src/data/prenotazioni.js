@@ -29,7 +29,7 @@ export const regole = {
   eta: { neonatiFinoA: 3, bambiniFinoA: 10 },
   // Esclusive: il carburante si paga a parte. La legge chiede di dire prima come si calcola e quando si paga
   // (es. 'a consumo, si paga a bordo a fine uscita'). Finché è vuoto, sul sito e nelle email compare un segnaposto.
-  carburante: '',
+  carburante: 'a consumo, si paga a bordo a fine uscita',
 };
 
 // Testo unico sul carburante delle esclusive (riepilogo, conferma, email, condizioni).

@@ -61,7 +61,7 @@ export const condizioni = [
       ['Si paga tutto al momento della prenotazione, con carta (tramite SumUp) o con PayPal, sulle loro pagine sicure. Non ci sono costi in più per il metodo di pagamento.'],
       [`Bambini fino a ${neonatiFinoA} anni gratis, da ${neonatiFinoA + 1} a ${bambiniFinoA} anni prezzo ridotto, da ${bambiniFinoA + 1} anni prezzo intero. Anche chi non paga occupa un posto a bordo e va indicato nella prenotazione.`],
       ['Nelle escursioni in esclusiva il carburante non è compreso nel prezzo e si paga a parte: ', v(regole.carburante, CARBURANTE_MANCA), '.'],
-      ['Ticket del Parco Nazionale: ', v(sito.regole.ticketParco, 'incluso nel prezzo, oppure quanto costa e come si paga'), '.'],
+      ['Il ticket del Parco Nazionale è compreso nel prezzo.'],
     ],
   },
   {

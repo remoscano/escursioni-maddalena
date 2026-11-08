@@ -65,7 +65,7 @@ export const sito = {
 
   regole: {
     maltempo: "Se mare o vento non sono sicuri annulliamo noi e scegli tu: rimborso completo o un'altra data.", // rimborso o cambio data
-    ticketParco: '', // incluso o da pagare
+    ticketParco: 'Sì, è incluso nel prezzo di tutte le escursioni.',
     pagamento: 'Online al momento della prenotazione, con carta o PayPal. Nei tour in esclusiva il carburante è a parte.', // a bordo, contanti o carta?
     bambini: 'Fino a 3 anni non pagano, da 4 a 10 anni pagano il ridotto.', // età minima, giubbotti, prezzo ridotto
     animali: '',
