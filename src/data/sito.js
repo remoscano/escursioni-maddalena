@@ -48,9 +48,9 @@ export const sito = {
     },
     maddalena: {
       nome: 'La Maddalena',
-      molo: '',
+      molo: 'Il Porticciolo, Via Padule, 07024 La Maddalena', // molo principale, dove i gommoni passano la notte
       ritrovo: '9:15',
-      mappa: '',
+      mappa: 'https://maps.app.goo.gl/ipWyZCHfEdG4hvKQA',
     },
   },
 

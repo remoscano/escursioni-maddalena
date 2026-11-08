@@ -75,6 +75,7 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Prezzi decisi da Remo (8 novembre 2026): tramonto come la mezza giornata, Corsica solo in esclusiva con i prezzi della giornata intera, esclusiva possibile su tutti e tre i gommoni
 - [x] Condizioni, privacy e cookie controllati sulle norme e su quello che fa il sito (8 novembre 2026); migrazione `0002_impronta_ip.sql` applicata a entrambi i database
 - [x] Carburante delle esclusive: a consumo, si paga a bordo a fine uscita. Ticket del Parco incluso nel prezzo (Remo, 8 novembre 2026)
+- [x] Molo di La Maddalena: Il Porticciolo, Via Padule (con link Google Maps)
 - [x] Gommoni: modelli, motori e posti confermati, pagina "I gommoni e lo skipper" aggiornata (8 novembre 2026)
 - [x] Confermati da Remo (8 novembre 2026): Corsica 9:30 – 17:30 con Lavezzi, isola di Cavallo e Bonifacio; le due regole aggiunte alle condizioni (guasto = regola del maltempo; altre piattaforme = loro condizioni); nessuna autorizzazione da indicare; ritrovo 15 minuti prima della partenza a Palau e a La Maddalena (9:15 per le uscite delle 9:30)
 
@@ -82,7 +83,7 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [ ] Gommone di Cannigione (Honda 9.50, 1 × Honda 350 cv): quante persone porta, quali escursioni fa, orari e ritrovo, prezzi, minimo di partecipanti, se fa il giro da solo. Poi: Cannigione come terzo imbarco nelle prenotazioni (assegnato a quel gommone) e nelle pagine
 - [ ] Molo di Palau (ancora da sapere)
 - [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA
-- [ ] Imbarchi: molo di La Maddalena, parcheggio a Palau, link Google Maps dei punti di ritrovo
+- [ ] Imbarchi: parcheggio a Palau, link Google Maps del molo di Palau
 - [ ] Regole: animali a bordo, età minima e giubbotti per i bambini, cosa è incluso (maschere, acqua)
 - [ ] Skipper (nome, esperienza, lingue) e due righe di presentazione dei gommoni
 - [ ] Testi delle escursioni Corsica (traversata, Lavezzi, Cavallo, Bonifacio, pranzo), Tramonto e Tour privato
