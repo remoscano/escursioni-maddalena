@@ -75,13 +75,13 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Prezzi decisi da Remo (8 novembre 2026): tramonto come la mezza giornata, Corsica solo in esclusiva con i prezzi della giornata intera, esclusiva possibile su tutti e tre i gommoni
 - [x] Condizioni, privacy e cookie controllati sulle norme e su quello che fa il sito (8 novembre 2026); migrazione `0002_impronta_ip.sql` applicata a entrambi i database
 - [x] Carburante delle esclusive: a consumo, si paga a bordo a fine uscita. Ticket del Parco incluso nel prezzo (Remo, 8 novembre 2026)
-- [x] Cannigione terzo punto d'imbarco con il suo gommone (Honda 9.50), nelle prenotazioni, nella gestione e nelle pagine (9 novembre 2026)
+- [x] Cannigione terzo punto d'imbarco con il suo gommone (Honda 9.50), nelle prenotazioni, nella gestione e nelle pagine (9 novembre 2026). Confermato da Remo: anche da Cannigione minimo 6 persone per le uscite di gruppo; tour privato prenotabile online (mezza giornata, tramonto, giornata intera)
 - [x] Molo di La Maddalena: Il Porticciolo, Via Padule (con link Google Maps)
 - [x] Gommoni: modelli, motori e posti confermati, pagina "I gommoni e lo skipper" aggiornata (8 novembre 2026)
 - [x] Confermati da Remo (8 novembre 2026): Corsica 9:30 – 17:30 con Lavezzi, isola di Cavallo e Bonifacio; le due regole aggiunte alle condizioni (guasto = regola del maltempo; altre piattaforme = loro condizioni); nessuna autorizzazione da indicare; ritrovo 15 minuti prima della partenza a Palau e a La Maddalena (9:15 per le uscite delle 9:30)
 
 ### Da decidere o da avere dal cliente (Remo)
-- [ ] Cannigione: link Google Maps del Pontile La Sciumara; confermare che anche da Cannigione l'uscita di gruppo parte con almeno 6 persone e che le esclusive si prenotano online come le altre
+- [ ] Cannigione: link Google Maps del Pontile La Sciumara
 - [ ] Molo di Palau (ancora da sapere)
 - [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA
 - [ ] Imbarchi: parcheggio a Palau, link Google Maps del molo di Palau
