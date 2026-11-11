@@ -66,7 +66,7 @@ export const faq = [
         domanda: 'Possono venire i bambini?',
         risposta: '',
         regola: 'bambini',
-        mancante: 'Età minima e giubbotti per bambini',
+        mancante: 'Età minima, giubbotti per bambini, prezzo ridotto',
       },
       {
         id: 'animali',

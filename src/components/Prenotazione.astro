@@ -61,14 +61,19 @@ const perOspite = area === 'struttura';
       <section class="prenota__passo" aria-labelledby="pr-persone" data-passo-dettagli hidden>
         <h2 id="pr-persone" class="prenota__titolo"><span class="prenota__n">5</span>Persone</h2>
         <div class="prenota__persone">
-          <div class="contatore">
-            <p class="contatore__nome" id="pr-n-persone">Persone a bordo<span>Stesso prezzo per tutti, a qualsiasi età</span></p>
-            <div class="contatore__comandi">
-              <button type="button" data-meno aria-label="Togli una persona">−</button>
-              <output data-num aria-labelledby="pr-n-persone" aria-live="polite">0</output>
-              <button type="button" data-piu aria-label="Aggiungi una persona">+</button>
+          {[
+            ['adulti', 'Adulti', `da ${regole.eta.bambiniFinoA + 1} anni`],
+            ['bambini', 'Bambini', `fino a ${regole.eta.bambiniFinoA} anni, prezzo ridotto`],
+          ].map(([id, nome, nota]) => (
+            <div class="contatore">
+              <p class="contatore__nome" id={`pr-n-${id}`}>{nome}<span>{nota}</span></p>
+              <div class="contatore__comandi">
+                <button type="button" data-meno={id} aria-label={`Togli ${nome.toLowerCase()}`}>−</button>
+                <output data-num={id} aria-labelledby={`pr-n-${id}`} aria-live="polite">0</output>
+                <button type="button" data-piu={id} aria-label={`Aggiungi ${nome.toLowerCase()}`}>+</button>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
         <p class="prenota__nota" data-nota-persone></p>
 
@@ -198,7 +203,7 @@ const perOspite = area === 'struttura';
       giorni: {} as Record<string, any>,
       data: '' as string,
       turno: '' as string,
-      persone: 2,
+      adulti: 2, bambini: 0,
       imbarco: 'maddalena' as string,
       pagamenti: [] as string[],
       invio: false,
@@ -324,7 +329,7 @@ const perOspite = area === 'struttura';
       $('[data-turni]').innerHTML = offerta.turni.map((t: any) => {
         const s = info.turni.find((x: any) => x.id === t.id) || { disponibile: false };
         const riga = rigaPrezzo(t.prezzi, st.data);
-        const prezzo = !riga ? '' : offerta.tipo === 'esclusiva' ? `${euro(riga.barca)} il gommone` : `${euro(riga.persona)} a persona`;
+        const prezzo = !riga ? '' : offerta.tipo === 'esclusiva' ? `${euro(riga.barca)} il gommone` : `${euro(riga.adulto)} a persona · ridotto ${euro(riga.bambino)}`;
         let disponibilita = 'Esaurito';
         if (s.disponibile) {
           if (offerta.tipo === 'esclusiva') disponibilita = `Gommone libero · fino a ${s.max} persone`;
@@ -356,21 +361,24 @@ const perOspite = area === 'struttura';
     const maxTurno = () => st.giorni[st.data]?.turni.find((t: any) => t.id === st.turno)?.max ?? 0;
     function sistemaPersone() {
       const max = maxTurno();
-      if (st.persone > max) st.persone = Math.max(1, max);
-      radice.querySelector('[data-num]')!.textContent = String(st.persone);
-      radice.querySelector<HTMLButtonElement>('[data-meno]')!.disabled = st.persone <= 1;
-      radice.querySelector<HTMLButtonElement>('[data-piu]')!.disabled = st.persone >= max;
+      while (st.adulti + st.bambini > max && st.bambini > 0) st.bambini--;
+      while (st.adulti + st.bambini > max && st.adulti > 1) st.adulti--;
+      for (const k of ['adulti', 'bambini'] as const) {
+        radice.querySelector(`[data-num="${k}"]`)!.textContent = String(st[k]);
+        radice.querySelector<HTMLButtonElement>(`[data-meno="${k}"]`)!.disabled = st[k] <= (k === 'adulti' ? 1 : 0);
+        radice.querySelector<HTMLButtonElement>(`[data-piu="${k}"]`)!.disabled = st.adulti + st.bambini >= max;
+      }
       const offerta = offerte[st.slug];
       $('[data-nota-persone]').textContent = offerta.tipo === 'esclusiva'
         ? `Il gommone è solo per voi: fino a ${max} persone, bambini compresi.`
-        : `Posti liberi su questa uscita: ${max}. Ogni persona a bordo, anche i bambini, paga la stessa cifra.`;
+        : `Posti liberi su questa uscita: ${max}. Anche i bambini più piccoli pagano il ridotto e occupano un posto a bordo.`;
     }
     radice.addEventListener('click', (ev) => {
       const t = ev.target as HTMLElement;
-      const piu = Boolean(t.closest('[data-piu]'));
-      const meno = Boolean(t.closest('[data-meno]'));
-      if (piu && st.persone < maxTurno()) st.persone++;
-      if (meno && st.persone > 1) st.persone--;
+      const piu = t.closest<HTMLElement>('[data-piu]')?.dataset.piu as 'adulti' | 'bambini' | undefined;
+      const meno = t.closest<HTMLElement>('[data-meno]')?.dataset.meno as 'adulti' | 'bambini' | undefined;
+      if (piu && st.adulti + st.bambini < maxTurno()) st[piu]++;
+      if (meno && st[meno] > (meno === 'adulti' ? 1 : 0)) st[meno]--;
       if (piu || meno) { sistemaPersone(); aggiorna(); }
     });
 
@@ -381,7 +389,7 @@ const perOspite = area === 'struttura';
       if (!st.slug || !st.data || !st.turno) return;
       const offerta = offerte[st.slug];
       const turno = offerta.turni.find((t: any) => t.id === st.turno);
-      const calcolo: any = calcolaPrenotazione(st.slug, st.turno, st.data, { persone: st.persone });
+      const calcolo: any = calcolaPrenotazione(st.slug, st.turno, st.data, { adulti: st.adulti, bambini: st.bambini });
       const titolo = config.escursioni.find((e: any) => e.slug === st.slug)?.titolo ?? '';
       const nomeImbarco = imbarchiPrenotazione.find((i) => i.id === imbarco())?.nome ?? '';
       // Note in HTML: i testi passano da h(), il segnaposto del carburante è già HTML.
@@ -396,7 +404,7 @@ const perOspite = area === 'struttura';
         <div class="riepilogo__voce"><span>Data</span><span>${h(dataLunga(st.data))}</span></div>
         <div class="riepilogo__voce"><span>Orario</span><span>${h(turno.nome)}<br>${turno.orario ? h(turno.orario) : segnaposto('da confermare')}</span></div>
         <div class="riepilogo__voce"><span>Imbarco</span><span>${h(nomeImbarco)}</span></div>
-        <div class="riepilogo__voce"><span>Persone</span><span>${h(testoPersone(st.persone))}</span></div>
+        <div class="riepilogo__voce"><span>Persone</span><span>${h(testoPersone(st.adulti, st.bambini))}</span></div>
         ${calcolo.errore ? `<p class="avviso">${h(calcolo.errore)}</p>` : calcolo.righe.map((r: any) => `<div class="riepilogo__voce"><span>${h(r.testo)}</span><span class="riepilogo__importo">${euro(r.importo)}</span></div>`).join('')}
         ${calcolo.errore ? '' : `<p class="riepilogo__totale"><span>Totale</span><span>${euro(calcolo.totale)}</span></p>`}
         <ul class="riepilogo__info">${info.map((t) => `<li>${t}</li>`).join('')}</ul>`;
@@ -447,7 +455,7 @@ const perOspite = area === 'struttura';
       radice.querySelectorAll<HTMLButtonElement>('[data-paga]').forEach((x) => (x.disabled = true));
       try {
         const r = await api('/api/prenota', { corpo: {
-          escursione: st.slug, turno: st.turno, data: st.data, persone: st.persone,
+          escursione: st.slug, turno: st.turno, data: st.data, adulti: st.adulti, bambini: st.bambini,
           imbarco: imbarco(), ...dati, metodo: b.dataset.paga, accetto: true, partner: partnerCodice || undefined,
         } });
         location.assign(r.redirect);

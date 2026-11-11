@@ -36,9 +36,9 @@ s, r = hot('GET', '/api/gestione/giorno?data=2027-06-10'); ok(s == 403, 'la stru
 s, r = hot('POST', '/api/accesso/password', {'attuale': pw, 'nuova': 'corta'}); ok(s == 400, 'password troppo corta → 400')
 s, r = hot('POST', '/api/accesso/password', {'attuale': pw, 'nuova': 'hotel-nuova-password'}); ok(s == 200, 'password cambiata')
 s, r = hot('POST', '/api/prenota', {'escursione': 'tour-7-isole', 'turno': 'giornata', 'data': '2027-07-20', 'adulti': 2, 'imbarco': 'palau', 'nome': 'Ospite Hotel', 'email': 'o@example.com', 'telefono': '3331112222', 'metodo': 'prova', 'accetto': True}); (s2, r2), q = paga(hot, r); ok(r2['stato'] == 'confermata', 'la struttura prenota per un ospite (250 €)')
-s, r = anon('POST', '/api/prenota', {'escursione': 'mezza-giornata', 'turno': 'mattina', 'data': '2027-07-21', 'persone': 2, 'imbarco': 'maddalena', 'nome': 'Ospite dal link', 'email': 'l@example.com', 'telefono': '3332223333', 'metodo': 'prova', 'accetto': True, 'partner': codice.lower()}); (s2, r2), q = paga(anon, r); ok(r2['stato'] == 'confermata', 'ospite prenota dal link della struttura (75 + 70 = 145 €)')
+s, r = anon('POST', '/api/prenota', {'escursione': 'mezza-giornata', 'turno': 'mattina', 'data': '2027-07-21', 'adulti': 1, 'bambini': 1, 'imbarco': 'maddalena', 'nome': 'Ospite dal link', 'email': 'l@example.com', 'telefono': '3332223333', 'metodo': 'prova', 'accetto': True, 'partner': codice.lower()}); (s2, r2), q = paga(anon, r); ok(r2['stato'] == 'confermata', 'ospite prenota dal link della struttura (75 + 70 = 145 €)')
 s, d = hot('GET', '/api/partner/riepilogo'); t = d['totali']
-ok(t['venduto'] == 400 and t['inArrivo'] == round(400 * 0.15, 2), f'struttura: venduto {t["venduto"]} €, provvigione in arrivo {t["inArrivo"]} €')
+ok(t['venduto'] == 395 and t['inArrivo'] == round(395 * 0.15, 2), f'struttura: venduto {t["venduto"]} €, provvigione in arrivo {t["inArrivo"]} €')
 ok(d['prenotazioni'][0]['nome'] is None and d['prenotazioni'][0]['daLink'] and d['prenotazioni'][1]['nome'] == 'Ospite Hotel', 'il nome dell\'ospite dal link non si vede, quello inserito dalla struttura sì')
 
 # provvigioni: una prenotazione passata (ottobre 2026) per provare il pagamento della quindicina
@@ -48,7 +48,7 @@ s, r = adm('POST', '/api/gestione/provvigioni', {'partnerId': pid, 'dal': '2026-
 s, r = adm('POST', '/api/gestione/provvigioni', {'partnerId': pid, 'dal': '2026-10-01'}); ok(s == 409, 'non si paga due volte la stessa quindicina')
 s, r = adm('POST', '/api/gestione/provvigioni', {'partnerId': pid, 'dal': '2027-07-16'}); ok(s == 409, 'quindicina non ancora finita → 409')
 s, d = hot('GET', '/api/partner/riepilogo'); t = d['totali']; ok(t['liquidata'] == 30 and t['daRicevere'] == 0 and t['maturata'] == 30, f'la struttura vede: maturata {t["maturata"]} €, ricevuta {t["liquidata"]} €, da ricevere {t["daRicevere"]} €')
-s, l = adm('GET', '/api/gestione/strutture'); h = [x for x in l['strutture'] if x['id'] == pid][0]; ok(h['venduto'] == 600 and h['daPagare'] == 0, f'gestione strutture: venduto {h["venduto"]} €, da pagare {h["daPagare"]} €')
+s, l = adm('GET', '/api/gestione/strutture'); h = [x for x in l['strutture'] if x['id'] == pid][0]; ok(h['venduto'] == 595 and h['daPagare'] == 0, f'gestione strutture: venduto {h["venduto"]} €, da pagare {h["daPagare"]} €')
 
 # disattivazione: la struttura viene scollegata e non può più entrare
 s, r = adm('POST', '/api/gestione/strutture', {'azione': 'modifica', 'id': pid, 'nome': 'Hotel Prova Palau', 'provvigione': 15, 'attivo': False}); ok(s == 200, 'struttura disattivata')

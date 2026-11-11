@@ -65,7 +65,7 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
           ) : (
             <p>
               <span class="box-prezzo__cifra" style="display:block">da <Dato v={e.prezzoAdulti} e="PREZZO" /> €</span>
-              {!e.prezzoGommone && <span class="box-prezzo__bambini">stesso prezzo per tutti, a qualsiasi età</span>}
+              {e.prezzoBambini !== null && <span class="box-prezzo__bambini">ridotto fino a 10 anni <Dato v={e.prezzoBambini} e="PREZZO" /> €</span>}
               {e.prezzoGommone && <span class="box-prezzo__bambini">fino a {e.postiMax} persone{carburanteEscluso ? ' · carburante escluso' : ''}</span>}
             </p>
           )}
