@@ -261,6 +261,8 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 }
 .mappa__punto--largo { width: auto; min-width: 44px; padding: 0 8px; border-radius: 999px; font-size: 13px; }
 .mappa__punto--rosa { background: var(--granito); color: var(--mare); }
+.mappa__punto--turchese { background: var(--turchese); color: var(--bianco); }
+.mappa__fuori { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; color: var(--mare); background: var(--bianco); padding: 4px 10px; border-radius: 999px; }
 .mappa__punto--imbarco { background: var(--bianco); border-color: var(--mare); color: var(--mare); }
 .mappa__nord {
   right: 4%; top: 3.5%; display: flex; flex-direction: column; align-items: flex-end;
@@ -274,6 +276,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 .mappa__legenda span { display: inline-flex; align-items: center; gap: 8px; }
 .pallino { width: 14px; height: 14px; border-radius: 50%; background: var(--mare); flex: none; }
 .pallino--rosa { background: var(--granito); border: 1px solid #C97561; }
+.pallino--turchese { background: var(--turchese); }
 .pallino--imbarco { background: var(--bianco); border: 2px solid var(--mare); }
 
 @media (max-width: 560px) {

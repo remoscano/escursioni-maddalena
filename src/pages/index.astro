@@ -9,7 +9,6 @@ import Mappa from '../components/Mappa.astro';
 import ElencoSoste from '../components/ElencoSoste.astro';
 import SchedaEscursione from '../components/SchedaEscursione.astro';
 import Gommone from '../components/Gommone.astro';
-import Recensioni from '../components/Recensioni.astro';
 import BoxInfo from '../components/BoxInfo.astro';
 import SezioneRichiesta from '../components/SezioneRichiesta.astro';
 import { escursioni, trovaEscursione } from '../data/escursioni.js';
@@ -93,7 +92,6 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
     </div>
   </section>
 
-  <Recensioni />
 
   <section id="info" class="sezione" aria-labelledby="info-titolo">
     <div class="contenitore pila">

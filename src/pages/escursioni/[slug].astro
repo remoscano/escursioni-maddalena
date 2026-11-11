@@ -140,7 +140,8 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
           ))}
         </ol>
         <div style="display:flex;flex-direction:column;gap:20px">
-          {e.mappa && <Mappa didascalia="Percorso indicativo. Il punto rosa è la Spiaggia Rosa, che si vede solo dal mare." />}
+          {e.mappa === 'mezza' && <Mappa variante="mezza" didascalia="Percorsi indicativi della mezza giornata: lo skipper sceglie in base al vento." />}
+          {e.mappa === true && <Mappa didascalia="Percorso indicativo. Il punto rosa è la Spiaggia Rosa, che si vede solo dal mare." />}
           <dl class="numeri">
             {e.numeri.map((n: any) => <div><dt>{n.etichetta}</dt><dd>{n.valore}</dd></div>)}
             <div><dt>Durata</dt><dd><Dato v={durata} e="ore" /></dd></div>

@@ -6,7 +6,7 @@ import { sito } from '../data/sito.js';
 import { gommoni } from '../data/prenotazioni.js';
 interface Props { titoloLivello?: 'h1' | 'h2'; link?: boolean }
 const { titoloLivello = 'h2', link = true } = Astro.props;
-const { gommone, skipper, flotta } = sito;
+const { gommone, flotta } = sito;
 const posti = (id: string) => gommoni.find((g) => g.id === id)?.posti;
 const uso = (id: string) => {
   const g = gommoni.find((x) => x.id === id);
@@ -20,7 +20,7 @@ const Titolo = titoloLivello;
   <div style="display:flex;flex-direction:column;gap:28px">
     <div style="display:flex;flex-direction:column;gap:16px">
       <p class="occhiello">I gommoni</p>
-      <Titolo id="gommone-titolo" class="titolo-sezione">I maxi gommoni e chi li guida</Titolo>
+      <Titolo id="gommone-titolo" class="titolo-sezione">I nostri maxi gommoni</Titolo>
       <p class="testo-2"><Dato v={gommone.descrizione} e="Presenta i gommoni in due righe: comodità, perché sono adatti a famiglie e gruppi" /></p>
     </div>
     <dl class="dati-barca">
@@ -32,14 +32,7 @@ const Titolo = titoloLivello;
         </div>
       ))}
     </dl>
-    <div class="skipper">
-      <span class="skipper__foto" aria-hidden="true"></span>
-      <div>
-        <p style="font-size:18px;line-height:1.3;font-weight:700"><Dato v={skipper.nome} e="Nome" />, skipper</p>
-        <p class="testo-2" style="font-size:15px;line-height:1.5"><Dato v={skipper.descrizione} e="Una riga su di te: anni di mare nell'arcipelago, lingue parlate" /></p>
-      </div>
-    </div>
-    {link && <a href="/gommone/" class="link-freccia">I gommoni e lo skipper<Icona nome="destra" size={18} /></a>}
+    {link && <a href="/gommone/" class="link-freccia">Scopri i gommoni<Icona nome="destra" size={18} /></a>}
   </div>
 </div>
 

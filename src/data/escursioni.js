@@ -135,7 +135,7 @@ export const escursioni = [
         "Una cala di Caprera o Santo Stefano",
       ],
     },
-    mappa: false,
+    mappa: 'mezza',
     numeri: [],
     programma: [
       { tipo: 'imbarco', titolo: `Ritrovo a ${daDove('tramonto-mezza-giornata')}`, testo: 'Mattina 9:30–13:30, pomeriggio 14:00–18:00, tramonto 18:00–20:30 con aperitivo.' },
