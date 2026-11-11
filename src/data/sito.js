@@ -78,7 +78,7 @@ export const sito = {
     maltempo: "Se mare o vento non sono sicuri annulliamo noi e scegli tu: rimborso completo o un'altra data.", // rimborso o cambio data
     ticketParco: 'Sì, è incluso nel prezzo di tutte le escursioni.',
     pagamento: 'Online al momento della prenotazione, con carta o PayPal. Nei tour in esclusiva il carburante è a parte.', // a bordo, contanti o carta?
-    bambini: "Sì, a qualsiasi età. Fino a 10 anni pagano il ridotto, anche i più piccoli: nessuno viaggia gratis. A bordo i giubbotti di salvataggio sono obbligatori, ma sono in taglia da adulto: se vuoi stare più tranquillo, porta un giubbotto della misura giusta per i tuoi bambini.", // età minima, giubbotti, prezzo ridotto
+    bambini: "Sì, a qualsiasi età. Fino a 10 anni pagano il ridotto. A bordo i giubbotti di salvataggio sono obbligatori, ma sono in taglia da adulto: se vuoi stare più tranquillo, porta un giubbotto della misura giusta per i tuoi bambini.", // età minima, giubbotti, prezzo ridotto
     animali: 'No, gli animali non sono ammessi a bordo.',
   },
 };
