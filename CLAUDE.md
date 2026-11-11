@@ -87,6 +87,7 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Molo di La Maddalena: Il Porticciolo, Via Padule (con link Google Maps)
 - [x] Fasce d'età (11 novembre 2026): ridotto da 0 a 10 anni, intero da 11, nessuna gratuità; tolti i neonati da prenotazione, gestione e testi
 - [x] Mezza giornata e tramonto separati; La Maddalena porto di partenza, Palau passaggio; mappe corrette (11 novembre 2026)
+- [x] Ombra a bordo su tutti i gommoni (Remo, 11 novembre 2026)
 - [x] Gommoni: modelli, motori e posti confermati, pagina "I gommoni e lo skipper" aggiornata (8 novembre 2026)
 - [x] Confermati da Remo (8 novembre 2026): Corsica 9:30 – 17:30 con Lavezzi, isola di Cavallo e Bonifacio (dall'11 novembre 2026: isola Piana, Lavezzi e Cavallo, senza Bonifacio); le due regole aggiunte alle condizioni (guasto = regola del maltempo; altre piattaforme = loro condizioni); nessuna autorizzazione da indicare; ritrovo 15 minuti prima della partenza a Palau e a La Maddalena (9:15 per le uscite delle 9:30)
 

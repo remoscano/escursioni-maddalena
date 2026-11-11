@@ -60,12 +60,12 @@ export const sito = {
   flotta: [
     { id: 'gruppo-1', modello: 'Joker Clubman 28', motori: '2 motori Suzuki da 200 cv', dotazioni: 'bagno, T-top', descrizione: '' },
     { id: 'gruppo-2', modello: 'BWA 30', motori: '2 motori Mercury da 250 cv', dotazioni: 'bagno, cabina, T-top', descrizione: '' },
-    { id: 'esclusiva', modello: 'Joker 35', motori: '2 motori Suzuki da 300 cv', dotazioni: 'cabina, bagno', descrizione: '' },
-    { id: 'cannigione', modello: 'Honda 9.50', motori: '1 motore Honda da 350 cv', dotazioni: '', descrizione: '' },
+    { id: 'esclusiva', modello: 'Joker 35', motori: '2 motori Suzuki da 300 cv', dotazioni: 'cabina, bagno, ombra', descrizione: '' },
+    { id: 'cannigione', modello: 'Honda 9.50', motori: '1 motore Honda da 350 cv', dotazioni: 'ombra', descrizione: '' },
   ],
   gommone: {
     // Scritta da Claude su richiesta di Remo (11 novembre 2026), solo con i dati della flotta già confermati.
-    descrizione: "Gommoni grandi e stabili, con lo skipper sempre a bordo: arrivi nelle cale più belle senza fatica e ti godi il mare in sicurezza. Bagno a bordo sui gommoni che partono da La Maddalena, T-top per l'ombra su quelli di gruppo e al massimo 12 persone: lo spazio giusto per famiglie con bambini e gruppi di amici.", // due righe di presentazione della flotta
+    descrizione: "Gommoni grandi e stabili, con lo skipper sempre a bordo: arrivi nelle cale più belle senza fatica e ti godi il mare in sicurezza. Ombra a bordo, bagno sui gommoni che partono da La Maddalena e al massimo 12 persone: lo spazio giusto per famiglie con bambini e gruppi di amici.", // due righe di presentazione della flotta
   },
 
   skipper: {
