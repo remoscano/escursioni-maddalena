@@ -76,6 +76,7 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Condizioni, privacy e cookie controllati sulle norme e su quello che fa il sito (8 novembre 2026); migrazione `0002_impronta_ip.sql` applicata a entrambi i database
 - [x] Carburante delle esclusive: a consumo, si paga a bordo a fine uscita. Ticket del Parco incluso nel prezzo (Remo, 8 novembre 2026)
 - [x] Cannigione terzo punto d'imbarco con il suo gommone (Honda 9.50), nelle prenotazioni, nella gestione e nelle pagine (9 novembre 2026). Confermato da Remo: anche da Cannigione minimo 6 persone per le uscite di gruppo; tour privato prenotabile online (mezza giornata, tramonto, giornata intera)
+- [x] Dati di Remo (11 novembre 2026): risposte tutti i giorni 7:30–22:30 dal 1° maggio al 31 ottobre; niente animali a bordo; bambini di qualsiasi età, giubbotti solo in taglia adulto (consigliato portare il proprio); maschere e boccagli non forniti per igiene (qualcuno a bordo); cibo e bevande a carico dei clienti, nelle esclusive bevande incluse, nel tramonto aperitivo; pranzo libero (suggeriamo noi dove, o pranzo al sacco); nessuna tassa di sbarco extra; prenotare presto, soprattutto da fine luglio ad agosto; niente programma ora per ora
 - [x] Molo di La Maddalena: Il Porticciolo, Via Padule (con link Google Maps)
 - [x] Gommoni: modelli, motori e posti confermati, pagina "I gommoni e lo skipper" aggiornata (8 novembre 2026)
 - [x] Confermati da Remo (8 novembre 2026): Corsica 9:30 – 17:30 con Lavezzi, isola di Cavallo e Bonifacio; le due regole aggiunte alle condizioni (guasto = regola del maltempo; altre piattaforme = loro condizioni); nessuna autorizzazione da indicare; ritrovo 15 minuti prima della partenza a Palau e a La Maddalena (9:15 per le uscite delle 9:30)
@@ -84,11 +85,11 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [ ] Molo di Palau (ancora da sapere)
 - [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA
 - [ ] Imbarchi: parcheggio a Palau, link Google Maps del molo di Palau
-- [ ] Regole: animali a bordo, età minima e giubbotti per i bambini, cosa è incluso (maschere, acqua)
 - [ ] Skipper (nome, esperienza, lingue) e due righe di presentazione dei gommoni
 - [ ] Testi delle escursioni Corsica (traversata, Lavezzi, Cavallo, Bonifacio, pranzo), Tramonto e Tour privato
 - [ ] Foto (le note sui segnaposto indicano gli scatti) ed eventuale logo
 - [ ] Recensioni vere da Google o TripAdvisor e link alla scheda Google
+- [ ] Risposte automatiche di WhatsApp Business (benvenuto, assenza fuori orario, risposte rapide): testi proposti da Claude, li imposta il cliente nell'app
 
 ### Da attivare prima di aprire le prenotazioni vere
 - [ ] Dominio: da GoDaddy a Cloudflare (DNS), collegarlo in Pages → Custom domains; poi `site` in `astro.config.mjs`, `url` in `src/data/sito.js`, `www` che rimanda alla versione senza `www`

@@ -35,9 +35,8 @@ export const faq = [
       },
       {
         id: 'anticipo',
-        domanda: 'Con quanto anticipo conviene scrivere?',
-        risposta: '',
-        mancante: 'Es. in luglio e agosto almeno qualche giorno prima',
+        domanda: 'Con quanto anticipo conviene prenotare?',
+        risposta: "Prima possibile: i posti sono pochi, soprattutto da fine luglio e per tutto agosto.",
       },
     ],
   },
@@ -60,7 +59,7 @@ export const faq = [
       {
         id: 'pranzo',
         domanda: 'Il pranzo è incluso nel Tour delle 7 isole?',
-        risposta: 'No. A La Maddalena c\'è tempo libero per pranzare dove preferisci, a carico dei partecipanti.',
+        risposta: "No, il pranzo è libero. Durante la sosta a La Maddalena ti suggeriamo noi dove mangiare, oppure puoi portare il pranzo al sacco.",
       },
       {
         id: 'bambini',
@@ -80,7 +79,7 @@ export const faq = [
         id: 'portare',
         domanda: 'Cosa devo portare?',
         risposta:
-          'Costume, telo e un cambio, crema solare, cappello e occhiali, acqua da bere e contanti o carta per il pranzo.',
+          "Costume, telo e un cambio, crema solare, cappello e occhiali, da mangiare e da bere. Se vuoi fare snorkeling porta maschera e boccaglio: per igiene non li forniamo, anche se a bordo ne teniamo qualcuno. Per i bambini, se vuoi, un giubbotto di salvataggio della loro misura.",
       },
     ],
   },

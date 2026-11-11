@@ -30,7 +30,7 @@ const faqPerEscursione: Record<string, string[]> = {
 const suRichiesta = e.prezzoAdulti === 'su richiesta';
 const prenotabile = regole.attive && Boolean(offerte[e.slug]);
 const carburanteEscluso = Boolean(offerte[e.slug]?.carburanteEscluso);
-const durata = e.ore ? `${e.ore} ore` : '';
+const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
 ---
 <Base
   titolo={e.titoloPagina}
@@ -103,15 +103,14 @@ const durata = e.ore ? `${e.ore} ore` : '';
       <div class="intestazione">
         <div class="intestazione__testo">
           <p class="occhiello">Il programma</p>
-          <h2 id="programma-titolo" class="titolo-sezione">La giornata, ora per ora</h2>
+          <h2 id="programma-titolo" class="titolo-sezione">Le soste della giornata</h2>
         </div>
-        <p class="intestazione__lato">Orari indicativi. Con vento e mare lo skipper può cambiare l'ordine delle soste.</p>
+        <p class="intestazione__lato">Con vento e mare lo skipper può cambiare l'ordine delle soste.</p>
       </div>
       <div class={e.mappa ? 'percorso' : 'due-colonne due-colonne--alto'}>
         <ol class="programma">
           {e.programma.map((t: any) => (
             <li class="tappa">
-              <span class="tappa__ora">{e.slug !== 'tour-privato' && <Dato v={t.ora} e="ora" />}</span>
               <span class="tappa__linea" aria-hidden="true">
                 {t.tipo === 'sosta' && <span class="tappa__punto">{t.n}</span>}
                 {t.tipo === 'vista' && <span class="tappa__punto tappa__punto--rosa"><Icona nome="occhio" size={18} /></span>}

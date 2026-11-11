@@ -19,7 +19,7 @@ export const sito = {
     // Come va mostrato a video: es. '+39 333 123 4567'
     telefonoVisibile: '+39 331 505 5736',
     email: 'maddalena.escursioni@gmail.com',
-    orariRisposta: '', // es. 'tutti i giorni dalle 8 alle 21'
+    orariRisposta: 'tutti i giorni dalle 7:30 alle 22:30, dal 1° maggio al 31 ottobre',
   },
 
   // Dati obbligatori per legge sul sito e nelle condizioni (Codice del consumo art. 49, D.Lgs. 70/2003 art. 7).
@@ -76,8 +76,8 @@ export const sito = {
     maltempo: "Se mare o vento non sono sicuri annulliamo noi e scegli tu: rimborso completo o un'altra data.", // rimborso o cambio data
     ticketParco: 'Sì, è incluso nel prezzo di tutte le escursioni.',
     pagamento: 'Online al momento della prenotazione, con carta o PayPal. Nei tour in esclusiva il carburante è a parte.', // a bordo, contanti o carta?
-    bambini: 'Fino a 3 anni non pagano, da 4 a 10 anni pagano il ridotto.', // età minima, giubbotti, prezzo ridotto
-    animali: '',
+    bambini: "Sì, a qualsiasi età. Fino a 3 anni non pagano, da 4 a 10 anni pagano il ridotto. A bordo i giubbotti di salvataggio sono obbligatori, ma sono in taglia da adulto: se vuoi stare più tranquillo, porta un giubbotto della misura giusta per i tuoi bambini.", // età minima, giubbotti, prezzo ridotto
+    animali: 'No, gli animali non sono ammessi a bordo.',
   },
 };
 

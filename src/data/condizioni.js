@@ -100,7 +100,8 @@ export const condizioni = [
       [`Il ritrovo al molo, a Palau e a La Maddalena, è ${regole.anticipoRitrovo} minuti prima della partenza (alle 9:15 per le uscite delle 9:30). L'uscita non può aspettare chi arriva in ritardo.`],
       ["Segui le indicazioni dello skipper, che è responsabile della sicurezza a bordo."],
       ['I minori partecipano accompagnati da un adulto.'],
-      ['Animali: ', v(sito.regole.animali, 'la vostra regola sugli animali a bordo'), '.'],
+      ['Gli animali non sono ammessi a bordo.'],
+      ['I bambini sono benvenuti a qualsiasi età. I giubbotti di salvataggio a bordo sono in taglia da adulto: per i bambini puoi portare il loro.'],
     ],
   },
   {

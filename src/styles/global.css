@@ -466,8 +466,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 }
 
 .programma { list-style: none; padding: 0; display: flex; flex-direction: column; }
-.tappa { display: grid; grid-template-columns: 72px 36px minmax(0, 1fr); gap: 0 16px; }
-.tappa__ora { padding-top: 6px; font-size: 15px; font-weight: 700; color: var(--turchese); text-align: right; }
+.tappa { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 0 16px; }
 .tappa__linea { display: flex; flex-direction: column; align-items: center; }
 .tappa__linea::after { content: ''; flex: 1; width: 2px; background: repeating-linear-gradient(180deg, rgba(10, 58, 81, 0.35) 0 6px, transparent 6px 12px); margin: 4px 0; }
 .tappa:last-child .tappa__linea::after { display: none; }
@@ -480,12 +479,6 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 .tappa__corpo { padding: 4px 0 28px; display: flex; flex-direction: column; gap: 6px; }
 .tappa__corpo h3 { font-size: 21px; line-height: 1.25; font-weight: 700; }
 .tappa__corpo p { font-size: 16px; line-height: 1.55; color: var(--testo-2); }
-@media (max-width: 520px) {
-  .tappa { grid-template-columns: 36px minmax(0, 1fr); }
-  .tappa__ora { grid-column: 2; grid-row: 1; text-align: left; padding: 0; font-size: 14px; }
-  .tappa__linea { grid-column: 1; grid-row: 1 / span 2; }
-  .tappa__corpo { grid-column: 2; padding-top: 2px; }
-}
 .numeri { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .numeri > div { background: var(--bianco); border: 1px solid var(--bordo); border-radius: 18px; padding: 16px 18px; }
 .numeri dt { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--testo-2); }
