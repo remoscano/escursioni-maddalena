@@ -22,7 +22,8 @@ export async function onRequestGet(contesto) {
   if (!offerte[slug].imbarchi.includes(imbarco)) throw new Errore(400, 'Da questo imbarco l\'escursione non parte.');
   const giorni = await calendarioMese(env.DB, slug, mese, { gestione, imbarco });
   let partner = null;
-  if (utente?.ruolo === 'partner') partner = { nome: utente.partner_nome, collegato: true };
+  // La struttura collegata prenota a suo nome solo dalla sua area; sul sito pubblico è un visitatore come gli altri.
+  if (utente?.ruolo === 'partner' && url.searchParams.get('area') === 'struttura') partner = { nome: utente.partner_nome, collegato: true };
   else if (url.searchParams.get('partner')) {
     const p = await prima(env.DB, 'SELECT nome FROM partner WHERE codice = :c AND attivo = 1', { c: url.searchParams.get('partner').toUpperCase().slice(0, 20) });
     if (p) partner = { nome: p.nome, collegato: false };

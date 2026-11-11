@@ -62,7 +62,8 @@ export async function creaPrenotazione(contesto, b, { modo, utente = null, ipHas
       canale = 'Struttura partner';
     }
     creataDa = `gestione:${utente.id}`;
-  } else if (utente?.ruolo === 'partner') {
+  } else if (utente?.ruolo === 'partner' && b.area === 'struttura') {
+    // Solo dall'area strutture: sul sito pubblico una struttura collegata prenota come un cliente qualsiasi.
     partner = { id: utente.partner_id, provvigione_pct: utente.provvigione_pct };
     canale = 'struttura';
     creataDa = `partner:${utente.id}`;

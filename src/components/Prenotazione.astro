@@ -157,6 +157,7 @@ const perOspite = area === 'struttura';
   .contatore__comandi button { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--mare); background: var(--bianco); color: var(--mare); font-size: 22px; line-height: 1; cursor: pointer; }
   .contatore__comandi button:disabled { border-color: var(--bordo-campo); color: #9AA9B0; cursor: not-allowed; }
   .contatore__comandi output { min-width: 28px; text-align: center; font-size: 18px; font-weight: 800; }
+  .prenota__togli { background: none; border: 0; padding: 10px 0; min-height: 44px; font: inherit; font-size: 14px; color: var(--turchese); text-decoration: underline; cursor: pointer; }
   .prenota__nota { font-size: 14px; line-height: 1.5; color: var(--testo-2); }
   .prenota__nota:empty { display: none; }
   .prenota__dati { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 14px; }
@@ -271,6 +272,7 @@ const perOspite = area === 'struttura';
       try {
         const q = new URLSearchParams({ escursione: st.slug, mese: st.mese, imbarco: st.imbarco });
         if (partnerCodice) q.set('partner', partnerCodice);
+        if (config.area) q.set('area', config.area);
         const d = await api(`/api/disponibilita?${q}`);
         st.giorni = d.giorni;
         st.pagamenti = d.pagamenti;
@@ -457,7 +459,7 @@ const perOspite = area === 'struttura';
       try {
         const r = await api('/api/prenota', { corpo: {
           escursione: st.slug, turno: st.turno, data: st.data, adulti: st.adulti, bambini: st.bambini,
-          imbarco: imbarco(), ...dati, metodo: b.dataset.paga, accetto: true, partner: partnerCodice || undefined,
+          imbarco: imbarco(), ...dati, metodo: b.dataset.paga, accetto: true, partner: partnerCodice || undefined, area: config.area || undefined,
         } });
         location.assign(r.redirect);
       } catch (e) {
@@ -472,8 +474,15 @@ const perOspite = area === 'struttura';
     function mostraPartner(p: any) {
       const box = $('[data-partner]');
       if (config.area === 'struttura' || !p) { box.hidden = true; return; }
-      box.textContent = `Stai prenotando tramite ${p.nome}.`;
+      box.innerHTML = `Stai prenotando tramite ${h(p.nome)}. <button type="button" class="prenota__togli" data-togli-partner>Non sei loro ospite? Togli</button>`;
       box.hidden = false;
+      box.querySelector('[data-togli-partner]')!.addEventListener('click', () => {
+        try { sessionStorage.removeItem('em_partner'); } catch {}
+        partnerCodice = '';
+        box.hidden = true;
+        const u = new URL(location.href); u.searchParams.delete('p'); history.replaceState(null, '', u);
+        caricaMese();
+      });
     }
 
     disegnaEscursioni();
