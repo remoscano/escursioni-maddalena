@@ -86,7 +86,7 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA
 - [ ] Imbarchi: parcheggio a Palau, link Google Maps del molo di Palau
 - [ ] Skipper (nome, esperienza, lingue) e due righe di presentazione dei gommoni
-- [ ] Testi delle escursioni Corsica (traversata, Lavezzi, Cavallo, Bonifacio, pranzo), Tramonto e Tour privato
+- [ ] Testi delle soste della Corsica (traversata, Lavezzi, Cavallo, Bonifacio) e percorso del tramonto. Mezza giornata fatta (11 novembre 2026): giro di Caprera (Coticcio, Napoletana, Giardinelli) o, con maestrale oltre 15 nodi, Spargi e La Maddalena (Cala Corsara, Cala Gavetta, Giardinelli). Lagunetta: riga scritta da Claude, da far controllare
 - [ ] Foto (le note sui segnaposto indicano gli scatti) ed eventuale logo
 - [ ] Recensioni vere da Google o TripAdvisor e link alla scheda Google
 - [ ] Risposte automatiche di WhatsApp Business (benvenuto, assenza fuori orario, risposte rapide): testi proposti da Claude, li imposta il cliente nell'app

@@ -476,6 +476,8 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 }
 .tappa__punto--rosa { background: var(--granito); color: var(--mare); }
 .tappa__punto--imbarco { background: var(--bianco); border: 2px solid var(--mare); color: var(--mare); }
+.tappa--percorso .tappa__corpo { background: var(--acqua); border-radius: 18px; padding: 16px 18px; margin: 0 0 24px; }
+.tappa--percorso .tappa__linea::after { margin-top: 0; }
 .tappa__corpo { padding: 4px 0 28px; display: flex; flex-direction: column; gap: 6px; }
 .tappa__corpo h3 { font-size: 21px; line-height: 1.25; font-weight: 700; }
 .tappa__corpo p { font-size: 16px; line-height: 1.55; color: var(--testo-2); }

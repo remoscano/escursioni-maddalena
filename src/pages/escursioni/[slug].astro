@@ -109,7 +109,16 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
       </div>
       <div class={e.mappa ? 'percorso' : 'due-colonne due-colonne--alto'}>
         <ol class="programma">
-          {e.programma.map((t: any) => (
+          {e.programma.map((t: any) => t.tipo === 'percorso' ? (
+            <li class="tappa tappa--percorso">
+              <span class="tappa__linea" aria-hidden="true"></span>
+              <div class="tappa__corpo">
+                <p class="occhiello">Percorso</p>
+                <h3>{t.titolo}</h3>
+                <p>{t.testo}</p>
+              </div>
+            </li>
+          ) : (
             <li class="tappa">
               <span class="tappa__linea" aria-hidden="true">
                 {t.tipo === 'sosta' && <span class="tappa__punto">{t.n}</span>}
@@ -135,7 +144,7 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
           <dl class="numeri">
             {e.numeri.map((n: any) => <div><dt>{n.etichetta}</dt><dd>{n.valore}</dd></div>)}
             <div><dt>Durata</dt><dd><Dato v={durata} e="ore" /></dd></div>
-            <div><dt>Imbarco</dt><dd>Palau o La Maddalena</dd></div>
+            <div><dt>Imbarco</dt><dd>{(e.fatti.find((f: string) => f.startsWith('Imbarco a ')) ?? 'Imbarco a Palau o La Maddalena').slice(10)}</dd></div>
           </dl>
           {e.note.length > 0 && (
             <ul class="note">
