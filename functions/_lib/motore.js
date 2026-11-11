@@ -1,7 +1,7 @@
 // Il cuore delle prenotazioni: quanti posti ci sono, su quale gommone va una prenotazione,
 // e inserimento "a prova di doppia prenotazione" (il controllo e l'inserimento avvengono in un'unica istruzione).
 
-import { offerte, gommoni, regole, turnoDi, inStagione, gommoniPer } from '../../src/data/prenotazioni.js';
+import { offerte, gommoni, regole, turnoDi, inStagione, gommoniPer, postiPer } from '../../src/data/prenotazioni.js';
 import { tutte, esegui, istruzione } from './db.js';
 import { oraRoma, aggiungiGiorni } from './util.js';
 
@@ -42,7 +42,7 @@ export function analizzaGommone(gommone, giorno, slug, turno, escludiId = null) 
     else conflitto = true;
   }
   if (conflitto) return { libero: false, motivo: 'occupato', occupati, paganti, liberi: 0 };
-  return { libero: true, motivo: null, occupati, paganti, liberi: gommone.posti - occupati };
+  return { libero: true, motivo: null, occupati, paganti, liberi: postiPer(offerte[slug], gommone) - occupati };
 }
 
 // Disponibilità di un turno in un giorno. "candidati" = gommoni su cui provare a inserire, in ordine.
@@ -66,7 +66,8 @@ export function situazioneTurno(slug, turnoId, giorno, postiRichiesti = 1, esclu
   // Gruppo: prima le uscite già aperte (le più piene, per arrivare prima al minimo), poi i gommoni vuoti.
   const aperte = stati.filter((s) => s.libero && s.occupati > 0 && s.liberi > 0).sort((a, b) => b.paganti - a.paganti || a.liberi - b.liberi);
   const vuoti = stati.filter((s) => s.libero && s.occupati === 0);
-  const maxPersone = Math.max(0, ...aperte.map((s) => s.liberi), ...vuoti.map((s) => s.gommone.posti));
+  const posti = (g) => postiPer(offerta, g);
+  const maxPersone = Math.max(0, ...aperte.map((s) => s.liberi), ...vuoti.map((s) => posti(s.gommone)));
   const migliore = stati.filter((s) => s.occupati > 0 && s.libero).sort((a, b) => b.paganti - a.paganti)[0];
   const paganti = migliore ? migliore.paganti : 0;
   return {
@@ -74,7 +75,7 @@ export function situazioneTurno(slug, turnoId, giorno, postiRichiesti = 1, esclu
     maxPersone,
     confermata: paganti >= offerta.minimo,
     mancano: Math.max(0, offerta.minimo - paganti),
-    candidati: [...aperte.filter((s) => s.liberi >= postiRichiesti), ...vuoti.filter((s) => s.gommone.posti >= postiRichiesti)].map((s) => s.gommone.id),
+    candidati: [...aperte.filter((s) => s.liberi >= postiRichiesti), ...vuoti.filter((s) => posti(s.gommone) >= postiRichiesti)].map((s) => s.gommone.id),
     stati,
   };
 }
@@ -123,7 +124,7 @@ export async function inserisciPrenotazione(db, dati, candidati, ora) {
     const gommone = gommoni.find((g) => g.id === barca);
     // In esclusiva la prenotazione occupa tutto il gommone.
     const posti = esclusiva ? gommone.posti : dati.posti;
-    const valori = { ...dati, posti, barca, blocchi: `,${turno.blocchi.join(',')},`, capienza: gommone.posti, ora };
+    const valori = { ...dati, posti, barca, blocchi: `,${turno.blocchi.join(',')},`, capienza: esclusiva ? gommone.posti : postiPer(offerte[dati.escursione], gommone), ora };
     const sql = `INSERT INTO prenotazioni (${COLONNE.join(', ')})
                  SELECT ${COLONNE.map((c) => `:${c}`).join(', ')}
                  WHERE ${condizioniPosto(turno)}`;
@@ -143,7 +144,7 @@ export async function riattivaSeLibero(db, pren, nuovoStato, campiExtra = {}) {
   const r = await esegui(db, `UPDATE prenotazioni SET stato = :nuovo, aggiornata_il = :ora ${extra}
      WHERE id = :id AND stato IN ('in_attesa', 'scaduta') AND ${condizioniPosto(turno, true)}`, {
     ...valoriExtra, nuovo: nuovoStato, id: pren.id, data: pren.data, barca: pren.barca, escursione: pren.escursione,
-    turno: pren.turno, posti: pren.posti, capienza: gommone.posti, ora: new Date().toISOString(),
+    turno: pren.turno, posti: pren.posti, capienza: offerte[pren.escursione].tipo === 'esclusiva' ? gommone.posti : postiPer(offerte[pren.escursione], gommone), ora: new Date().toISOString(),
   });
   return r.meta?.changes === 1;
 }

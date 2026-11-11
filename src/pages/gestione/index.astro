@@ -368,7 +368,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
   }
   function aggiornaTurni() {
     const slug = $<HTMLSelectElement>('#n-esc').value;
-    $<HTMLSelectElement>('#n-turno').innerHTML = offerte[slug].turni.map((t: any) => `<option value="${h(t.id)}">${h(t.nome)}${t.orario ? ` · ${h(t.orario)}` : ''}</option>`).join('');
+    $<HTMLSelectElement>('#n-turno').innerHTML = offerte[slug].turni.map((t: any) => `<option value="${h(t.id)}">${h(t.nome)}${t.orari ? ' · orario secondo il mese' : t.orario ? ` · ${h(t.orario)}` : ''}</option>`).join('');
     controllaPosti();
   }
   let richiestaPosti = 0;

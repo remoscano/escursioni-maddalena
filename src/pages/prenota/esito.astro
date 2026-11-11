@@ -83,7 +83,7 @@ import { sito } from '../../data/sito.js';
     return `<dl>
       <dt>Escursione</dt><dd>${h(p.escursione)}</dd>
       <dt>Data</dt><dd>${h(p.dataLeggibile)}</dd>
-      <dt>Orario</dt><dd>${h(p.turno)} · ${p.orario ? h(p.orario) : segnaposto('te lo confermiamo')}</dd>
+      <dt>Orario</dt><dd>${h(p.turno)} · ${p.orario ? h(p.orario) + (p.orarioIndicativo ? ' (indicativo)' : '') : segnaposto('te lo confermiamo')}</dd>
       <dt>Imbarco</dt><dd>${h(p.imbarco)}</dd>
       <dt>Persone</dt><dd>${h(persone(p.adulti, p.bambini, p.neonati))}</dd>
       <dt>Totale</dt><dd>${euro(p.totale)}</dd>

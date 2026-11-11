@@ -8,7 +8,8 @@
 //
 // Listini dal cliente (8 novembre 2026):
 // - giornata intera e mezza giornata, a persona e in esclusiva;
-// - tramonto: stesso prezzo della mezza giornata;
+// - tramonto (11 novembre 2026): listino suo, da 100 € a persona (gruppo, max 8 persone, minimo 6) e da 780 a 900 € in esclusiva;
+//   periodi e ridotti calcolati da Claude su indicazione di Remo, da far confermare
 // - Corsica: solo in esclusiva, stesso prezzo delle altre giornate intere in esclusiva;
 // - a tutte le esclusive si aggiunge il carburante.
 // Tutti e tre i gommoni si possono prenotare in esclusiva (quello da 6 posti fa solo esclusive).
@@ -87,6 +88,30 @@ const mezzaPersona = [
   { dal: '07-01', al: '08-31', adulto: 75, bambino: 70 },
   { dal: '09-01', al: '10-31', adulto: 65, bambino: 60 },
 ];
+// Tramonto con aperitivo (11 novembre 2026). Remo: "da 100 € a persona", "da 780 € in bassa stagione fino a 900 € in altissima";
+// periodi e ridotti proposti da Claude sullo schema delle altre uscite (ridotto 10 € in meno).
+const tramontoPersona = [
+  { dal: '05-01', al: '06-30', adulto: 100, bambino: 90 },
+  { dal: '07-01', al: '07-31', adulto: 110, bambino: 100 },
+  { dal: '08-01', al: '08-31', adulto: 120, bambino: 110 },
+  { dal: '09-01', al: '09-30', adulto: 110, bambino: 100 },
+  { dal: '10-01', al: '10-31', adulto: 100, bambino: 90 },
+];
+const tramontoEsclusiva = [
+  { dal: '05-01', al: '06-30', barca: 780 },
+  { dal: '07-01', al: '07-31', barca: 840 },
+  { dal: '08-01', al: '08-31', barca: 900 },
+  { dal: '09-01', al: '09-30', barca: 840 },
+  { dal: '10-01', al: '10-31', barca: 780 },
+];
+// Orari del tramonto: seguono la luce, quindi cambiano nei mesi e sono indicativi (Remo, 11 novembre 2026).
+const orariTramonto = [
+  { dal: '05-01', al: '05-31', orario: '18:30 – 21:00' },
+  { dal: '06-01', al: '06-30', orario: '19:00 – 21:30' },
+  { dal: '07-01', al: '08-31', orario: '18:30 – 21:00' },
+  { dal: '09-01', al: '09-30', orario: '18:00 – 20:30' },
+  { dal: '10-01', al: '10-31', orario: '17:30 – 20:00' },
+];
 const giornataEsclusiva = [
   { dal: '05-01', al: '06-30', barca: 1200 },
   { dal: '07-01', al: '07-31', barca: 1500 },
@@ -138,9 +163,11 @@ export const offerte = {
   tramonto: {
     tipo: 'gruppo',
     minimo: 6,
+    // Al tramonto di gruppo al massimo 8 persone per gommone (Remo, 11 novembre 2026).
+    postiMax: 8,
     imbarchi: ['maddalena', 'palau', 'cannigione'],
     turni: [
-      { id: 'tramonto', nome: 'Tramonto con aperitivo', orario: '18:00 – 20:30', blocchi: ['sera'], prezzi: mezzaPersona },
+      { id: 'tramonto', nome: 'Tramonto con aperitivo', orario: '18:30 – 21:00', orari: orariTramonto, indicativo: true, blocchi: ['sera'], prezzi: tramontoPersona },
     ],
   },
   'tour-privato': {
@@ -151,7 +178,7 @@ export const offerte = {
     turni: [
       { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '9:30 – 13:30', blocchi: ['mattina'], prezzi: mezzaEsclusiva },
       { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:00 – 18:00', blocchi: ['pomeriggio', 'sera'], prezzi: mezzaEsclusiva },
-      { id: 'tramonto', nome: 'Tramonto con aperitivo', orario: '18:00 – 20:30', blocchi: ['sera'], prezzi: mezzaEsclusiva },
+      { id: 'tramonto', nome: 'Tramonto con aperitivo', orario: '18:30 – 21:00', orari: orariTramonto, indicativo: true, blocchi: ['sera'], prezzi: tramontoEsclusiva },
       { id: 'giornata', nome: 'Giornata intera', orario: '9:30 – 17:30', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataEsclusiva },
     ],
   },
@@ -174,6 +201,16 @@ export const imbarchiPrenotazione = [
 
 export const offertaDi = (slug) => offerte[slug] ?? null;
 export const turnoDi = (slug, turno) => offerte[slug]?.turni.find((t) => t.id === turno) ?? null;
+
+// Orario di un turno in una certa data: alcuni turni (il tramonto) cambiano orario nei mesi.
+export function orarioDi(turno, data) {
+  if (!turno) return '';
+  const riga = data && turno.orari ? rigaPrezzo(turno.orari, data) : null;
+  return riga?.orario ?? turno.orario ?? '';
+}
+
+// Posti prenotabili su un gommone per un'offerta di gruppo (alcune uscite hanno un tetto più basso del gommone).
+export const postiPer = (offerta, gommone) => Math.min(gommone.posti, offerta?.tipo === 'gruppo' && offerta.postiMax ? offerta.postiMax : gommone.posti);
 
 // Punti d'imbarco da cui parte un'offerta.
 export const imbarchiPer = (slug) => imbarchiPrenotazione.filter((i) => offerte[slug]?.imbarchi.includes(i.id));
@@ -223,7 +260,7 @@ export function calcolaPrenotazione(slug, turnoId, data, persone) {
   const paganti = totPersone;
   const riga = rigaPrezzo(t.prezzi, data);
   if (!riga) return { errore: 'Nessun prezzo per questa data.' };
-  const capienza = Math.max(...gommoniPer(slug).map((g) => g.posti));
+  const capienza = Math.max(...gommoniPer(slug).map((g) => postiPer(o, g)));
 
   if (o.tipo === 'esclusiva') {
     if (totPersone > capienza) return { errore: `In esclusiva il gommone porta al massimo ${capienza} persone, bambini compresi: per gruppi più grandi scrivici su WhatsApp.` };
@@ -235,7 +272,7 @@ export function calcolaPrenotazione(slug, turnoId, data, persone) {
     };
   }
 
-  if (totPersone > capienza) return { errore: `Su un gommone ci sono ${capienza} posti: per gruppi più grandi scrivici su WhatsApp.` };
+  if (totPersone > capienza) return { errore: `Su questa uscita ci sono al massimo ${capienza} posti: per gruppi più grandi scrivici su WhatsApp.` };
   const righe = [];
   if (adulti) righe.push({ testo: `${adulti} × intero ${riga.adulto} €`, importo: adulti * riga.adulto });
   if (bambini) righe.push({ testo: `${bambini} × ridotto fino a ${regole.eta.bambiniFinoA} anni ${riga.bambino} €`, importo: bambini * riga.bambino });

@@ -1,6 +1,6 @@
 // Operazioni sulle prenotazioni condivise da più API: lettura, conferma dopo il pagamento, email.
 
-import { offerte, turnoDi, regole, imbarchiPrenotazione, gommoni, testoCarburante, testoRitrovo } from '../../src/data/prenotazioni.js';
+import { offerte, turnoDi, regole, imbarchiPrenotazione, gommoni, testoCarburante, testoRitrovo, orarioDi } from '../../src/data/prenotazioni.js';
 import { escursioni } from '../../src/data/escursioni.js';
 import { sito } from '../../src/data/sito.js';
 import { condizioniInTesto } from '../../src/data/condizioni.js';
@@ -35,7 +35,8 @@ export function vistaCliente(p) {
     turno: t?.nome ?? p.turno,
     data: p.data,
     dataLeggibile: dataLeggibile(p.data),
-    orario: t?.orario || '',
+    orario: orarioDi(t, p.data),
+    orarioIndicativo: Boolean(t?.indicativo),
     carburanteEscluso: Boolean(offerta?.carburanteEscluso),
     imbarco: nomeImbarco(p.imbarco),
     adulti: p.adulti,
@@ -122,7 +123,7 @@ export async function inviaEmailConferma(env, p, origine) {
     `${v.escursione} · ${v.turno}${v.privato ? ' · gommone solo per voi' : ''}`,
     `Data: ${v.dataLeggibile}`,
     `Imbarco: ${v.imbarco}`,
-    v.orario ? `Orario: ${v.orario}` : 'Orario: te lo confermiamo noi',
+    v.orario ? `Orario: ${v.orario}${v.orarioIndicativo ? ' (indicativo: segue la luce del tramonto)' : ''}` : 'Orario: te lo confermiamo noi',
     testoRitrovo(v.orario) || null,
     `Persone: ${persone}`,
     `Totale pagato: ${euroDaCent(p.pagato || p.totale)} € (IVA inclusa)`,

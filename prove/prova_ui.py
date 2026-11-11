@@ -68,7 +68,7 @@ async def tramonto(b):
     await pg.click('[data-mese="1"]'); await pg.wait_for_selector('[data-data="2027-06-12"]')
     await pg.click('[data-data="2027-06-12"]')
     await pg.wait_for_selector('[data-righe]:has-text("Tramonto")')
-    t = await pg.inner_text('[data-righe]'); ok('130 €' in t and 'Tramonto' in t, 'tramonto 12 giugno, 2 adulti = 130 € (come la mezza giornata), pagina a parte')
+    t = await pg.inner_text('[data-righe]'); ok('200 €' in t and 'Tramonto' in t, 'tramonto 12 giugno, 2 adulti = 200 € (listino del tramonto), pagina a parte')
     await pg.screenshot(path=f'{OUT}/prenota-turni-390.png', full_page=True)
     await ctx.close()
 

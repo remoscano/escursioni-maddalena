@@ -1,5 +1,5 @@
 // GET /api/gestione/giorno?data=AAAA-MM-GG → uscite del giorno per gommone, con l'elenco passeggeri.
-import { gommoni, offerte, turnoDi } from '../../../src/data/prenotazioni.js';
+import { gommoni, offerte, turnoDi, orarioDi } from '../../../src/data/prenotazioni.js';
 import { tutte } from '../../_lib/db.js';
 import { richiedi } from '../../_lib/accessi.js';
 import { titoloEscursione, nomeImbarco } from '../../_lib/prenotazioni.js';
@@ -31,7 +31,7 @@ export async function onRequestGet({ request, env }) {
       const k = `${p.escursione}|${p.turno}`;
       if (!uscite.has(k)) {
         const t = turnoDi(p.escursione, p.turno);
-        uscite.set(k, { escursioneSlug: p.escursione, turnoId: p.turno, escursione: titoloEscursione(p.escursione), turno: t?.nome ?? p.turno, orario: t?.orario ?? '', minimo: offerte[p.escursione]?.minimo ?? null, privato: offerte[p.escursione]?.tipo === 'esclusiva', persone: 0, paganti: 0, prenotazioni: [] });
+        uscite.set(k, { escursioneSlug: p.escursione, turnoId: p.turno, escursione: titoloEscursione(p.escursione), turno: t?.nome ?? p.turno, orario: orarioDi(t, p.data), minimo: offerte[p.escursione]?.minimo ?? null, privato: offerte[p.escursione]?.tipo === 'esclusiva', persone: 0, paganti: 0, prenotazioni: [] });
       }
       const u = uscite.get(k);
       u.persone += p.adulti + p.bambini + p.neonati;

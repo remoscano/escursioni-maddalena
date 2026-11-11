@@ -2,13 +2,20 @@
 // con lo stesso modello della pagina "Tour delle 7 isole".
 // I valori vuoti ('') diventano segnaposto rosa sul sito.
 
-import { prezzoDa, offerte, gommoniPer, imbarchiPer } from './prenotazioni.js';
+import { prezzoDa, offerte, gommoniPer, imbarchiPer, postiPer } from './prenotazioni.js';
 
 // Prezzi "da" e posti arrivano da src/data/prenotazioni.js (listino unico per sito e prenotazioni).
 const da = (slug) => prezzoDa(slug) ?? {};
 // "Palau, La Maddalena o Cannigione": da dove parte un'escursione.
 const daDove = (slug) => { const n = imbarchiPer(slug).map((i) => i.nome); return n.length > 1 ? `${n.slice(0, -1).join(', ')} o ${n.at(-1)}` : n[0]; };
-const posti = (slug) => String(Math.max(...gommoniPer(slug).map((g) => g.posti)));
+const posti = (slug) => String(Math.max(...gommoniPer(slug).map((g) => postiPer(offerte[slug], g))));
+// '05-01', '05-31' → 'Maggio'; '07-01', '08-31' → 'Luglio e agosto'.
+const MESI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+const nomeMesi = (dal, al) => {
+  const [m1, m2] = [Number(dal.slice(0, 2)), Number(al.slice(0, 2))];
+  const t = m1 === m2 ? MESI[m1 - 1] : `${MESI[m1 - 1]} e ${MESI[m2 - 1]}`;
+  return t[0].toUpperCase() + t.slice(1);
+};
 // Partenza e rientro della Corsica, dall'orario del listino (es. '9:30 – 17:30').
 const [partenzaCorsica, rientroCorsica] = offerte['corsica-lavezzi-bonifacio'].turni[0].orario.split('–').map((x) => x.trim());
 
@@ -111,15 +118,16 @@ export const escursioni = [
     note: [],
   },
   {
+    // Tramonto ("sunset"): aperitivo in gommone, dati di Remo dell'11 novembre 2026.
     slug: 'tramonto',
     titolo: 'Tramonto con aperitivo',
     titoloPagina: 'Tramonto in maxi gommone con aperitivo',
-    etichette: ['Sera', 'Aperitivo a bordo'],
-    breve: "Due ore e mezza in mare con il sole che scende sulle isole, e l'aperitivo a bordo.",
+    etichette: ['Sunset', 'Aperitivo a bordo', `Massimo ${posti('tramonto')} persone`],
+    breve: "L'aperitivo in gommone al tramonto: prosecco, qualcosa da mangiare e una sosta nella baia più riparata.",
     intro:
-      "L'arcipelago con la luce più bella: si esce verso sera, si guarda il sole scendere dal mare e si brinda con l'aperitivo a bordo.",
+      "L'uscita al tramonto, il sunset, è un aperitivo in gommone: si brinda con il prosecco, si assaggia qualcosa e ci si ferma in una baia riparata mentre il sole scende sulle isole.",
     durata: 'Due ore e mezza',
-    orari: offerte.tramonto.turni[0].orario.replace(' – ', '–'),
+    orari: 'verso il tramonto, orario indicativo',
     ore: '2,5',
     durataTesto: '2 ore e mezza',
     prezzoAdulti: String(da('tramonto').adulto),
@@ -129,25 +137,38 @@ export const escursioni = [
     foto: {
       copertina: 'Il gommone controluce al tramonto',
       galleria: [
-        'Il gommone al tramonto tra le isole',
-        "L'aperitivo a bordo",
+        'Il brindisi con il prosecco a bordo',
+        'Il tagliere e gli spiedini di frutta',
         'Il cielo arancione sul mare',
-        'Ospiti a prua con la luce della sera',
+        'Il gommone fermo in una baia, con la luce della sera',
         'Il rientro in porto con le prime luci',
       ],
     },
     mappa: false,
-    numeri: [],
+    // Orari del mese, dal listino (src/data/prenotazioni.js): sono indicativi.
+    numeri: offerte.tramonto.turni[0].orari.map((o) => ({ etichetta: `Orario ${nomeMesi(o.dal, o.al).toLowerCase()}`, valore: o.orario.replace(' – ', '–') })),
     programma: [
-      { tipo: 'imbarco', titolo: `Partenza da ${daDove('tramonto')}`, testo: "Alle 18:00. Si parte da La Maddalena; a Palau il gommone passa a prendere chi si imbarca lì. Da Cannigione parte l'Honda 9.50." },
-      { tipo: 'vista', titolo: 'Il tramonto dal mare', luogo: 'Con aperitivo a bordo', testo: '', mancante: 'Percorso del tramonto e dove vi fermate a guardarlo' },
-      { tipo: 'rientro', titolo: 'Rientro alle 20:30', testo: 'Si scende dove si è saliti.' },
+      { tipo: 'imbarco', titolo: `Partenza da ${daDove('tramonto')}`, testo: "Ti consigliamo La Maddalena: al rientro è già buio e la strada più corta rende il ritorno più breve e sicuro. A Palau il gommone passa a prendere chi si imbarca lì; da Cannigione parte l'Honda 9.50." },
+      { tipo: 'percorso', titolo: 'La sosta, scelta in base al vento', testo: "Il comandante sceglie la baia più riparata del momento, per evitare il mare mosso e navigare tranquilli. Di solito è una di queste tre." },
+      { tipo: 'sosta', n: '1', titolo: 'Il Pesce', luogo: 'Davanti al pontile', testo: "Di fronte al pontile d'ormeggio: spiaggia e acqua bassa." },
+      { tipo: 'sosta', n: '2', titolo: 'Santo Stefano', luogo: 'A 3 minuti', testo: 'Bastano tre minuti di navigazione.' },
+      { tipo: 'sosta', n: '3', titolo: 'Villa Marina', luogo: 'Santo Stefano', testo: 'La cala riparata sulla costa sud di Santo Stefano.' },
+      { tipo: 'rientro', titolo: 'Rientro con le luci della sera', testo: 'Si scende dove si è saliti.' },
     ],
-    incluso: ['Skipper', 'Carburante', 'Ticket del Parco', 'Aperitivo a bordo'],
+    incluso: [
+      'Skipper',
+      'Carburante',
+      'Ticket del Parco',
+      'Da bere: prosecco per il brindisi, oppure birra o Coca-Cola',
+      'Da mangiare: tagliere con salsiccia e formaggio, oppure spiedini di frutta',
+    ],
     inclusoMancante: null,
     nonIncluso: ['Cena', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
     nonInclusoMancante: null,
-    note: [],
+    note: [
+      'Gli orari sono indicativi: seguono la luce del tramonto, che cambia da un mese all\'altro.',
+      `Al tramonto di gruppo siete al massimo ${posti('tramonto')} persone. Con il tour privato il gommone è solo vostro e potete chiedere mete più lontane, come Porto della Madonna, Caprera, Spargi o Budelli, se il meteo lo permette (carburante a parte).`,
+    ],
   },
   {
     slug: 'tour-privato',
