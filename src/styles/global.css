@@ -1,33 +1,35 @@
 /* Escursioni Maddalena — stili del sito
-   Colori e caratteri dall'identità visiva: "Solare e turchese". */
+   Identità "Bianco e arancio" (11 novembre 2026, riferimento indicato da Remo: escursi.com):
+   sfondo bianco, testi grafite, arancio per i bottoni, carattere Urbanist.
+   I nomi delle variabili sono rimasti quelli di prima (sabbia, mare, laguna…) per non toccare tutto il codice. */
 
 :root {
-  --sabbia: #FBF8F2;
-  --sabbia-calda: #F3EADB;
-  --mare: #0A3A51;
-  --mare-notte: #072E40;
-  --mare-hero: #0E4A63;
-  --laguna: #2BB7C2;
-  --turchese: #0A7380;
-  --acqua: #DDF3F4;
+  --sabbia: #FFFFFF;
+  --sabbia-calda: #FFFFFF;
+  --mare: #282828;
+  --mare-notte: #1E1E1E;
+  --mare-hero: #282828;
+  --laguna: #FC971C;
+  --turchese: #A85500;
+  --acqua: #F7F3EC;
   --granito: #EC9A86;
   --granito-scuro: #A14A33;
-  --testo-2: #3D5A69;
-  --bordo: #E7DECF;
-  --bordo-campo: #C5D6DB;
-  --azzurro-chiaro: #BDEBEF;
+  --testo-2: #5F676E;
+  --bordo: #E6E6E6;
+  --bordo-campo: #CED4DA;
+  --azzurro-chiaro: #FDE2B8;
   --bianco: #FFFFFF;
 
-  --font-titoli: 'Bricolage Grotesque Variable', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
-  --font-testo: 'Figtree Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-titoli: 'Urbanist Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-testo: 'Urbanist Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
 
   --larghezza: 1344px;
   --gutter: 32px;
   --raggio-l: 28px;
   --raggio-m: 24px;
   --raggio-s: 14px;
-  --ombra-card: 0 1px 2px rgba(10, 58, 81, 0.06), 0 8px 24px rgba(10, 58, 81, 0.06);
-  --ombra-grande: 0 1px 2px rgba(10, 58, 81, 0.06), 0 12px 32px rgba(10, 58, 81, 0.08);
+  --ombra-card: 0 1px 2px rgba(40, 40, 40, 0.06), 0 8px 24px rgba(40, 40, 40, 0.06);
+  --ombra-grande: 0 1px 2px rgba(40, 40, 40, 0.06), 0 12px 32px rgba(40, 40, 40, 0.08);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -173,7 +175,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   .testata__pannello:not([hidden]) {
     display: block; position: absolute; left: 0; right: 0; top: 100%;
     background: var(--sabbia); color: var(--mare); border-bottom: 1px solid var(--bordo);
-    box-shadow: 0 16px 32px rgba(10, 58, 81, 0.15);
+    box-shadow: 0 16px 32px rgba(40, 40, 40, 0.15);
   }
   .testata__pannello nav { display: flex; flex-direction: column; padding: 8px var(--gutter) 24px; }
   .testata__pannello nav a {
@@ -192,7 +194,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 .foto.hero__foto { position: absolute; inset: 0; border-radius: 0; }
 .hero__velo {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(6, 36, 51, 0.45) 0%, rgba(6, 36, 51, 0.15) 35%, rgba(6, 36, 51, 0.65) 100%);
+  background: linear-gradient(180deg, rgba(20, 20, 20, 0.45) 0%, rgba(20, 20, 20, 0.15) 35%, rgba(20, 20, 20, 0.65) 100%);
 }
 .hero__contenuto {
   position: relative; flex: 1; width: 100%; max-width: var(--larghezza); margin: 0 auto;
@@ -205,9 +207,9 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   max-width: 13ch; font-weight: 800; font-size: clamp(44px, 6.6vw, 100px); line-height: 0.96;
   letter-spacing: -0.03em; text-wrap: balance;
 }
-.hero__testo { max-width: 46ch; font-size: 20px; line-height: 1.55; color: #E6F4F6; text-wrap: pretty; }
+.hero__testo { max-width: 46ch; font-size: 20px; line-height: 1.55; color: #F1F1F1; text-wrap: pretty; }
 .hero__azioni { display: flex; flex-wrap: wrap; gap: 12px; }
-.hero__fatti { position: relative; border-top: 1px solid rgba(255, 255, 255, 0.2); background: rgba(6, 36, 51, 0.45); }
+.hero__fatti { position: relative; border-top: 1px solid rgba(255, 255, 255, 0.2); background: rgba(20, 20, 20, 0.45); }
 .hero__fatti dl {
   max-width: var(--larghezza); margin: 0 auto; padding: 22px var(--gutter);
   display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px 32px;
@@ -221,24 +223,24 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 
 /* ---------- Foto e segnaposto foto ---------- */
 
-.foto { position: relative; overflow: hidden; border-radius: var(--raggio-l); background: #CDECEF; }
+.foto { position: relative; overflow: hidden; border-radius: var(--raggio-l); background: #EEEEEE; }
 .foto img { width: 100%; height: 100%; object-fit: cover; }
 .foto--vuota {
   display: flex; align-items: flex-end; padding: 20px;
-  background-color: #CDECEF;
-  background-image: repeating-linear-gradient(135deg, rgba(10, 58, 81, 0.07) 0 2px, transparent 2px 16px);
+  background-color: #EEEEEE;
+  background-image: repeating-linear-gradient(135deg, rgba(40, 40, 40, 0.07) 0 2px, transparent 2px 16px);
 }
 .foto--rosa { background-color: #F6D9CB; }
 .foto--sabbia { background-color: #EFE3D0; }
 .hero .foto--vuota { background-color: var(--mare-hero); background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 22px); border-radius: 0; }
 .foto__nota {
   display: inline-flex; align-items: center; gap: 8px; max-width: 100%;
-  background: rgba(251, 248, 242, 0.94); color: var(--mare); border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94); color: var(--mare); border-radius: 999px;
   padding: 8px 14px; font-size: 13px; line-height: 1.3; font-weight: 600;
 }
 .hero .foto__nota {
   position: absolute; right: var(--gutter); top: 120px; max-width: 420px; border-radius: 14px;
-  background: rgba(6, 36, 51, 0.55); border: 1px dashed rgba(255, 255, 255, 0.5); color: var(--bianco);
+  background: rgba(20, 20, 20, 0.55); border: 1px dashed rgba(255, 255, 255, 0.5); color: var(--bianco);
 }
 
 /* ---------- Percorso e mappa ---------- */
@@ -256,7 +258,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 }
 .mappa__punto {
   display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%;
-  background: var(--mare); border: 2px solid var(--bianco); box-shadow: 0 2px 6px rgba(10, 58, 81, 0.35);
+  background: var(--mare); border: 2px solid var(--bianco); box-shadow: 0 2px 6px rgba(40, 40, 40, 0.35);
   color: var(--bianco); font-size: 14px; line-height: 1; font-weight: 800;
 }
 .mappa__punto--largo { width: auto; min-width: 44px; padding: 0 8px; border-radius: 999px; font-size: 13px; }
@@ -354,7 +356,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 .skipper { display: flex; align-items: center; gap: 16px; }
 .skipper__foto {
   flex: none; width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--bianco); box-shadow: 0 0 0 1px var(--bordo);
-  background-color: #CDECEF; background-image: repeating-linear-gradient(135deg, rgba(10, 58, 81, 0.08) 0 2px, transparent 2px 10px);
+  background-color: #EEEEEE; background-image: repeating-linear-gradient(135deg, rgba(40, 40, 40, 0.08) 0 2px, transparent 2px 10px);
 }
 
 /* ---------- Recensioni ---------- */
@@ -363,7 +365,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   background: rgba(255, 255, 255, 0.7); border-radius: var(--raggio-m); padding: 28px;
   display: flex; flex-direction: column; gap: 16px;
 }
-.recensione--vuota { border: 1.5px dashed #6FB4BC; }
+.recensione--vuota { border: 1.5px dashed #ADB5BD; }
 .recensione blockquote { font-size: 18px; line-height: 1.6; }
 .recensione figcaption { font-size: 14px; line-height: 1.4; color: var(--testo-2); }
 
@@ -382,7 +384,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   width: 48px; height: 48px; border-radius: 50%; background: var(--acqua); color: var(--turchese);
   display: flex; align-items: center; justify-content: center;
 }
-.box--acqua { background: var(--acqua); border-color: #B9DFE3; }
+.box--acqua { background: var(--acqua); border-color: #DEE2E6; }
 
 /* ---------- Richiesta WhatsApp ---------- */
 
@@ -392,7 +394,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--laguna); color: var(--mare);
   display: flex; align-items: center; justify-content: center; font-weight: 800; margin-top: -3px;
 }
-.sezione--scura .passi + p { color: #D6E9EC; }
+.sezione--scura .passi + p { color: #E9ECEF; }
 .sezione--scura a { color: var(--bianco); }
 
 .modulo {
@@ -425,7 +427,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   text-transform: uppercase; color: var(--testo-2);
 }
 .anteprima__messaggio {
-  background: #F4FAF9; border: 1px solid var(--bordo); border-radius: 18px 18px 18px 4px; padding: 14px 16px;
+  background: #F8F9FA; border: 1px solid var(--bordo); border-radius: 18px 18px 18px 4px; padding: 14px 16px;
   font-size: 15px; line-height: 1.5; white-space: pre-line;
 }
 .modulo__nota { font-size: 13px; line-height: 1.5; color: var(--testo-2); text-align: center; }
@@ -453,8 +455,8 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 }
 .box-prezzo__etichetta { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--azzurro-chiaro); }
 .box-prezzo__cifra { font-family: var(--font-titoli); font-size: 36px; line-height: 1.1; font-weight: 800; }
-.box-prezzo__bambini { font-size: 16px; color: #D6E9EC; }
-.box-prezzo__nota { font-size: 14px; line-height: 1.5; color: #D6E9EC; }
+.box-prezzo__bambini { font-size: 16px; color: #E9ECEF; }
+.box-prezzo__nota { font-size: 14px; line-height: 1.5; color: #E9ECEF; }
 .box-prezzo a:not(.btn) { color: var(--bianco); font-weight: 700; }
 
 .galleria { display: flex; flex-wrap: wrap; gap: 16px; }
@@ -471,7 +473,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 .programma { list-style: none; padding: 0; display: flex; flex-direction: column; }
 .tappa { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 0 16px; }
 .tappa__linea { display: flex; flex-direction: column; align-items: center; }
-.tappa__linea::after { content: ''; flex: 1; width: 2px; background: repeating-linear-gradient(180deg, rgba(10, 58, 81, 0.35) 0 6px, transparent 6px 12px); margin: 4px 0; }
+.tappa__linea::after { content: ''; flex: 1; width: 2px; background: repeating-linear-gradient(180deg, rgba(40, 40, 40, 0.35) 0 6px, transparent 6px 12px); margin: 4px 0; }
 .tappa:last-child .tappa__linea::after { display: none; }
 .tappa__punto {
   width: 36px; height: 36px; border-radius: 50%; background: var(--mare); color: var(--bianco); flex: none;
@@ -516,8 +518,8 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 }
 .altra:hover { border-color: var(--mare); color: var(--mare); }
 .altra__foto {
-  flex: none; width: 88px; height: 88px; border-radius: 14px; background-color: #CDECEF;
-  background-image: repeating-linear-gradient(135deg, rgba(10, 58, 81, 0.07) 0 2px, transparent 2px 12px);
+  flex: none; width: 88px; height: 88px; border-radius: 14px; background-color: #EEEEEE;
+  background-image: repeating-linear-gradient(135deg, rgba(40, 40, 40, 0.07) 0 2px, transparent 2px 12px);
 }
 .altra strong { display: block; font-family: var(--font-titoli); font-size: 19px; line-height: 1.25; }
 .altra span span { display: block; margin-top: 4px; font-size: 14px; line-height: 1.45; color: var(--testo-2); }
@@ -534,7 +536,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 
 /* ---------- Piede ---------- */
 
-.piede { background: var(--mare-notte); color: #D6E9EC; padding: 72px 0 40px; }
+.piede { background: var(--mare-notte); color: #E9ECEF; padding: 72px 0 40px; }
 .piede a { color: var(--bianco); }
 .piede__griglia { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 40px; }
 .piede__col { display: flex; flex-direction: column; gap: 10px; font-size: 15px; line-height: 1.5; }
@@ -554,7 +556,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   .barra-wa {
     display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; gap: 10px;
     padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-    background: rgba(251, 248, 242, 0.96); border-top: 1px solid var(--bordo);
+    background: rgba(255, 255, 255, 0.96); border-top: 1px solid var(--bordo);
     -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
   }
   .barra-wa .btn--wa { flex: 1; }

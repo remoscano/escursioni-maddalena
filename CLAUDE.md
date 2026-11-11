@@ -43,13 +43,15 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
   - `ModuloRichiesta.astro`: compone il messaggio e apre `https://wa.me/<numero>?text=…`. Accetta `?escursione=<slug>` nell'URL della pagina `/richiesta/`.
 - Stili in `src/styles/global.css` con le variabili CSS in cima. Non introdurre Tailwind o altre librerie CSS.
 
-## Identità visiva ("Solare e turchese")
+## Identità visiva ("Bianco e arancio", dall'11 novembre 2026)
 
-- Colori: Sabbia `#FBF8F2` (sfondo), Sabbia calda `#F3EADB` (sezioni alternate), Mare profondo `#0A3A51` (testi, fondi scuri), Laguna `#2BB7C2` (bottoni WhatsApp, con testo blu scuro), Turchese scuro `#0A7380` (link, occhielli), Acqua chiara `#DDF3F4` (etichette, riquadri), Rosa granito `#EC9A86` (Spiaggia Rosa, dettagli).
-- Caratteri: Bricolage Grotesque (titoli, peso 800) e Figtree (testi). Sono ospitati sul sito tramite `@fontsource-variable`: non usare Google Fonts.
-- Un solo bottone turchese per sezione: "Prenota" dove la prenotazione online è attiva (`regole.attive` in `src/data/prenotazioni.js`), altrimenti la richiesta WhatsApp.
+- Scelta di Remo: sito più pulito e minimale, riferimento escursi.com per colori e carattere. Sfondo bianco ovunque, niente sezioni colorate.
+- Colori (in `src/styles/global.css`; i nomi delle variabili sono rimasti quelli vecchi): bianco `#FFFFFF` (`--sabbia`, `--sabbia-calda`), grafite `#282828` (`--mare`: testi, piede, apertura), arancio `#FC971C` (`--laguna`: bottoni principali, con testo grafite), arancio scuro `#A85500` (`--turchese`: link e occhielli, contrasto ok su bianco), crema `#F7F3EC` (`--acqua`: etichette e riquadri), grigio `#5F676E` (`--testo-2`), bordi `#E6E6E6`. La mappa resta col mare azzurro.
+- Carattere: Urbanist (titoli e testi), ospitato sul sito con `@fontsource-variable/urbanist`: non usare Google Fonts.
+- Apertura della home: tutte le escursioni (non solo il Tour delle 7 isole), bottone "Prenota online"; il 7 isole resta in evidenza tra le schede e con il suo percorso più sotto.
+- Un solo bottone arancio per sezione: "Prenota" dove la prenotazione online è attiva (`regole.attive` in `src/data/prenotazioni.js`), altrimenti la richiesta WhatsApp.
 - Icone a tratto da 24 px in `Icona.astro`; mai emoji.
-- Marchio: sole e due onde che disegnano la M (in `Logo.astro`). È una proposta: se il cliente fornisce un logo, va sostituito.
+- Marchio: sole e due onde che disegnano la M (in `Logo.astro`, ora arancio e grafite). È una proposta: se il cliente fornisce un logo, va sostituito.
 - Accessibilità: contrasto almeno 4.5:1, bersagli tattili almeno 44 px, veri `<button>`/`<a>`/`<label>`, testo alternativo sulle foto.
 
 ## Regole sui contenuti

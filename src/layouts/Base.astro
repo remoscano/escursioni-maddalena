@@ -1,6 +1,5 @@
 ---
-import '@fontsource-variable/bricolage-grotesque/opsz.css';
-import '@fontsource-variable/figtree/wght.css';
+import '@fontsource-variable/urbanist';
 import '../styles/global.css';
 import Testata from '../components/Testata.astro';
 import Piede from '../components/Piede.astro';
@@ -30,7 +29,7 @@ const telefono = sito.contatti.whatsapp ? `tel:+${sito.contatti.whatsapp}` : '/c
   <meta name="description" content={descrizione} />
   <link rel="canonical" href={canonico} />
   {(sito.inCostruzione || nascosta) && <meta name="robots" content="noindex, nofollow" />}
-  <meta name="theme-color" content="#0A3A51" />
+  <meta name="theme-color" content="#FFFFFF" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="it_IT" />

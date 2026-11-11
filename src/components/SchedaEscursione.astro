@@ -8,7 +8,7 @@ interface Props { e: any; grande?: boolean }
 const { e, grande = false } = Astro.props;
 const href = `/escursioni/${e.slug}/`;
 const richiesta = regole.attive ? `/prenota/?escursione=${e.slug}` : `/richiesta/?escursione=${e.slug}`;
-const tono = e.slug === 'tramonto-mezza-giornata' ? 'rosa' : 'acqua';
+const tono = 'acqua';
 ---
 {grande ? (
   <article class="scheda-grande">

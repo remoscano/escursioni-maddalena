@@ -1,5 +1,5 @@
 ---
-import { regole } from '../data/prenotazioni.js';
+import { regole, postiMassimi } from '../data/prenotazioni.js';
 import Base from '../layouts/Base.astro';
 import Testata from '../components/Testata.astro';
 import Foto from '../components/Foto.astro';
@@ -14,59 +14,42 @@ import SezioneRichiesta from '../components/SezioneRichiesta.astro';
 import { escursioni, trovaEscursione } from '../data/escursioni.js';
 
 const tour = trovaEscursione('tour-7-isole');
+// Prezzo più basso a persona tra le uscite di gruppo, per l'apertura.
+const prezzoMinimo = Math.min(...escursioni.filter((e) => !e.prezzoGommone).map((e) => Number(e.prezzoAdulti)));
 const altre = escursioni.filter((e) => !e.inEvidenza);
 ---
 <Base
-  titolo="Escursioni Maddalena · Tour delle 7 isole in maxi gommone"
+  titolo="Escursioni Maddalena · Escursioni in maxi gommone nell'Arcipelago di La Maddalena"
   descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, Corsica, tramonto e tour privati. Imbarco a Palau, La Maddalena o Cannigione, prenoti online."
   testataScura
 >
   <section slot="hero" class="hero" aria-label="Apertura">
     <Foto
       class="hero__foto"
-      nota="il gommone in planata tra le isole, vista dall'alto (orizzontale, almeno 2400 px)"
+      nota="un gommone in planata tra le isole dell'arcipelago, vista dall'alto (orizzontale, almeno 2400 px)"
       priorita
       sizes="100vw"
     />
     <div class="hero__velo" aria-hidden="true"></div>
     <Testata scura />
     <div class="hero__contenuto">
-      <p class="hero__occhiello">Tour delle 7 isole · Arcipelago di La Maddalena</p>
-      <h1 class="hero__titolo">Sette isole, sette soste, un giorno in maxi gommone.</h1>
-      <p class="hero__testo">Dalla Spiaggia Rosa di Budelli a Cala Corsara: il giro completo dell'arcipelago, con imbarco a Palau o a La Maddalena.</p>
+      <p class="hero__occhiello">Arcipelago di La Maddalena · Sardegna</p>
+      <h1 class="hero__titolo">L'arcipelago di La Maddalena in maxi gommone.</h1>
+      <p class="hero__testo">Il Tour delle 7 isole, la mezza giornata, il tramonto con aperitivo, il tour privato e la Corsica. Partenze da Palau, La Maddalena e Cannigione.</p>
       <div class="hero__azioni">
         {regole.attive
-          ? <a href="/prenota/?escursione=tour-7-isole" class="btn btn--wa btn--grande">Prenota il tour delle 7 isole</a>
-          : <a href="/richiesta/?escursione=tour-7-isole" class="btn btn--wa btn--grande"><Icona nome="whatsapp" />Chiedi disponibilità su WhatsApp</a>}
-        <a href="#percorso" class="btn btn--bordo-chiaro btn--grande">Guarda il percorso<Icona nome="giu" /></a>
+          ? <a href="/prenota/" class="btn btn--wa btn--grande">Prenota online</a>
+          : <a href="/richiesta/" class="btn btn--wa btn--grande"><Icona nome="whatsapp" />Chiedi disponibilità su WhatsApp</a>}
+        <a href="#escursioni" class="btn btn--bordo-chiaro btn--grande">Scegli l'escursione<Icona nome="giu" /></a>
       </div>
     </div>
     <div class="hero__fatti">
       <dl>
-        <div><dt><Icona nome="orologio" size={18} />Durata</dt><dd>Giornata intera, <Dato v={tour.orari} e="orari" /></dd></div>
-        <div><dt><Icona nome="ancora" size={18} />Imbarco</dt><dd>Palau o La Maddalena</dd></div>
-        <div><dt><Icona nome="persone" size={18} />A bordo</dt><dd>Massimo <Dato v={tour.postiMax} e="N" /> persone</dd></div>
-        <div><dt><Icona nome="euro" size={18} />Prezzo</dt><dd>Da <Dato v={tour.prezzoAdulti} e="PREZZO" /> € a persona</dd></div>
+        <div><dt><Icona nome="orologio" size={18} />Uscite</dt><dd>Mezza giornata, giornata intera, tramonto</dd></div>
+        <div><dt><Icona nome="ancora" size={18} />Imbarco</dt><dd>Palau, La Maddalena, Cannigione</dd></div>
+        <div><dt><Icona nome="persone" size={18} />A bordo</dt><dd>Massimo {postiMassimi} persone</dd></div>
+        <div><dt><Icona nome="euro" size={18} />Prezzo</dt><dd>Da {prezzoMinimo} € a persona</dd></div>
       </dl>
-    </div>
-  </section>
-
-  <section id="percorso" class="sezione" aria-labelledby="percorso-titolo">
-    <div class="contenitore pila" style="gap:56px">
-      <div class="intestazione">
-        <div class="intestazione__testo">
-          <p class="occhiello">Il percorso</p>
-          <h2 id="percorso-titolo" class="titolo-sezione">Il giro dell'arcipelago, sosta per sosta</h2>
-        </div>
-        <p class="intestazione__lato">Imbarco a Palau o a La Maddalena, rientro alle <Dato v={tour.oraRientro} e="ora" />. L'ordine delle soste può cambiare in base a vento e mare.</p>
-      </div>
-      <div class="percorso">
-        <Mappa />
-        <div style="display:flex;flex-direction:column;gap:24px">
-          <ElencoSoste programma={tour.programma} rientro={tour.oraRientro} />
-          <a href="/escursioni/tour-7-isole/" class="link-freccia">Programma completo del tour<Icona nome="destra" size={18} /></a>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -82,6 +65,25 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
       <SchedaEscursione e={tour} grande />
       <div class="griglia-schede">
         {altre.map((e) => <SchedaEscursione e={e} />)}
+      </div>
+    </div>
+  </section>
+
+  <section id="percorso" class="sezione" aria-labelledby="percorso-titolo">
+    <div class="contenitore pila" style="gap:56px">
+      <div class="intestazione">
+        <div class="intestazione__testo">
+          <p class="occhiello">Tour delle 7 isole</p>
+          <h2 id="percorso-titolo" class="titolo-sezione">Il giro dell'arcipelago, sosta per sosta</h2>
+        </div>
+        <p class="intestazione__lato">Imbarco a Palau o a La Maddalena, rientro alle <Dato v={tour.oraRientro} e="ora" />. L'ordine delle soste può cambiare in base a vento e mare.</p>
+      </div>
+      <div class="percorso">
+        <Mappa />
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <ElencoSoste programma={tour.programma} rientro={tour.oraRientro} />
+          <a href="/escursioni/tour-7-isole/" class="link-freccia">Programma completo del tour<Icona nome="destra" size={18} /></a>
+        </div>
       </div>
     </div>
   </section>
