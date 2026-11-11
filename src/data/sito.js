@@ -57,15 +57,16 @@ export const sito = {
 
   // I gommoni (Remo, 8 novembre 2026). "id" collega ogni gommone a quello del sistema di prenotazione
   // (src/data/prenotazioni.js), da cui arrivano i posti.
+  // Descrizioni dei gommoni scritte da Claude (11 novembre 2026) dalle schede dei modelli (Joker Boat, BWA) e dai dati di Remo: da far controllare.
   flotta: [
-    { id: 'gruppo-1', modello: 'Joker Clubman 28', motori: '2 motori Suzuki da 200 cv', dotazioni: 'bagno, T-top', descrizione: '' },
-    { id: 'gruppo-2', modello: 'BWA 30', motori: '2 motori Mercury da 250 cv', dotazioni: 'bagno, cabina, T-top', descrizione: '' },
-    { id: 'esclusiva', modello: 'Joker 35', motori: '2 motori Suzuki da 300 cv', dotazioni: 'cabina, bagno, ombra', descrizione: '' },
-    { id: 'cannigione', modello: 'Honda 9.50', motori: '1 motore Honda da 350 cv', dotazioni: 'ombra', descrizione: '' },
+    { id: 'gruppo-1', modello: 'Joker Clubman 28', motori: '2 motori Suzuki da 200 cv', dotazioni: 'bagno, T-top', descrizione: "Il gommone delle uscite di gruppo: 8,5 metri, un grande prendisole a prua e il divanetto a U a poppa, dove si sta comodi anche in dodici. Ombra del T-top e bagno a bordo." },
+    { id: 'gruppo-2', modello: 'BWA 30', motori: '2 motori Mercury da 250 cv', dotazioni: 'bagno, cabina, T-top', descrizione: "Più ampio, con cabina e bagno sotto coperta: comodo per cambiarsi con calma dopo il tuffo. A prua c'è il prendisole, e il T-top fa ombra mentre si naviga." },
+    { id: 'esclusiva', modello: 'Joker 35', motori: '2 motori Suzuki da 300 cv', dotazioni: 'cabina, bagno, ombra', descrizione: "Il più grande della flotta, oltre 10 metri, riservato alle esclusive con al massimo 6 persone: spazio per tutti. Cabina con letto matrimoniale, bagno separato e un prendisole a prua dove ci si sdraia in più di quattro." },
+    { id: 'cannigione', modello: 'Honda 9.50', motori: '1 motore Honda da 350 cv', dotazioni: 'ombra', descrizione: "Il gommone di chi parte da Cannigione, con un motore Honda da 350 cavalli: arriva nell'arcipelago senza perdere tempo. Porta fino a 12 persone, con l'ombra a bordo." },
   ],
   gommone: {
     // Scritta da Claude su richiesta di Remo (11 novembre 2026), solo con i dati della flotta già confermati.
-    descrizione: "Gommoni grandi e stabili, con lo skipper sempre a bordo: arrivi nelle cale più belle senza fatica e ti godi il mare in sicurezza. Ombra a bordo, bagno sui gommoni che partono da La Maddalena e al massimo 12 persone: lo spazio giusto per famiglie con bambini e gruppi di amici.", // due righe di presentazione della flotta
+    descrizione: "Gommoni grandi e stabili, con lo skipper sempre a bordo: arrivi nelle cale più belle senza fatica e ti godi il mare in sicurezza. Ombra a bordo e al massimo 12 persone: lo spazio giusto per famiglie con bambini e gruppi di amici.", // due righe di presentazione della flotta
   },
 
   skipper: {
