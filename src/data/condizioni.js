@@ -60,7 +60,7 @@ export const condizioni = [
     punti: [
       ["I prezzi sono in euro e comprendono l'IVA. Cambiano in base al periodo: quello della tua data lo vedi nel calendario e nel riepilogo."],
       ['Si paga tutto al momento della prenotazione, con carta (tramite SumUp) o con PayPal, sulle loro pagine sicure. Non ci sono costi in più per il metodo di pagamento.'],
-      [`Bambini fino a ${bambiniFinoA} anni prezzo ridotto, da ${bambiniFinoA + 1} anni prezzo intero. Nessuno viaggia gratis: anche i bambini più piccoli pagano il ridotto, occupano un posto a bordo e vanno indicati nella prenotazione.`],
+      [`Fino a ${bambiniFinoA} anni c'è il prezzo ridotto.`],
       ['Nelle escursioni in esclusiva il carburante non è compreso nel prezzo e si paga a parte: ', v(regole.carburante, CARBURANTE_MANCA), '.'],
       ['Il ticket del Parco Nazionale è compreso nel prezzo.'],
     ],

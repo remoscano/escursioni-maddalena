@@ -371,7 +371,7 @@ const perOspite = area === 'struttura';
       const offerta = offerte[st.slug];
       $('[data-nota-persone]').textContent = offerta.tipo === 'esclusiva'
         ? `Il gommone è solo per voi: fino a ${max} persone, bambini compresi.`
-        : `Posti liberi su questa uscita: ${max}. Anche i bambini più piccoli pagano il ridotto e occupano un posto a bordo.`;
+        : `Posti liberi su questa uscita: ${max}. Fino a ${regole.eta.bambiniFinoA} anni c'è il prezzo ridotto.`;
     }
     radice.addEventListener('click', (ev) => {
       const t = ev.target as HTMLElement;
