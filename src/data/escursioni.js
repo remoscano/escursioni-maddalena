@@ -193,7 +193,7 @@ export const escursioni = [
     slug: 'corsica-lavezzi-bonifacio',
     titolo: 'Corsica',
     titoloPagina: 'Corsica in maxi gommone: Lavezzi e Bonifacio',
-    etichette: ['Solo il vostro gruppo', 'Bocche di Bonifacio', "Documento per l'espatrio"],
+    etichette: ['Solo il vostro gruppo', 'Bocche di Bonifacio'],
     breve: "Gommone in esclusiva, giornata intera con visita all'isola Piana, Lavezzi e isola di Cavallo.",
     intro:
       "Una giornata intera con il gommone solo per il vostro gruppo: si attraversano le Bocche di Bonifacio per raggiungere la Corsica, le acque trasparenti delle isole Lavezzi, l'isola di Cavallo e le falesie bianche su cui è costruita Bonifacio.",
