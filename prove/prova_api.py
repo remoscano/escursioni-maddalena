@@ -41,23 +41,25 @@ s, r = prenota(pub, adulti=2); ok(s == 200, 'altri 2 → gommone 2')
 s, r = prenota(pub, adulti=11); ok(s == 409, f'11 persone non entrano (restano 10): {s} {r}')
 s, r = prenota(pub, adulti=10); ok(s == 200, '10 persone → gommone 2 pieno')
 g = giorno('tour-7-isole', '2027-06-10'); ok(g['stato'] == 'pieno', 'giorno pieno per il 7 isole')
-g = giorno('tramonto-mezza-giornata', '2027-06-10'); ok(g['stato'] == 'pieno', 'con i due gommoni in giornata intera, mezza giornata e tramonto sono chiusi')
+g = giorno('mezza-giornata', '2027-06-10'); ok(g['stato'] == 'pieno', 'con i due gommoni in giornata intera, la mezza giornata è chiusa')
+g = giorno('tramonto', '2027-06-10'); ok(g['stato'] == 'pieno', 'con i due gommoni in giornata intera, il tramonto è chiuso')
 
 # 3. conflitti tra turni: pomeriggio occupa anche la sera
-s, r = prenota(pub, escursione='tramonto-mezza-giornata', turno='pomeriggio', data='2027-06-11', adulti=2); ok(s == 200, 'pomeriggio 11 giugno su gommone 1')
-s, r = prenota(pub, escursione='tramonto-mezza-giornata', turno='tramonto', data='2027-06-11', adulti=2); ok(s == 200, 'tramonto 11 giugno → va sul gommone 2')
-g = giorno('tramonto-mezza-giornata', '2027-06-11'); t = {x['id']: x for x in g['turni']}
+s, r = prenota(pub, escursione='mezza-giornata', turno='pomeriggio', data='2027-06-11', adulti=2); ok(s == 200, 'pomeriggio 11 giugno su gommone 1')
+s, r = prenota(pub, escursione='tramonto', turno='tramonto', data='2027-06-11', adulti=2); ok(s == 200, 'tramonto 11 giugno → va sul gommone 2')
+g = giorno('mezza-giornata', '2027-06-11'); t = {x['id']: x for x in g['turni']}
+t.update({x['id']: x for x in giorno('tramonto', '2027-06-11')['turni']})
 ok(t['mattina']['max'] == 12, 'mattina ancora libera su entrambi')
 ok(t['pomeriggio']['max'] == 10 and t['tramonto']['max'] == 10, 'pomeriggio e tramonto: solo 10 posti, sulle uscite già aperte')
 g = giorno('tour-7-isole', '2027-06-11'); ok(g['stato'] == 'pieno', 'giornata intera impossibile: entrambi i gommoni hanno un\'uscita')
-s, r = prenota(pub, escursione='tramonto-mezza-giornata', turno='mattina', data='2027-06-11', adulti=1, bambini=1, neonati=1); ok(s == 200, 'mattina + pomeriggio sullo stesso gommone: possibile')
+s, r = prenota(pub, escursione='mezza-giornata', turno='mattina', data='2027-06-11', adulti=1, bambini=1, neonati=1); ok(s == 200, 'mattina + pomeriggio sullo stesso gommone: possibile')
 
 # 3b. Cannigione: gommone dedicato (Honda 9.50), solo mezze giornate, tramonto ed esclusive
 def giorno_da(slug, data, imbarco):
     s, d = pub('GET', f'/api/disponibilita?escursione={slug}&mese={data[:7]}&imbarco={imbarco}'); return d['giorni'][data]
-ok(giorno_da('tramonto-mezza-giornata', '2027-06-10', 'cannigione')['stato'] == 'libero', '10 giugno: da Palau tutto pieno, da Cannigione il gommone è libero')
-s, r = prenota(pub, escursione='tramonto-mezza-giornata', turno='mattina', data='2027-06-10', adulti=12, imbarco='cannigione'); ok(s == 200, 'mezza giornata da Cannigione, 12 persone sul gommone di Cannigione')
-s, r = prenota(pub, escursione='tramonto-mezza-giornata', turno='mattina', data='2027-06-10', adulti=1, imbarco='cannigione'); ok(s == 409, 'il gommone di Cannigione è pieno: non si va su quelli di Palau')
+ok(giorno_da('mezza-giornata', '2027-06-10', 'cannigione')['stato'] == 'libero', '10 giugno: da Palau tutto pieno, da Cannigione il gommone è libero')
+s, r = prenota(pub, escursione='mezza-giornata', turno='mattina', data='2027-06-10', adulti=12, imbarco='cannigione'); ok(s == 200, 'mezza giornata da Cannigione, 12 persone sul gommone di Cannigione')
+s, r = prenota(pub, escursione='mezza-giornata', turno='mattina', data='2027-06-10', adulti=1, imbarco='cannigione'); ok(s == 409, 'il gommone di Cannigione è pieno: non si va su quelli di Palau')
 s, r = prenota(pub, escursione='tour-7-isole', data='2027-06-20', adulti=2, imbarco='cannigione'); ok(s == 400, f'7 isole da Cannigione: {r.get("errore")}')
 s, r = prenota(pub, escursione='corsica-lavezzi-bonifacio', turno='giornata', data='2027-06-20', adulti=2, imbarco='cannigione'); ok(s == 400, 'Corsica da Cannigione: non parte')
 s, d = pub('GET', '/api/disponibilita?escursione=tour-7-isole&mese=2027-06&imbarco=cannigione'); ok(s == 400, 'calendario del 7 isole da Cannigione: non esiste')
@@ -74,11 +76,11 @@ s, r = prenota(pub, data='2027-07-15', adulti=12); ok(s == 200, '7 isole 15 lugl
 ok(giorno('tour-privato', '2027-07-15')['stato'] == 'pieno', 'tutti e tre i gommoni occupati: niente più esclusive il 15 luglio')
 s, r = prenota(pub, escursione='tour-privato', turno='mattina', data='2027-07-16', adulti=7); ok(s == 200, 'privato da 7 persone → su un gommone da 12')
 t = {x['id']: x for x in giorno('tour-7-isole', '2027-07-16')['turni']}; ok(t['giornata']['max'] == 12, '7 isole 16 luglio: resta un solo gommone grande')
-t = {x['id']: x for x in giorno('tramonto-mezza-giornata', '2027-07-16')['turni']}; ok(t['pomeriggio']['max'] == 12, 'il pomeriggio è libero anche sul gommone del privato del mattino')
+t = {x['id']: x for x in giorno('mezza-giornata', '2027-07-16')['turni']}; ok(t['pomeriggio']['max'] == 12, 'il pomeriggio è libero anche sul gommone del privato del mattino')
 s, r = prenota(pub, escursione='tour-privato', turno='mattina', data='2027-07-17', adulti=13); ok(s == 400, f'13 persone in esclusiva: {r.get("errore")}')
 s, r = prenota(pub, escursione='corsica-lavezzi-bonifacio', turno='giornata', data='2027-08-12', adulti=3); (s2, r2), q = paga(pub, r)
 s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['totale'] == 1620 and v['privato'] and v['carburanteEscluso'] and v['documento'] and v['orario'] == '9:30 – 17:30', f'Corsica in esclusiva ad agosto = {v["totale"]} €, carburante escluso, documento, {v["orario"]}')
-s, r = prenota(pub, escursione='tramonto-mezza-giornata', turno='tramonto', data='2027-07-20', adulti=2, bambini=1); (s2, r2), q = paga(pub, r)
+s, r = prenota(pub, escursione='tramonto', turno='tramonto', data='2027-07-20', adulti=2, bambini=1); (s2, r2), q = paga(pub, r)
 s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['totale'] == 75*2+70, f'tramonto a luglio come la mezza giornata: {v["totale"]} €')
 s, r = prenota(pub, escursione='tour-7-isole', data='2027-08-05', adulti=2, bambini=1); (s2, r2), q = paga(pub, r); s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['totale'] == 135*2+125, f'agosto 2 interi + 1 ridotto = {v["totale"]} €')
 

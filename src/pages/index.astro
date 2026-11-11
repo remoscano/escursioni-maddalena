@@ -15,7 +15,7 @@ import { escursioni, trovaEscursione } from '../data/escursioni.js';
 const tour = trovaEscursione('tour-7-isole');
 // I due percorsi della mezza giornata, dal programma dell'escursione (voci "percorso" seguite dalle loro soste).
 const percorsiMezza: { titolo: string; testo: string; soste: any[] }[] = [];
-for (const t of trovaEscursione('tramonto-mezza-giornata').programma) {
+for (const t of trovaEscursione('mezza-giornata').programma) {
   if (t.tipo === 'percorso') percorsiMezza.push({ titolo: t.titolo, testo: t.testo, soste: [] });
   else if (t.tipo === 'sosta' && percorsiMezza.length) percorsiMezza.at(-1)!.soste.push(t);
 }
@@ -25,7 +25,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
 ---
 <Base
   titolo="Escursioni Maddalena · Escursioni in maxi gommone nell'Arcipelago di La Maddalena"
-  descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, Corsica, tramonto e tour privati. Imbarco a Palau, La Maddalena o Cannigione, prenoti online."
+  descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, Corsica, tramonto e tour privati. Partenza da La Maddalena, imbarco anche a Palau e Cannigione: prenoti online."
 
 >
   <section slot="hero" class="hero" aria-label="Apertura">
@@ -33,7 +33,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
       <div class="hero__contenuto">
         <p class="hero__occhiello">Arcipelago di La Maddalena · Sardegna</p>
         <h1 class="hero__titolo">L'arcipelago di La Maddalena in maxi gommone.</h1>
-        <p class="hero__testo">Il Tour delle 7 isole, la mezza giornata, il tramonto con aperitivo, il tour privato e la Corsica. Partenze da Palau, La Maddalena e Cannigione.</p>
+        <p class="hero__testo">Il Tour delle 7 isole, la mezza giornata, il tramonto con aperitivo, il tour privato e la Corsica. Partenze da La Maddalena e Cannigione, con imbarco anche a Palau.</p>
         <div class="hero__azioni">
           {regole.attive
             ? <a href="/prenota/" class="btn btn--wa btn--grande">Prenota online</a>
@@ -51,7 +51,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
     <div class="hero__fatti">
       <dl>
         <div><dt><Icona nome="orologio" size={18} />Uscite</dt><dd>Mezza giornata, giornata intera, tramonto</dd></div>
-        <div><dt><Icona nome="ancora" size={18} />Imbarco</dt><dd>Palau, La Maddalena, Cannigione</dd></div>
+        <div><dt><Icona nome="ancora" size={18} />Imbarco</dt><dd>La Maddalena, Palau, Cannigione</dd></div>
         <div><dt><Icona nome="persone" size={18} />A bordo</dt><dd>Massimo {postiMassimi} persone</dd></div>
         <div><dt><Icona nome="euro" size={18} />Prezzo</dt><dd>Da {prezzoMinimo} € a persona</dd></div>
       </dl>
@@ -65,7 +65,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
           <p class="occhiello">Escursioni</p>
           <h2 id="escursioni-titolo" class="titolo-sezione">Scegli la tua giornata in mare</h2>
         </div>
-        <p class="intestazione__lato">{regole.attive ? 'Quattro uscite in maxi gommone: vedi i posti liberi e prenoti online in pochi minuti.' : 'Quattro uscite in maxi gommone, tutte prenotabili con un messaggio WhatsApp.'}</p>
+        <p class="intestazione__lato">{regole.attive ? 'Cinque uscite in maxi gommone: vedi i posti liberi e prenoti online in pochi minuti.' : 'Cinque uscite in maxi gommone, tutte prenotabili con un messaggio WhatsApp.'}</p>
       </div>
       <SchedaEscursione e={tour} grande />
       <div class="griglia-schede">
@@ -81,7 +81,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
           <p class="occhiello">Tour delle 7 isole</p>
           <h2 id="percorso-titolo" class="titolo-sezione">Il giro dell'arcipelago, sosta per sosta</h2>
         </div>
-        <p class="intestazione__lato">Imbarco a Palau o a La Maddalena, rientro alle <Dato v={tour.oraRientro} e="ora" />. L'ordine delle soste può cambiare in base a vento e mare.</p>
+        <p class="intestazione__lato">Partenza da La Maddalena, con passaggio a Palau; rientro alle <Dato v={tour.oraRientro} e="ora" />. L'ordine delle soste può cambiare in base a vento e mare.</p>
       </div>
       <div class="percorso">
         <Mappa />
@@ -100,7 +100,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
           <p class="occhiello">Mezza giornata</p>
           <h2 id="mezza-titolo" class="titolo-sezione">Due percorsi, a seconda del vento</h2>
         </div>
-        <p class="intestazione__lato">Mattina o pomeriggio, da Palau, La Maddalena o Cannigione. Con il maestrale si va sul lato riparato dell'arcipelago.</p>
+        <p class="intestazione__lato">Mattina o pomeriggio, da La Maddalena (con passaggio a Palau) o da Cannigione. Con il maestrale si va sul lato riparato dell'arcipelago.</p>
       </div>
       <div class="percorso">
         <Mappa variante="mezza" didascalia="Percorsi indicativi: lo skipper sceglie in base al vento." />
@@ -112,7 +112,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
               <ElencoSoste programma={p.soste} turchese={i === 1} />
             </div>
           ))}
-          <a href="/escursioni/tramonto-mezza-giornata/" class="link-freccia">Mezza giornata e tramonto<Icona nome="destra" size={18} /></a>
+          <a href="/escursioni/mezza-giornata/" class="link-freccia">La mezza giornata<Icona nome="destra" size={18} /></a>
         </div>
       </div>
     </div>

@@ -39,7 +39,7 @@ export const condizioni = [
     punti: [
       [`Uscite di gruppo (${nomi('gruppo')}): prenoti i posti per le persone del tuo gruppo, a bordo con altri ospiti, fino a ${postiMassimi} persone sul gommone.`],
       [`In esclusiva (${nomi('esclusiva')}): il gommone è solo per il tuo gruppo, fino a ${postiMassimi} persone. In base a quante siete vi assegniamo il gommone da ${piuPiccolo} posti o uno da ${postiMassimi}. Il prezzo è per gommone, non a persona.`],
-      [`Imbarco a Palau, La Maddalena o Cannigione. Da Cannigione parte un gommone dedicato, solo per ${nomiDa('cannigione')}.`],
+      [`Partenza da La Maddalena, con passaggio a Palau per chi si imbarca lì, oppure da Cannigione. Da Cannigione parte un gommone dedicato, solo per ${nomiDa('cannigione')}.`],
       ["Con te c'è sempre lo skipper: non noleggiamo gommoni senza skipper."],
       ['Orari, programma e cosa è compreso sono nella pagina di ogni escursione e nel riepilogo prima di pagare.'],
     ],
@@ -97,7 +97,7 @@ export const condizioni = [
   {
     titolo: 'A bordo',
     punti: [
-      [`Il ritrovo al molo, a Palau e a La Maddalena, è ${regole.anticipoRitrovo} minuti prima della partenza (alle 9:15 per le uscite delle 9:30). L'uscita non può aspettare chi arriva in ritardo.`],
+      [`Il ritrovo al molo, a La Maddalena e a Palau, è ${regole.anticipoRitrovo} minuti prima della partenza (alle 9:15 per le uscite delle 9:30). L'uscita non può aspettare chi arriva in ritardo.`],
       ["Segui le indicazioni dello skipper, che è responsabile della sicurezza a bordo."],
       ['I minori partecipano accompagnati da un adulto.'],
       ['Gli animali non sono ammessi a bordo.'],

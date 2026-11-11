@@ -19,7 +19,7 @@ export const regole = {
   stagione: { dal: '2027-05-01', al: '2027-10-31' },
   // Online si prenota fino alle 20 del giorno prima; per l'ultimo minuto si scrive su WhatsApp.
   chiusuraOnline: { giorniPrima: 1, ora: '20:00' },
-  // Ritrovo al molo: quanti minuti prima della partenza, a Palau e a La Maddalena (Remo, 8 novembre 2026).
+  // Ritrovo al molo: quanti minuti prima della partenza (Remo, 8 novembre 2026).
   anticipoRitrovo: 15,
   // Per quanti minuti i posti restano tenuti da parte mentre il cliente paga.
   minutiPerPagare: 30,
@@ -58,10 +58,10 @@ export const testoChiusuraOnline = `Online puoi prenotare fino alle ${regole.chi
 // I gommoni. "posti" conta tutte le persone a bordo, neonati compresi.
 // "imbarchi" = da dove parte: chi si imbarca a Cannigione va solo sul gommone di Cannigione, e viceversa.
 export const gommoni = [
-  { id: 'gruppo-1', nome: 'Joker Clubman 28', tipo: 'gruppo', posti: 12, imbarchi: ['palau', 'maddalena'] },
-  { id: 'gruppo-2', nome: 'BWA 30', tipo: 'gruppo', posti: 12, imbarchi: ['palau', 'maddalena'] },
+  { id: 'gruppo-1', nome: 'Joker Clubman 28', tipo: 'gruppo', posti: 12, imbarchi: ['maddalena', 'palau'] },
+  { id: 'gruppo-2', nome: 'BWA 30', tipo: 'gruppo', posti: 12, imbarchi: ['maddalena', 'palau'] },
   // Joker 35: il più grande, ma fa solo esclusive con massimo 6 persone (Remo, 8 novembre 2026).
-  { id: 'esclusiva', nome: 'Joker 35', tipo: 'esclusiva', posti: 6, imbarchi: ['palau', 'maddalena'] },
+  { id: 'esclusiva', nome: 'Joker 35', tipo: 'esclusiva', posti: 6, imbarchi: ['maddalena', 'palau'] },
   // Honda 9.50: parte da Cannigione e fa mezze giornate, tramonto ed esclusive, come gli altri (Remo, 8 novembre 2026).
   { id: 'cannigione', nome: 'Honda 9.50', tipo: 'gruppo', posti: 12, imbarchi: ['cannigione'] },
 ];
@@ -109,7 +109,7 @@ export const offerte = {
   'tour-7-isole': {
     tipo: 'gruppo',
     minimo: 6,
-    imbarchi: ['palau', 'maddalena'],
+    imbarchi: ['maddalena', 'palau'],
     turni: [
       { id: 'giornata', nome: 'Giornata intera', orario: '9:30 – 17:30', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataPersona },
     ],
@@ -119,26 +119,34 @@ export const offerte = {
     tipo: 'esclusiva',
     carburanteEscluso: true,
     documento: true,
-    imbarchi: ['palau', 'maddalena'],
+    imbarchi: ['maddalena', 'palau'],
     gommoni: tuttiIGommoni,
     turni: [
       { id: 'giornata', nome: 'Giornata intera', orario: '9:30 – 17:30', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataEsclusiva },
     ],
   },
-  'tramonto-mezza-giornata': {
+  // Mezza giornata e tramonto sono due attività diverse, con due pagine (Remo, 11 novembre 2026).
+  'mezza-giornata': {
     tipo: 'gruppo',
     minimo: 6,
-    imbarchi: ['palau', 'maddalena', 'cannigione'],
+    imbarchi: ['maddalena', 'palau', 'cannigione'],
     turni: [
       { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '9:30 – 13:30', blocchi: ['mattina'], prezzi: mezzaPersona },
       { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:00 – 18:00', blocchi: ['pomeriggio', 'sera'], prezzi: mezzaPersona },
+    ],
+  },
+  tramonto: {
+    tipo: 'gruppo',
+    minimo: 6,
+    imbarchi: ['maddalena', 'palau', 'cannigione'],
+    turni: [
       { id: 'tramonto', nome: 'Tramonto con aperitivo', orario: '18:00 – 20:30', blocchi: ['sera'], prezzi: mezzaPersona },
     ],
   },
   'tour-privato': {
     tipo: 'esclusiva',
     carburanteEscluso: true,
-    imbarchi: ['palau', 'maddalena', 'cannigione'],
+    imbarchi: ['maddalena', 'palau', 'cannigione'],
     gommoni: tuttiIGommoni,
     turni: [
       { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '9:30 – 13:30', blocchi: ['mattina'], prezzi: mezzaEsclusiva },
@@ -156,8 +164,9 @@ export const canaliEsterni = [
 ];
 
 export const imbarchiPrenotazione = [
-  { id: 'palau', nome: 'Palau' },
+  // La Maddalena è il porto principale; Palau è un punto di raccolta: il gommone passa a prendere i clienti (Remo, 11 novembre 2026).
   { id: 'maddalena', nome: 'La Maddalena' },
+  { id: 'palau', nome: 'Palau' },
   { id: 'cannigione', nome: 'Cannigione' },
 ];
 

@@ -259,6 +259,8 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 .mappa__punto--turchese { background: var(--turchese); color: var(--bianco); }
 .mappa__fuori { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; color: var(--mare); background: var(--bianco); padding: 4px 10px; border-radius: 999px; }
 .mappa__punto--imbarco { background: var(--bianco); border-color: var(--mare); color: var(--mare); }
+.mappa__punto--partenza { background: var(--laguna); border-color: var(--mare); color: var(--mare); }
+.mappa__punto.mappa__punto--piccolo { width: 24px; height: 24px; }
 .mappa__nord {
   right: 4%; top: 3.5%; display: flex; flex-direction: column; align-items: flex-end;
   gap: 6px; font-size: 11px; line-height: 1; font-weight: 700;
@@ -273,6 +275,8 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 .pallino--rosa { background: var(--granito); border: 1px solid #C97561; }
 .pallino--turchese { background: var(--turchese); }
 .pallino--imbarco { background: var(--bianco); border: 2px solid var(--mare); }
+.pallino--partenza { background: var(--laguna); border: 2px solid var(--mare); }
+.pallino--piccolo { width: 11px; height: 11px; }
 
 @media (max-width: 560px) {
   .mappa__punto { width: 26px; height: 26px; font-size: 12px; }

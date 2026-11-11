@@ -20,7 +20,7 @@ Appena si compila il campo, il segnaposto sparisce in tutte le pagine.
 
 - `/` home
 - `/escursioni/` catalogo
-- `/escursioni/tour-7-isole/`, `/escursioni/corsica-lavezzi-bonifacio/`, `/escursioni/tramonto-mezza-giornata/`, `/escursioni/tour-privato/` — tutte generate dallo stesso modello (`src/pages/escursioni/[slug].astro`)
+- `/escursioni/tour-7-isole/`, `/escursioni/corsica-lavezzi-bonifacio/`, `/escursioni/mezza-giornata/`, `/escursioni/tramonto/`, `/escursioni/tour-privato/` — tutte generate dallo stesso modello (`src/pages/escursioni/[slug].astro`)
 - `/richiesta/` modulo WhatsApp (accetta `?escursione=<slug>` per preselezionare l'escursione)
 - `/gommone/`, `/info-utili/`, `/domande-frequenti/`, `/contatti/`, `/privacy/`, `/cookie/`
 

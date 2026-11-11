@@ -4,7 +4,7 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 
 ## Il progetto
 
-- **Cliente:** Escursioni Maddalena, escursioni in maxi gommone nell'Arcipelago di La Maddalena (Sardegna), con imbarco a Palau, La Maddalena e Cannigione.
+- **Cliente:** Escursioni Maddalena, escursioni in maxi gommone nell'Arcipelago di La Maddalena (Sardegna), con partenza da La Maddalena (porto principale) e Cannigione; a Palau il gommone passa a prendere i clienti.
 - **Chi lavora sul sito:** Remo (web designer/consulente, non programmatore). Parla italiano: rispondi in italiano, in modo semplice, senza gergo tecnico se non serve.
 - **Obiettivo del sito:** trasformare le visite in prenotazioni online pagate (escursione, data, orario, persone, imbarco). WhatsApp resta per domande, ultimo minuto e gruppi oltre 12 persone. Le altre piattaforme (GetYourGuide, Viator, Click&Boat…) NON sono collegate al sito: una persona dedicata inserisce a mano le loro prenotazioni nella gestione.
 - **Flotta:** 2 gommoni di gruppo, Joker Clubman 28 e BWA 30 (12 posti, uscita confermata con almeno 6 paganti), e il Joker 35 solo per le esclusive (6 posti). Modelli e motori in `sito.flotta`. Quarto gommone: Honda 9.50 (12 posti), solo per chi parte da Cannigione (Pontile La Sciumara, Via Lungomare A. Doria 7): mezze giornate, tramonto ed esclusive, stessi orari e prezzi; niente Tour delle 7 isole né Corsica da Cannigione. Ogni gommone ha i suoi imbarchi (`imbarchi` in `gommoni`), ogni offerta i suoi (`imbarchi` in `offerte`): il calendario dei posti dipende dall'imbarco scelto, che nella prenotazione viene prima della data. I gommoni di Palau e La Maddalena si possono prenotare in esclusiva, allo stesso prezzo: il sistema sceglie il più piccolo che basta (fino a 6 persone il gommone da 6, da 7 a 12 uno da 12). Stagione 2027: 1 maggio – 31 ottobre.
@@ -36,7 +36,7 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
   - Pagine: `/prenota/` (+ `esito/`, `prova/`), `/partner/`, `/gestione/`, `/condizioni/`.
   - Prove automatiche in `prove/` (vedi `prove/LEGGIMI.md`): prima di ogni push che tocca le prenotazioni devono passare tutte.
 - I contenuti stanno in `src/data/` (`sito.js`, `escursioni.js`, `faq.js`, `menu.js`). Prima di scrivere testo dentro una pagina, chiediti se va in un file dati.
-- Le 4 pagine escursione nascono tutte da `src/pages/escursioni/[slug].astro`: una nuova escursione si aggiunge in `escursioni.js`, non con un file nuovo.
+- Le 5 pagine escursione (7 isole, Corsica, mezza giornata, tramonto, tour privato) nascono tutte da `src/pages/escursioni/[slug].astro`: una nuova escursione si aggiunge in `escursioni.js`, non con un file nuovo.
 - Componenti riutilizzabili in `src/components/`. In particolare:
   - `Dato.astro`: mostra il valore o, se vuoto, un segnaposto rosa `[etichetta]`. Usalo per ogni dato non ancora fornito dal cliente.
   - `Foto.astro`: foto vera (con `src` importato da `src/assets/foto/`, ottimizzata da Astro) o segnaposto che dice quale scatto serve.
@@ -58,6 +58,8 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 
 - **Mai inventare dati:** prezzi, orari, numeri, nomi, capienza, regole. Se mancano, usa `Dato` con un segnaposto chiaro.
 - **Mai recensioni inventate.** Solo recensioni vere copiate da Google o TripAdvisor, con nome e data come pubblicati.
+- Mezza giornata e tramonto sono due attività diverse, con due pagine e due offerte (`mezza-giornata`, `tramonto`); il vecchio indirizzo `/escursioni/tramonto-mezza-giornata/` rimanda alla mezza giornata (`public/_redirects`). Migrazione `0003_mezza_giornata_tramonto.sql` per le prenotazioni già registrate.
+- Porti: La Maddalena è il porto di partenza dei tre gommoni di gruppo ed esclusiva (Il Porticciolo, Via Padule); Palau è un punto di raccolta (il gommone passa a prendere i clienti); l'Honda 9.50 parte da Cannigione. Sulle mappe: ancora arancio = partenza da La Maddalena, puntini = passaggio a Palau.
 - Fatti da rispettare: alla Spiaggia Rosa di Budelli niente sbarco né bagno (si vede dal mare); il pranzo del Tour delle 7 isole è libero a La Maddalena e non incluso; la Corsica si fa solo in esclusiva (giornata intera, prezzi delle giornate in esclusiva) e serve un documento valido per l'espatrio; nelle esclusive il carburante è a parte; il tramonto costa come la mezza giornata.
 - Tono: diretto, caldo, concreto. Frasi brevi, seconda persona singolare ("scrivici", "scegli").
 - Niente servizi esterni che caricano cookie o tracciano (YouTube, Google Maps incorporata, Google Fonts, pixel pubblicitari). Se servono statistiche, Cloudflare Web Analytics. Ogni nuovo servizio va riportato nella pagina `/cookie/` e in `/privacy/`.
@@ -81,11 +83,12 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Dati di Remo (11 novembre 2026): risposte tutti i giorni 7:30–22:30 dal 1° maggio al 31 ottobre; niente animali a bordo; bambini di qualsiasi età, giubbotti solo in taglia adulto (consigliato portare il proprio); maschere e boccagli non forniti per igiene (qualcuno a bordo); cibo e bevande a carico dei clienti, nelle esclusive bevande incluse, nel tramonto aperitivo; pranzo libero (suggeriamo noi dove, o pranzo al sacco); nessuna tassa di sbarco extra; prenotare presto, soprattutto da fine luglio ad agosto; niente programma ora per ora
 - [x] Decisioni di Remo (11 novembre 2026): niente sezione skipper, niente certificazioni da citare, niente recensioni (primo anno di attività; il componente `Recensioni.astro` resta pronto per il futuro). Cartina della mezza giornata con i due percorsi (`Mappa.astro` variante 'mezza', `public/img/mappa-mezza-giornata.svg`)
 - [x] Molo di La Maddalena: Il Porticciolo, Via Padule (con link Google Maps)
+- [x] Mezza giornata e tramonto separati; La Maddalena porto di partenza, Palau passaggio; mappe corrette (11 novembre 2026)
 - [x] Gommoni: modelli, motori e posti confermati, pagina "I gommoni e lo skipper" aggiornata (8 novembre 2026)
 - [x] Confermati da Remo (8 novembre 2026): Corsica 9:30 – 17:30 con Lavezzi, isola di Cavallo e Bonifacio; le due regole aggiunte alle condizioni (guasto = regola del maltempo; altre piattaforme = loro condizioni); nessuna autorizzazione da indicare; ritrovo 15 minuti prima della partenza a Palau e a La Maddalena (9:15 per le uscite delle 9:30)
 
 ### Da decidere o da avere dal cliente (Remo)
-- [ ] Molo di Palau (ancora da sapere)
+- [ ] Molo di Palau (ancora da sapere) e orario di ritrovo a Palau ora che il gommone ci passa dopo la partenza da La Maddalena (per ora 9:15, come prima)
 - [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA
 - [ ] Imbarchi: parcheggio a Palau, link Google Maps del molo di Palau
 - [ ] Due righe di presentazione dei gommoni e dotazioni a bordo (sedute, prendisole, scaletta, doccetta, gavone)

@@ -24,7 +24,8 @@ const toni = ['acqua', 'rosa', 'acqua', 'sabbia', 'acqua'] as const;
 const faqPerEscursione: Record<string, string[]> = {
   'tour-7-isole': ['maestrale', 'cancellare', 'minimo', 'pranzo', 'spiaggia-rosa', 'bambini', 'pagare', 'animali'],
   'corsica-lavezzi-bonifacio': ['pagare', 'maestrale', 'cancellare', 'bambini', 'animali'],
-  'tramonto-mezza-giornata': ['maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
+  'mezza-giornata': ['maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
+  tramonto: ['maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
   'tour-privato': ['pagare', 'maestrale', 'cancellare', 'bambini', 'animali'],
 };
 const suRichiesta = e.prezzoAdulti === 'su richiesta';
@@ -145,7 +146,7 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
           <dl class="numeri">
             {e.numeri.map((n: any) => <div><dt>{n.etichetta}</dt><dd>{n.valore}</dd></div>)}
             <div><dt>Durata</dt><dd><Dato v={durata} e="ore" /></dd></div>
-            <div><dt>Imbarco</dt><dd>{(e.fatti.find((f: string) => f.startsWith('Imbarco a ')) ?? 'Imbarco a Palau o La Maddalena').slice(10)}</dd></div>
+            <div><dt>Imbarco</dt><dd>{(e.fatti.find((f: string) => f.startsWith('Imbarco a ')) ?? 'Imbarco a La Maddalena o Palau').slice(10)}</dd></div>
           </dl>
           {e.note.length > 0 && (
             <ul class="note">
@@ -189,14 +190,15 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
           </ul>
         </div>
         <div class="box">
-          <h3>Imbarco a Palau</h3>
-          <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo} minuti prima della partenza (alle <Dato v={imbarchi.palau.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
-          <p>Comodo se dormi in Gallura. Parcheggio: <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" />.</p>
+          <h3>Partenza da La Maddalena</h3>
+          <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo} minuti prima della partenza (alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
+          <p>Il nostro porto di partenza. Comodo se dormi sull'isola.</p>
         </div>
         <div class="box">
-          <h3>Imbarco a La Maddalena</h3>
-          <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo} minuti prima della partenza (alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
-          <p>Comodo se dormi sull'isola.</p>
+          <h3>Passaggio a Palau</h3>
+          <p>Il gommone parte da La Maddalena e passa a prendere chi si imbarca a Palau.</p>
+          <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo} minuti prima della partenza (alle <Dato v={imbarchi.palau.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
+          <p>Comodo se dormi in Gallura. Parcheggio: <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" />.</p>
         </div>
         {offerte[e.slug]?.imbarchi.includes('cannigione') && (
           <div class="box">

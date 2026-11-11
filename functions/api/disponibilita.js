@@ -18,7 +18,7 @@ export async function onRequestGet(contesto) {
   const utente = await utenteCollegato(env.DB, request);
   const gestione = url.searchParams.get('gestione') === '1' && utente?.ruolo === 'gestione';
   // Imbarco: Palau e La Maddalena usano gli stessi gommoni, Cannigione il suo.
-  const imbarco = url.searchParams.get('imbarco') || 'palau';
+  const imbarco = url.searchParams.get('imbarco') || 'maddalena';
   if (!offerte[slug].imbarchi.includes(imbarco)) throw new Errore(400, 'Da questo imbarco l\'escursione non parte.');
   const giorni = await calendarioMese(env.DB, slug, mese, { gestione, imbarco });
   let partner = null;

@@ -205,7 +205,7 @@ const perOspite = area === 'struttura';
       data: '' as string,
       turno: '' as string,
       adulti: 2, bambini: 0, neonati: 0,
-      imbarco: 'palau' as string,
+      imbarco: 'maddalena' as string,
       pagamenti: [] as string[],
       invio: false,
     };
@@ -244,13 +244,15 @@ const perOspite = area === 'struttura';
       await caricaMese();
     }
 
-    // ---------- 2. Imbarco (Palau e La Maddalena hanno gli stessi gommoni, Cannigione il suo: cambia il calendario) ----------
+    // ---------- 2. Imbarco (La Maddalena e Palau hanno gli stessi gommoni, Cannigione il suo: cambia il calendario) ----------
+    // La Maddalena è il porto di partenza; a Palau il gommone passa a prendere i clienti.
     const imbarco = () => st.imbarco;
     function disegnaImbarchi() {
       const possibili = imbarchiPer(st.slug);
       if (!possibili.some((i) => i.id === st.imbarco)) st.imbarco = possibili[0].id;
       $('[data-imbarchi]').innerHTML = possibili.map((i) => `
-        <label class="scelta"><input type="radio" name="pr-imbarco" value="${h(i.id)}" ${i.id === st.imbarco ? 'checked' : ''} />${h(i.nome)}</label>`).join('');
+        <label class="scelta"><input type="radio" name="pr-imbarco" value="${h(i.id)}" ${i.id === st.imbarco ? 'checked' : ''} />${h(i.nome)}</label>`).join('')
+        + (possibili.some((i) => i.id === 'palau') ? '<p class="prenota__nota" style="flex-basis:100%;margin:4px 0 0">Si parte da La Maddalena: a Palau il gommone passa a prenderti.</p>' : '');
     }
     $('[data-imbarchi]').addEventListener('change', (ev) => {
       const v = (ev.target as HTMLInputElement).value;

@@ -54,16 +54,21 @@ async def prenota_cliente(b, w):
 async def tramonto(b):
     ctx = await b.new_context(viewport={'width': 390, 'height': 900}); pg = await ctx.new_page()
     await pg.goto(f'{B}/prenota/', wait_until='networkidle')
-    await pg.click('[data-slug="tramonto-mezza-giornata"]')
+    await pg.click('[data-slug="mezza-giornata"]')
     await pg.wait_for_selector('.cal__giorno:not([disabled])')
     await pg.click('[data-mese="1"]'); await pg.wait_for_selector('[data-data="2027-06-12"]')
     await pg.click('[data-data="2027-06-12"]')
-    await pg.wait_for_selector('[data-turno="tramonto"]')
+    await pg.wait_for_selector('[data-turno="pomeriggio"]')
     ok(await pg.locator('[data-riepilogo]').is_hidden(), 'più orari: il riepilogo aspetta la scelta')
-    await pg.click('[data-turno="tramonto"]')
-    t = await pg.inner_text('[data-righe]'); ok('130 €' in t and 'Tramonto' in t, 'tramonto 12 giugno, 2 adulti = 130 € (come la mezza giornata)')
     await pg.click('[data-turno="mattina"]')
     t = await pg.inner_text('[data-righe]'); ok('130 €' in t, 'mezza giornata mattina, 2 adulti = 130 €')
+    await pg.goto(f'{B}/prenota/', wait_until='networkidle')
+    await pg.click('[data-slug="tramonto"]')
+    await pg.wait_for_selector('.cal__giorno:not([disabled])')
+    await pg.click('[data-mese="1"]'); await pg.wait_for_selector('[data-data="2027-06-12"]')
+    await pg.click('[data-data="2027-06-12"]')
+    await pg.wait_for_selector('[data-righe]:has-text("Tramonto")')
+    t = await pg.inner_text('[data-righe]'); ok('130 €' in t and 'Tramonto' in t, 'tramonto 12 giugno, 2 adulti = 130 € (come la mezza giornata), pagina a parte')
     await pg.screenshot(path=f'{OUT}/prenota-turni-390.png', full_page=True)
     await ctx.close()
 
@@ -167,7 +172,7 @@ async def strutture_e_gestione(b):
 async def pagine(b):
     for w in (1440, 390):
         ctx = await b.new_context(viewport={'width': w, 'height': 900}); pg = await ctx.new_page()
-        for path in ['/', '/escursioni/tour-7-isole/', '/escursioni/tour-privato/', '/escursioni/corsica-lavezzi-bonifacio/', '/escursioni/tramonto-mezza-giornata/', '/escursioni/', '/prenota/', '/condizioni/', '/privacy/', '/cookie/', '/domande-frequenti/']:
+        for path in ['/', '/escursioni/tour-7-isole/', '/escursioni/tour-privato/', '/escursioni/corsica-lavezzi-bonifacio/', '/escursioni/mezza-giornata/', '/escursioni/tramonto/', '/gommone/', '/info-utili/', '/escursioni/', '/prenota/', '/condizioni/', '/privacy/', '/cookie/', '/domande-frequenti/']:
             await pg.goto(B + path, wait_until='networkidle')
             await larghezza(pg, w, path)
             nome = path.strip('/').replace('/', '_') or 'home'

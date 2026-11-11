@@ -18,13 +18,16 @@ const isole = [
   { nome: 'Palau', x: 37, y: 88 },
   { nome: 'Sardegna', x: 15.15, y: 94.23 },
 ];
+// La Maddalena è il porto di partenza; a Palau il gommone passa a prendere i clienti (Remo, 11 novembre 2026).
+const partenza = { x: 58.5, y: 67.75 };
+const passaggioPalau = { x: 41.38, y: 82.52 };
 const soste7 = [
-  { n: '1·4', x: 52.35, y: 66.17, largo: true },
-  { n: '2', x: 51.86, y: 82.31 },
-  { n: '3', x: 71.08, y: 58.38 },
-  { n: '5', x: 25.31, y: 54.63 },
-  { n: '6', x: 25.06, y: 18.68 },
-  { n: '7', x: 35.12, y: 20.06 },
+  { n: '1', x: 51.86, y: 82.31 },
+  { n: '2', x: 71.08, y: 58.38 },
+  { n: '3', x: 52.35, y: 66.17 },
+  { n: '4', x: 25.31, y: 54.63 },
+  { n: '5', x: 25.06, y: 18.68 },
+  { n: '6', x: 35.12, y: 20.06 },
 ];
 // Mezza giornata: blu = giro di Caprera, turchese = con il maestrale (Spargi e La Maddalena). I Giardinelli in tutti e due.
 const sosteMezza = [
@@ -37,8 +40,8 @@ const sosteMezza = [
 const soste = mezza ? sosteMezza : soste7;
 const immagine = mezza ? '/img/mappa-mezza-giornata.svg' : '/img/mappa-arcipelago.svg';
 const alt = mezza
-  ? "Mappa dei due percorsi della mezza giornata. Giro di Caprera: da Palau verso Cala Coticcio sulla costa est di Caprera, Cala Napoletana a nord e I Giardinelli tra La Maddalena e Caprera. Con il maestrale: Cala Corsara a Spargi, Cala Gavetta a La Maddalena e I Giardinelli. Cannigione è più a sud-est, fuori dalla mappa."
-  : "Mappa dell'Arcipelago di La Maddalena con il percorso del tour: da Palau al porto di La Maddalena, Santo Stefano, Caprera, di nuovo La Maddalena per il pranzo, poi Spargi, la Spiaggia Rosa di Budelli vista dal mare, Porto della Madonna tra Budelli, Razzoli e Santa Maria, e rientro.";
+  ? "Mappa dei due percorsi della mezza giornata, con partenza dal porto di La Maddalena e passaggio a Palau per chi si imbarca lì. Giro di Caprera: verso Cala Coticcio sulla costa est di Caprera, Cala Napoletana a nord e I Giardinelli tra La Maddalena e Caprera. Con il maestrale: Cala Corsara a Spargi, Cala Gavetta a La Maddalena e I Giardinelli. Cannigione è più a sud-est, fuori dalla mappa."
+  : "Mappa dell'Arcipelago di La Maddalena con il percorso del tour: partenza dal porto di La Maddalena, passaggio a Palau per chi si imbarca lì, Santo Stefano, Caprera, di nuovo La Maddalena per il pranzo, poi Spargi, la Spiaggia Rosa di Budelli vista dal mare, Porto della Madonna tra Budelli, Razzoli e Santa Maria, e rientro.";
 ---
 <figure class="mappa">
   <div class="mappa__area">
@@ -58,12 +61,13 @@ const alt = mezza
       {isole.map((i) => (
         <span class="mappa__isola" style={`left:${i.x}%;top:${i.y}%`} set:html={i.nome} />
       ))}
-      <span class="mappa__punto mappa__punto--imbarco" style="left:41.38%;top:82.52%"><Icona nome="ancora" size={16} tratto={2.4} /></span>
+      <span class="mappa__punto mappa__punto--imbarco mappa__punto--piccolo" style={`left:${passaggioPalau.x}%;top:${passaggioPalau.y}%`}><Icona nome="ancora" size={13} tratto={2.4} /></span>
       {!mezza && <span class="mappa__punto mappa__punto--rosa" style="left:27.07%;top:27.37%"><Icona nome="occhio" size={17} tratto={2.2} /></span>}
       {mezza && <span class="mappa__fuori" style="left:72%;top:96%"><Icona nome="giu" size={14} tratto={2.4} />Cannigione</span>}
       {soste.map((s: any) => (
         <span class={`mappa__punto ${s.largo ? 'mappa__punto--largo' : ''} ${s.turchese ? 'mappa__punto--turchese' : ''}`} style={`left:${s.x}%;top:${s.y}%`}>{s.n}</span>
       ))}
+      <span class="mappa__punto mappa__punto--partenza" style={`left:${partenza.x}%;top:${partenza.y}%`}><Icona nome="ancora" size={16} tratto={2.4} /></span>
     </div>
   </div>
   <figcaption class="mappa__legenda">
@@ -71,14 +75,16 @@ const alt = mezza
       <Fragment>
         <span><span class="pallino" aria-hidden="true"></span>Giro di Caprera</span>
         <span><span class="pallino pallino--turchese" aria-hidden="true"></span>Con il maestrale: Spargi e La Maddalena</span>
-        <span><span class="pallino pallino--imbarco" aria-hidden="true"></span>Imbarco a Palau</span>
-        <span style="flex-basis:100%">La sosta 3, I Giardinelli, è in tutti e due i percorsi. Da La Maddalena e da Cannigione il giro è lo stesso.</span>
+        <span><span class="pallino pallino--partenza" aria-hidden="true"></span>Partenza da La Maddalena</span>
+        <span><span class="pallino pallino--imbarco pallino--piccolo" aria-hidden="true"></span>Passaggio a Palau (puntini)</span>
+        <span style="flex-basis:100%">La sosta 3, I Giardinelli, è in tutti e due i percorsi. Da Cannigione il giro è lo stesso, con il gommone dedicato.</span>
       </Fragment>
     ) : (
       <Fragment>
         <span><span class="pallino" aria-hidden="true"></span>Sosta bagno o pranzo</span>
         <span><span class="pallino pallino--rosa" aria-hidden="true"></span>Spiaggia Rosa, solo dal mare</span>
-        <span><span class="pallino pallino--imbarco" aria-hidden="true"></span>Imbarco</span>
+        <span><span class="pallino pallino--partenza" aria-hidden="true"></span>Partenza da La Maddalena</span>
+        <span><span class="pallino pallino--imbarco pallino--piccolo" aria-hidden="true"></span>Passaggio a Palau (puntini)</span>
       </Fragment>
     )}
     <span style="flex-basis:100%">{didascalia}</span>
