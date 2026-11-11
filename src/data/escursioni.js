@@ -55,7 +55,7 @@ export const escursioni = [
       { tipo: 'sosta', n: '5', titolo: 'Cala Corsara', luogo: 'Spargi · bagno', testo: 'Quattro spiaggette di sabbia bianca finissima tra graniti modellati da vento e mare. Si arriva solo dal mare.' },
       { tipo: 'vista', titolo: 'Spiaggia Rosa', luogo: 'Budelli · senza sosta', testo: 'Passaggio lento davanti alla spiaggia. Per proteggerla il Parco vieta sbarco e bagno: la si ammira dal mare.' },
       { tipo: 'sosta', n: '6', titolo: 'Manto della Madonna', luogo: 'Porto della Madonna · bagno', testo: "Lo specchio d'acqua chiuso tra Budelli, Razzoli e Santa Maria, riparato dalle correnti: l'effetto è quello di una piscina naturale." },
-      { tipo: 'sosta', n: '7', titolo: 'Lagunetta della Madonna', luogo: 'Ultimo bagno', testo: '', mancante: 'Una riga sulla Lagunetta: dove si trova e cosa la rende speciale' },
+      { tipo: 'sosta', n: '7', titolo: 'Lagunetta della Madonna', luogo: 'Ultimo bagno', testo: "Acqua bassa e calma, a due passi dal Porto della Madonna: l'ultimo tuffo della giornata, prima di rientrare." },
       { tipo: 'rientro', titolo: 'Rientro a La Maddalena e Palau', testo: 'Si scende dove si è saliti.' },
     ],
     incluso: ['Skipper per tutta la giornata', 'Carburante', 'Ticket del Parco'],
