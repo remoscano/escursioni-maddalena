@@ -192,11 +192,11 @@ export const escursioni = [
   {
     slug: 'corsica-lavezzi-bonifacio',
     titolo: 'Corsica',
-    titoloPagina: 'Corsica in maxi gommone: Lavezzi e Bonifacio',
-    etichette: ['Esclusiva', 'Bocche di Bonifacio'],
+    titoloPagina: 'Corsica in maxi gommone: isola Piana, Lavezzi e Cavallo',
+    etichette: ['Esclusiva', 'Giornata intera'],
     breve: "Gommone in esclusiva, giornata intera con visita all'isola Piana, Lavezzi e isola di Cavallo.",
     intro:
-      "Una giornata intera con il gommone solo per il vostro gruppo: si attraversano le Bocche di Bonifacio per raggiungere la Corsica, le acque trasparenti delle isole Lavezzi, l'isola di Cavallo e le falesie bianche su cui è costruita Bonifacio.",
+      "Una giornata intera con il gommone solo per il vostro gruppo: si attraversa il mare verso la Corsica per scoprire l'isola Piana, le acque trasparenti delle isole Lavezzi e l'isola di Cavallo.",
     durata: 'Giornata intera',
     orari: offerte['corsica-lavezzi-bonifacio'].turni[0].orario,
     ore: '8',
@@ -206,23 +206,22 @@ export const escursioni = [
     postiMax: posti('corsica-lavezzi-bonifacio'),
     fatti: ['Gommone in esclusiva', `Imbarco a ${daDove('corsica-lavezzi-bonifacio')}`, "Serve un documento valido per l'espatrio"],
     foto: {
-      copertina: 'Le falesie di Bonifacio viste dal mare',
+      copertina: 'Le isole Lavezzi viste dal mare, con il gommone all\'ancora',
       galleria: [
-        'Le falesie di Bonifacio dal gommone',
+        "L'isola Piana dal gommone",
         'Le isole Lavezzi, acqua e granito',
         'Ospiti in acqua alle Lavezzi',
-        'Il porto di Bonifacio',
-        'La traversata delle Bocche',
+        "L'isola di Cavallo dal mare",
+        'La traversata verso la Corsica',
       ],
     },
     mappa: false,
     numeri: [],
     programma: [
       { tipo: 'imbarco', ora: partenzaCorsica, titolo: 'Partenza da La Maddalena', luogo: 'O passaggio a Palau', testo: 'Si parte da La Maddalena; se preferite, il gommone passa a prendervi a Palau.' },
-      { tipo: 'sosta', n: '1', titolo: 'Traversata delle Bocche di Bonifacio', luogo: 'Verso la Corsica', testo: '', mancante: 'Durata della traversata e cosa si vede' },
+      { tipo: 'sosta', n: '1', titolo: 'Isola Piana', luogo: 'Corsica', testo: '', mancante: "Cosa si fa all'isola Piana" },
       { tipo: 'sosta', n: '2', titolo: 'Isole Lavezzi', luogo: 'Bagno', testo: '', mancante: 'Dove si fa il bagno e quanto dura la sosta' },
       { tipo: 'sosta', n: '3', titolo: 'Isola di Cavallo', luogo: 'Corsica', testo: '', mancante: 'Cosa si fa a Cavallo: bagno, giro intorno all\'isola' },
-      { tipo: 'sosta', n: '4', titolo: 'Bonifacio', luogo: 'Falesie e porto', testo: '', mancante: 'Giro sotto le falesie, sosta in paese, pranzo' },
       { tipo: 'rientro', ora: rientroCorsica, titolo: 'Rientro', testo: 'Si scende dove si è saliti.' },
     ],
     incluso: ['Il gommone e lo skipper solo per il vostro gruppo', 'Bevande a bordo', 'Ticket del Parco', 'Eventuali tasse di sbarco'],
@@ -231,7 +230,7 @@ export const escursioni = [
     nonInclusoMancante: null,
     note: [
       "Si entra in Francia: ognuno deve avere con sé carta d'identità valida per l'espatrio o passaporto, anche i bambini.",
-      'La traversata dipende dal mare nelle Bocche: con vento forte l\'uscita può essere spostata.',
+      'La traversata dipende dal mare: con vento forte l\'uscita può essere spostata.',
     ],
   },
 ];
