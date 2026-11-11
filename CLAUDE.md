@@ -43,15 +43,15 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
   - `ModuloRichiesta.astro`: compone il messaggio e apre `https://wa.me/<numero>?text=…`. Accetta `?escursione=<slug>` nell'URL della pagina `/richiesta/`.
 - Stili in `src/styles/global.css` con le variabili CSS in cima. Non introdurre Tailwind o altre librerie CSS.
 
-## Identità visiva ("Bianco e arancio", dall'11 novembre 2026)
+## Identità visiva ("Bianco e azzurro", dall'11 novembre 2026)
 
 - Scelta di Remo: sito più pulito e minimale, riferimento escursi.com per colori e carattere. Sfondo bianco ovunque, niente sezioni colorate.
-- Colori (in `src/styles/global.css`; i nomi delle variabili sono rimasti quelli vecchi): bianco `#FFFFFF` (`--sabbia`, `--sabbia-calda`), grafite `#282828` (`--mare`: testi, piede, apertura), arancio `#FC971C` (`--laguna`: bottoni principali, con testo grafite), arancio scuro `#A85500` (`--turchese`: link e occhielli, contrasto ok su bianco), crema `#F7F3EC` (`--acqua`: etichette e riquadri), grigio `#5F676E` (`--testo-2`), bordi `#E6E6E6`. La mappa resta col mare azzurro.
+- Colori (in `src/styles/global.css`; i nomi delle variabili sono rimasti quelli vecchi): bianco `#FFFFFF` (`--sabbia`, `--sabbia-calda`), grafite `#282828` (`--mare`: testi, piede, apertura), azzurro mare `#2BA6DE` (`--laguna`: bottoni principali, con testo grafite), azzurro scuro `#0A6A9E` (`--turchese`: link e occhielli, contrasto ok su bianco), azzurro chiarissimo `#EEF7FC` (`--acqua`: etichette e riquadri); fino all'11 novembre 2026 era arancio `#FC971C` / `#A85500` / crema `#F7F3EC`, grigio `#5F676E` (`--testo-2`), bordi `#E6E6E6`. La mappa resta col mare azzurro.
 - Carattere: Urbanist (titoli e testi), ospitato sul sito con `@fontsource-variable/urbanist`: non usare Google Fonts.
 - Home: apertura bianca (testo a sinistra, foto a destra), su tutte le escursioni, bottone "Prenota online"; poi le schede (7 isole in evidenza), il percorso del 7 isole e la cartina dei due percorsi della mezza giornata.
 - Un solo bottone arancio per sezione: "Prenota" dove la prenotazione online è attiva (`regole.attive` in `src/data/prenotazioni.js`), altrimenti la richiesta WhatsApp.
 - Icone a tratto da 24 px in `Icona.astro`; mai emoji.
-- Marchio: sole e due onde che disegnano la M (in `Logo.astro`, ora arancio e grafite). È una proposta: se il cliente fornisce un logo, va sostituito.
+- Marchio: sole e due onde che disegnano la M (in `Logo.astro` e `public/favicon.svg`, ora azzurro e grafite). È una proposta: se il cliente fornisce un logo, va sostituito.
 - Accessibilità: contrasto almeno 4.5:1, bersagli tattili almeno 44 px, veri `<button>`/`<a>`/`<label>`, testo alternativo sulle foto.
 
 ## Regole sui contenuti
@@ -59,7 +59,7 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 - **Mai inventare dati:** prezzi, orari, numeri, nomi, capienza, regole. Se mancano, usa `Dato` con un segnaposto chiaro.
 - **Mai recensioni inventate.** Solo recensioni vere copiate da Google o TripAdvisor, con nome e data come pubblicati.
 - Mezza giornata e tramonto sono due attività diverse, con due pagine e due offerte (`mezza-giornata`, `tramonto`); il vecchio indirizzo `/escursioni/tramonto-mezza-giornata/` rimanda alla mezza giornata (`public/_redirects`). Migrazione `0003_mezza_giornata_tramonto.sql` per le prenotazioni già registrate.
-- Porti: La Maddalena è il porto di partenza dei tre gommoni di gruppo ed esclusiva (Il Porticciolo, Via Padule); Palau è un punto di raccolta (il gommone passa a prendere i clienti); l'Honda 9.50 parte da Cannigione. Sulle mappe: ancora arancio = partenza da La Maddalena, puntini = passaggio a Palau.
+- Porti: La Maddalena è il porto di partenza dei tre gommoni di gruppo ed esclusiva (Il Porticciolo, Via Padule); Palau è un punto di raccolta (il gommone passa a prendere i clienti); l'Honda 9.50 parte da Cannigione. Sulle mappe: ancora azzurra = partenza da La Maddalena, puntini = passaggio a Palau.
 - Prezzi delle uscite di gruppo: intero da 11 anni, ridotto da 0 a 10 anni; nessuno viaggia gratis (Remo, 11 novembre 2026). Nel database i vecchi `neonati` contano come bambini.
 - Fatti da rispettare: alla Spiaggia Rosa di Budelli niente sbarco né bagno (si vede dal mare); il pranzo del Tour delle 7 isole è libero a La Maddalena e non incluso; la Corsica si fa solo in esclusiva (giornata intera, prezzi delle giornate in esclusiva) e serve un documento valido per l'espatrio; nelle esclusive il carburante è a parte. Tramonto ("sunset", 11 novembre 2026): aperitivo a bordo (prosecco, birra o Coca-Cola; tagliere salsiccia e formaggio o spiedini di frutta), sosta scelta col vento (il Pesce davanti al pontile, Santo Stefano, Villa Marina), di gruppo minimo 6 e massimo 8 persone (`postiMax` nell'offerta), listino suo da 100 € a persona, in esclusiva da 780 a 900 € (in esclusiva mete più lontane su richiesta); orari per mese in `orariTramonto`, indicativi; partenza consigliata da La Maddalena. Periodi, ridotti e orari del mese proposti da Claude: da far confermare a Remo.
 - Niente nomi di ristoranti sul sito: dove mangiare lo propone lo skipper ai clienti sul momento (Remo, 11 novembre 2026).

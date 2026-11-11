@@ -18,7 +18,7 @@
 .tabella-box { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--bordo); border-radius: 14px; }
 .tabella { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.45; background: var(--bianco); }
 .tabella th, .tabella td { padding: 10px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--bordo); }
-.tabella th { background: #F7F3EC; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--testo-2); white-space: nowrap; }
+.tabella th { background: #EEF7FC; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--testo-2); white-space: nowrap; }
 .tabella tr:last-child td { border-bottom: 0; }
 .tabella td.num, .tabella th.num { text-align: right; white-space: nowrap; }
 .tabella .vuota { text-align: center; color: var(--testo-2); padding: 24px; }
@@ -35,14 +35,14 @@
 .btn--avviso { background: #FBE3DB; color: #8A3B26; }
 .btn--avviso:hover { background: #F7CFC1; color: #8A3B26; }
 .copia { display: flex; gap: 10px; flex-wrap: wrap; }
-.copia input { flex: 1 1 260px; height: 52px; border: 1.5px solid var(--bordo-campo); border-radius: 12px; padding: 0 14px; font: inherit; font-size: 15px; color: var(--mare); background: #F7F3EC; min-width: 0; }
+.copia input { flex: 1 1 260px; height: 52px; border: 1.5px solid var(--bordo-campo); border-radius: 12px; padding: 0 14px; font: inherit; font-size: 15px; color: var(--mare); background: #EEF7FC; min-width: 0; }
 .messaggio-ok { background: #DFF3E4; color: #1F5E33; border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.5; font-weight: 600; }
 .password-nuova { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 18px; font-weight: 700; background: var(--acqua); border-radius: 10px; padding: 10px 14px; user-select: all; word-break: break-all; }
 .gommone-giorno { border: 1px solid var(--bordo); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 14px; background: #FDFCF9; }
 .uscita { border-top: 1px solid var(--bordo); padding-top: 14px; display: flex; flex-direction: column; gap: 10px; }
 .uscita__testa { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
 details.azione-extra summary { cursor: pointer; font-weight: 700; color: var(--turchese); min-height: 44px; display: inline-flex; align-items: center; }
-details.azione-extra[open] { background: #F7F3EC; border-radius: 14px; padding: 4px 14px 14px; }
+details.azione-extra[open] { background: #EEF7FC; border-radius: 14px; padding: 4px 14px 14px; }
 .spunte { display: flex; flex-wrap: wrap; gap: 8px 16px; }
 .spunte label { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; }
 .spunte input { width: 20px; height: 20px; accent-color: var(--mare); }
