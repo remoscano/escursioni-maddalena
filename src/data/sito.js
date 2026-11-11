@@ -45,7 +45,7 @@ export const sito = {
       nome: 'Cannigione',
       molo: 'Pontile La Sciumara, Via Lungomare A. Doria 7, 07021 Cannigione (SS)',
       ritrovo: '9:15',
-      mappa: '',
+      mappa: 'https://share.google/pqI5W7O5CTVevSFsE',
     },
     maddalena: {
       nome: 'La Maddalena',

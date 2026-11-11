@@ -81,7 +81,6 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Confermati da Remo (8 novembre 2026): Corsica 9:30 – 17:30 con Lavezzi, isola di Cavallo e Bonifacio; le due regole aggiunte alle condizioni (guasto = regola del maltempo; altre piattaforme = loro condizioni); nessuna autorizzazione da indicare; ritrovo 15 minuti prima della partenza a Palau e a La Maddalena (9:15 per le uscite delle 9:30)
 
 ### Da decidere o da avere dal cliente (Remo)
-- [ ] Cannigione: link Google Maps del Pontile La Sciumara
 - [ ] Molo di Palau (ancora da sapere)
 - [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA
 - [ ] Imbarchi: parcheggio a Palau, link Google Maps del molo di Palau
