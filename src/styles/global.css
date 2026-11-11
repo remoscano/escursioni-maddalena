@@ -100,7 +100,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   background: #FBE3DB; color: #8A3B26; border-radius: 6px; padding: 1px 6px; font-weight: 600;
   -webkit-box-decoration-break: clone; box-decoration-break: clone;
 }
-.su-scuro .dato, .sezione--scura .dato, .hero .dato, .piede .dato {
+.su-scuro .dato, .sezione--scura .dato, .piede .dato {
   background: rgba(236, 154, 134, 0.24); color: #FFE1D8;
 }
 
@@ -187,29 +187,23 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 
 /* ---------- Hero della home ---------- */
 
-.hero {
-  position: relative; min-height: min(820px, 100svh); display: flex; flex-direction: column;
-  background-color: var(--mare-hero); color: var(--bianco); overflow: hidden;
+.hero { background: var(--bianco); color: var(--mare); }
+.hero__griglia {
+  max-width: var(--larghezza); margin: 0 auto; padding: 48px var(--gutter) 56px;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center;
 }
-.foto.hero__foto { position: absolute; inset: 0; border-radius: 0; }
-.hero__velo {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(20, 20, 20, 0.45) 0%, rgba(20, 20, 20, 0.15) 35%, rgba(20, 20, 20, 0.65) 100%);
-}
-.hero__contenuto {
-  position: relative; flex: 1; width: 100%; max-width: var(--larghezza); margin: 0 auto;
-  padding: 40px var(--gutter) 56px; display: flex; flex-direction: column; justify-content: flex-end; gap: 28px;
-}
+.hero__contenuto { display: flex; flex-direction: column; gap: 28px; }
+.foto.hero__foto { aspect-ratio: 4 / 5; max-height: 640px; width: 100%; }
 .hero__occhiello {
-  font-size: 14px; line-height: 1.3; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--azzurro-chiaro);
+  font-size: 14px; line-height: 1.3; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--turchese);
 }
 .hero__titolo {
-  max-width: 13ch; font-weight: 800; font-size: clamp(44px, 6.6vw, 100px); line-height: 0.96;
+  max-width: 13ch; font-weight: 800; font-size: clamp(44px, 5.6vw, 84px); line-height: 0.98;
   letter-spacing: -0.03em; text-wrap: balance;
 }
-.hero__testo { max-width: 46ch; font-size: 20px; line-height: 1.55; color: #F1F1F1; text-wrap: pretty; }
+.hero__testo { max-width: 46ch; font-size: 20px; line-height: 1.55; color: var(--testo-2); text-wrap: pretty; }
 .hero__azioni { display: flex; flex-wrap: wrap; gap: 12px; }
-.hero__fatti { position: relative; border-top: 1px solid rgba(255, 255, 255, 0.2); background: rgba(20, 20, 20, 0.45); }
+.hero__fatti { border-top: 1px solid var(--bordo); border-bottom: 1px solid var(--bordo); }
 .hero__fatti dl {
   max-width: var(--larghezza); margin: 0 auto; padding: 22px var(--gutter);
   display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px 32px;
@@ -217,9 +211,13 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 .hero__fatti div { display: flex; flex-direction: column; gap: 6px; }
 .hero__fatti dt {
   display: flex; align-items: center; gap: 8px; font-size: 12px; line-height: 1.2; font-weight: 700;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--azzurro-chiaro);
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--turchese);
 }
 .hero__fatti dd { margin: 0; font-size: 17px; line-height: 1.4; font-weight: 600; }
+@media (max-width: 960px) {
+  .hero__griglia { grid-template-columns: 1fr; gap: 32px; padding-top: 32px; }
+  .foto.hero__foto { aspect-ratio: 4 / 3; }
+}
 
 /* ---------- Foto e segnaposto foto ---------- */
 
@@ -232,15 +230,10 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 }
 .foto--rosa { background-color: #F6D9CB; }
 .foto--sabbia { background-color: #EFE3D0; }
-.hero .foto--vuota { background-color: var(--mare-hero); background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 22px); border-radius: 0; }
 .foto__nota {
   display: inline-flex; align-items: center; gap: 8px; max-width: 100%;
   background: rgba(255, 255, 255, 0.94); color: var(--mare); border-radius: 999px;
   padding: 8px 14px; font-size: 13px; line-height: 1.3; font-weight: 600;
-}
-.hero .foto__nota {
-  position: absolute; right: var(--gutter); top: 120px; max-width: 420px; border-radius: 14px;
-  background: rgba(20, 20, 20, 0.55); border: 1px dashed rgba(255, 255, 255, 0.5); color: var(--bianco);
 }
 
 /* ---------- Percorso e mappa ---------- */
@@ -293,6 +286,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   padding: 18px 0; border-bottom: 1px solid var(--bordo);
 }
 .sosta:last-child { border-bottom: 0; align-items: center; }
+.sosta__n--turchese { background: var(--turchese) !important; }
 .sosta__n {
   width: 44px; height: 44px; border-radius: 50%; background: var(--mare); color: var(--bianco);
   display: flex; align-items: center; justify-content: center; font-family: var(--font-titoli);
@@ -573,8 +567,6 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   .sezione--acqua { padding: 64px 0; }
   .pila { gap: 32px; }
   .hero__testo { font-size: 18px; }
-  .hero__contenuto { padding-top: 150px; padding-bottom: 40px; gap: 22px; }
-  .hero .foto__nota { top: 92px; left: var(--gutter); right: var(--gutter); font-size: 12px; }
   .hero__fatti dl { grid-template-columns: 1fr 1fr; padding-top: 18px; padding-bottom: 18px; }
   .hero__fatti dd { font-size: 15px; }
   .hero__azioni .btn { width: 100%; }
