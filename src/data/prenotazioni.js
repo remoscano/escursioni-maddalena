@@ -3,7 +3,7 @@
 // in questo file e pubblicare. Prezzi in euro, IVA inclusa.
 //
 // Ogni turno ha il suo listino: ogni riga vale tra due date mese-giorno ('05-01' = 1 maggio).
-// - gruppo:    adulto = prezzo intero a persona, bambino = ridotto (4–10 anni); 0–3 anni gratis
+// - gruppo:    persona = prezzo a persona, uguale per tutti: niente ridotti, gratuità o fasce d'età (Remo, 11 novembre 2026)
 // - esclusiva: barca  = prezzo del gommone solo per il gruppo
 //
 // Listini dal cliente (8 novembre 2026):
@@ -27,8 +27,6 @@ export const regole = {
   cancellazioneGratisOre: 48,
   // Provvigione delle strutture partner, in percentuale sul lordo pagato dal cliente.
   provvigioneStrutture: 15,
-  // Fasce d'età: 0–3 gratis, 4–10 ridotto, da 11 anni intero.
-  eta: { neonatiFinoA: 3, bambiniFinoA: 10 },
   // Esclusive: il carburante si paga a parte. La legge chiede di dire prima come si calcola e quando si paga
   // (es. 'a consumo, si paga a bordo a fine uscita'). Finché è vuoto, sul sito e nelle email compare un segnaposto.
   carburante: 'a consumo, si paga a bordo a fine uscita',
@@ -55,7 +53,7 @@ export const testoRitrovo = (orario) => {
 // Frase unica su chiusura online e gruppi grandi (pagina Prenota, FAQ, condizioni, pagine escursione).
 export const testoChiusuraOnline = `Online puoi prenotare fino alle ${regole.chiusuraOnline.ora} del giorno prima della partenza.`;
 
-// I gommoni. "posti" conta tutte le persone a bordo, neonati compresi.
+// I gommoni. "posti" conta tutte le persone a bordo.
 // "imbarchi" = da dove parte: chi si imbarca a Cannigione va solo sul gommone di Cannigione, e viceversa.
 export const gommoni = [
   { id: 'gruppo-1', nome: 'Joker Clubman 28', tipo: 'gruppo', posti: 12, imbarchi: ['maddalena', 'palau'] },
@@ -76,16 +74,16 @@ export const testoDopoChiusura = `Dopo quell'ora, o per gruppi di più di ${post
 
 // Listini usati da più turni.
 const giornataPersona = [
-  { dal: '05-01', al: '06-30', adulto: 100, bambino: 90 },
-  { dal: '07-01', al: '07-31', adulto: 125, bambino: 115 },
-  { dal: '08-01', al: '08-31', adulto: 135, bambino: 125 },
-  { dal: '09-01', al: '09-30', adulto: 125, bambino: 115 },
-  { dal: '10-01', al: '10-31', adulto: 100, bambino: 90 },
+  { dal: '05-01', al: '06-30', persona: 100 },
+  { dal: '07-01', al: '07-31', persona: 125 },
+  { dal: '08-01', al: '08-31', persona: 135 },
+  { dal: '09-01', al: '09-30', persona: 125 },
+  { dal: '10-01', al: '10-31', persona: 100 },
 ];
 const mezzaPersona = [
-  { dal: '05-01', al: '06-30', adulto: 65, bambino: 60 },
-  { dal: '07-01', al: '08-31', adulto: 75, bambino: 70 },
-  { dal: '09-01', al: '10-31', adulto: 65, bambino: 60 },
+  { dal: '05-01', al: '06-30', persona: 65 },
+  { dal: '07-01', al: '08-31', persona: 75 },
+  { dal: '09-01', al: '10-31', persona: 65 },
 ];
 const giornataEsclusiva = [
   { dal: '05-01', al: '06-30', barca: 1200 },
@@ -202,8 +200,7 @@ export function prezzoDa(slug, soloTurni) {
   const turni = soloTurni ? o.turni.filter((t) => soloTurni.includes(t.id)) : o.turni;
   const righe = turni.flatMap((t) => t.prezzi);
   if (o.tipo === 'esclusiva') return { barca: Math.min(...righe.map((r) => r.barca)) };
-  const piuEconomica = righe.reduce((a, b) => (b.adulto < a.adulto ? b : a));
-  return { adulto: piuEconomica.adulto, bambino: piuEconomica.bambino };
+  return { persona: Math.min(...righe.map((r) => r.persona)) };
 }
 
 // Calcola persone, posti occupati e totale (in euro) di una prenotazione.
@@ -212,19 +209,22 @@ export function calcolaPrenotazione(slug, turnoId, data, persone) {
   const o = offerte[slug];
   const t = turnoDi(slug, turnoId);
   if (!o || !t) return { errore: 'Escursione o turno non validi.' };
-  const adulti = Number(persone.adulti) || 0;
-  const bambini = Number(persone.bambini) || 0;
-  const neonati = Number(persone.neonati) || 0;
-  if ([adulti, bambini, neonati].some((n) => !Number.isInteger(n) || n < 0 || n > 20)) return { errore: 'Numero di persone non valido.' };
-  if (adulti < 1) return { errore: 'Serve almeno un adulto.' };
-  const totPersone = adulti + bambini + neonati;
-  const paganti = adulti + bambini;
+  // Ogni persona a bordo paga la stessa cifra, a qualsiasi età (Remo, 11 novembre 2026).
+  // "persone" può arrivare come numero (persone.persone) o, dalle versioni vecchie, divisa in adulti/bambini/neonati: si sommano.
+  const parti = persone.persone !== undefined ? [persone.persone] : [persone.adulti, persone.bambini, persone.neonati];
+  const numeri = parti.map((n) => (n === undefined || n === null || n === '' ? 0 : Number(n)));
+  if (numeri.some((n) => !Number.isInteger(n) || n < 0 || n > 20)) return { errore: 'Numero di persone non valido.' };
+  const totPersone = numeri.reduce((a, b) => a + b, 0);
+  if (totPersone < 1) return { errore: 'Serve almeno una persona.' };
+  // Nel database restano le colonne adulti/bambini/neonati: tutte le persone vanno in "adulti".
+  const adulti = totPersone, bambini = 0, neonati = 0;
+  const paganti = totPersone;
   const riga = rigaPrezzo(t.prezzi, data);
   if (!riga) return { errore: 'Nessun prezzo per questa data.' };
   const capienza = Math.max(...gommoniPer(slug).map((g) => g.posti));
 
   if (o.tipo === 'esclusiva') {
-    if (totPersone > capienza) return { errore: `In esclusiva il gommone porta al massimo ${capienza} persone, neonati compresi: per gruppi più grandi scrivici su WhatsApp.` };
+    if (totPersone > capienza) return { errore: `In esclusiva il gommone porta al massimo ${capienza} persone: per gruppi più grandi scrivici su WhatsApp.` };
     // "posti" viene poi portato alla capienza del gommone scelto: in esclusiva il gommone è tutto vostro.
     return {
       adulti, bambini, neonati, persone: totPersone, paganti, posti: totPersone, totale: riga.barca,
@@ -235,9 +235,7 @@ export function calcolaPrenotazione(slug, turnoId, data, persone) {
 
   if (totPersone > capienza) return { errore: `Su un gommone ci sono ${capienza} posti: per gruppi più grandi scrivici su WhatsApp.` };
   const righe = [];
-  if (adulti) righe.push({ testo: `${adulti} × intero ${riga.adulto} €`, importo: adulti * riga.adulto });
-  if (bambini) righe.push({ testo: `${bambini} × ridotto 4–10 anni ${riga.bambino} €`, importo: bambini * riga.bambino });
-  if (neonati) righe.push({ testo: `${neonati} × 0–3 anni gratis`, importo: 0 });
+  righe.push({ testo: `${totPersone} × ${riga.persona} € a persona`, importo: totPersone * riga.persona });
   const totale = righe.reduce((s, r) => s + r.importo, 0);
   return { adulti, bambini, neonati, persone: totPersone, paganti, posti: totPersone, totale, righe, carburanteEscluso: false };
 }

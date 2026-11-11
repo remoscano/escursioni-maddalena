@@ -85,9 +85,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
             </div>
             <p class="testo-2" data-disponibilita aria-live="polite"></p>
             <div class="riga-campi">
-              <div class="campo"><label for="n-adulti">Adulti</label><input id="n-adulti" name="adulti" type="number" min="1" max="20" value="2" required /></div>
-              <div class="campo"><label for="n-bambini">Bambini 4–10</label><input id="n-bambini" name="bambini" type="number" min="0" max="20" value="0" /></div>
-              <div class="campo"><label for="n-neonati">Neonati 0–3</label><input id="n-neonati" name="neonati" type="number" min="0" max="20" value="0" /></div>
+              <div class="campo"><label for="n-persone">Persone</label><input id="n-persone" name="persone" type="number" min="1" max="20" value="2" required /></div>
               <div class="campo"><label for="n-imbarco">Imbarco</label><select id="n-imbarco" name="imbarco"><option value="maddalena">La Maddalena</option><option value="palau">Palau</option><option value="cannigione">Cannigione</option></select></div>
             </div>
             <div class="riga-campi">
@@ -378,7 +376,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
     const slug = $<HTMLSelectElement>('#n-esc').value, data = $<HTMLInputElement>('#n-data').value, turno = $<HTMLSelectElement>('#n-turno').value, imbarco = $<HTMLSelectElement>('#n-imbarco').value;
     const box = $('[data-disponibilita]');
     const f = $<HTMLFormElement>('[data-modulo-nuova]');
-    const calcolo: any = calcolaPrenotazione(slug, turno, data, { adulti: Number(f.adulti.value), bambini: Number(f.bambini.value), neonati: Number(f.neonati.value) });
+    const calcolo: any = calcolaPrenotazione(slug, turno, data, { persone: Number(f.persone.value) });
     $<HTMLInputElement>('#n-importo').placeholder = calcolo.errore ? '' : `listino: ${calcolo.totale}`;
     if (!data) { box.textContent = ''; return; }
     if (!offerte[slug].imbarchi.includes(imbarco)) { box.textContent = 'Da questo imbarco l\'escursione non parte.'; return; }
@@ -393,7 +391,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
     } catch (e) { box.textContent = (e as Error).message; }
   }
   $('#n-esc').addEventListener('change', aggiornaTurni);
-  ['#n-data', '#n-turno', '#n-adulti', '#n-bambini', '#n-neonati', '#n-imbarco'].forEach((s) => $(s).addEventListener('change', controllaPosti));
+  ['#n-data', '#n-turno', '#n-persone', '#n-imbarco'].forEach((s) => $(s).addEventListener('change', controllaPosti));
   $('#n-canale').addEventListener('change', async () => {
     const struttura = $<HTMLSelectElement>('#n-canale').value === 'Struttura partner';
     $('[data-campo-struttura]').hidden = !struttura;
@@ -538,8 +536,8 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
     a.click();
   }
   document.querySelectorAll<HTMLButtonElement>('[data-csv]').forEach((b) => b.addEventListener('click', () => {
-    if (b.dataset.csv === 'elenco') scaricaCsv('prenotazioni.csv', ['Data', 'Codice', 'Escursione', 'Orario', 'Gommone', 'Nome', 'Telefono', 'Email', 'Adulti', 'Bambini', 'Neonati', 'Imbarco', 'Totale', 'Pagato', 'Provvigione', 'Canale', 'Struttura', 'Stato', 'Rimborso', 'Note'],
-      ultimeRighe.map((p) => [p.data, p.codice, p.escursione, p.turno, p.gommone, p.nome, p.telefono, p.email, p.adulti, p.bambini, p.neonati, p.imbarco, String(p.totale).replace('.', ','), String(p.pagato).replace('.', ','), String(p.provvigione).replace('.', ','), p.canale, p.struttura, p.stato, p.rimborso, p.note]));
+    if (b.dataset.csv === 'elenco') scaricaCsv('prenotazioni.csv', ['Data', 'Codice', 'Escursione', 'Orario', 'Gommone', 'Nome', 'Telefono', 'Email', 'Persone', 'Imbarco', 'Totale', 'Pagato', 'Provvigione', 'Canale', 'Struttura', 'Stato', 'Rimborso', 'Note'],
+      ultimeRighe.map((p) => [p.data, p.codice, p.escursione, p.turno, p.gommone, p.nome, p.telefono, p.email, p.adulti + p.bambini + p.neonati, p.imbarco, String(p.totale).replace('.', ','), String(p.pagato).replace('.', ','), String(p.provvigione).replace('.', ','), p.canale, p.struttura, p.stato, p.rimborso, p.note]));
     else scaricaCsv(`provvigioni-${periodoCorrente?.dal}.csv`, ['Struttura', 'Email', 'Prenotazioni', 'Venduto', 'Provvigione', 'Pagata il'],
       righeProvvigioni.map((s) => [s.nome, s.email, s.numero, String(s.venduto).replace('.', ','), String(s.provvigione).replace('.', ','), s.pagataIl ? new Date(s.pagataIl).toLocaleDateString('it-IT') : '']));
   }));

@@ -107,11 +107,8 @@ export async function inviaEmail(env, { a, oggetto, testo }) {
 
 export async function inviaEmailConferma(env, p, origine) {
   const v = vistaCliente(p);
-  const persone = [
-    v.adulti && `${v.adulti} ${v.adulti === 1 ? 'adulto' : 'adulti'}`,
-    v.bambini && `${v.bambini} ${v.bambini === 1 ? 'bambino' : 'bambini'}`,
-    v.neonati && `${v.neonati} ${v.neonati === 1 ? 'neonato' : 'neonati'}`,
-  ].filter(Boolean).join(', ');
+  const n = (v.adulti || 0) + (v.bambini || 0) + (v.neonati || 0);
+  const persone = `${n} ${n === 1 ? 'persona' : 'persone'}`;
   const link = `${origine}/prenota/esito/?codice=${encodeURIComponent(p.codice)}&t=${encodeURIComponent(p.token)}`;
   const { azienda } = sito;
   // null = riga che non serve per questa prenotazione; '' = riga vuota tra un blocco e l'altro.

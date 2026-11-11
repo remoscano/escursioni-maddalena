@@ -408,6 +408,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   font: inherit; font-size: 16px; color: var(--mare); background: var(--bianco);
 }
 .campo input:focus, .campo select:focus { border-color: var(--mare); outline: 2px solid var(--laguna); outline-offset: 1px; }
+.campi-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; }
 .campi-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 @media (max-width: 520px) { .campi-3 { grid-template-columns: 1fr 1fr; } .campi-3 .campo:first-child { grid-column: 1 / -1; } }
 .modulo fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }

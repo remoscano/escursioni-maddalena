@@ -42,10 +42,8 @@ export function aggiungiGiorni(data: string, n: number) {
 
 export const segnaposto = (etichetta: string) => `<span class="dato">[${h(etichetta)}]</span>`;
 
-export function persone(a: number, b: number, n: number) {
-  return [
-    a && `${a} ${a === 1 ? 'adulto' : 'adulti'}`,
-    b && `${b} ${b === 1 ? 'bambino' : 'bambini'}`,
-    n && `${n} ${n === 1 ? 'neonato' : 'neonati'}`,
-  ].filter(Boolean).join(', ');
+// "3 persone". Accetta anche le tre parti delle prenotazioni vecchie (adulti, bambini, neonati) e le somma.
+export function persone(a: number, b = 0, n = 0) {
+  const tot = (Number(a) || 0) + (Number(b) || 0) + (Number(n) || 0);
+  return `${tot} ${tot === 1 ? 'persona' : 'persone'}`;
 }

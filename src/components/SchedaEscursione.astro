@@ -19,7 +19,7 @@ const tono = 'acqua';
       <p class="testo-2" style="font-size:18px">{e.breve}</p>
       <p class="prezzo">
         Da <Dato v={e.prezzoAdulti} e="PREZZO" /> € {e.prezzoGommone ? 'a gommone' : 'a persona'}
-        {e.prezzoBambini !== null && <small>· ridotto 4–10 anni <Dato v={e.prezzoBambini} e="PREZZO" /> €</small>}
+        {!e.prezzoGommone && <small>· stesso prezzo per tutti</small>}
       </p>
       <div class="azioni">
         {regole.attive

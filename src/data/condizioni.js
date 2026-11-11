@@ -21,9 +21,8 @@ const nomiDa = (imbarco) => escursioni.filter((e) => offerte[e.slug]?.imbarchi.i
 const nomi = (tipo) => escursioni.filter((e) => offerte[e.slug]?.tipo === tipo).map((e) => e.titolo).join(', ');
 const minimo = Math.min(...Object.values(offerte).filter((o) => o.tipo === 'gruppo').map((o) => o.minimo));
 const piuPiccolo = Math.min(...gommoni.map((g) => g.posti));
-const { neonatiFinoA, bambiniFinoA } = regole.eta;
 
-export const aggiornamento = '8 novembre 2026';
+export const aggiornamento = '11 novembre 2026';
 
 export const condizioni = [
   {
@@ -60,7 +59,7 @@ export const condizioni = [
     punti: [
       ["I prezzi sono in euro e comprendono l'IVA. Cambiano in base al periodo: quello della tua data lo vedi nel calendario e nel riepilogo."],
       ['Si paga tutto al momento della prenotazione, con carta (tramite SumUp) o con PayPal, sulle loro pagine sicure. Non ci sono costi in più per il metodo di pagamento.'],
-      [`Bambini fino a ${neonatiFinoA} anni gratis, da ${neonatiFinoA + 1} a ${bambiniFinoA} anni prezzo ridotto, da ${bambiniFinoA + 1} anni prezzo intero. Anche chi non paga occupa un posto a bordo e va indicato nella prenotazione.`],
+      ['Nelle uscite di gruppo il prezzo è a persona ed è lo stesso per tutti, a qualsiasi età: non ci sono prezzi ridotti né gratuità. Ogni persona a bordo, bambini compresi, occupa un posto e va indicata nella prenotazione.'],
       ['Nelle escursioni in esclusiva il carburante non è compreso nel prezzo e si paga a parte: ', v(regole.carburante, CARBURANTE_MANCA), '.'],
       ['Il ticket del Parco Nazionale è compreso nel prezzo.'],
     ],

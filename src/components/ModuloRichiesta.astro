@@ -35,18 +35,14 @@ const fissa = escursione ? escursioni.find((e) => e.slug === escursione) : undef
     </div>
   )}
 
-  <div class="campi-3">
+  <div class="campi-2">
     <div class="campo">
       <label for={`${id}-data`}>Data</label>
       <input id={`${id}-data`} name="data" type="date" />
     </div>
     <div class="campo">
-      <label for={`${id}-adulti`}>Adulti</label>
-      <input id={`${id}-adulti`} name="adulti" type="number" inputmode="numeric" min="1" max="99" value="2" />
-    </div>
-    <div class="campo">
-      <label for={`${id}-bambini`}>Bambini</label>
-      <input id={`${id}-bambini`} name="bambini" type="number" inputmode="numeric" min="0" max="99" value="0" />
+      <label for={`${id}-persone`}>Persone</label>
+      <input id={`${id}-persone`} name="persone" type="number" inputmode="numeric" min="1" max="99" value="2" />
     </div>
   </div>
 
@@ -113,10 +109,8 @@ const fissa = escursione ? escursioni.find((e) => e.slug === escursione) : undef
         const d = new Date(valoreData + 'T12:00:00');
         if (!isNaN(d.getTime())) testoData = formatoData.format(d);
       }
-      const adulti = intero('adulti', 1);
-      const bambini = intero('bambini', 0);
-      const persone = `${adulti} ${adulti === 1 ? 'adulto' : 'adulti'}` +
-        (bambini > 0 ? `, ${bambini} ${bambini === 1 ? 'bambino' : 'bambini'}` : '');
+      const n = intero('persone', 1);
+      const persone = `${n}`;
       const nome = String(dati.get('nome') ?? '').trim();
       return [
         `Ciao ${nomeSito}! Vorrei prenotare:`,

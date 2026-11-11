@@ -23,11 +23,14 @@ export async function creaPrenotazione(contesto, b, { modo, utente = null, ipHas
   const ok = modo === 'gestione' ? prenotabileGestione(b.data) : prenotabileOnline(b.data);
   if (!ok.ok) throw new Errore(409, MOTIVI[ok.motivo] ?? 'Data non prenotabile.');
 
-  const persone = {
-    adulti: intero(b.adulti, { campo: 'adulti', min: 0, max: 20 }),
-    bambini: intero(b.bambini ?? 0, { campo: 'bambini', min: 0, max: 20 }),
-    neonati: intero(b.neonati ?? 0, { campo: 'neonati', min: 0, max: 20 }),
-  };
+  // Prezzo unico a persona: arriva "persone"; adulti/bambini/neonati (versioni vecchie) vengono sommati.
+  const persone = b.persone !== undefined
+    ? { persone: intero(b.persone, { campo: 'persone', min: 1, max: 20 }) }
+    : {
+      adulti: intero(b.adulti ?? 0, { campo: 'adulti', min: 0, max: 20 }),
+      bambini: intero(b.bambini ?? 0, { campo: 'bambini', min: 0, max: 20 }),
+      neonati: intero(b.neonati ?? 0, { campo: 'neonati', min: 0, max: 20 }),
+    };
   const calcolo = calcolaPrenotazione(slug, turnoId, b.data, persone);
   if (calcolo.errore) throw new Errore(400, calcolo.errore);
   if (!imbarchiPrenotazione.some((i) => i.id === b.imbarco)) throw new Errore(400, "Scegli il punto d'imbarco.");
