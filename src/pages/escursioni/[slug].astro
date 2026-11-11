@@ -34,7 +34,7 @@ const durata = e.ore ? `${e.ore} ore` : '';
 ---
 <Base
   titolo={e.titoloPagina}
-  descrizione={`${e.breve} Imbarco a Palau o La Maddalena, richiesta di disponibilità su WhatsApp.`.slice(0, 160)}
+  descrizione={`${e.breve} ${e.fatti.find((f: string) => f.startsWith('Imbarco')) ?? ''}${prenotabile ? ', prenoti online.' : ', richiesta su WhatsApp.'}`.slice(0, 160)}
 >
   <section class="testa-tour" aria-labelledby="tour-titolo">
     <div class="contenitore">

@@ -8,7 +8,7 @@ const { contatti, imbarchi } = sito;
 ---
 <Base
   titolo="Contatti"
-  descrizione="Scrivici su WhatsApp, chiamaci o mandaci un'email. Imbarchi a Palau e a La Maddalena."
+  descrizione="Scrivici su WhatsApp, chiamaci o mandaci un'email. Imbarchi a Palau, La Maddalena e Cannigione."
 >
   <section class="testa-pagina">
     <div class="contenitore">
@@ -44,6 +44,7 @@ const { contatti, imbarchi } = sito;
           <h2 style="font-size:22px;line-height:1.2;font-weight:700">Imbarchi</h2>
           <p><strong>Palau</strong> · <Dato v={imbarchi.palau.molo} e="molo e indirizzo" /></p>
           <p><strong>La Maddalena</strong> · <Dato v={imbarchi.maddalena.molo} e="molo e indirizzo" /></p>
+          <p><strong>Cannigione</strong> · <Dato v={imbarchi.cannigione.molo} e="molo e indirizzo" /></p>
           <a href="/info-utili/" class="link-freccia">Come arrivare<Icona nome="destra" size={18} /></a>
         </div>
       </div>
