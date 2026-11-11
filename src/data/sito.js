@@ -58,10 +58,10 @@ export const sito = {
   // I gommoni (Remo, 8 novembre 2026). "id" collega ogni gommone a quello del sistema di prenotazione
   // (src/data/prenotazioni.js), da cui arrivano i posti.
   flotta: [
-    { id: 'gruppo-1', modello: 'Joker Clubman 28', motori: '2 motori Suzuki da 200 cv', dotazioni: 'bagno, T-top' },
-    { id: 'gruppo-2', modello: 'BWA 30', motori: '2 motori Mercury da 250 cv', dotazioni: 'bagno, cabina, T-top' },
-    { id: 'esclusiva', modello: 'Joker 35', motori: '2 motori Suzuki da 300 cv', dotazioni: 'cabina, bagno' },
-    { id: 'cannigione', modello: 'Honda 9.50', motori: '1 motore Honda da 350 cv', dotazioni: '' },
+    { id: 'gruppo-1', modello: 'Joker Clubman 28', motori: '2 motori Suzuki da 200 cv', dotazioni: 'bagno, T-top', descrizione: '' },
+    { id: 'gruppo-2', modello: 'BWA 30', motori: '2 motori Mercury da 250 cv', dotazioni: 'bagno, cabina, T-top', descrizione: '' },
+    { id: 'esclusiva', modello: 'Joker 35', motori: '2 motori Suzuki da 300 cv', dotazioni: 'cabina, bagno', descrizione: '' },
+    { id: 'cannigione', modello: 'Honda 9.50', motori: '1 motore Honda da 350 cv', dotazioni: '', descrizione: '' },
   ],
   gommone: {
     descrizione: '', // due righe di presentazione della flotta

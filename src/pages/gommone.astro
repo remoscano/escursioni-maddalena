@@ -1,26 +1,83 @@
 ---
 import Base from '../layouts/Base.astro';
-import Gommone from '../components/Gommone.astro';
 import Foto from '../components/Foto.astro';
 import Icona from '../components/Icona.astro';
 import Dato from '../components/Dato.astro';
 import SezioneRichiesta from '../components/SezioneRichiesta.astro';
+import { sito } from '../data/sito.js';
+import { escursioni } from '../data/escursioni.js';
+import { gommoni, gommoniPer, imbarchiPrenotazione } from '../data/prenotazioni.js';
+
+// Una sezione per ogni gommone: i dati vengono da sito.flotta (modello, motori, dotazioni)
+// e da prenotazioni.js (posti, imbarchi, escursioni che può fare).
+const barche = sito.flotta.map((f) => {
+  const g = gommoni.find((x) => x.id === f.id);
+  const uso = g.imbarchi.includes('cannigione') ? 'Da Cannigione' : g.tipo === 'esclusiva' ? 'Solo esclusive' : 'Gruppo ed esclusive';
+  const partenze = imbarchiPrenotazione.filter((i) => g.imbarchi.includes(i.id)).map((i) => i.nome).join(' e ');
+  const fa = escursioni.filter((e) => gommoniPer(e.slug).some((x) => x.id === f.id));
+  const dotazioni = f.dotazioni ? f.dotazioni.split(',').map((d) => d.trim()) : [];
+  const nota = g.tipo === 'esclusiva'
+    ? `Solo per gruppi privati, fino a ${g.posti} persone.`
+    : `Uscite di gruppo con almeno 6 persone, oppure tutto per voi in esclusiva, fino a ${g.posti} persone.`;
+  return { ...f, posti: g.posti, uso, partenze, fa, dotazioni, nota };
+});
 ---
 <Base
   titolo="I maxi gommoni"
-  descrizione="I maxi gommoni con cui esploriamo l'Arcipelago di La Maddalena comodità, sicurezza e dotazioni a bordo."
+  descrizione="I quattro maxi gommoni con cui esploriamo l'Arcipelago di La Maddalena: Joker Clubman 28, BWA 30, Joker 35 e Honda 9.50."
 >
   <section class="sezione" style="padding-top:56px" aria-labelledby="gommone-titolo">
-    <div class="contenitore">
-      <Gommone titoloLivello="h1" link={false} />
+    <div class="contenitore pila">
+      <div class="intestazione__testo">
+        <p class="occhiello">La flotta</p>
+        <h1 id="gommone-titolo" class="titolo-sezione">I nostri maxi gommoni</h1>
+        <p class="testo-2"><Dato v={sito.gommone.descrizione} e="Presenta i gommoni in due righe: comodità, perché sono adatti a famiglie e gruppi" /></p>
+      </div>
+      <nav class="flotta-indice" aria-label="I gommoni">
+        {barche.map((b) => (
+          <a href={`#${b.id}`}>
+            <span class="flotta-indice__uso">{b.uso}</span>
+            <span class="flotta-indice__nome">{b.modello}</span>
+            <span class="flotta-indice__posti">Fino a {b.posti} persone</span>
+          </a>
+        ))}
+      </nav>
     </div>
   </section>
 
+  {barche.map((b, i) => (
+    <section class={`sezione barca${i % 2 ? ' barca--inversa' : ''}`} id={b.id} aria-labelledby={`${b.id}-titolo`}>
+      <div class="contenitore due-colonne">
+        <Foto nota={`Il ${b.modello} in navigazione`} class="barca__foto" tono={i % 2 ? 'sabbia' : undefined} />
+        <div class="barca__testo">
+          <div class="pila-stretta">
+            <p class="occhiello">{b.uso}</p>
+            <h2 id={`${b.id}-titolo`} class="titolo-sezione">{b.modello}</h2>
+            <p class="testo-2"><Dato v={b.descrizione} e={`Due righe sul ${b.modello}: per chi è adatto, cosa ha di speciale`} /></p>
+          </div>
+          <dl class="dati-barca">
+            <div><dt>Persone</dt><dd>Fino a {b.posti}</dd><dd class="testo">{b.nota}</dd></div>
+            <div><dt>Motori</dt><dd class="testo">{b.motori}</dd></div>
+            <div><dt>Parte da</dt><dd class="testo">{b.partenze}</dd></div>
+            <div><dt>A bordo</dt><dd class="testo">{b.dotazioni.length ? b.dotazioni.join(', ').replace(/^./, (c) => c.toUpperCase()) : <Dato e={`Dotazioni dell'${b.modello}`} />}</dd></div>
+          </dl>
+          <div class="pila-stretta">
+            <h3 class="barca__sotto">Con questo gommone</h3>
+            <ul class="barca__escursioni">
+              {b.fa.map((e) => (
+                <li><a href={`/escursioni/${e.slug}/`} class="link-freccia">{e.titolo}<Icona nome="destra" size={18} /></a></li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  ))}
   <section class="sezione sezione--calda" aria-labelledby="bordo-titolo">
     <div class="contenitore pila">
       <div class="intestazione__testo">
         <p class="occhiello">A bordo</p>
-        <h2 id="bordo-titolo" class="titolo-sezione">Comodi e sicuri, tutto il giorno</h2>
+        <h2 id="bordo-titolo" class="titolo-sezione">Su tutti i gommoni</h2>
       </div>
       <div class="griglia-info">
         <div class="box">
@@ -63,3 +120,25 @@ import SezioneRichiesta from '../components/SezioneRichiesta.astro';
 
   <SezioneRichiesta />
 </Base>
+
+<style>
+  .flotta-indice { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 12px; }
+  .flotta-indice a {
+    display: flex; flex-direction: column; gap: 4px; padding: 18px 20px; min-height: 44px;
+    border: 1px solid var(--bordo); border-radius: 16px; color: var(--mare); text-decoration: none;
+  }
+  .flotta-indice a:hover, .flotta-indice a:focus-visible { border-color: var(--turchese); }
+  .flotta-indice__uso { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--turchese); }
+  .flotta-indice__nome { font-family: var(--font-titoli); font-size: 22px; font-weight: 800; line-height: 1.2; }
+  .flotta-indice__posti { color: var(--testo-2); font-weight: 600; }
+  .barca { border-top: 1px solid var(--bordo); scroll-margin-top: 80px; }
+  .barca__testo { display: flex; flex-direction: column; gap: 28px; min-width: 0; }
+  .pila-stretta { display: flex; flex-direction: column; gap: 12px; }
+  :global(.barca__foto) { aspect-ratio: 5 / 4; }
+  .barca__sotto { font-size: 18px; margin: 0; }
+  .barca__escursioni { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .barca__escursioni .link-freccia { min-height: 44px; display: inline-flex; align-items: center; }
+  @media (min-width: 1040px) {
+    .barca--inversa :global(.barca__foto) { order: 2; }
+  }
+</style>
