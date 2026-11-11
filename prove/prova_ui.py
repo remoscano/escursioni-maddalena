@@ -157,7 +157,7 @@ async def strutture_e_gestione(b):
     await pg.wait_for_url(re.compile(r'/prenota/prova/')); await pg.wait_for_selector('[data-dati] strong'); await pg.click('[data-esito="ok"]')
     await pg.wait_for_selector('text=Prenotazione confermata')
     await pg.goto(f'{B}/partner/', wait_until='networkidle'); await pg.wait_for_selector('[data-vendite] tr td')
-    t = await pg.inner_text('[data-numeri]'); ok('30 €' in t, f'area struttura: provvigione in arrivo 30 € (15% di 200)')
+    t = await pg.inner_text('[data-numeri]'); ok('40 €' in t, f'area struttura: provvigione in arrivo 40 € (20% di 200)')
     await larghezza(pg, 390, 'area strutture')
     await pg.screenshot(path=f'{OUT}/partner-390.png', full_page=True)
     await ctx.close()

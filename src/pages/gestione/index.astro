@@ -2,7 +2,7 @@
 // Gestione interna: uscite del giorno, prenotazioni dalle altre piattaforme, maltempo, strutture partner, provvigioni.
 import Base from '../../layouts/Base.astro';
 import { escursioni } from '../../data/escursioni.js';
-import { offerte } from '../../data/prenotazioni.js';
+import { offerte, regole } from '../../data/prenotazioni.js';
 import '../../styles/area.css';
 const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map((e) => [e.slug, e.titolo]));
 ---
@@ -137,7 +137,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
               <div class="campo"><label for="s-email">Email (per l'accesso)</label><input id="s-email" name="email" type="email" maxlength="160" required /></div>
               <div class="campo"><label for="s-tel">Telefono</label><input id="s-tel" name="telefono" type="tel" maxlength="30" /></div>
               <div class="campo"><label for="s-ref">Referente</label><input id="s-ref" name="referente" maxlength="100" /></div>
-              <div class="campo"><label for="s-pct">Provvigione %</label><input id="s-pct" name="provvigione" type="number" min="0" max="50" step="0.5" value="15" /></div>
+              <div class="campo"><label for="s-pct">Provvigione %</label><input id="s-pct" name="provvigione" type="number" min="0" max="50" step="0.5" value={regole.provvigioneStrutture} /></div>
             </div>
             <div data-esito-struttura></div>
             <button class="btn btn--wa btn--grande" type="submit">Crea struttura e accesso</button>

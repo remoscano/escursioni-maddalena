@@ -27,7 +27,7 @@ export const regole = {
   // Rimborso completo se il cliente annulla almeno 48 ore prima.
   cancellazioneGratisOre: 48,
   // Provvigione delle strutture partner, in percentuale sul lordo pagato dal cliente.
-  provvigioneStrutture: 15,
+  provvigioneStrutture: 20, // Remo, 11 novembre 2026 (prima era 15)
   // Fasce d'età: da 0 a 10 anni ridotto, da 11 anni intero. Nessuno viaggia gratis (Remo, 11 novembre 2026).
   eta: { bambiniFinoA: 10 },
   // Esclusive: il carburante si paga a parte. La legge chiede di dire prima come si calcola e quando si paga
