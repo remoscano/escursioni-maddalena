@@ -64,7 +64,8 @@ export const sito = {
     { id: 'cannigione', modello: 'Honda 9.50', motori: '1 motore Honda da 350 cv', dotazioni: '', descrizione: '' },
   ],
   gommone: {
-    descrizione: '', // due righe di presentazione della flotta
+    // Scritta da Claude su richiesta di Remo (11 novembre 2026), solo con i dati della flotta già confermati.
+    descrizione: "Gommoni grandi e stabili, con lo skipper sempre a bordo: arrivi nelle cale più belle senza fatica e ti godi il mare in sicurezza. Bagno a bordo sui gommoni che partono da La Maddalena, T-top per l'ombra su quelli di gruppo e al massimo 12 persone: lo spazio giusto per famiglie con bambini e gruppi di amici.", // due righe di presentazione della flotta
   },
 
   skipper: {

@@ -94,7 +94,7 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [ ] Molo di Palau (ancora da sapere) e orario di ritrovo a Palau ora che il gommone ci passa dopo la partenza da La Maddalena (per ora 9:15, come prima)
 - [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA
 - [ ] Imbarchi: parcheggio a Palau, link Google Maps del molo di Palau
-- [ ] Due righe di presentazione dei gommoni e dotazioni a bordo (sedute, prendisole, scaletta, doccetta, gavone)
+- [ ] Presentazione generale dei gommoni scritta da Claude (11 novembre 2026), da far controllare. Mancano: due righe per ogni gommone e dotazioni a bordo (sedute, prendisole, scaletta, doccetta, gavone)
 - [ ] Testi delle soste della Corsica (isola Piana, Lavezzi, Cavallo) e percorso del tramonto. Mezza giornata fatta (11 novembre 2026): giro di Caprera (Coticcio, Napoletana, Giardinelli) o, con maestrale oltre 15 nodi, Spargi e La Maddalena (Cala Corsara, Cala Gavetta, Giardinelli). Lagunetta: riga scritta da Claude, da far controllare
 - [ ] Foto (le note sui segnaposto indicano gli scatti) ed eventuale logo
 - [ ] Risposte automatiche di WhatsApp Business (benvenuto, assenza fuori orario, risposte rapide): testi proposti da Claude, li imposta il cliente nell'app
