@@ -79,7 +79,7 @@ export const faq = [
         id: 'portare',
         domanda: 'Cosa devo portare?',
         risposta:
-          "Costume, telo e un cambio, crema solare, cappello e occhiali, da mangiare e da bere. Se vuoi fare snorkeling porta maschera e boccaglio: per igiene non li forniamo, anche se a bordo ne teniamo qualcuno. Per i bambini, se vuoi, un giubbotto di salvataggio della loro misura.",
+          "Costume, telo e un cambio, crema solare, cappello e occhiali, qualcosa da mangiare. Se vuoi fare snorkeling porta maschera e boccaglio: per igiene non li forniamo, anche se a bordo ne teniamo qualcuno. Per i bambini, se vuoi, un giubbotto di salvataggio della loro misura. E soprattutto la voglia di divertirti e passare una giornata indimenticabile.",
       },
     ],
   },
