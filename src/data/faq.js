@@ -59,7 +59,7 @@ export const faq = [
       {
         id: 'pranzo',
         domanda: 'Il pranzo è incluso nel Tour delle 7 isole?',
-        risposta: "No, il pranzo è libero. Durante la sosta a La Maddalena ti suggeriamo noi dove mangiare, oppure puoi portare il pranzo al sacco.",
+        risposta: "No, il pranzo è libero. Durante la sosta a La Maddalena, se vuoi, lo skipper ti accompagna in un ristorante tipico convenzionato, con cucina sarda a prezzo agevolato. Oppure puoi portare il pranzo al sacco.",
       },
       {
         id: 'bambini',

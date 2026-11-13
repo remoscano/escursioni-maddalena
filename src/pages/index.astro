@@ -17,15 +17,17 @@ const tour = trovaEscursione('tour-7-isole');
 const percorsiMezza: { titolo: string; testo: string; soste: any[] }[] = [];
 for (const t of trovaEscursione('mezza-giornata').programma) {
   if (t.tipo === 'percorso') percorsiMezza.push({ titolo: t.titolo, testo: t.testo, soste: [] });
-  else if (t.tipo === 'sosta' && percorsiMezza.length) percorsiMezza.at(-1)!.soste.push(t);
+  else if ((t.tipo === 'sosta' || t.tipo === 'vista') && percorsiMezza.length) percorsiMezza.at(-1)!.soste.push(t);
 }
+// Solo i due giri (la riga introduttiva non ha soste).
+percorsiMezza.splice(0, percorsiMezza.length, ...percorsiMezza.filter((p) => p.soste.length));
 // Prezzo più basso a persona tra le uscite di gruppo, per l'apertura.
 const prezzoMinimo = Math.min(...escursioni.filter((e) => !e.prezzoGommone).map((e) => Number(e.prezzoAdulti)));
 const altre = escursioni.filter((e) => !e.inEvidenza);
 ---
 <Base
-  titolo="Escursioni Maddalena · Escursioni in maxi gommone nell'Arcipelago di La Maddalena"
-  descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, mezza giornata, tramonto, tour privati e Corsica. Partenza da La Maddalena, Palau e Cannigione: prenoti online."
+  titolo="Escursioni La Maddalena · Escursioni in maxi gommone nell'Arcipelago di La Maddalena"
+  descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, mezza giornata, Sunset al tramonto, tour privati e Corsica. Partenza da La Maddalena, Palau e Cannigione: prenoti online."
 
 >
   <section slot="hero" class="hero" aria-label="Apertura">
@@ -33,7 +35,7 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
       <div class="hero__contenuto">
         <p class="hero__occhiello">Arcipelago di La Maddalena · Sardegna</p>
         <h1 class="hero__titolo">L'arcipelago di La Maddalena in maxi gommone.</h1>
-        <p class="hero__testo">Il Tour delle 7 isole, la mezza giornata, il tramonto con aperitivo, il tour privato e la Corsica. Partenze da La Maddalena, Palau e Cannigione.</p>
+        <p class="hero__testo">Il Tour delle 7 isole, la mezza giornata, il Sunset con aperitivo al tramonto, il tour privato e la Corsica. Partenze da La Maddalena, Palau e Cannigione.</p>
         <div class="hero__azioni">
           {regole.attive
             ? <a href="/prenota/" class="btn btn--wa btn--grande">Prenota online</a>
@@ -98,12 +100,12 @@ const altre = escursioni.filter((e) => !e.inEvidenza);
       <div class="intestazione">
         <div class="intestazione__testo">
           <p class="occhiello">Mezza giornata</p>
-          <h2 id="mezza-titolo" class="titolo-sezione">Due percorsi, a seconda del vento</h2>
+          <h2 id="mezza-titolo" class="titolo-sezione">Due giri, a seconda del vento</h2>
         </div>
-        <p class="intestazione__lato">Mattina o pomeriggio, da La Maddalena (con passaggio a Palau) o da Cannigione. Con il maestrale si va sul lato riparato dell'arcipelago.</p>
+        <p class="intestazione__lato">Mattina o pomeriggio, da La Maddalena (con passaggio a Palau) o da Cannigione. In quattro ore si fa un giro solo: Caprera oppure le isole del nord, lo sceglie lo skipper in base al vento.</p>
       </div>
       <div class="percorso">
-        <Mappa variante="mezza" didascalia="Percorsi indicativi: lo skipper sceglie in base al vento." />
+        <Mappa variante="mezza" didascalia="Percorsi indicativi: lo skipper sceglie il giro in base al vento." />
         <div style="display:flex;flex-direction:column;gap:24px">
           {percorsiMezza.map((p, i) => (
             <div style="display:flex;flex-direction:column;gap:12px">

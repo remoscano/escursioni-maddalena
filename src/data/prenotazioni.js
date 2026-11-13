@@ -8,8 +8,8 @@
 //
 // Listini dal cliente (8 novembre 2026):
 // - giornata intera e mezza giornata, a persona e in esclusiva;
-// - tramonto (11 novembre 2026): listino suo, da 100 € a persona (gruppo, max 8 persone, minimo 6) e da 780 a 900 € in esclusiva;
-//   periodi e ridotti calcolati da Claude su indicazione di Remo, da far confermare
+// - tramonto, "Sunset": listino suo, da 100 € a persona (gruppo, minimo 6 e massimo 10 persone) e da 700 a 800 € in esclusiva
+//   (Remo, 13 novembre 2026); periodi e ridotti proposti da Claude, confermati da Remo il 13 novembre 2026
 // - Corsica: solo in esclusiva, stesso prezzo delle altre giornate intere in esclusiva;
 // - a tutte le esclusive si aggiunge il carburante.
 // Tutti e tre i gommoni si possono prenotare in esclusiva (quello da 6 posti fa solo esclusive).
@@ -20,8 +20,9 @@ export const regole = {
   stagione: { dal: '2027-05-01', al: '2027-10-31' },
   // Online si prenota fino alle 20 del giorno prima; per l'ultimo minuto si scrive su WhatsApp.
   chiusuraOnline: { giorniPrima: 1, ora: '20:00' },
-  // Ritrovo al molo: quanti minuti prima della partenza (Remo, 8 novembre 2026).
-  anticipoRitrovo: 15,
+  // Ritrovo al molo: quanti minuti prima della partenza, per imbarco (Remo, 13 novembre 2026:
+  // alle 9 a Palau e alle 9:15 a La Maddalena per le uscite delle 9:30).
+  anticipoRitrovo: { maddalena: 15, palau: 30, cannigione: 15 },
   // Per quanti minuti i posti restano tenuti da parte mentre il cliente paga.
   minutiPerPagare: 30,
   // Rimborso completo se il cliente annulla almeno 48 ore prima.
@@ -41,16 +42,19 @@ export const CARBURANTE_MANCA = 'come si calcola e quando si paga';
 export const testoCarburante = (segnaposto = (e) => `[${e}]`) =>
   `Il carburante non è compreso e si paga a parte: ${regole.carburante || segnaposto(CARBURANTE_MANCA)}.`;
 
-// Ora di ritrovo al molo per un turno ('9:30 – 13:30' → '9:15').
-export function oraRitrovo(orario) {
+// Minuti di anticipo del ritrovo per un imbarco ('palau' → 30).
+export const anticipoDi = (imbarco) => regole.anticipoRitrovo[imbarco] ?? regole.anticipoRitrovo.maddalena;
+
+// Ora di ritrovo al molo per un turno e un imbarco ('9:30 – 13:30', 'palau' → '9:00').
+export function oraRitrovo(orario, imbarco = 'maddalena') {
   const m = /^(\d{1,2}):(\d{2})/.exec(String(orario || '').trim());
   if (!m) return '';
-  const minuti = Number(m[1]) * 60 + Number(m[2]) - regole.anticipoRitrovo;
+  const minuti = Number(m[1]) * 60 + Number(m[2]) - anticipoDi(imbarco);
   return `${Math.floor(minuti / 60)}:${String(minuti % 60).padStart(2, '0')}`;
 }
-export const testoRitrovo = (orario) => {
-  const ora = oraRitrovo(orario);
-  return ora ? `Ritrovo al molo alle ${ora}, ${regole.anticipoRitrovo} minuti prima della partenza: l'uscita non può aspettare chi arriva in ritardo.` : '';
+export const testoRitrovo = (orario, imbarco = 'maddalena') => {
+  const ora = oraRitrovo(orario, imbarco);
+  return ora ? `Ritrovo al molo alle ${ora}, ${anticipoDi(imbarco)} minuti prima della partenza: l'uscita non può aspettare chi arriva in ritardo.` : '';
 };
 
 // Frase unica su chiusura online e gruppi grandi (pagina Prenota, FAQ, condizioni, pagine escursione).
@@ -88,8 +92,8 @@ const mezzaPersona = [
   { dal: '07-01', al: '08-31', adulto: 75, bambino: 70 },
   { dal: '09-01', al: '10-31', adulto: 65, bambino: 60 },
 ];
-// Tramonto con aperitivo (11 novembre 2026). Remo: "da 100 € a persona", "da 780 € in bassa stagione fino a 900 € in altissima";
-// periodi e ridotti proposti da Claude sullo schema delle altre uscite (ridotto 10 € in meno).
+// Sunset, aperitivo al tramonto. Remo: "100 € a persona" (11 novembre 2026), in esclusiva "700 – 800 € a seconda del periodo"
+// (13 novembre 2026). Periodi e ridotti proposti da Claude (ridotto 10 € in meno), confermati da Remo il 13 novembre 2026.
 const tramontoPersona = [
   { dal: '05-01', al: '06-30', adulto: 100, bambino: 90 },
   { dal: '07-01', al: '07-31', adulto: 110, bambino: 100 },
@@ -98,13 +102,13 @@ const tramontoPersona = [
   { dal: '10-01', al: '10-31', adulto: 100, bambino: 90 },
 ];
 const tramontoEsclusiva = [
-  { dal: '05-01', al: '06-30', barca: 780 },
-  { dal: '07-01', al: '07-31', barca: 840 },
-  { dal: '08-01', al: '08-31', barca: 900 },
-  { dal: '09-01', al: '09-30', barca: 840 },
-  { dal: '10-01', al: '10-31', barca: 780 },
+  { dal: '05-01', al: '06-30', barca: 700 },
+  { dal: '07-01', al: '07-31', barca: 750 },
+  { dal: '08-01', al: '08-31', barca: 800 },
+  { dal: '09-01', al: '09-30', barca: 750 },
+  { dal: '10-01', al: '10-31', barca: 700 },
 ];
-// Orari del tramonto: seguono la luce, quindi cambiano nei mesi e sono indicativi (Remo, 11 novembre 2026).
+// Orari del tramonto: seguono la luce, quindi cambiano nei mesi e sono indicativi (proposti da Claude, confermati da Remo il 13 novembre 2026).
 const orariTramonto = [
   { dal: '05-01', al: '05-31', orario: '18:30 – 21:00' },
   { dal: '06-01', al: '06-30', orario: '19:00 – 21:30' },
@@ -163,11 +167,11 @@ export const offerte = {
   tramonto: {
     tipo: 'gruppo',
     minimo: 6,
-    // Al tramonto di gruppo al massimo 8 persone per gommone (Remo, 11 novembre 2026).
-    postiMax: 8,
+    // Al Sunset di gruppo al massimo 10 persone per gommone (Remo, 13 novembre 2026).
+    postiMax: 10,
     imbarchi: ['maddalena', 'palau', 'cannigione'],
     turni: [
-      { id: 'tramonto', nome: 'Tramonto con aperitivo', orario: '18:30 – 21:00', orari: orariTramonto, indicativo: true, blocchi: ['sera'], prezzi: tramontoPersona },
+      { id: 'tramonto', nome: 'Sunset, aperitivo al tramonto', orario: '18:30 – 21:00', orari: orariTramonto, indicativo: true, blocchi: ['sera'], prezzi: tramontoPersona },
     ],
   },
   'tour-privato': {
@@ -178,7 +182,7 @@ export const offerte = {
     turni: [
       { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '9:30 – 13:30', blocchi: ['mattina'], prezzi: mezzaEsclusiva },
       { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:00 – 18:00', blocchi: ['pomeriggio', 'sera'], prezzi: mezzaEsclusiva },
-      { id: 'tramonto', nome: 'Tramonto con aperitivo', orario: '18:30 – 21:00', orari: orariTramonto, indicativo: true, blocchi: ['sera'], prezzi: tramontoEsclusiva },
+      { id: 'tramonto', nome: 'Sunset, aperitivo al tramonto', orario: '18:30 – 21:00', orari: orariTramonto, indicativo: true, blocchi: ['sera'], prezzi: tramontoEsclusiva },
       { id: 'giornata', nome: 'Giornata intera', orario: '9:30 – 17:30', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataEsclusiva },
     ],
   },

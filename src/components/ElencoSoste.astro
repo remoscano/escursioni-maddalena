@@ -4,7 +4,7 @@ import Icona from './Icona.astro';
 import Dato from './Dato.astro';
 interface Props { programma: any[]; rientro?: string; turchese?: boolean }
 const { programma, rientro, turchese = false } = Astro.props;
-const tappe = programma.filter((t) => t.tipo !== 'imbarco');
+const tappe = programma.filter((t) => t.tipo !== 'imbarco' && t.tipo !== 'percorso');
 ---
 <ul class="soste">
   {tappe.map((t) => (

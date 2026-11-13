@@ -1,4 +1,4 @@
-/* Escursioni Maddalena — stili del sito
+/* Escursioni La Maddalena — stili del sito
    Identità "Bianco e arancio" (11 novembre 2026, riferimento indicato da Remo: escursi.com):
    sfondo bianco, testi grafite, arancio per i bottoni, carattere Urbanist.
    I nomi delle variabili sono rimasti quelli di prima (sabbia, mare, laguna…) per non toccare tutto il codice. */
@@ -580,3 +580,8 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   .modulo { padding: 24px; border-radius: 24px; }
   .percorso, .due-colonne { gap: 36px; }
 }
+
+/* Foto dei piatti dei ristoranti convenzionati (pagina del Tour delle 7 isole) */
+.piatti { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.piatti .foto { aspect-ratio: 1 / 1; }
+@media (max-width: 760px) { .piatti { grid-template-columns: repeat(2, 1fr); gap: 12px; } }

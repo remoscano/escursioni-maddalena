@@ -97,7 +97,7 @@ export const condizioni = [
   {
     titolo: 'A bordo',
     punti: [
-      [`Il ritrovo al molo, a La Maddalena e a Palau, è ${regole.anticipoRitrovo} minuti prima della partenza (alle 9:15 per le uscite delle 9:30). L'uscita non può aspettare chi arriva in ritardo.`],
+      [`Il ritrovo al molo è ${regole.anticipoRitrovo.maddalena} minuti prima della partenza a La Maddalena e a Cannigione, ${regole.anticipoRitrovo.palau} minuti prima a Palau (per le uscite delle 9:30: alle 9:15 a La Maddalena e a Cannigione, alle 9:00 a Palau). L'uscita non può aspettare chi arriva in ritardo.`],
       ["Segui le indicazioni dello skipper, che è responsabile della sicurezza a bordo."],
       ['I minori partecipano accompagnati da un adulto.'],
       ['Gli animali non sono ammessi a bordo.'],

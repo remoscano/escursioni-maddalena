@@ -3,7 +3,7 @@
 // Basta compilarli qui e si aggiornano in tutte le pagine.
 
 export const sito = {
-  nome: 'Escursioni Maddalena',
+  nome: 'Escursioni La Maddalena', // nome scelto da Remo il 13 novembre 2026 (prima 'Escursioni Maddalena')
 
   // Indirizzo definitivo del sito (serve per i link canonici).
   // Da cambiare quando si collega il dominio.
@@ -36,7 +36,7 @@ export const sito = {
     palau: {
       nome: 'Palau',
       molo: '', // es. 'Porto turistico, banchina ...'
-      ritrovo: '9:15', // uscite del mattino; in generale 15 minuti prima della partenza (regole.anticipoRitrovo)
+      ritrovo: '9:00', // uscite delle 9:30; in generale 30 minuti prima della partenza (regole.anticipoRitrovo, Remo 13 novembre 2026)
       parcheggio: '',
       mappa: '', // link Google Maps del punto di ritrovo
     },
@@ -62,7 +62,7 @@ export const sito = {
     { id: 'gruppo-1', modello: 'Joker Clubman 28', motori: '2 motori Suzuki da 200 cv', dotazioni: 'bagno, T-top', descrizione: "Il gommone delle uscite di gruppo: 8,5 metri, un grande prendisole a prua e il divanetto a U a poppa, dove si sta comodi anche in dodici. Ombra del T-top e bagno a bordo." },
     { id: 'gruppo-2', modello: 'BWA 30', motori: '2 motori Mercury da 250 cv', dotazioni: 'bagno, cabina, T-top', descrizione: "Più ampio, con cabina e bagno sotto coperta: comodo per cambiarsi con calma dopo il tuffo. A prua c'è il prendisole, e il T-top fa ombra mentre si naviga." },
     { id: 'esclusiva', modello: 'Joker 35', motori: '2 motori Suzuki da 300 cv', dotazioni: 'cabina, bagno, ombra', descrizione: "Il più grande della flotta, oltre 10 metri, riservato alle esclusive con al massimo 6 persone: spazio per tutti. Cabina con letto matrimoniale, bagno separato e un prendisole a prua dove ci si sdraia in più di quattro." },
-    { id: 'cannigione', modello: 'Honda 9.50', motori: '1 motore Honda da 350 cv', dotazioni: 'ombra', descrizione: "Il gommone di chi parte da Cannigione, con un motore Honda da 350 cavalli: arriva nell'arcipelago senza perdere tempo. Porta fino a 12 persone, con l'ombra a bordo." },
+    { id: 'cannigione', modello: 'Honda 9.50', motori: '1 motore Honda da 350 cv', dotazioni: 'T-top', descrizione: "Il gommone di chi parte da Cannigione, con un motore Honda da 350 cavalli: arriva nell'arcipelago senza perdere tempo. Porta fino a 12 persone, con l'ombra a bordo." },
   ],
   gommone: {
     // Scritta da Claude su richiesta di Remo (11 novembre 2026), solo con i dati della flotta già confermati.

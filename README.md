@@ -1,4 +1,4 @@
-# Escursioni Maddalena — sito web
+# Escursioni La Maddalena — sito web
 
 Sito statico fatto con [Astro](https://astro.build): produce HTML, CSS e un po' di JavaScript, senza server né database.
 Viene pubblicato su Cloudflare Pages a ogni modifica salvata su GitHub.

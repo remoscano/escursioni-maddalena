@@ -469,7 +469,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
     } catch (e) { errore(e); }
   }
   const messaggioAccesso = (nome: string, email: string, password: string, codice: string) =>
-    `Ciao! Ecco l'accesso all'area strutture di Escursioni Maddalena per ${nome}.\nIndirizzo: ${location.origin}/partner/\nEmail: ${email}\nPassword provvisoria: ${password} (al primo accesso ne sceglierai una tua)\nLink per i vostri ospiti: ${location.origin}/prenota/?p=${codice}`;
+    `Ciao! Ecco l'accesso all'area strutture di Escursioni La Maddalena per ${nome}.\nIndirizzo: ${location.origin}/partner/\nEmail: ${email}\nPassword provvisoria: ${password} (al primo accesso ne sceglierai una tua)\nLink per i vostri ospiti: ${location.origin}/prenota/?p=${codice}`;
   $('[data-strutture]').addEventListener('click', async (ev) => {
     const b = (ev.target as Element).closest<HTMLElement>('[data-struttura]');
     if (!b) return;
@@ -493,7 +493,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
       const testo = messaggioAccesso(corpo.nome, r.email, r.password, r.codice);
       $('[data-esito-struttura]').innerHTML = `<div class="messaggio-ok">Struttura creata. Manda questi dati alla struttura (la password non sarà più visibile):</div>
         <textarea rows="6" readonly>${h(testo)}</textarea>
-        <div class="azioni-riga"><a class="btn btn--bordo btn--piccolo" href="mailto:${h(r.email)}?subject=${encodeURIComponent('Accesso area strutture Escursioni Maddalena')}&body=${encodeURIComponent(testo)}">Manda per email</a></div>`;
+        <div class="azioni-riga"><a class="btn btn--bordo btn--piccolo" href="mailto:${h(r.email)}?subject=${encodeURIComponent('Accesso area strutture Escursioni La Maddalena')}&body=${encodeURIComponent(testo)}">Manda per email</a></div>`;
       f.reset();
       caricaStrutture();
     } catch (e) { errore(e); }

@@ -29,7 +29,7 @@ export async function onRequestPost({ request, env }) {
     await tentativi.sbagliato();
     throw new Errore(401, 'Email o password non corretti.');
   }
-  if (u.ruolo === 'partner' && !u.partner_attivo) throw new Errore(403, 'Questo account non è attivo: contatta Escursioni Maddalena.');
+  if (u.ruolo === 'partner' && !u.partner_attivo) throw new Errore(403, 'Questo account non è attivo: contatta Escursioni La Maddalena.');
   await tentativi.riuscito();
   const s = await creaSessione(env.DB, u.id);
   await esegui(env.DB, 'UPDATE utenti SET ultimo_accesso = :ora WHERE id = :id', { ora: new Date().toISOString(), id: u.id });

@@ -1,10 +1,10 @@
-# Istruzioni per Claude — sito Escursioni Maddalena
+# Istruzioni per Claude — sito Escursioni La Maddalena
 
 Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i contenuti; qui ci sono contesto, regole e cose da fare.
 
 ## Il progetto
 
-- **Cliente:** Escursioni Maddalena, escursioni in maxi gommone nell'Arcipelago di La Maddalena (Sardegna), con partenza da La Maddalena (porto principale) e Cannigione; a Palau il gommone passa a prendere i clienti.
+- **Cliente:** Escursioni La Maddalena (nome scelto da Remo il 13 novembre 2026; prima "Escursioni Maddalena"), escursioni in maxi gommone nell'Arcipelago di La Maddalena (Sardegna), con partenza da La Maddalena (porto principale) e Cannigione; a Palau il gommone passa a prendere i clienti.
 - **Chi lavora sul sito:** Remo (web designer/consulente, non programmatore). Parla italiano: rispondi in italiano, in modo semplice, senza gergo tecnico se non serve.
 - **Obiettivo del sito:** trasformare le visite in prenotazioni online pagate (escursione, data, orario, persone, imbarco). WhatsApp resta per domande, ultimo minuto e gruppi oltre 12 persone. Le altre piattaforme (GetYourGuide, Viator, Click&Boat…) NON sono collegate al sito: una persona dedicata inserisce a mano le loro prenotazioni nella gestione.
 - **Flotta:** 2 gommoni di gruppo, Joker Clubman 28 e BWA 30 (12 posti, uscita confermata con almeno 6 paganti), e il Joker 35 solo per le esclusive (6 posti). Modelli e motori in `sito.flotta`. Quarto gommone: Honda 9.50 (12 posti), solo per chi parte da Cannigione (Pontile La Sciumara, Via Lungomare A. Doria 7): mezze giornate, tramonto ed esclusive, stessi orari e prezzi; niente Tour delle 7 isole né Corsica da Cannigione. Ogni gommone ha i suoi imbarchi (`imbarchi` in `gommoni`), ogni offerta i suoi (`imbarchi` in `offerte`): il calendario dei posti dipende dall'imbarco scelto, che nella prenotazione viene prima della data. I gommoni di Palau e La Maddalena si possono prenotare in esclusiva, allo stesso prezzo: il sistema sceglie il più piccolo che basta (fino a 6 persone il gommone da 6, da 7 a 12 uno da 12). Stagione 2027: 1 maggio – 31 ottobre.
@@ -51,7 +51,7 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 - Home: apertura bianca (testo a sinistra, foto a destra), su tutte le escursioni, bottone "Prenota online"; poi le schede (7 isole in evidenza), il percorso del 7 isole e la cartina dei due percorsi della mezza giornata.
 - Un solo bottone arancio per sezione: "Prenota" dove la prenotazione online è attiva (`regole.attive` in `src/data/prenotazioni.js`), altrimenti la richiesta WhatsApp.
 - Icone a tratto da 24 px in `Icona.astro`; mai emoji.
-- Marchio: sole e due onde che disegnano la M (in `Logo.astro` e `public/favicon.svg`, ora azzurro e grafite). È una proposta: se il cliente fornisce un logo, va sostituito.
+- Marchio: sole e due onde che disegnano la M (in `Logo.astro` e `public/favicon.svg`, ora azzurro e grafite), con la scritta "Escursioni / La Maddalena". È una proposta, da rivedere (Remo, 13 novembre 2026): se il cliente fornisce un logo, va sostituito.
 - Accessibilità: contrasto almeno 4.5:1, bersagli tattili almeno 44 px, veri `<button>`/`<a>`/`<label>`, testo alternativo sulle foto.
 
 ## Regole sui contenuti
@@ -61,8 +61,10 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 - Mezza giornata e tramonto sono due attività diverse, con due pagine e due offerte (`mezza-giornata`, `tramonto`); il vecchio indirizzo `/escursioni/tramonto-mezza-giornata/` rimanda alla mezza giornata (`public/_redirects`). Migrazione `0003_mezza_giornata_tramonto.sql` per le prenotazioni già registrate.
 - Porti: La Maddalena è il porto di partenza dei tre gommoni di gruppo ed esclusiva (Il Porticciolo, Via Padule); Palau è un punto di raccolta (il gommone passa a prendere i clienti); l'Honda 9.50 parte da Cannigione. Sulle mappe: ancora azzurra = partenza da La Maddalena, puntini = passaggio a Palau.
 - Prezzi delle uscite di gruppo: intero da 11 anni, ridotto da 0 a 10 anni; nessuno viaggia gratis (Remo, 11 novembre 2026). Nel database i vecchi `neonati` contano come bambini.
-- Fatti da rispettare: alla Spiaggia Rosa di Budelli niente sbarco né bagno (si vede dal mare); il pranzo del Tour delle 7 isole è libero a La Maddalena e non incluso; la Corsica si fa solo in esclusiva (giornata intera, prezzi delle giornate in esclusiva) e serve un documento valido per l'espatrio; nelle esclusive il carburante è a parte. Tramonto ("sunset", 11 novembre 2026): aperitivo a bordo (prosecco, birra o Coca-Cola; tagliere salsiccia e formaggio o spiedini di frutta), sosta scelta col vento (il Pesce davanti al pontile, Santo Stefano, Villa Marina), di gruppo minimo 6 e massimo 8 persone (`postiMax` nell'offerta), listino suo da 100 € a persona, in esclusiva da 780 a 900 € (in esclusiva mete più lontane su richiesta); orari per mese in `orariTramonto`, indicativi; partenza consigliata da La Maddalena. Periodi, ridotti e orari del mese proposti da Claude: da far confermare a Remo.
-- Niente nomi di ristoranti sul sito: dove mangiare lo propone lo skipper ai clienti sul momento (Remo, 11 novembre 2026).
+- Fatti da rispettare: alla Spiaggia Rosa di Budelli niente sbarco né bagno (si vede dal mare); il pranzo del Tour delle 7 isole è libero a La Maddalena e non incluso; la Corsica si fa solo in esclusiva (giornata intera, prezzi delle giornate in esclusiva) e serve un documento valido per l'espatrio; nelle esclusive il carburante è a parte. Sunset, aperitivo al tramonto (slug `tramonto`; Remo, 11 e 13 novembre 2026): frigo di bordo con prosecco, birra, Coca-Cola e acqua; tagliere di salumi e formaggi (o solo formaggi) con spiedini di frutta fresca. Sosta di gruppo scelta dal comandante col vento: di solito Il Pesce, a Santo Stefano di fronte al pontile dei gommoni (3 minuti, acqua bassa, spiaggia), in alternativa Cala Villamarina. Di gruppo minimo 6 e massimo 10 persone (`postiMax`), da 100 € a persona; in esclusiva 700/750/800 € per periodo, con la possibilità di allungare fino a Spargi o Budelli o di fare il tramonto a Porto della Madonna o Caprera (meteo permettendo, carburante a parte). Orari per mese in `orariTramonto`, indicativi; partenza consigliata da La Maddalena (rientro al buio più corto). Periodi, ridotti e orari confermati da Remo il 13 novembre 2026.
+- Tour delle 7 isole: nei testi solo le isole (Santo Stefano, Caprera, La Maddalena, Spargi, Budelli dal mare, Razzoli e Santa Maria / Porto della Madonna), senza nomi di cale: dove fermarsi lo decide lo skipper col meteo (Remo, 13 novembre 2026). Se servono le cale, le alternative si scrivono con la barra: "Cala Villamarina / Il Pesce", "Cala Garibaldi / Cala Serena".
+- Mezza giornata: due giri distinti, mai insieme. Giro 1 Caprera (Cala Garibaldi / Cala Serena, Cala Coticcio); giro 2 isole del nord (Spargi, Spiaggia Rosa dal mare, Porto della Madonna, rientro diretto senza Santo Stefano). Il giro lo sceglie lo skipper col vento, non il cliente (Remo, 13 novembre 2026).
+- Niente nomi di ristoranti sul sito. Si dice però che, nella sosta a La Maddalena del Tour delle 7 isole, lo skipper può accompagnare i clienti in ristoranti tipici convenzionati, con pranzo sardo a prezzo agevolato; sulla pagina del 7 isole c'è la sezione con le foto dei piatti (`pranzo` in `escursioni.js`) (Remo, 13 novembre 2026).
 - Tono: diretto, caldo, concreto. Frasi brevi, seconda persona singolare ("scrivici", "scegli").
 - Niente servizi esterni che caricano cookie o tracciano (YouTube, Google Maps incorporata, Google Fonts, pixel pubblicitari). Se servono statistiche, Cloudflare Web Analytics. Ogni nuovo servizio va riportato nella pagina `/cookie/` e in `/privacy/`.
 - Alle strutture partner non si mostra il nome dell'ospite che ha prenotato dal loro link (solo data, escursione, persone, importo).
@@ -88,16 +90,16 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Fasce d'età (11 novembre 2026): ridotto da 0 a 10 anni, intero da 11, nessuna gratuità; tolti i neonati da prenotazione, gestione e testi
 - [x] Mezza giornata e tramonto separati; La Maddalena porto di partenza, Palau passaggio; mappe corrette (11 novembre 2026)
 - [x] Ombra a bordo su tutti i gommoni (Remo, 11 novembre 2026)
-- [x] Gommoni: modelli, motori e posti confermati, pagina "I gommoni e lo skipper" aggiornata (8 novembre 2026)
-- [x] Confermati da Remo (8 novembre 2026): Corsica 9:30 – 17:30 con Lavezzi, isola di Cavallo e Bonifacio (dall'11 novembre 2026: isola Piana, Lavezzi e Cavallo, senza Bonifacio); le due regole aggiunte alle condizioni (guasto = regola del maltempo; altre piattaforme = loro condizioni); nessuna autorizzazione da indicare; ritrovo 15 minuti prima della partenza a Palau e a La Maddalena (9:15 per le uscite delle 9:30)
+- [x] Gommoni: modelli, motori e posti confermati, pagina "I gommoni e lo skipper" aggiornata (8 novembre 2026). Due righe per gommone ok per ora; Honda 9.50 con le dotazioni degli altri tranne il bagno (Remo, 13 novembre 2026)
+- [x] Ritrovo (Remo, 13 novembre 2026): alle 9:00 a Palau e alle 9:15 a La Maddalena per le uscite delle 9:30, cioè 30 e 15 minuti prima (`regole.anticipoRitrovo` per imbarco; Cannigione 15)
+- [x] Sunset, mezza giornata a due giri, 7 isole senza cale, ristoranti convenzionati, nome "Escursioni La Maddalena" (13 novembre 2026)
+- [x] Confermati da Remo (8 novembre 2026): Corsica 9:30 – 17:30 con Lavezzi, isola di Cavallo e Bonifacio (dall'11 novembre 2026: isola Piana, Lavezzi e Cavallo, senza Bonifacio); le due regole aggiunte alle condizioni (guasto = regola del maltempo; altre piattaforme = loro condizioni); nessuna autorizzazione da indicare; ritrovo 15 minuti prima della partenza (dal 13 novembre 2026: 9:00 a Palau, 9:15 a La Maddalena)
 
 ### Da decidere o da avere dal cliente (Remo)
-- [ ] Molo di Palau (ancora da sapere) e orario di ritrovo a Palau ora che il gommone ci passa dopo la partenza da La Maddalena (per ora 9:15, come prima)
-- [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA
-- [ ] Imbarchi: parcheggio a Palau, link Google Maps del molo di Palau
-- [ ] Presentazione generale e due righe per ogni gommone scritte da Claude (11 novembre 2026) dalle schede dei modelli, da far controllare. Mancano le dotazioni a bordo (sedute, prendisole, scaletta, doccetta, gavone)
-- [ ] Testi delle soste della Corsica (isola Piana, Lavezzi, Cavallo) e percorso del tramonto. Mezza giornata fatta (11 novembre 2026): giro di Caprera (Coticcio, Napoletana, Giardinelli) o, con maestrale oltre 15 nodi, Spargi e La Maddalena (Cala Corsara, Cala Gavetta, Giardinelli). Lagunetta: riga scritta da Claude, da far controllare
-- [ ] Foto (le note sui segnaposto indicano gli scatti) ed eventuale logo
+- [ ] Molo di Palau: Remo manda il link (13 novembre 2026); poi `molo` e `mappa` in `sito.imbarchi.palau`. Parcheggio a Palau
+- [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA (Remo li manda insieme alle foto)
+- [ ] Testi delle soste della Corsica (isola Piana, Lavezzi, Cavallo) scritti da Claude il 13 novembre 2026: da far controllare a Remo
+- [ ] Foto (le note sui segnaposto indicano gli scatti, comprese quelle dei piatti dei ristoranti convenzionati) e logo da rivedere
 - [ ] Risposte automatiche di WhatsApp Business (benvenuto, assenza fuori orario, risposte rapide): testi proposti da Claude, li imposta il cliente nell'app
 
 ### Da attivare prima di aprire le prenotazioni vere

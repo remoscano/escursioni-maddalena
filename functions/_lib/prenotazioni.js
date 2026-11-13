@@ -39,6 +39,7 @@ export function vistaCliente(p) {
     orarioIndicativo: Boolean(t?.indicativo),
     carburanteEscluso: Boolean(offerta?.carburanteEscluso),
     imbarco: nomeImbarco(p.imbarco),
+    imbarcoId: p.imbarco,
     adulti: p.adulti,
     bambini: p.bambini,
     neonati: p.neonati,
@@ -84,7 +85,7 @@ export async function confermaPagamento(contesto, p, { importo, rif, chi }) {
 }
 
 // ---------- Email ----------
-// Funzionano quando ci sono RESEND_API_KEY ed EMAIL_MITTENTE (es. "Escursioni Maddalena <prenotazioni@dominio.it>").
+// Funzionano quando ci sono RESEND_API_KEY ed EMAIL_MITTENTE (es. "Escursioni La Maddalena <prenotazioni@dominio.it>").
 // Serve il dominio collegato. Prima di aprire le prenotazioni vere sono necessarie: la legge chiede di mandare
 // al cliente la conferma con le condizioni su un supporto durevole (art. 51, comma 7, Codice del consumo).
 
@@ -124,7 +125,7 @@ export async function inviaEmailConferma(env, p, origine) {
     `Data: ${v.dataLeggibile}`,
     `Imbarco: ${v.imbarco}`,
     v.orario ? `Orario: ${v.orario}${v.orarioIndicativo ? ' (indicativo: segue la luce del tramonto)' : ''}` : 'Orario: te lo confermiamo noi',
-    testoRitrovo(v.orario) || null,
+    testoRitrovo(v.orario, v.imbarcoId) || null,
     `Persone: ${persone}`,
     `Totale pagato: ${euroDaCent(p.pagato || p.totale)} € (IVA inclusa)`,
     v.carburanteEscluso ? testoCarburante() : null,

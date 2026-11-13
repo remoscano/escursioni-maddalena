@@ -81,7 +81,7 @@ export async function avviaPagamento(env, metodo, p, url) {
         payment_source: {
           paypal: {
             experience_context: {
-              brand_name: 'Escursioni Maddalena',
+              brand_name: 'Escursioni La Maddalena',
               locale: 'it-IT',
               shipping_preference: 'NO_SHIPPING',
               user_action: 'PAY_NOW',

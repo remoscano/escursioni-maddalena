@@ -398,7 +398,7 @@ const perOspite = area === 'struttura';
       const info: string[] = [];
       if (offerta.tipo === 'gruppo') info.push(h(`L'uscita parte con almeno ${offerta.minimo} persone paganti: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`));
       if (turno.indicativo) info.push(h("L'orario del tramonto è indicativo: segue la luce della giornata."));
-      if (testoRitrovo(orarioDi(turno, st.data))) info.push(h(testoRitrovo(orarioDi(turno, st.data))));
+      if (testoRitrovo(orarioDi(turno, st.data), imbarco())) info.push(h(testoRitrovo(orarioDi(turno, st.data), imbarco())));
       if (calcolo.carburanteEscluso) info.push(regole.carburante ? h(testoCarburante()) : testoCarburante(segnaposto));
       if (offerta.documento || turno.documento) info.push(h("Si va in Corsica: serve un documento valido per l'espatrio per ogni persona, anche per i bambini."));
       info.push(h(`Cancellazione gratuita fino a ${regole.cancellazioneGratisOre} ore prima. Con mare o vento non sicuri annulliamo noi: rimborso completo o nuova data, scegli tu.`));

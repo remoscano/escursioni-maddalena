@@ -3,7 +3,7 @@
 import Base from '../../layouts/Base.astro';
 import { sito } from '../../data/sito.js';
 ---
-<Base titolo="La tua prenotazione" descrizione="Stato della tua prenotazione con Escursioni Maddalena." nascosta senzaBarra>
+<Base titolo="La tua prenotazione" descrizione="Stato della tua prenotazione con Escursioni La Maddalena." nascosta senzaBarra>
   <section class="sezione" style="padding-top:56px">
     <div class="contenitore" style="max-width:760px">
       <div class="esito" data-esito data-whatsapp={sito.contatti.whatsapp} data-telefono={sito.contatti.telefonoVisibile}>
@@ -67,7 +67,7 @@ import { sito } from '../../data/sito.js';
     const adesso = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
     const dettagli = [`Codice ${p.codice}`, p.turno, persone(p.adulti, p.bambini, p.neonati),
       p.documento ? "Porta un documento valido per l'espatrio per ogni persona, anche per i bambini." : ''].filter(Boolean).join('\n');
-    const righe = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Escursioni Maddalena//IT', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    const righe = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Escursioni La Maddalena//IT', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
       ...(conOrario ? ORA_ROMA : []),
       'BEGIN:VEVENT', `UID:${p.codice}@escursioni-maddalena`, `DTSTAMP:${adesso}`,
       ...(conOrario ? [`DTSTART;TZID=Europe/Rome:${giorno}T${ini}00`, `DTEND;TZID=Europe/Rome:${giorno}T${fin}00`] : [`DTSTART;VALUE=DATE:${giorno}`]),
@@ -96,7 +96,7 @@ import { sito } from '../../data/sito.js';
       // Note in HTML: i testi sono protetti con h(), il segnaposto del carburante è già HTML.
       const note = [
         p.documento && h("Si va in Corsica: porta un documento valido per l'espatrio per ogni persona, anche per i bambini."),
-        testoRitrovo(p.orario) && h(testoRitrovo(p.orario)),
+        testoRitrovo(p.orario, p.imbarcoId) && h(testoRitrovo(p.orario, p.imbarcoId)),
         p.carburanteEscluso && (regole.carburante ? h(testoCarburante()) : testoCarburante(segnaposto)),
         !p.privato && p.minimo && h(`L'uscita parte con almeno ${p.minimo} persone paganti: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`),
         h(`Cancellazione gratuita fino a ${p.cancellazioneGratisOre} ore prima: scrivici su WhatsApp. Con mare o vento non sicuri annulliamo noi e scegli tu tra rimborso completo e nuova data.`),

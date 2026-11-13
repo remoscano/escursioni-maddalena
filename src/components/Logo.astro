@@ -1,7 +1,7 @@
 ---
 // Marchio: un sole e due onde che disegnano la M di Maddalena.
 interface Props { size?: number; href?: string; etichetta?: string }
-const { size = 46, href = '/', etichetta = 'Escursioni Maddalena, torna alla home' } = Astro.props;
+const { size = 46, href = '/', etichetta = 'Escursioni La Maddalena, torna alla home' } = Astro.props;
 ---
 <a href={href} class="logo" aria-label={etichetta}>
   <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
@@ -11,6 +11,6 @@ const { size = 46, href = '/', etichetta = 'Escursioni Maddalena, torna alla hom
   </svg>
   <span class="logo__testo">
     <span class="logo__sopra">Escursioni</span>
-    <span class="logo__nome">Maddalena</span>
+    <span class="logo__nome">La Maddalena</span>
   </span>
 </a>

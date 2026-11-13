@@ -143,7 +143,7 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
           ))}
         </ol>
         <div style="display:flex;flex-direction:column;gap:20px">
-          {e.mappa === 'mezza' && <Mappa variante="mezza" didascalia="Percorsi indicativi della mezza giornata: lo skipper sceglie in base al vento." />}
+          {e.mappa === 'mezza' && <Mappa variante="mezza" didascalia="Percorsi indicativi della mezza giornata: lo skipper sceglie il giro in base al vento." />}
           {e.mappa === true && <Mappa didascalia="Percorso indicativo. Il punto rosa è la Spiaggia Rosa, che si vede solo dal mare." />}
           <dl class="numeri">
             {e.numeri.map((n: any) => <div><dt>{n.etichetta}</dt><dd>{n.valore}</dd></div>)}
@@ -159,6 +159,23 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
       </div>
     </div>
   </section>
+
+  {e.pranzo && (
+    <section id="pranzo" class="sezione" aria-labelledby="pranzo-titolo">
+      <div class="contenitore pila">
+        <div class="intestazione">
+          <div class="intestazione__testo">
+            <p class="occhiello">Ristoranti convenzionati</p>
+            <h2 id="pranzo-titolo" class="titolo-sezione">{e.pranzo.titolo}</h2>
+          </div>
+          <p class="intestazione__lato">{e.pranzo.testo}</p>
+        </div>
+        <div class="piatti">
+          {e.pranzo.foto.map((n: string, i: number) => <Foto nota={n} tono={i % 2 ? 'sabbia' : 'acqua'} sizes="(max-width: 760px) 50vw, 25vw" />)}
+        </div>
+      </div>
+    </section>
+  )}
 
   <section id="pratiche" class="sezione" aria-labelledby="pratiche-titolo">
     <div class="contenitore pila">
@@ -193,19 +210,19 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
         </div>
         <div class="box">
           <h3>Partenza da La Maddalena</h3>
-          <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo} minuti prima della partenza{!serale && <Fragment> (alle <Dato v={imbarchi.maddalena.ritrovo} e=\"ora\" /> per le uscite delle 9:30)</Fragment>}.</p>
+          <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.maddalena} minuti prima della partenza{!serale && <Fragment> (alle <Dato v={imbarchi.maddalena.ritrovo} e=\"ora\" /> per le uscite delle 9:30)</Fragment>}.</p>
           <p>Il nostro porto di partenza. Comodo se dormi sull'isola.</p>
         </div>
         <div class="box">
           <h3>Passaggio a Palau</h3>
           <p>Il gommone parte da La Maddalena e passa a prendere chi si imbarca a Palau.</p>
-          <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo} minuti prima della partenza{!serale && <Fragment> (alle <Dato v={imbarchi.palau.ritrovo} e=\"ora\" /> per le uscite delle 9:30)</Fragment>}.</p>
+          <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.palau} minuti prima della partenza{!serale && <Fragment> (alle <Dato v={imbarchi.palau.ritrovo} e=\"ora\" /> per le uscite delle 9:30)</Fragment>}.</p>
           <p>Comodo se dormi in Gallura. Parcheggio: <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" />.</p>
         </div>
         {offerte[e.slug]?.imbarchi.includes('cannigione') && (
           <div class="box">
             <h3>Imbarco a Cannigione</h3>
-            <p><Dato v={imbarchi.cannigione.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo} minuti prima della partenza{!serale && <Fragment> (alle <Dato v={imbarchi.cannigione.ritrovo} e=\"ora\" /> per le uscite delle 9:30)</Fragment>}.</p>
+            <p><Dato v={imbarchi.cannigione.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.cannigione} minuti prima della partenza{!serale && <Fragment> (alle <Dato v={imbarchi.cannigione.ritrovo} e=\"ora\" /> per le uscite delle 9:30)</Fragment>}.</p>
             <p>Comodo se dormi a Cannigione, ad Arzachena o in Costa Smeralda: da qui parte un gommone dedicato.</p>
           </div>
         )}
