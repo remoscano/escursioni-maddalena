@@ -9,17 +9,16 @@ const { imbarchi, regole } = sito;
 <div class="griglia-info">
   <div class="box">
     <span class="box__icona"><Icona nome="luogo" size={24} tratto={1.8} /></span>
-    <h3>Due punti d'imbarco</h3>
+    <h3>Tre punti d'imbarco</h3>
     <p><strong>La Maddalena</strong> · <Dato v={imbarchi.maddalena.molo} e="molo e indirizzo" />, ritrovo {regoleP.anticipoRitrovo.maddalena} minuti prima della partenza (alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" /> per le uscite delle 9:30)</p>
     <p><strong>Palau</strong> (ti passiamo a prendere) · <Dato v={imbarchi.palau.molo} e="molo e indirizzo" />, ritrovo {regoleP.anticipoRitrovo.palau} minuti prima della partenza (alle <Dato v={imbarchi.palau.ritrovo} e="ora" /> per le uscite delle 9:30)</p>
+    <p><strong>Cannigione</strong> (gommone dedicato) · <Dato v={imbarchi.cannigione.molo} e="molo e indirizzo" />, ritrovo {regoleP.anticipoRitrovo.cannigione} minuti prima della partenza (alle <Dato v={imbarchi.cannigione.ritrovo} e="ora" /> per le uscite delle 9:30)</p>
   </div>
   <div class="box">
     <span class="box__icona"><Icona nome="borsa" size={24} tratto={1.8} /></span>
     <h3>Cosa portare</h3>
     <ul>
-      <li>Costume, telo e un cambio</li>
-      <li>Crema solare, cappello e occhiali</li>
-      <li>La voglia di divertirti e passare una giornata indimenticabile</li>
+      {sito.cosaPortare.map((x) => <li>{x}</li>)}
     </ul>
   </div>
   <div class="box">

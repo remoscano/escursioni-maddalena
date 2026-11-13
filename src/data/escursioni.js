@@ -67,7 +67,7 @@ export const escursioni = [
     ],
     incluso: ['Skipper per tutta la giornata', 'Carburante', 'Ticket del Parco'],
     inclusoMancante: null,
-    nonIncluso: ['Pranzo: libero a La Maddalena, anche in un ristorante convenzionato a prezzo agevolato, oppure al sacco', 'Cibo e bevande', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
+    nonIncluso: ['Pranzo: libero a La Maddalena, anche in un ristorante convenzionato a prezzo agevolato, oppure al sacco', 'Altro cibo e bevande a bordo', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
     nonInclusoMancante: null,
     note: [],
     // Ristoranti convenzionati a La Maddalena, senza nomi (Remo, 13 novembre 2026): la sezione mostra le foto dei piatti.
@@ -132,6 +132,7 @@ export const escursioni = [
     // Sunset, aperitivo al tramonto: dati di Remo dell'11 e del 13 novembre 2026.
     slug: 'tramonto',
     titolo: 'Sunset, aperitivo al tramonto',
+    nomeBreve: 'Sunset', // negli elenchi con altre escursioni
     titoloPagina: 'Sunset: aperitivo al tramonto in maxi gommone',
     etichette: ['Aperitivo a bordo', `Massimo ${posti('tramonto')} persone`],
     breve: "L'aperitivo in gommone al tramonto: prosecco, un tagliere e una sosta in acqua calma a Santo Stefano.",
@@ -188,7 +189,7 @@ export const escursioni = [
     intro:
       "Il maxi gommone solo per il vostro gruppo: famiglie, amici, aziende o un'occasione speciale. Itinerario, orari e soste si decidono insieme allo skipper.",
     durata: 'Mezza giornata, giornata o Sunset',
-    orari: 'mezza giornata, giornata intera o Sunset al tramonto',
+    orari: 'da concordare',
     ore: '',
     durataTesto: 'Da 2 ore e mezza a 8 ore',
     prezzoAdulti: String(da('tour-privato').barca),

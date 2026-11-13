@@ -74,6 +74,14 @@ export const sito = {
     descrizione: '', // anni di mare, lingue parlate
   },
 
+  // "Cosa portare": un'unica lista per home, Info utili e pagine escursione (Remo, 13 novembre 2026:
+  // niente acqua né contanti; cibo e bevande stanno nel "Non incluso" di ogni escursione).
+  cosaPortare: [
+    'Costume, telo e un cambio',
+    'Crema solare, cappello e occhiali',
+    'La voglia di divertirti e passare una giornata indimenticabile',
+  ],
+
   regole: {
     maltempo: "Se mare o vento non sono sicuri annulliamo noi e scegli tu: rimborso completo o un'altra data.", // rimborso o cambio data
     ticketParco: 'Sì, è incluso nel prezzo di tutte le escursioni.',

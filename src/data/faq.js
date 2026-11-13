@@ -79,7 +79,7 @@ export const faq = [
         id: 'portare',
         domanda: 'Cosa devo portare?',
         risposta:
-          "Costume, telo e un cambio, crema solare, cappello e occhiali, qualcosa da mangiare. Se vuoi fare snorkeling porta maschera e boccaglio: per igiene non li forniamo, anche se a bordo ne teniamo qualcuno. Per i bambini, se vuoi, un giubbotto di salvataggio della loro misura. E soprattutto la voglia di divertirti e passare una giornata indimenticabile.",
+          "Costume, telo e un cambio, crema solare, cappello e occhiali. Se vuoi fare snorkeling porta maschera e boccaglio: per igiene non li forniamo, anche se a bordo ne teniamo qualcuno. Per i bambini, se vuoi, un giubbotto di salvataggio della loro misura. Cibo e bevande: nelle uscite di gruppo sono a carico tuo, nel Sunset c'è l'aperitivo e nei tour in esclusiva le bevande sono incluse. Ogni escursione lo dice nella lista \"Non incluso\". E soprattutto porta la voglia di divertirti e passare una giornata indimenticabile.",
       },
     ],
   },

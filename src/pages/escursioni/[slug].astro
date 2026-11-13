@@ -201,11 +201,8 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
         <div class="box">
           <h3>Cosa portare</h3>
           <ul>
-            <li>Costume, telo e un cambio</li>
-            <li>Crema solare, cappello e occhiali</li>
-            <li>Acqua da bere</li>
             {e.slug === 'corsica-lavezzi-bonifacio' && <li>Carta d'identità valida per l'espatrio o passaporto</li>}
-            {e.slug === 'tour-7-isole' && <li>Contanti o carta per il pranzo</li>}
+            {sito.cosaPortare.map((x: string) => <li>{x}</li>)}
           </ul>
         </div>
         <div class="box">

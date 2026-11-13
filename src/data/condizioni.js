@@ -17,13 +17,17 @@ import {
 const { azienda, contatti } = sito;
 const v = (valore, etichetta) => (valore === undefined || valore === null || String(valore).trim() === '' ? { manca: etichetta } : String(valore));
 
-const nomiDa = (imbarco) => escursioni.filter((e) => offerte[e.slug]?.imbarchi.includes(imbarco)).map((e) => e.titolo).join(' e ');
-const nomi = (tipo) => escursioni.filter((e) => offerte[e.slug]?.tipo === tipo).map((e) => e.titolo).join(', ');
+// Elenco all'italiana ("A, B e C"); negli elenchi si usa il nome breve, se c'è (es. "Sunset").
+const elenco = (n) => (n.length > 1 ? `${n.slice(0, -1).join(', ')} e ${n.at(-1)}` : n[0] ?? '');
+const nome = (e) => e.nomeBreve ?? e.titolo;
+const nomiDa = (imbarco) => elenco(escursioni.filter((e) => offerte[e.slug]?.imbarchi.includes(imbarco)).map(nome));
+const nomi = (tipo) => elenco(escursioni.filter((e) => offerte[e.slug]?.tipo === tipo).map(nome));
+const postiSunset = offerte.tramonto?.postiMax;
 const minimo = Math.min(...Object.values(offerte).filter((o) => o.tipo === 'gruppo').map((o) => o.minimo));
 const piuPiccolo = Math.min(...gommoni.map((g) => g.posti));
 const { bambiniFinoA } = regole.eta;
 
-export const aggiornamento = '11 novembre 2026';
+export const aggiornamento = '13 novembre 2026';
 
 export const condizioni = [
   {
@@ -37,7 +41,7 @@ export const condizioni = [
   {
     titolo: 'Le escursioni',
     punti: [
-      [`Uscite di gruppo (${nomi('gruppo')}): prenoti i posti per le persone del tuo gruppo, a bordo con altri ospiti, fino a ${postiMassimi} persone sul gommone.`],
+      [`Uscite di gruppo (${nomi('gruppo')}): prenoti i posti per le persone del tuo gruppo, a bordo con altri ospiti, fino a ${postiMassimi} persone sul gommone${postiSunset ? ` (${postiSunset} al Sunset)` : ''}.`],
       [`In esclusiva (${nomi('esclusiva')}): il gommone è solo per il tuo gruppo, fino a ${postiMassimi} persone. In base a quante siete vi assegniamo il gommone da ${piuPiccolo} posti o uno da ${postiMassimi}. Il prezzo è per gommone, non a persona.`],
       [`Partenza da La Maddalena, con passaggio a Palau per chi si imbarca lì, oppure da Cannigione. Da Cannigione parte un gommone dedicato, solo per ${nomiDa('cannigione')}.`],
       ["Con te c'è sempre lo skipper: non noleggiamo gommoni senza skipper."],
