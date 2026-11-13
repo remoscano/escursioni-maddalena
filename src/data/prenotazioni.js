@@ -43,6 +43,9 @@ export const regole = {
   grazieOreDopo: 2,
   // Buoni regalo comprati online: importi proposti e validità.
   buoni: { importi: [50, 100, 150, 200, 300], minimo: 30, massimo: 2000, validitaMesi: 12 },
+  // Spese di bordo degli skipper (13 novembre 2026): promemoria per email la sera del giorno lavorato e la mattina dopo
+  // se mancano ancora; lo skipper può correggere i suoi dati fino a 30 giorni indietro (dopo li cambia solo la gestione).
+  spese: { promemoriaSera: '20:00', promemoriaMattina: '08:00', giorniModifica: 30 },
 };
 
 // Testo unico sul carburante delle esclusive (riepilogo, conferma, email, condizioni).

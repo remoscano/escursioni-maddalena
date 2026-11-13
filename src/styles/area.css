@@ -76,3 +76,4 @@ details.azione-extra[open] { background: #EEF7FC; border-radius: 14px; padding: 
 .qr-mini { width: 72px; height: 72px; }
 .qr-mini svg { width: 100%; height: 100%; }
 .riga-verde td { background: #F3FBF5; }
+.riga-mancante td { background: #FFF6F3; }

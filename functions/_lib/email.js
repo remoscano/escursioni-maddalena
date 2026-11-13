@@ -158,3 +158,21 @@ export async function inviaEmailBuono(env, b, origine) {
   }
 }
 
+
+// Skipper: mancano le spese di bordo di uno o più giorni lavorati.
+export async function inviaEmailSpese(env, utente, giorni, origine, momento) {
+  const elenco = giorni.map((d) => `- ${dataLeggibile(d)}`);
+  const testo = [
+    `Ciao ${utente.nome},`,
+    momento === 'sera' && giorni.length === 1
+      ? "oggi hai imbarcato dei clienti ma non hai ancora scritto le spese di bordo (carburante, bevande, cibo)."
+      : 'mancano ancora le spese di bordo di questi giorni:',
+    ...(momento === 'sera' && giorni.length === 1 ? [] : elenco),
+    '',
+    `Le scrivi in un minuto da qui, nella scheda Spese: ${origine}/imbarco/#spese`,
+    'Se non hai speso niente, tocca "Nessuna spesa".',
+    '',
+    sito.nome,
+  ];
+  return inviaEmail(env, { a: utente.email, oggetto: momento === 'sera' ? 'Spese di bordo di oggi' : 'Mancano le spese di bordo', testo: testo.join('\n') });
+}

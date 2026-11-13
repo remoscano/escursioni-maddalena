@@ -19,4 +19,4 @@ python3 prove/prova_ui_nuove.py    # le stesse funzioni dal browser, 1440 e 390 
 ```
 
 Le prove usano date della stagione 2027 e vanno lanciate su un database locale vuoto (tranne l'accesso di gestione):
-`npx wrangler d1 execute DB --local --command "DELETE FROM prenotazioni_extra; DELETE FROM prenotazioni; DELETE FROM blocchi; DELETE FROM liquidazioni; DELETE FROM utenti WHERE ruolo='partner'; DELETE FROM partner; DELETE FROM tentativi_accesso; DELETE FROM sessioni; DELETE FROM extra; DELETE FROM regole_prezzo; DELETE FROM codici_sconto; DELETE FROM lista_attesa; DELETE FROM campagne; DELETE FROM utenti WHERE ruolo='skipper';"`
+`npx wrangler d1 execute DB --local --command "DELETE FROM rendiconti; DELETE FROM promemoria_spese; DELETE FROM prenotazioni_extra; DELETE FROM prenotazioni; DELETE FROM blocchi; DELETE FROM liquidazioni; DELETE FROM utenti WHERE ruolo='partner'; DELETE FROM partner; DELETE FROM tentativi_accesso; DELETE FROM sessioni; DELETE FROM extra; DELETE FROM regole_prezzo; DELETE FROM codici_sconto; DELETE FROM lista_attesa; DELETE FROM campagne; DELETE FROM utenti WHERE ruolo='skipper';"`

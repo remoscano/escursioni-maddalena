@@ -4,7 +4,7 @@
 import Base from '../../layouts/Base.astro';
 import '../../styles/area.css';
 ---
-<Base titolo="Imbarco" descrizione="Area riservata agli skipper." nascosta senzaBarra senzaTestata>
+<Base titolo="Imbarco e spese" descrizione="Area riservata agli skipper." nascosta senzaBarra senzaTestata>
   <Fragment slot="head">
     <link rel="manifest" href="/imbarco/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/img/app-180.png" />
@@ -46,21 +46,37 @@ import '../../styles/area.css';
           <div><p class="occhiello">Imbarco</p><h1 data-titolo-giorno style="font-size:clamp(28px,4vw,40px)">Oggi</h1></div>
           <button class="btn btn--bordo btn--piccolo" type="button" data-esci>Esci</button>
         </div>
-        <div class="area-scheda">
-          <div class="imbarco-cerca">
-            <button class="btn btn--wa btn--grande" type="button" data-scanner hidden>Inquadra il QR</button>
-            <form data-cerca class="imbarco-codice" novalidate>
-              <label for="im-codice" class="visually-hidden">Codice della prenotazione</label>
-              <input id="im-codice" placeholder="Codice, es. EM-AB12CD" autocapitalize="characters" autocomplete="off" maxlength="20" />
-              <button class="btn btn--scuro" type="submit">Cerca</button>
-            </form>
-          </div>
-          <p class="testo-2" data-nota-scanner style="font-size:14px">Puoi anche inquadrare il QR del biglietto con la fotocamera del telefono: si apre questa pagina con la prenotazione.</p>
-          <video data-video playsinline muted hidden style="width:100%;max-height:60vh;border-radius:14px;background:#000"></video>
+        <div class="schede-area" role="tablist" aria-label="Sezioni" style="margin-bottom:16px">
+          <button role="tab" type="button" data-vista-btn="imbarco" aria-selected="true">Imbarco</button>
+          <button role="tab" type="button" data-vista-btn="spese" aria-selected="false">Spese <span class="bollino" data-bollino hidden></span></button>
         </div>
-        <p class="avviso" data-errore role="alert" hidden></p>
-        <div data-scheda-pren></div>
-        <div data-uscite class="pila" style="gap:16px;margin-top:16px"></div>
+        <div class="avviso-spese" data-avviso-spese hidden></div>
+        <div data-vista="imbarco">
+          <div class="area-scheda">
+            <div class="imbarco-cerca">
+              <button class="btn btn--wa btn--grande" type="button" data-scanner hidden>Inquadra il QR</button>
+              <form data-cerca class="imbarco-codice" novalidate>
+                <label for="im-codice" class="visually-hidden">Codice della prenotazione</label>
+                <input id="im-codice" placeholder="Codice, es. EM-AB12CD" autocapitalize="characters" autocomplete="off" maxlength="20" />
+                <button class="btn btn--scuro" type="submit">Cerca</button>
+              </form>
+            </div>
+            <p class="testo-2" data-nota-scanner style="font-size:14px">Puoi anche inquadrare il QR del biglietto con la fotocamera del telefono: si apre questa pagina con la prenotazione.</p>
+            <video data-video playsinline muted hidden style="width:100%;max-height:60vh;border-radius:14px;background:#000"></video>
+          </div>
+          <p class="avviso" data-errore role="alert" hidden></p>
+          <div data-scheda-pren></div>
+          <div data-uscite class="pila" style="gap:16px;margin-top:16px"></div>
+        </div>
+        <div data-vista="spese" hidden>
+          <div class="area-scheda">
+            <div class="cal__testa"><button type="button" class="cal__freccia" data-mese-spese="-1" aria-label="Mese precedente">‹</button><h2 class="cal__mese" data-nome-mese-spese aria-live="polite"></h2><button type="button" class="cal__freccia" data-mese-spese="1" aria-label="Mese successivo">›</button></div>
+            <div class="cal__settimana" aria-hidden="true"><span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span></div>
+            <div class="cal__giorni" data-giorni-spese></div>
+            <ul class="cal__legenda"><li><span class="cal__punto cal__punto--fatto"></span>Spese scritte</li><li><span class="cal__punto cal__punto--manca"></span>Da compilare</li><li><span class="cal__punto"></span>Tocca un giorno per scrivere</li></ul>
+          </div>
+          <div class="area-scheda" data-giorno-spese hidden></div>
+        </div>
       </div>
     </div>
   </section>
@@ -81,6 +97,32 @@ import '../../styles/area.css';
   .passeggero p strong { font-size: 17px; }
   .btn-imbarca { min-width: 120px; }
   .btn-imbarca[aria-pressed="true"] { background: #DFF3E4; color: #1F5E33; border-color: #1F5E33; }
+  .bollino { display: inline-flex; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #B3261E; color: #fff; font-size: 13px; align-items: center; justify-content: center; margin-left: 4px; }
+  .avviso-spese { background: #FBE3DB; color: #8A3B26; border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; font-size: 15px; line-height: 1.5; display: flex; flex-direction: column; gap: 8px; }
+  .avviso-spese .azioni-riga button { background: #fff; }
+  .cal__testa { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .cal__mese { font-weight: 800; font-size: 20px; text-transform: capitalize; }
+  .cal__freccia { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--bordo-campo); background: var(--bianco); font-size: 24px; line-height: 1; color: var(--mare); cursor: pointer; }
+  .cal__settimana, .cal__giorni { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+  .cal__settimana span { text-align: center; font-size: 12px; font-weight: 700; color: var(--testo-2); text-transform: uppercase; }
+  .cal__giorno { min-height: 48px; border-radius: 10px; border: 1.5px solid var(--bordo-campo); background: var(--bianco); font: inherit; font-size: 16px; font-weight: 700; color: var(--mare); cursor: pointer; padding: 0; position: relative; }
+  .cal__giorno:disabled { background: #F4F4F4; border-color: transparent; color: #9AA9B0; cursor: not-allowed; font-weight: 500; }
+  .cal__giorno--fatto { background: #DFF3E4; border-color: #1F5E33; color: #1F5E33; }
+  .cal__giorno--manca { background: #FBE3DB; border-color: #B3261E; color: #8A3B26; }
+  .cal__giorno[aria-pressed="true"] { outline: 3px solid var(--laguna); outline-offset: 1px; }
+  .cal__vuoto { min-height: 48px; }
+  .cal__legenda { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--testo-2); margin: 0; }
+  .cal__legenda li { display: inline-flex; align-items: center; gap: 6px; }
+  .cal__punto { width: 14px; height: 14px; border-radius: 4px; border: 1.5px solid var(--bordo-campo); background: #fff; }
+  .cal__punto--fatto { background: #DFF3E4; border-color: #1F5E33; }
+  .cal__punto--manca { background: #FBE3DB; border-color: #B3261E; }
+  .modulo-spese { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 12px; align-items: end; }
+  .modulo-spese .intero { grid-column: 1 / -1; }
+  .modulo-spese fieldset { grid-column: 1 / -1; border: 1px solid var(--bordo); border-radius: 14px; padding: 12px 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); gap: 12px; margin: 0; }
+  .modulo-spese legend { font-weight: 800; padding: 0 6px; }
+  .modulo-spese input, .modulo-spese select, .modulo-spese textarea { width: 100%; min-height: 48px; border: 1.5px solid var(--bordo-campo); border-radius: 12px; padding: 8px 12px; font: inherit; font-size: 17px; color: var(--mare); background: #fff; }
+  .rendiconto { border: 1px solid var(--bordo); border-radius: 14px; padding: 12px 14px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; align-items: center; }
+  .rendiconto p { font-size: 15px; line-height: 1.5; }
   .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 </style>
 
@@ -128,8 +170,10 @@ import '../../styles/area.css';
     $('[data-titolo-giorno]').textContent = giorno.charAt(0).toUpperCase() + giorno.slice(1);
     if ('BarcodeDetector' in window) $('[data-scanner]').hidden = false;
     caricaUscite();
+    controllaMancanti();
     const codice = new URLSearchParams(location.search).get('codice');
     if (codice) cerca(codice);
+    else if (location.hash === '#spese') apriVista('spese');
   }
 
   // ---------- Uscite di oggi ----------
@@ -159,7 +203,7 @@ import '../../styles/area.css';
     const b = (ev.target as Element).closest<HTMLButtonElement>('[data-imbarca]');
     if (!b) return;
     b.disabled = true;
-    try { await api('/api/imbarco', { corpo: { codice: b.dataset.imbarca, annulla: b.getAttribute('aria-pressed') === 'true' } }); await caricaUscite(); }
+    try { await api('/api/imbarco', { corpo: { codice: b.dataset.imbarca, annulla: b.getAttribute('aria-pressed') === 'true' } }); await caricaUscite(); controllaMancanti(); }
     catch (e) { errore(e); b.disabled = false; }
   });
 
@@ -193,7 +237,7 @@ import '../../styles/area.css';
     if (t.closest('[data-chiudi-scheda]')) { $('[data-scheda-pren]').innerHTML = ''; history.replaceState(null, '', '/imbarco/'); return; }
     const si = t.closest<HTMLElement>('[data-imbarca-una]'), no = t.closest<HTMLElement>('[data-togli-una]');
     if (!si && !no) return;
-    try { await api('/api/imbarco', { corpo: { codice: (si || no)!.dataset.imbarcaUna || (si || no)!.dataset.togliUna, annulla: Boolean(no) } }); await cerca((si || no)!.dataset.imbarcaUna || (si || no)!.dataset.togliUna!); caricaUscite(); }
+    try { await api('/api/imbarco', { corpo: { codice: (si || no)!.dataset.imbarcaUna || (si || no)!.dataset.togliUna, annulla: Boolean(no) } }); await cerca((si || no)!.dataset.imbarcaUna || (si || no)!.dataset.togliUna!); caricaUscite(); controllaMancanti(); }
     catch (e) { errore(e); }
   });
   $('[data-cerca]').addEventListener('submit', (ev) => { ev.preventDefault(); const c = $<HTMLInputElement>('#im-codice').value.trim(); if (c) cerca(c); });
@@ -224,6 +268,140 @@ import '../../styles/area.css';
       };
       giro();
     } catch (e) { errore(new Error('Non riesco ad aprire la fotocamera: usa la fotocamera del telefono o scrivi il codice.')); }
+  });
+
+
+  // ---------- Schede: Imbarco | Spese ----------
+  function apriVista(nome: string) {
+    document.querySelectorAll<HTMLElement>('[data-vista]').forEach((v) => (v.hidden = v.dataset.vista !== nome));
+    document.querySelectorAll<HTMLElement>('[data-vista-btn]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.vistaBtn === nome)));
+    if (nome === 'spese') { history.replaceState(null, '', '#spese'); caricaSpese(); }
+    else if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  }
+  document.querySelectorAll<HTMLElement>('[data-vista-btn]').forEach((b) => b.addEventListener('click', () => apriVista(b.dataset.vistaBtn!)));
+
+  // ---------- Spese di bordo ----------
+  const sp: any = { mese: oggi.slice(0, 7), dati: null, giorno: '' };
+  const NOMI_MESI = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const num = (n: number) => String(n || '').replace('.', ',');
+  const dataCorta = (d: string) => new Intl.DateTimeFormat('it-IT', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(`${d}T12:00:00Z`));
+
+  function mostraMancanti(mancanti: string[]) {
+    const bollino = $('[data-bollino]');
+    bollino.textContent = String(mancanti.length);
+    bollino.hidden = !mancanti.length;
+    const box = $('[data-avviso-spese]');
+    box.hidden = !mancanti.length;
+    box.innerHTML = mancanti.length ? `<strong>${mancanti.length === 1 ? 'Manca il rendiconto di un giorno' : `Mancano i rendiconti di ${mancanti.length} giorni`} in cui hai imbarcato clienti.</strong>
+      <div class="azioni-riga">${mancanti.map((d) => `<button type="button" class="btn btn--bordo btn--piccolo" data-vai-giorno="${d}">${h(dataCorta(d))}</button>`).join('')}</div>` : '';
+  }
+  $('[data-avviso-spese]').addEventListener('click', (ev) => {
+    const b = (ev.target as Element).closest<HTMLElement>('[data-vai-giorno]');
+    if (!b) return;
+    sp.mese = b.dataset.vaiGiorno!.slice(0, 7); sp.giorno = b.dataset.vaiGiorno!;
+    apriVista('spese');
+  });
+
+  async function caricaSpese() {
+    try {
+      sp.dati = await api(`/api/spese?mese=${sp.mese}`);
+      mostraMancanti(sp.dati.mancanti);
+      disegnaMese();
+      if (sp.giorno && sp.giorno.slice(0, 7) === sp.mese) apriGiorno(sp.giorno);
+    } catch (e) { errore(e); }
+  }
+  // All'avvio si controlla subito se manca qualcosa (per l'avviso e il bollino).
+  async function controllaMancanti() { try { mostraMancanti((await api(`/api/spese?mese=${oggi.slice(0, 7)}`)).mancanti); } catch { /* niente */ } }
+
+  function disegnaMese() {
+    const d = sp.dati;
+    $('[data-nome-mese-spese]').textContent = NOMI_MESI.format(new Date(`${sp.mese}-15T12:00:00Z`));
+    const [a, m] = sp.mese.split('-').map(Number);
+    const vuoti = (new Date(Date.UTC(a, m - 1, 1)).getUTCDay() + 6) % 7;
+    const quanti = new Date(Date.UTC(a, m, 0)).getUTCDate();
+    let html = '<span class="cal__vuoto"></span>'.repeat(vuoti);
+    for (let g = 1; g <= quanti; g++) {
+      const data = `${sp.mese}-${String(g).padStart(2, '0')}`;
+      const info = d.giorni[data];
+      const fatto = info?.rendiconti.length > 0;
+      const manca = d.mancanti.includes(data);
+      const chiuso = data > d.oggi || (d.limite && data < d.limite);
+      const desc = fatto ? 'spese scritte' : manca ? 'da compilare' : chiuso ? 'non modificabile' : '';
+      html += `<button type="button" class="cal__giorno${fatto ? ' cal__giorno--fatto' : manca ? ' cal__giorno--manca' : ''}" data-data="${data}" ${chiuso && !fatto ? 'disabled' : ''} aria-pressed="${data === sp.giorno}" aria-label="${h(dataLunga(data))}${desc ? `, ${desc}` : ''}">${g}</button>`;
+    }
+    $('[data-giorni-spese]').innerHTML = html;
+  }
+  document.querySelectorAll<HTMLButtonElement>('[data-mese-spese]').forEach((b) => b.addEventListener('click', () => {
+    const [a, m] = sp.mese.split('-').map(Number);
+    sp.mese = new Date(Date.UTC(a, m - 1 + Number(b.dataset.meseSpese), 1)).toISOString().slice(0, 7);
+    sp.giorno = '';
+    $('[data-giorno-spese]').hidden = true;
+    caricaSpese();
+  }));
+  $('[data-giorni-spese]').addEventListener('click', (ev) => {
+    const b = (ev.target as Element).closest<HTMLButtonElement>('[data-data]');
+    if (b && !b.disabled) apriGiorno(b.dataset.data!);
+  });
+
+  function apriGiorno(data: string, modifica: any = null) {
+    sp.giorno = data;
+    disegnaMese();
+    const d = sp.dati;
+    const info = d.giorni[data] || { rendiconti: [], barca: null };
+    const bloccato = data > d.oggi || (d.limite && data < d.limite);
+    const usati = info.rendiconti.map((r: any) => r.barca);
+    const barca = modifica?.barca || info.barca || d.gommoni.find((g: any) => !usati.includes(g.id))?.id || d.gommoni[0].id;
+    const r = modifica || info.rendiconti.find((x: any) => x.barca === barca) || null;
+    const box = $('[data-giorno-spese]');
+    box.hidden = false;
+    box.innerHTML = `<h2 style="text-transform:capitalize">${h(dataLunga(data))}</h2>
+      ${info.lavorato ? '<p class="testo-2">Oggi hai imbarcato clienti: scrivi le spese, anche se è zero.</p>' : ''}
+      ${info.rendiconti.map((x: any) => `<div class="rendiconto"><p><strong>${h(x.gommone)}</strong><br>${x.nessunaSpesa ? 'Nessuna spesa' : [x.litri ? `Carburante ${num(x.litri)} l · ${euro(x.carburante)}` : '', x.bevande ? `Bevande ${euro(x.bevande)}` : '', x.cibo ? `Cibo ${euro(x.cibo)}` : '', x.altro ? `Altro ${euro(x.altro)}` : ''].filter(Boolean).join(' · ')}${x.note ? `<br><span class="testo-2">${h(x.note)}</span>` : ''}</p>
+        ${bloccato ? '' : `<div class="azioni-riga"><button type="button" class="btn btn--bordo btn--piccolo" data-modifica="${x.id}">Modifica</button><button type="button" class="btn btn--avviso btn--piccolo" data-cancella="${x.id}">Cancella</button></div>`}</div>`).join('')}
+      ${bloccato ? '<p class="testo-2">Questo giorno non si può più modificare da qui: per correzioni chiedi all\'ufficio.</p>' : `
+      <form class="modulo-spese" data-modulo-spese novalidate>
+        <div class="campo intero"><label for="sp-barca">Gommone</label><select id="sp-barca" name="barca">${d.gommoni.map((g: any) => `<option value="${h(g.id)}" ${g.id === barca ? 'selected' : ''}>${h(g.nome)}</option>`).join('')}</select></div>
+        <fieldset><legend>Carburante</legend>
+          <div class="campo"><label for="sp-litri">Litri</label><input id="sp-litri" name="litri" inputmode="decimal" placeholder="0" value="${r?.litri ? num(r.litri) : ''}" /></div>
+          <div class="campo"><label for="sp-carb">Euro spesi</label><input id="sp-carb" name="carburante" inputmode="decimal" placeholder="0" value="${r?.carburante ? num(r.carburante) : ''}" /></div>
+        </fieldset>
+        <div class="campo"><label for="sp-bev">Bevande (€)</label><input id="sp-bev" name="bevande" inputmode="decimal" placeholder="0" value="${r?.bevande ? num(r.bevande) : ''}" /></div>
+        <div class="campo"><label for="sp-cibo">Cibo (€)</label><input id="sp-cibo" name="cibo" inputmode="decimal" placeholder="0" value="${r?.cibo ? num(r.cibo) : ''}" /></div>
+        <div class="campo"><label for="sp-altro">Altro (€)</label><input id="sp-altro" name="altro" inputmode="decimal" placeholder="0" value="${r?.altro ? num(r.altro) : ''}" /></div>
+        <div class="campo intero"><label for="sp-note">Note (per "altro" scrivi cosa)</label><textarea id="sp-note" name="note" rows="2" maxlength="500">${h(r?.note || '')}</textarea></div>
+        <p class="avviso intero" data-errore-spese hidden role="alert"></p>
+        <p class="messaggio-ok intero" data-ok-spese hidden></p>
+        <div class="azioni-riga intero"><button type="submit" class="btn btn--wa btn--grande">Salva</button><button type="button" class="btn btn--bordo btn--grande" data-nessuna>Nessuna spesa</button></div>
+      </form>`}`;
+    const f = box.querySelector<HTMLFormElement>('[data-modulo-spese]');
+    if (!f) return;
+    // Cambiando gommone si caricano i dati già scritti per quel gommone (se ci sono).
+    f.barca.addEventListener('change', () => apriGiorno(data, info.rendiconti.find((x: any) => x.barca === f.barca.value) || { barca: f.barca.value }));
+    const salva = async (vuoto: boolean) => {
+      const err = f.querySelector<HTMLElement>('[data-errore-spese]')!, ok = f.querySelector<HTMLElement>('[data-ok-spese]')!;
+      err.hidden = true; ok.hidden = true;
+      const corpo = vuoto ? { data, barca: f.barca.value } : { data, barca: f.barca.value, litri: f.litri.value, carburante: f.carburante.value, bevande: f.bevande.value, cibo: f.cibo.value, altro: f.altro.value, note: f.note.value };
+      try {
+        await api('/api/spese', { corpo });
+        sp.dati = await api(`/api/spese?mese=${sp.mese}`);
+        mostraMancanti(sp.dati.mancanti);
+        apriGiorno(data);
+        const conferma = $('[data-giorno-spese]').querySelector<HTMLElement>('[data-ok-spese]');
+        if (conferma) { conferma.textContent = vuoto ? 'Salvato: nessuna spesa.' : 'Spese salvate.'; conferma.hidden = false; }
+      } catch (e) { err.textContent = (e as Error).message; err.hidden = false; }
+    };
+    f.addEventListener('submit', (ev) => { ev.preventDefault(); salva(false); });
+    f.querySelector('[data-nessuna]')!.addEventListener('click', () => salva(true));
+  }
+  $('[data-giorno-spese]').addEventListener('click', async (ev) => {
+    const t = ev.target as Element;
+    const mod = t.closest<HTMLElement>('[data-modifica]');
+    if (mod) { apriGiorno(sp.giorno, sp.dati.giorni[sp.giorno].rendiconti.find((x: any) => String(x.id) === mod.dataset.modifica)); return; }
+    const canc = t.closest<HTMLElement>('[data-cancella]');
+    if (canc) {
+      try { await api(`/api/spese?id=${canc.dataset.cancella}`, { metodo: 'DELETE', corpo: {} }); await caricaSpese(); apriGiorno(sp.giorno); }
+      catch (e) { errore(e); }
+    }
   });
 
   avvio();

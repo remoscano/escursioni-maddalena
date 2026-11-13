@@ -154,6 +154,16 @@ async def gestione(b, w):
     await pg.wait_for_selector(f'[data-png*="LOC{w}"]')
     async with pg.expect_download() as dl: await pg.click(f'[data-png*="LOC{w}"]')
     ok((await dl.value).suggested_filename == f'qr-LOC{w}.png', f'{w}px QR del volantino scaricato in PNG')
+    # spese di bordo ed Excel
+    await pg.click('[data-scheda="spese"]'); await pg.wait_for_selector('[data-spese] .cifra--evidenza')
+    await larghezza(pg, w, 'gestione, spese di bordo')
+    await pg.screenshot(path=f'{OUT}/nuove-gestione-spese-{w}.png', full_page=True)
+    async with pg.expect_download() as dl: await pg.click('[data-excel-spese]')
+    file = os.path.join(OUT, f'spese-{w}.xlsx'); await (await dl.value).save_as(file)
+    try:
+        import openpyxl
+        wb = openpyxl.load_workbook(file); ok(wb.sheetnames == ['Spese', 'Per gommone', 'Per skipper', 'Per mese', 'Giorni senza spese'], f'{w}px Excel delle spese: {wb.sheetnames}')
+    except ImportError: pass
     # finestra delle azioni: sposta una prenotazione dall'elenco
     await pg.click('[data-scheda="elenco"]'); await pg.fill('#f-dal', '2027-05-01'); await pg.fill('#f-al', '2027-05-31'); await pg.click('[data-filtri] button[type="submit"]')
     await pg.wait_for_selector('[data-elenco] [data-gestisci]'); await pg.click('[data-elenco] [data-gestisci]')
@@ -187,6 +197,18 @@ async def imbarco(b, w):
     await pg.click('[data-imbarca-una]'); await pg.wait_for_selector('.pren-imbarco--ok')
     ok('Già a bordo' in await pg.inner_text('.pren-imbarco'), f'{w}px imbarco registrato')
     ok(await pg.locator('[data-imbarca][aria-pressed="true"]').count() >= 1, f'{w}px nella lista di oggi risulta a bordo')
+    # spese di bordo: avviso, calendario, modulo
+    await pg.click('[data-chiudi-scheda]')
+    await pg.wait_for_selector('[data-avviso-spese]:not([hidden])')
+    ok('Manca il rendiconto' in await pg.inner_text('[data-avviso-spese]'), f'{w}px avviso: mancano le spese di oggi')
+    await pg.click('[data-vai-giorno]'); await pg.wait_for_selector('[data-modulo-spese]')
+    await larghezza(pg, w, 'spese di bordo')
+    await pg.select_option('#sp-barca', 'gruppo-2')
+    await pg.wait_for_selector('[data-modulo-spese]')
+    await pg.fill('#sp-litri', '60'); await pg.fill('#sp-carb', '110,50'); await pg.fill('#sp-bev', '20')
+    await pg.click('[data-modulo-spese] button[type="submit"]'); await pg.wait_for_selector('[data-ok-spese]:not([hidden])')
+    ok(await pg.locator(f'.cal__giorno--fatto[data-data="{oggi}"]').count() == 1 and await pg.locator('[data-avviso-spese]').is_hidden(), f'{w}px spese salvate: il giorno diventa verde e l\'avviso sparisce')
+    await pg.screenshot(path=f'{OUT}/nuove-spese-{w}.png', full_page=True)
     await ctx.close()
 
 async def main():

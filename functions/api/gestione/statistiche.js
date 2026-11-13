@@ -42,6 +42,8 @@ export async function onRequestGet({ request, env }) {
   const buoni = await tutte(env.DB, `SELECT COUNT(*) AS numero, COALESCE(SUM(pagato), 0) AS incassato, COALESCE(SUM(valore), 0) AS valore, COALESCE(SUM(saldo), 0) AS saldo
       FROM codici_sconto WHERE tipo = 'buono' AND stato IN ('attivo', 'annullato') AND substr(creato_il, 1, 10) BETWEEN :dal AND :al`, { dal, al });
 
+  const spese = await tutte(env.DB, `SELECT COALESCE(SUM(litri), 0) AS litri, COALESCE(SUM(carburante), 0) AS carburante, COALESCE(SUM(bevande), 0) AS bevande,
+      COALESCE(SUM(cibo), 0) AS cibo, COALESCE(SUM(altro), 0) AS altro FROM rendiconti WHERE data BETWEEN :dal AND :al`, { dal, al });
   const confermate = righe.filter((p) => p.stato === 'confermata' || p.stato === 'da_verificare');
   const annullate = righe.filter((p) => p.stato === 'annullata');
   const perEscursione = new Map(), perCanale = new Map(), perMese = new Map(), perTurno = new Map(), perGiorno = new Map();
@@ -88,6 +90,8 @@ export async function onRequestGet({ request, env }) {
       inAttesaDiScelta: annullate.filter((p) => p.recupero === 'proposto').length,
       annullateTotali: annullate.length,
     },
+    spese: (() => { const x = spese[0] || {}; const tot = (x.carburante || 0) + (x.bevande || 0) + (x.cibo || 0) + (x.altro || 0);
+      return { litri: Math.round((x.litri || 0) * 10) / 10, carburante: euro(x.carburante || 0), bevande: euro(x.bevande || 0), cibo: euro(x.cibo || 0), altro: euro(x.altro || 0), totale: euro(tot) }; })(),
     buoniVenduti: { numero: buoni[0]?.numero ?? 0, incassato: euro(buoni[0]?.incassato ?? 0), valore: euro(buoni[0]?.valore ?? 0), ancoraDaUsare: euro(buoni[0]?.saldo ?? 0) },
     perEscursione: elenco(perEscursione),
     perCanale: elenco(perCanale),

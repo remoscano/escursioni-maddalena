@@ -55,6 +55,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
           <button role="tab" type="button" data-scheda="elenco" aria-selected="false">Prenotazioni</button>
           <button role="tab" type="button" data-scheda="attesa" aria-selected="false">Lista d'attesa</button>
           <button role="tab" type="button" data-scheda="statistiche" aria-selected="false">Statistiche</button>
+          <button role="tab" type="button" data-scheda="spese" aria-selected="false">Spese di bordo</button>
           <button role="tab" type="button" data-scheda="offerte" aria-selected="false">Offerte</button>
           <button role="tab" type="button" data-scheda="volantini" aria-selected="false">Volantini</button>
           <button role="tab" type="button" data-scheda="strutture" aria-selected="false">Strutture</button>
@@ -161,6 +162,21 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
             <div class="azioni-riga"><button class="btn btn--scuro btn--piccolo" type="submit">Aggiorna</button><button class="btn btn--bordo btn--piccolo" type="button" data-excel>Scarica Excel per il commercialista</button><button class="btn btn--bordo btn--piccolo" type="button" onclick="window.print()">Stampa</button></div>
           </form>
           <div data-statistiche style="margin-top:20px"></div>
+        </div>
+
+
+        <!-- Spese di bordo -->
+        <div role="tabpanel" data-pannello="spese" hidden>
+          <form class="area-scheda non-stampare" data-filtri-spese>
+            <p class="testo-2">Le scrivono gli skipper dalla loro app (/imbarco/, scheda Spese) dopo ogni giornata: carburante con litri ed euro, bevande, cibo, altro.</p>
+            <div class="riga-campi">
+              <div class="campo"><label for="sp-periodo">Periodo</label><select id="sp-periodo"><option value="mese">Questo mese</option><option value="scorso">Mese scorso</option><option value="stagione">Stagione {regole.stagione.dal.slice(0, 4)}</option><option value="anno">Quest'anno</option><option value="altro">Scegli le date</option></select></div>
+              <div class="campo"><label for="sp-dal">Dal</label><input id="sp-dal" name="dal" type="date" /></div>
+              <div class="campo"><label for="sp-al">Al</label><input id="sp-al" name="al" type="date" /></div>
+            </div>
+            <div class="azioni-riga"><button class="btn btn--scuro btn--piccolo" type="submit">Aggiorna</button><button class="btn btn--bordo btn--piccolo" type="button" data-excel-spese>Scarica Excel delle spese</button></div>
+          </form>
+          <div data-spese style="margin-top:20px"></div>
         </div>
 
         <!-- Offerte: promozioni, codici sconto, buoni regalo, extra -->
@@ -293,7 +309,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
           </form>
           <div class="area-scheda" style="margin-top:20px">
             <h2>Accessi skipper</h2>
-            <p class="testo-2">Lo skipper entra da <strong data-indirizzo-imbarco></strong>: vede solo le uscite di oggi e segna chi sale a bordo (anche inquadrando il QR del biglietto). Dal telefono si installa come un'app: nel browser, "Aggiungi a schermata Home".</p>
+            <p class="testo-2">Lo skipper entra da <strong data-indirizzo-imbarco></strong>: vede solo le uscite di oggi, segna chi sale a bordo (anche inquadrando il QR del biglietto) e scrive le spese di bordo di ogni giornata. Dal telefono si installa come un'app: nel browser, "Aggiungi a schermata Home".</p>
             <form class="riga-campi" data-modulo-skipper novalidate>
               <div class="campo"><label for="sk-nome">Nome</label><input id="sk-nome" name="nome" maxlength="100" required /></div>
               <div class="campo"><label for="sk-email">Email (per l'accesso)</label><input id="sk-email" name="email" type="email" maxlength="160" required /></div>
@@ -404,7 +420,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
     document.querySelectorAll<HTMLElement>('[data-pannello]').forEach((p) => (p.hidden = p.dataset.pannello !== b.dataset.scheda));
     pulisciErrore();
     ({ giorno: caricaGiorno, nuova: () => {}, elenco: caricaElenco, strutture: caricaStrutture, provvigioni: caricaProvvigioni, account: caricaSkipper,
-       attesa: caricaAttesa, statistiche: caricaStatistiche, offerte: caricaOfferte, volantini: caricaVolantini } as Record<string, () => void>)[b.dataset.scheda!]();
+       attesa: caricaAttesa, statistiche: caricaStatistiche, spese: caricaSpeseGestione, offerte: caricaOfferte, volantini: caricaVolantini } as Record<string, () => void>)[b.dataset.scheda!]();
   }));
 
   // ---------- Giornata ----------
@@ -897,6 +913,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
           ${cifra('Maltempo', `${d.maltempo.rinviate} rinviate`, `${euro(d.maltempo.rinviateValore)} salvati · ${d.maltempo.rimborsate} rimborsate · ${d.maltempo.inAttesaDiScelta} aspettano`)}
           ${cifra('Clienti', String(t.clienti), `${t.clientiAbituali} hanno prenotato più di una volta`)}
           ${cifra('Check-in', String(t.checkin), 'prenotazioni imbarcate')}
+          ${cifra('Spese di bordo', euro(d.spese.totale), `carburante ${euro(d.spese.carburante)} (${String(d.spese.litri).replace('.', ',')} l) · bevande e cibo ${euro(d.spese.bevande + d.spese.cibo)}`)}
         </div>
         <div class="griglia-stat">
           ${tabellaStat('Per escursione', d.perEscursione)}
@@ -925,6 +942,8 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
         ['Extra venduti €', t.extra], ['Provvigioni strutture €', t.provvigioni],
         ['Buoni regalo venduti (numero)', d.buoniVenduti.numero], ['Buoni regalo venduti €', d.buoniVenduti.incassato], ['Buoni ancora da usare €', d.buoniVenduti.ancoraDaUsare],
         ['Maltempo: rinviate', d.maltempo.rinviate], ['Maltempo: rimborsate', d.maltempo.rimborsate],
+        ['Spese di bordo €', d.spese.totale], ['  di cui carburante €', d.spese.carburante], ['  litri di carburante', d.spese.litri],
+        ['  di cui bevande €', d.spese.bevande], ['  di cui cibo €', d.spese.cibo], ['  di cui altro €', d.spese.altro],
       ] },
       { nome: 'Per mese', righe: [intest, ...d.perMese.map(riga)] },
       { nome: 'Per escursione', righe: [intest, ...d.perEscursione.map(riga)] },
@@ -933,6 +952,78 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
         ['Data escursione', 'Prenotata il', 'Codice', 'Stato', 'Escursione', 'Orario', 'Gommone', 'Imbarco', 'Cliente', 'Email', 'Adulti', 'Bambini', 'Listino €', 'Sconto €', 'Sconto', 'Codice sconto', 'Extra €', 'Totale €', 'Buono regalo €', 'Pagato €', 'Rimborsato €', 'Metodo', 'Riferimento pagamento', 'Canale', 'Struttura', 'Provvigione €', 'Codice piattaforma', 'Volantino', 'Maltempo'],
         ...d.prenotazioni.map((p: any) => [p.data, p.prenotataIl, p.codice, p.stato, p.escursione, p.turno, p.gommone, p.imbarco, p.cliente, p.email, p.adulti, p.bambini, p.listino, p.sconto, p.scontoNota, p.codiceSconto, p.extra, p.totale, p.buono, p.pagato, p.rimborsato, p.metodo, p.rifPagamento, p.canale, p.struttura, p.provvigione, p.rifEsterno, p.campagna, p.maltempo]),
       ] },
+    ]);
+  });
+
+
+  // ---------- Spese di bordo ----------
+  let ultimeSpese: any = null;
+  function periodoSpese() {
+    const f = $<HTMLFormElement>('[data-filtri-spese]');
+    const [a, m] = oggiRoma().split('-');
+    const fine = (anno: number, mese: number) => new Date(Date.UTC(anno, mese, 0)).toISOString().slice(0, 10);
+    const scelta = $<HTMLSelectElement>('#sp-periodo').value;
+    if (scelta === 'mese') { f.dal.value = `${a}-${m}-01`; f.al.value = fine(Number(a), Number(m)); }
+    if (scelta === 'scorso') { const d = new Date(Date.UTC(Number(a), Number(m) - 2, 1)); f.dal.value = d.toISOString().slice(0, 10); f.al.value = fine(d.getUTCFullYear(), d.getUTCMonth() + 1); }
+    if (scelta === 'stagione') { f.dal.value = regole.stagione.dal; f.al.value = regole.stagione.al; }
+    if (scelta === 'anno') { f.dal.value = `${a}-01-01`; f.al.value = `${a}-12-31`; }
+  }
+  $('#sp-periodo').addEventListener('change', () => { periodoSpese(); caricaSpeseGestione(); });
+  ['#sp-dal', '#sp-al'].forEach((x) => $(x).addEventListener('change', () => { $<HTMLSelectElement>('#sp-periodo').value = 'altro'; }));
+  $('[data-filtri-spese]').addEventListener('submit', (ev) => { ev.preventDefault(); caricaSpeseGestione(); });
+  const litri = (n: number) => `${String(n).replace('.', ',')} l`;
+  const tabellaSpese = (titolo: string, righe: any[]) => `<div class="area-scheda"><h2>${h(titolo)}</h2><div class="tabella-box"><table class="tabella">
+    <thead><tr><th></th><th class="num">Giorni</th><th class="num">Litri</th><th class="num">Carburante</th><th class="num">€/litro</th><th class="num">Bevande</th><th class="num">Cibo</th><th class="num">Altro</th><th class="num">Totale</th></tr></thead>
+    <tbody>${righe.length ? righe.map((r) => `<tr><td>${h(r.nome)}</td><td class="num">${r.giorni}</td><td class="num">${litri(r.litri)}</td><td class="num">${euro(r.carburante)}</td><td class="num">${r.euroLitro ? euro(r.euroLitro) : '—'}</td><td class="num">${euro(r.bevande)}</td><td class="num">${euro(r.cibo)}</td><td class="num">${euro(r.altro)}</td><td class="num"><strong>${euro(r.totale)}</strong></td></tr>`).join('') : '<tr><td class="vuota" colspan="9">Niente in questo periodo.</td></tr>'}</tbody></table></div></div>`;
+  async function caricaSpeseGestione() {
+    const f = $<HTMLFormElement>('[data-filtri-spese]');
+    if (!f.dal.value) periodoSpese();
+    const box = $('[data-spese]');
+    box.innerHTML = '<p class="testo-2">Carico…</p>';
+    try {
+      const d = await api(`/api/gestione/spese?dal=${f.dal.value}&al=${f.al.value}`);
+      ultimeSpese = d;
+      const t = d.totale;
+      const cifra = (nome: string, valore: string, nota = '', evidenza = false) => `<div class="cifra${evidenza ? ' cifra--evidenza' : ''}"><span>${h(nome)}</span><strong>${valore}</strong>${nota ? `<small>${nota}</small>` : ''}</div>`;
+      box.innerHTML = `<div class="cifre">
+          ${cifra('Spese totali', euro(t.totale), `${t.giorni} giornate`, true)}
+          ${cifra('Carburante', euro(t.carburante), `${litri(t.litri)}${t.euroLitro ? ` · media ${euro(t.euroLitro)} al litro` : ''}`)}
+          ${cifra('Bevande', euro(t.bevande))}
+          ${cifra('Cibo', euro(t.cibo))}
+          ${cifra('Altro', euro(t.altro))}
+        </div>
+        <div class="area-scheda"><h2>Giornate con uscite ma senza spese</h2>
+          <p class="testo-2">Giorni in cui un gommone ha avuto clienti ma nessuno skipper ha scritto le spese. Gli skipper ricevono un promemoria per email la sera e la mattina dopo.</p>
+          ${d.mancanti.length ? `<div class="tabella-box"><table class="tabella"><thead><tr><th>Giorno</th><th>Gommone</th><th class="num">Prenotazioni</th><th class="num">Persone</th><th>Skipper (dal check-in)</th></tr></thead><tbody>
+            ${d.mancanti.map((x: any) => `<tr class="riga-mancante"><td>${h(dataBreve(x.data))}</td><td>${h(x.gommone)}</td><td class="num">${x.prenotazioni}</td><td class="num">${x.persone}</td><td>${h(x.skipper || '—')}</td></tr>`).join('')}</tbody></table></div>` : '<p class="messaggio-ok">Tutto compilato: nessuna giornata senza spese.</p>'}
+        </div>
+        <div class="griglia-stat">${tabellaSpese('Per gommone', d.perGommone)}${tabellaSpese('Per skipper', d.perSkipper)}${tabellaSpese('Per mese', d.perMese)}</div>
+        <div class="area-scheda" style="margin-top:20px"><h2>Tutte le spese</h2><div class="tabella-box"><table class="tabella">
+          <thead><tr><th>Giorno</th><th>Gommone</th><th>Skipper</th><th class="num">Litri</th><th class="num">Carburante</th><th class="num">Bevande</th><th class="num">Cibo</th><th class="num">Altro</th><th>Note</th><th class="non-stampare"></th></tr></thead>
+          <tbody>${d.rendiconti.length ? d.rendiconti.map((r: any) => `<tr><td>${h(dataBreve(r.data))}</td><td>${h(r.gommone)}</td><td>${h(r.skipper || '')}</td>
+            <td class="num">${r.litri ? litri(r.litri) : '—'}</td><td class="num">${euro(r.carburante)}</td><td class="num">${euro(r.bevande)}</td><td class="num">${euro(r.cibo)}</td><td class="num">${euro(r.altro)}</td>
+            <td>${r.nessunaSpesa ? '<span class="stato">Nessuna spesa</span>' : ''}${h(r.note || '')}</td>
+            <td class="non-stampare"><button class="btn btn--bordo btn--piccolo" type="button" data-cancella-spesa="${r.id}">Cancella</button></td></tr>`).join('') : '<tr><td class="vuota" colspan="10">Nessuna spesa in questo periodo.</td></tr>'}</tbody></table></div></div>`;
+    } catch (e) { box.innerHTML = ''; errore(e); }
+  }
+  $('[data-spese]').addEventListener('click', async (ev) => {
+    const b = (ev.target as Element).closest<HTMLElement>('[data-cancella-spesa]');
+    if (!b || !window.confirm('Cancellare questa riga di spese?')) return;
+    try { await api(`/api/spese?id=${b.dataset.cancellaSpesa}`, { metodo: 'DELETE', corpo: {} }); caricaSpeseGestione(); } catch (e) { errore(e); }
+  });
+  $('[data-excel-spese]').addEventListener('click', async () => {
+    if (!ultimeSpese) await caricaSpeseGestione();
+    const d = ultimeSpese;
+    if (!d) return;
+    const intest = ['', 'Giorni', 'Litri', 'Carburante €', '€ al litro', 'Bevande €', 'Cibo €', 'Altro €', 'Totale €'];
+    const riga = (r: any) => [r.nome, r.giorni, r.litri, r.carburante, r.euroLitro, r.bevande, r.cibo, r.altro, r.totale];
+    scaricaXlsx(`spese-di-bordo-${d.dal}-${d.al}.xlsx`, [
+      { nome: 'Spese', righe: [['Giorno', 'Gommone', 'Skipper', 'Litri', 'Carburante €', '€ al litro', 'Bevande €', 'Cibo €', 'Altro €', 'Totale €', 'Note', 'Ultima modifica'],
+        ...d.rendiconti.map((r: any) => [r.data, r.gommone, r.skipper, r.litri, r.carburante, r.litri ? Math.round((r.carburante / r.litri) * 1000) / 1000 : null, r.bevande, r.cibo, r.altro, r.totale, r.nessunaSpesa ? `Nessuna spesa${r.note ? ` · ${r.note}` : ''}` : r.note || '', String(r.aggiornatoIl || '').slice(0, 16).replace('T', ' ')])] },
+      { nome: 'Per gommone', righe: [intest, ...d.perGommone.map(riga), riga(d.totale)] },
+      { nome: 'Per skipper', righe: [intest, ...d.perSkipper.map(riga)] },
+      { nome: 'Per mese', righe: [intest, ...d.perMese.map(riga)] },
+      { nome: 'Giorni senza spese', righe: [['Giorno', 'Gommone', 'Prenotazioni', 'Persone', 'Skipper'], ...d.mancanti.map((x: any) => [x.data, x.gommone, x.prenotazioni, x.persone, x.skipper || ''])] },
     ]);
   });
 

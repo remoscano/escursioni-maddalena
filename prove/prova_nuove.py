@@ -139,6 +139,20 @@ s, r = sk('GET', '/api/imbarco?codice=em-oggi01'); ok(s == 200 and r['persone'] 
 s, r = sk('POST', '/api/imbarco', {'codice': 'EM-OGGI01'}); ok(s == 200 and r['checkin'], 'check-in fatto')
 s, r = sk('GET', f'/api/imbarco?codice={c1}'); ok(s == 409, 'una prenotazione di un altro giorno: lo skipper viene avvisato')
 
+# ---------- 9b. spese di bordo dello skipper ----------
+s, r = sk('GET', '/api/spese'); ok(s == 200 and oggi in r['mancanti'] and r['giorni'][oggi]['lavorato'], 'oggi lo skipper ha imbarcato clienti: le spese risultano da compilare')
+s, r = sk('POST', '/api/spese', {'data': oggi, 'barca': 'gruppo-1', 'litri': '80'}); ok(s == 400, f'litri senza euro: {r.get("errore")}')
+s, r = sk('POST', '/api/spese', {'data': '2099-01-01', 'barca': 'gruppo-1'}); ok(s == 400, 'niente spese per i giorni futuri')
+s, r = sk('POST', '/api/spese', {'data': oggi, 'barca': 'gruppo-1', 'litri': '82,5', 'carburante': '150,40', 'bevande': '24', 'cibo': '18,5'}); ok(s == 200 and r['mancanti'] == [] and r['rendiconto']['totale'] == 192.9, f'spese salvate: {r.get("rendiconto")}')
+s, r = sk('POST', '/api/spese', {'data': oggi, 'barca': 'gruppo-1', 'litri': '82,5', 'carburante': '150,40', 'bevande': '30'}); ok(s == 200 and r['rendiconto']['bevande'] == 30 and r['rendiconto']['cibo'] == 0, 'correzione dello stesso giorno e gommone: si aggiorna, non si duplica')
+s, r = sk('POST', '/api/spese', {'data': oggi, 'barca': 'cannigione'}); ok(s == 200 and r['rendiconto']['nessunaSpesa'], '"nessuna spesa" su un altro gommone')
+s, r = sk('POST', '/api/spese', {'data': oggi, 'barca': 'gruppo-2', 'altro': '10'}); ok(s == 400, 'spesa "altro" senza note: chiede di dire cosa')
+s, r = sk('GET', '/api/gestione/spese'); ok(s == 403, 'lo skipper non vede le spese di tutti')
+s, d = adm('GET', f'/api/gestione/spese?dal={oggi}&al={oggi}')
+ok(d['totale']['carburante'] == 150.4 and d['totale']['litri'] == 82.5 and d['totale']['euroLitro'] == 1.823 and len(d['rendiconti']) == 2, f'gestione: carburante {d["totale"]["carburante"]} € per {d["totale"]["litri"]} l ({d["totale"]["euroLitro"]} €/l)')
+ok(d['perSkipper'][0]['nome'] == 'Skipper Prova' and d['mancanti'] == [], 'spese per skipper; nessun giorno mancante per il gommone usato oggi')
+s, st = adm('GET', f'/api/gestione/statistiche?dal={oggi}&al={oggi}'); ok(st['spese']['totale'] == 180.4, f'spese nelle statistiche: {st["spese"]["totale"]} €')
+
 # ---------- 10. email automatiche ----------
 domani = sql("SELECT date('now', '+1 day') AS d")[0]['d']; ieri = sql("SELECT date('now', '-1 day') AS d")[0]['d']
 sql(f"INSERT INTO prenotazioni (codice, token, escursione, turno, data, barca, blocchi, adulti, posti, paganti, imbarco, nome, email, totale, pagato, stato, canale, metodo) VALUES ('EM-DOMANI', 'tok2', 'tour-7-isole', 'giornata', '{domani}', 'gruppo-1', ',mattina,', 2, 2, 2, 'palau', 'Domani Prova', 'domani@example.com', 20000, 20000, 'confermata', 'sito', 'prova'), ('EM-IERI01', 'tok3', 'tour-7-isole', 'giornata', '{ieri}', 'gruppo-1', ',mattina,', 2, 2, 2, 'palau', 'Ieri Prova', 'ieri@example.com', 20000, 20000, 'confermata', 'sito', 'prova')")
