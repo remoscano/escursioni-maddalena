@@ -138,14 +138,14 @@ const mezzaEsclusiva = [
 // "orario" vuoto = sul sito compare un segnaposto finché non viene confermato.
 // "orario" è quello di La Maddalena; "orariImbarco" lo cambia per gli altri moli. Uscite di gruppo (Remo, 13 novembre 2026):
 // si parte alle 9:00 da La Maddalena e si passa a Palau alle 9:30; al ritorno prima Palau, poi La Maddalena.
-// Le esclusive restano 9:30 – 17:30 per la giornata intera. Cannigione: orari di prima, da confermare.
+// Le esclusive restano 9:30 – 17:30 per la giornata intera. Cannigione: 9:30 – 13:30 e 14:00 – 18:00 (confermati da Remo, 13 novembre 2026).
 export const offerte = {
   'tour-7-isole': {
     tipo: 'gruppo',
     minimo: 6,
     imbarchi: ['maddalena', 'palau'],
     turni: [
-      // Rientro a Palau alle 17:00 calcolato da Claude come nella mezza giornata (mezz'ora prima di La Maddalena): da confermare.
+      // Rientro a Palau alle 17:00, mezz'ora prima di La Maddalena (confermato da Remo, 13 novembre 2026).
       { id: 'giornata', nome: 'Giornata intera', orario: '9:00 – 17:30', orariImbarco: { palau: '9:30 – 17:00' }, blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataPersona },
     ],
   },

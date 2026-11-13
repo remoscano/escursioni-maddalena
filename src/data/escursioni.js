@@ -267,7 +267,7 @@ export const escursioni = [
     ],
     incluso: ['Il gommone e lo skipper solo per il vostro gruppo', 'Bevande a bordo', 'Prosecco per il brindisi: una bottiglia ogni 6 persone', 'Tagliere con salsiccia e formaggio, oppure spiedini di frutta o taralli e ciliege', 'Ticket del Parco', 'Eventuali tasse di sbarco'],
     inclusoMancante: null,
-    nonIncluso: ['Carburante: a consumo, si paga a bordo a fine uscita', 'Pranzo: libero, ti suggeriamo dove mangiare oppure porta il pranzo al sacco', 'Altre bottiglie di prosecco, se le chiedete: si pagano a parte', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
+    nonIncluso: ['Carburante: a consumo, si paga a bordo a fine uscita', 'Pranzo: al sacco oppure al ristorante, scegli tu', 'Altre bottiglie di prosecco, se le chiedete: si pagano a parte', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
     nonInclusoMancante: null,
     note: [
       "Si entra in Francia: ognuno deve avere con sé carta d'identità valida per l'espatrio o passaporto, anche i bambini.",
