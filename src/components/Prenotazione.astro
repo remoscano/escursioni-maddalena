@@ -50,8 +50,33 @@ const perOspite = area === 'struttura';
             <li><span class="cal__punto cal__punto--pochi"></span>Ultimi posti</li>
             <li><span class="cal__punto cal__punto--pieno"></span>Pieno o chiuso</li>
           </ul>
+          <p class="prenota__offerte" data-offerte hidden></p>
+          {!perOspite && <button type="button" class="prenota__togli" data-attesa-apri>Il giorno che vuoi è pieno? Avvisami se si libera un posto</button>}
         </div>
       </section>
+
+      {!perOspite && (
+        <section class="prenota__passo" aria-labelledby="pr-attesa" data-passo-attesa hidden>
+          <h2 id="pr-attesa" class="prenota__titolo">Lista d'attesa</h2>
+          <p class="prenota__nota" style="font-size:15px">Se si libera un posto ti scriviamo noi per email: prenoti tu, se vuoi. Nessun impegno e nessun pagamento adesso.</p>
+          <form class="prenota__dati" data-modulo-attesa novalidate>
+            <div class="campo"><label for="at-data">Giorno</label><input id="at-data" name="data" type="date" required /></div>
+            <div class="campo"><label for="at-turno">Orario</label><select id="at-turno" name="turno" required></select></div>
+            <div class="campo"><label for="at-adulti">Adulti</label><input id="at-adulti" name="adulti" type="number" min="1" max="12" value="2" required /></div>
+            <div class="campo"><label for="at-bambini">Bambini fino a {regole.eta.bambiniFinoA} anni</label><input id="at-bambini" name="bambini" type="number" min="0" max="12" value="0" /></div>
+            <div class="campo"><label for="at-nome">Nome e cognome</label><input id="at-nome" name="nome" autocomplete="name" maxlength="100" required /></div>
+            <div class="campo"><label for="at-email">Email</label><input id="at-email" name="email" type="email" autocomplete="email" maxlength="160" required /></div>
+            <div class="campo"><label for="at-tel">Telefono (facoltativo)</label><input id="at-tel" name="telefono" type="tel" autocomplete="tel" maxlength="30" /></div>
+            <label class="prenota__accetto campo--intero"><input type="checkbox" name="accetto" /><span>Ho letto l'<a href="/privacy/" target="_blank" rel="noopener">informativa privacy</a>: i miei dati servono solo per avvisarmi e si cancellano dopo la data.</span></label>
+            <p class="avviso campo--intero" data-errore-attesa role="alert" hidden></p>
+            <p class="messaggio-ok campo--intero" data-ok-attesa hidden></p>
+            <div class="campo--intero" style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn btn--wa" type="submit">Avvisami se si libera</button>
+              <button class="btn btn--bordo" type="button" data-attesa-chiudi>Chiudi</button>
+            </div>
+          </form>
+        </section>
+      )}
 
       <section class="prenota__passo" aria-labelledby="pr-turno" data-passo-turno hidden>
         <h2 id="pr-turno" class="prenota__titolo"><span class="prenota__n">4</span>Orario</h2>
@@ -76,6 +101,11 @@ const perOspite = area === 'struttura';
           ))}
         </div>
         <p class="prenota__nota" data-nota-persone></p>
+
+        <div data-blocco-extra hidden>
+          <h3 class="prenota__sottotitolo">Vuoi aggiungere qualcosa?</h3>
+          <div class="prenota__extra" data-extra></div>
+        </div>
 
         <h2 class="prenota__titolo" style="margin-top:28px"><span class="prenota__n">6</span>{perOspite ? "Dati dell'ospite" : 'I tuoi dati'}</h2>
         <div class="prenota__dati">
@@ -102,6 +132,15 @@ const perOspite = area === 'struttura';
     <aside class="prenota__riepilogo" aria-labelledby="pr-riepilogo" data-riepilogo hidden>
       <h2 id="pr-riepilogo" class="prenota__titolo">Riepilogo</h2>
       <div data-righe aria-live="polite"></div>
+      <details class="prenota__codice" data-box-codice>
+        <summary>Hai un codice sconto o un buono regalo?</summary>
+        <div class="prenota__codice-riga">
+          <label class="visually-hidden" for="pr-codice">Codice sconto o buono regalo</label>
+          <input id="pr-codice" data-codice maxlength="30" autocomplete="off" autocapitalize="characters" placeholder="Es. BR-XXXXXXXX" />
+          <button type="button" class="btn btn--bordo btn--piccolo" data-applica-codice>Applica</button>
+        </div>
+        <p class="prenota__nota" data-nota-codice aria-live="polite"></p>
+      </details>
       <label class="prenota__accetto">
         <input type="checkbox" data-accetto />
         <span>Ho letto le <a href="/condizioni/" target="_blank" rel="noopener">condizioni di prenotazione</a> e l'<a href="/privacy/" target="_blank" rel="noopener">informativa privacy</a>.</span>
@@ -115,7 +154,8 @@ const perOspite = area === 'struttura';
 
 <style is:global>
   .prenota__colonne { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 400px); gap: 32px; align-items: start; }
-  @media (max-width: 960px) { .prenota__colonne { grid-template-columns: 1fr; } }
+  @media (max-width: 960px) { .prenota__colonne { grid-template-columns: minmax(0, 1fr); } }
+  .prenota__riepilogo { min-width: 0; }
   .prenota__passi { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
   .prenota__passo, .prenota__riepilogo { background: var(--bianco); border: 1px solid var(--bordo); border-radius: var(--raggio-m); padding: 28px; display: flex; flex-direction: column; gap: 16px; }
   .prenota__riepilogo { position: sticky; top: 24px; box-shadow: var(--ombra-grande); }
@@ -176,14 +216,31 @@ const perOspite = area === 'struttura';
   .prenota__accetto input { width: 20px; height: 20px; margin-top: 1px; accent-color: var(--mare); flex: none; }
   .prenota__paga { display: flex; flex-direction: column; gap: 10px; }
   .prenota__sicuro { font-size: 13px; line-height: 1.5; color: var(--testo-2); text-align: center; }
+  .prenota__sottotitolo { font-size: 18px; font-weight: 800; margin-top: 20px; }
+  .prenota__extra { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+  .extra-voce { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1.5px solid var(--bordo-campo); border-radius: 14px; }
+  .extra-voce p { display: flex; flex-direction: column; font-size: 15px; line-height: 1.4; }
+  .extra-voce p strong { font-size: 16px; }
+  .extra-voce p span { color: var(--testo-2); font-size: 14px; }
+  .prenota__offerte { background: var(--acqua); border-radius: 12px; padding: 10px 14px; font-size: 14px; line-height: 1.5; }
+  .prenota__codice summary { cursor: pointer; font-size: 15px; font-weight: 700; color: var(--turchese); min-height: 44px; display: flex; align-items: center; }
+  .prenota__codice-riga { display: flex; gap: 8px; }
+  .prenota__codice-riga input { flex: 1; min-width: 0; height: 44px; border: 1.5px solid var(--bordo-campo); border-radius: 12px; padding: 0 12px; font: inherit; font-size: 16px; text-transform: uppercase; }
+  .riepilogo__voce--sconto span:last-child { color: #1F5E33; }
+  .riepilogo__dapagare { display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; padding-top: 6px; }
+  .opzione__attesa { align-self: flex-start; background: none; border: 0; padding: 4px 0; font: inherit; font-size: 14px; font-weight: 700; color: var(--turchese); text-decoration: underline; cursor: pointer; min-height: 32px; }
+  .prenota .messaggio-ok { background: #DFF3E4; color: #1F5E33; border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.5; font-weight: 600; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 </style>
 
 <script>
-  import { offerte, regole, calcolaPrenotazione, rigaPrezzo, imbarchiPrenotazione, imbarchiPer, testoCarburante, testoRitrovo, orarioDi } from '../data/prenotazioni.js';
+  import { offerte, regole, calcolaPrenotazione, rigaPrezzo, imbarchiPrenotazione, imbarchiPer, testoCarburante, testoRitrovo, orarioDi, NOMI_REGOLE } from '../data/prenotazioni.js';
   import { api, ErroreApi, h, euro, dataLunga, oggiRoma, segnaposto, persone as testoPersone } from '../scripts/comune';
 
   const NOMI_MESI = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric', timeZone: 'UTC' });
-  const ETICHETTE_PAGA: Record<string, string> = { sumup: 'Paga con carta', paypal: 'Paga con PayPal', prova: 'Pagamento di prova (anteprima)' };
+  const ETICHETTE_PAGA: Record<string, string> = { sumup: 'Paga con carta', paypal: 'Paga con PayPal', prova: 'Pagamento di prova (anteprima)', buono: 'Conferma con il buono regalo' };
+  // Testo breve di una promozione, per il riquadro sotto il calendario.
+  const testoRegola = (r: any) => r.tipo === 'weekend' ? '' : `${r.nome || NOMI_REGOLE[r.tipo]}: −${r.percentuale}% ${r.tipo === 'anticipo' ? `prenotando almeno ${r.soglia} giorni prima` : r.tipo === 'ultimo-minuto' ? `nelle ultime ${r.soglia} ore prima della partenza` : `da ${r.soglia} persone in su`}`;
 
   document.querySelectorAll<HTMLElement>('[data-prenota]').forEach((radice) => {
     const config = JSON.parse(radice.querySelector('[data-config]')!.textContent || '{}');
@@ -198,6 +255,13 @@ const perOspite = area === 'struttura';
     } catch { partnerCodice = parametri.get('p')?.toUpperCase() || ''; }
     if (config.area === 'struttura') partnerCodice = '';
 
+    // Codice del volantino (?c=CODICE, dal QR): resta per tutta la visita.
+    let campagna = '';
+    try {
+      if (parametri.get('c')) sessionStorage.setItem('em_campagna', parametri.get('c')!.toUpperCase());
+      campagna = sessionStorage.getItem('em_campagna') || '';
+    } catch { campagna = parametri.get('c')?.toUpperCase() || ''; }
+
     const st = {
       slug: '' as string,
       mese: '' as string,
@@ -208,7 +272,15 @@ const perOspite = area === 'struttura';
       imbarco: 'maddalena' as string,
       pagamenti: [] as string[],
       invio: false,
+      regole: [] as any[],
+      extra: [] as any[],
+      extraScelti: {} as Record<string, number>,
+      codice: null as any,
     };
+    let ultimoCalcolo: any = null;
+    // Dalla lista d'attesa o da un link: giorno e imbarco già scelti.
+    const dataIniziale = /^\d{4}-\d{2}-\d{2}$/.test(parametri.get('data') || '') ? parametri.get('data')! : '';
+    if (parametri.get('imbarco')) st.imbarco = parametri.get('imbarco')!;
 
     const iniziale = radice.dataset.escursione || parametri.get('escursione') || '';
     const primoMese = () => {
@@ -233,7 +305,7 @@ const perOspite = area === 'struttura';
     async function scegliEscursione(slug: string) {
       if (!offerte[slug]) return;
       st.slug = slug; st.data = ''; st.turno = '';
-      if (!st.mese) st.mese = primoMese();
+      if (!st.mese) st.mese = dataIniziale && dataIniziale >= config.stagione.dal && dataIniziale <= config.stagione.al ? dataIniziale.slice(0, 7) : primoMese();
       disegnaEscursioni();
       disegnaImbarchi();
       $('[data-passo-imbarco]').hidden = false;
@@ -242,6 +314,9 @@ const perOspite = area === 'struttura';
       $('[data-passo-dettagli]').hidden = true;
       $('[data-riepilogo]').hidden = true;
       await caricaMese();
+      if (dataIniziale && st.giorni[dataIniziale] && ['libero', 'pochi'].includes(st.giorni[dataIniziale].stato)) {
+        radice.querySelector<HTMLButtonElement>(`[data-data="${dataIniziale}"]`)?.click();
+      }
     }
 
     // ---------- 2. Imbarco (La Maddalena e Palau hanno gli stessi gommoni, Cannigione il suo: cambia il calendario) ----------
@@ -276,7 +351,9 @@ const perOspite = area === 'struttura';
         const d = await api(`/api/disponibilita?${q}`);
         st.giorni = d.giorni;
         st.pagamenti = d.pagamenti;
+        st.regole = d.regole || [];
         mostraPartner(d.partner);
+        mostraOfferte();
       } catch (e) {
         st.giorni = {};
         errore(e);
@@ -342,12 +419,49 @@ const perOspite = area === 'struttura';
           <span>${orarioDi(t, st.data) ? h(orarioDi(t, st.data)) + (t.indicativo ? ' (indicativo)' : '') : segnaposto('orario da confermare')}</span>
           <span>${prezzo}</span>
           <span class="opzione__stato">${disponibilita}</span>
-        </button>`;
+        </button>${!s.disponibile && config.area !== 'struttura' ? `<button type="button" class="opzione__attesa" data-attesa-turno="${h(t.id)}">Avvisami se si libera un posto</button>` : ''}`;
       }).join('');
     }
     $('[data-turni]').addEventListener('click', (ev) => {
+      const attesa = (ev.target as Element).closest<HTMLElement>('[data-attesa-turno]');
+      if (attesa) { apriAttesa(st.data, attesa.dataset.attesaTurno!); return; }
       const b = (ev.target as Element).closest<HTMLButtonElement>('[data-turno]');
       if (b && !b.disabled) scegliTurno(b.dataset.turno!);
+    });
+
+    // ---------- Lista d'attesa ----------
+    function apriAttesa(data = '', turno = '') {
+      const box = radice.querySelector<HTMLElement>('[data-passo-attesa]');
+      if (!box || !st.slug) return;
+      const f = box.querySelector<HTMLFormElement>('[data-modulo-attesa]')!;
+      const domani = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+      f.data.min = domani > config.stagione.dal ? domani : config.stagione.dal;
+      f.data.max = config.stagione.al;
+      if (data) f.data.value = data;
+      f.turno.innerHTML = offerte[st.slug].turni.map((t: any) => `<option value="${h(t.id)}" ${t.id === turno ? 'selected' : ''}>${h(t.nome)}</option>`).join('');
+      f.adulti.value = String(st.adulti); f.bambini.value = String(st.bambini);
+      box.querySelector<HTMLElement>('[data-ok-attesa]')!.hidden = true;
+      box.hidden = false;
+      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      (data ? f.nome : f.data).focus({ preventScroll: true });
+    }
+    radice.querySelector('[data-attesa-apri]')?.addEventListener('click', () => apriAttesa(st.data));
+    radice.querySelector('[data-attesa-chiudi]')?.addEventListener('click', () => { radice.querySelector<HTMLElement>('[data-passo-attesa]')!.hidden = true; });
+    radice.querySelector('[data-modulo-attesa]')?.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const f = ev.target as HTMLFormElement;
+      const err = f.querySelector<HTMLElement>('[data-errore-attesa]')!;
+      const okBox = f.querySelector<HTMLElement>('[data-ok-attesa]')!;
+      err.hidden = true;
+      for (const c of [f.data, f.nome, f.email] as HTMLInputElement[]) if (!c.value.trim() || !c.checkValidity()) { c.reportValidity(); c.focus(); return; }
+      try {
+        const r = await api('/api/lista-attesa', { corpo: {
+          escursione: st.slug, imbarco: st.imbarco, data: f.data.value, turno: f.turno.value, adulti: Number(f.adulti.value), bambini: Number(f.bambini.value),
+          nome: f.nome.value, email: f.email.value, telefono: f.telefono.value, accetto: f.accetto.checked,
+        } });
+        okBox.textContent = r.gia ? "Sei già in lista d'attesa per questo giorno e orario." : `Fatto: se si libera un posto il ${dataLunga(f.data.value)} ti scriviamo a ${f.email.value}.`;
+        okBox.hidden = false;
+      } catch (e) { err.textContent = (e as Error).message; err.hidden = false; }
     });
 
     function scegliTurno(id: string) {
@@ -357,7 +471,71 @@ const perOspite = area === 'struttura';
       $('[data-riepilogo]').hidden = false;
       sistemaPersone();
       aggiorna();
+      caricaExtra();
     }
+
+    // ---------- Promozioni attive ----------
+    function mostraOfferte() {
+      const box = $('[data-offerte]');
+      const testi = st.regole.filter((r) => !r.escursioni || String(r.escursioni).split(',').includes(st.slug)).map(testoRegola).filter(Boolean);
+      box.textContent = testi.length ? `Offerte: ${testi.join(' · ')}.` : '';
+      box.hidden = !testi.length;
+    }
+
+    // ---------- Extra a pagamento ----------
+    async function caricaExtra() {
+      const blocco = $('[data-blocco-extra]');
+      try {
+        const d = await api(`/api/extra?escursione=${encodeURIComponent(st.slug)}&data=${st.data}`);
+        st.extra = d.extra;
+      } catch { st.extra = []; }
+      for (const id of Object.keys(st.extraScelti)) if (!st.extra.some((e) => String(e.id) === id)) delete st.extraScelti[id];
+      blocco.hidden = !st.extra.length;
+      disegnaExtra();
+      aggiorna();
+    }
+    function disegnaExtra() {
+      const persone = st.adulti + st.bambini;
+      $('[data-extra]').innerHTML = st.extra.map((e) => {
+        const max = Math.min(e.modo === 'persona' ? persone : 1, e.rimanenti ?? 99);
+        const q = Math.min(st.extraScelti[e.id] || 0, max);
+        st.extraScelti[e.id] = q;
+        return `<div class="extra-voce">
+          <p><strong>${h(e.nome)}</strong><span>${euro(e.prezzo)}${e.modo === 'persona' ? ' a persona' : ''}${e.descrizione ? ` · ${h(e.descrizione)}` : ''}${max === 0 ? ' · esaurito per questo giorno' : ''}</span></p>
+          <div class="contatore__comandi">
+            <button type="button" data-extra-meno="${e.id}" aria-label="Togli ${h(e.nome)}" ${q <= 0 ? 'disabled' : ''}>−</button>
+            <output aria-live="polite">${q}</output>
+            <button type="button" data-extra-piu="${e.id}" aria-label="Aggiungi ${h(e.nome)}" ${q >= max ? 'disabled' : ''}>+</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    $('[data-extra]').addEventListener('click', (ev) => {
+      const t = ev.target as HTMLElement;
+      const piu = t.closest<HTMLElement>('[data-extra-piu]')?.dataset.extraPiu;
+      const meno = t.closest<HTMLElement>('[data-extra-meno]')?.dataset.extraMeno;
+      if (piu) st.extraScelti[piu] = (st.extraScelti[piu] || 0) + 1;
+      if (meno) st.extraScelti[meno] = Math.max(0, (st.extraScelti[meno] || 0) - 1);
+      if (piu || meno) { disegnaExtra(); aggiorna(); }
+    });
+
+    // ---------- Codice sconto o buono regalo ----------
+    async function applicaCodice() {
+      const campo = $<HTMLInputElement>('[data-codice]');
+      const nota = $('[data-nota-codice]');
+      const valore = campo.value.trim().toUpperCase();
+      if (!valore) { st.codice = null; nota.textContent = ''; aggiorna(); return; }
+      try {
+        st.codice = await api(`/api/codice?codice=${encodeURIComponent(valore)}`);
+        campo.value = st.codice.codice;
+      } catch (e) {
+        st.codice = null;
+        nota.textContent = (e as Error).message;
+      }
+      aggiorna();
+    }
+    $('[data-applica-codice]').addEventListener('click', applicaCodice);
+    $('[data-codice]').addEventListener('keydown', (ev) => { if ((ev as KeyboardEvent).key === 'Enter') { ev.preventDefault(); applicaCodice(); } });
 
     // ---------- 5. Persone ----------
     const maxTurno = () => st.giorni[st.data]?.turni.find((t: any) => t.id === st.turno)?.max ?? 0;
@@ -381,7 +559,7 @@ const perOspite = area === 'struttura';
       const meno = t.closest<HTMLElement>('[data-meno]')?.dataset.meno as 'adulti' | 'bambini' | undefined;
       if (piu && st.adulti + st.bambini < maxTurno()) st[piu]++;
       if (meno && st[meno] > (meno === 'adulti' ? 1 : 0)) st[meno]--;
-      if (piu || meno) { sistemaPersone(); aggiorna(); }
+      if (piu || meno) { sistemaPersone(); disegnaExtra(); aggiorna(); }
     });
 
     // ---------- Riepilogo e pagamento ----------
@@ -391,7 +569,12 @@ const perOspite = area === 'struttura';
       if (!st.slug || !st.data || !st.turno) return;
       const offerta = offerte[st.slug];
       const turno = offerta.turni.find((t: any) => t.id === st.turno);
-      const calcolo: any = calcolaPrenotazione(st.slug, st.turno, st.data, { adulti: st.adulti, bambini: st.bambini });
+      const calcolo: any = calcolaPrenotazione(st.slug, st.turno, st.data, { adulti: st.adulti, bambini: st.bambini }, {
+        regole: st.regole, codice: st.codice, extra: st.extra, extraScelti: st.extraScelti,
+      });
+      ultimoCalcolo = calcolo;
+      const nota = $('[data-nota-codice]');
+      if (st.codice) nota.textContent = calcolo.codiceErrore || (calcolo.buono ? `Buono regalo: ${euro(calcolo.buono)} usati su ${euro(st.codice.saldo)}.` : 'Codice applicato.');
       const titolo = config.escursioni.find((e: any) => e.slug === st.slug)?.titolo ?? '';
       const nomeImbarco = imbarchiPrenotazione.find((i) => i.id === imbarco())?.nome ?? '';
       // Note in HTML: i testi passano da h(), il segnaposto del carburante è già HTML.
@@ -408,14 +591,22 @@ const perOspite = area === 'struttura';
         <div class="riepilogo__voce"><span>Orario</span><span>${h(turno.nome)}<br>${orarioDi(turno, st.data) ? h(orarioDi(turno, st.data)) + (turno.indicativo ? ' (indicativo)' : '') : segnaposto('da confermare')}</span></div>
         <div class="riepilogo__voce"><span>Imbarco</span><span>${h(nomeImbarco)}</span></div>
         <div class="riepilogo__voce"><span>Persone</span><span>${h(testoPersone(st.adulti, st.bambini))}</span></div>
-        ${calcolo.errore ? `<p class="avviso">${h(calcolo.errore)}</p>` : calcolo.righe.map((r: any) => `<div class="riepilogo__voce"><span>${h(r.testo)}</span><span class="riepilogo__importo">${euro(r.importo)}</span></div>`).join('')}
+        ${calcolo.errore ? `<p class="avviso">${h(calcolo.errore)}</p>` : calcolo.righe.filter((r: any) => !r.buono).map((r: any) => `<div class="riepilogo__voce${r.importo < 0 ? ' riepilogo__voce--sconto' : ''}"><span>${h(r.testo)}</span><span class="riepilogo__importo">${r.importo < 0 ? '−' : ''}${euro(Math.abs(r.importo))}</span></div>`).join('')}
         ${calcolo.errore ? '' : `<p class="riepilogo__totale"><span>Totale</span><span>${euro(calcolo.totale)}</span></p>`}
+        ${!calcolo.errore && calcolo.buono ? `<div class="riepilogo__voce riepilogo__voce--sconto"><span>Buono regalo ${h(st.codice.codice)}</span><span class="riepilogo__importo">−${euro(calcolo.buono)}</span></div><p class="riepilogo__dapagare"><span>Da pagare adesso</span><span>${euro(calcolo.daPagare)}</span></p>` : ''}
         <ul class="riepilogo__info">${info.map((t) => `<li>${t}</li>`).join('')}</ul>`;
       disegnaPagamenti(Boolean(calcolo.errore));
     }
 
     function disegnaPagamenti(bloccato: boolean) {
       const box = $('[data-pagamenti]');
+      const tuttoColBuono = ultimoCalcolo && !ultimoCalcolo.errore && ultimoCalcolo.buono > 0 && ultimoCalcolo.daPagare === 0;
+      if (tuttoColBuono) {
+        const accettato = radice.querySelector<HTMLInputElement>('[data-accetto]')!.checked;
+        box.innerHTML = `<button type="button" class="btn btn--wa btn--grande btn--pieno" data-paga="buono" ${bloccato || st.invio ? 'disabled' : ''}>${ETICHETTE_PAGA.buono}</button>`
+          + (accettato ? '' : '<p class="prenota__nota" style="text-align:center">Per continuare spunta la casella delle condizioni.</p>');
+        return;
+      }
       if (!st.pagamenti.length) {
         const testo = encodeURIComponent(`Ciao! Vorrei prenotare ${config.escursioni.find((e: any) => e.slug === st.slug)?.titolo ?? ''} il ${st.data ? dataLunga(st.data) : ''}.`);
         box.innerHTML = `<p class="avviso">I pagamenti online non sono ancora attivi.</p>${config.whatsapp ? `<a class="btn btn--wa btn--grande btn--pieno" href="https://wa.me/${h(config.whatsapp)}?text=${testo}">Prenota su WhatsApp</a>` : ''}`;
@@ -460,6 +651,7 @@ const perOspite = area === 'struttura';
         const r = await api('/api/prenota', { corpo: {
           escursione: st.slug, turno: st.turno, data: st.data, adulti: st.adulti, bambini: st.bambini,
           imbarco: imbarco(), ...dati, metodo: b.dataset.paga, accetto: true, partner: partnerCodice || undefined, area: config.area || undefined,
+          codice: st.codice?.codice || undefined, extra: st.extraScelti, campagna: campagna || undefined,
         } });
         location.assign(r.redirect);
       } catch (e) {

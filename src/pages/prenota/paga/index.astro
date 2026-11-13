@@ -1,0 +1,80 @@
+---
+// Link di pagamento mandato dalla gestione: il cliente vede il riepilogo e paga con carta o PayPal.
+import Base from '../../../layouts/Base.astro';
+import { sito } from '../../../data/sito.js';
+---
+<Base titolo="Paga la prenotazione" descrizione="Paga online la tua prenotazione con Escursioni Maddalena." nascosta senzaBarra>
+  <section class="sezione" style="padding-top:56px">
+    <div class="contenitore" style="max-width:760px">
+      <div class="esito" data-paga-link data-whatsapp={sito.contatti.whatsapp}>
+        <p class="testo-2">Carico la prenotazione…</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  .esito { background: var(--bianco); border: 1px solid var(--bordo); border-radius: var(--raggio-l); padding: 40px; display: flex; flex-direction: column; gap: 20px; box-shadow: var(--ombra-grande); }
+  @media (max-width: 520px) { .esito { padding: 28px 20px; } }
+  .esito h1 { font-weight: 800; font-size: clamp(32px, 4.4vw, 48px); line-height: 1.05; letter-spacing: -0.02em; }
+  .esito__codice { display: inline-flex; align-self: flex-start; background: var(--acqua); border-radius: 999px; padding: 6px 14px; font-weight: 800; letter-spacing: .06em; }
+  .esito dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 20px; font-size: 16px; }
+  .esito dt { color: var(--testo-2); }
+  .esito dd { margin: 0; font-weight: 600; }
+  .paga__accetto { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.5; cursor: pointer; }
+  .paga__accetto input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--mare); flex: none; }
+  .paga__bottoni { display: flex; flex-direction: column; gap: 10px; max-width: 420px; }
+</style>
+
+<script>
+  import { api, h, euro, persone } from '../../../scripts/comune';
+  import { regole, testoCarburante } from '../../../data/prenotazioni.js';
+  const box = document.querySelector<HTMLElement>('[data-paga-link]')!;
+  const q = new URLSearchParams(location.search);
+  const codice = q.get('codice') || '', t = q.get('t') || '';
+  const whatsapp = box.dataset.whatsapp || '';
+  const wa = (testo: string) => whatsapp ? `<a class="btn btn--bordo" href="https://wa.me/${h(whatsapp)}?text=${encodeURIComponent(testo)}">Scrivici su WhatsApp</a>` : '';
+  const ETICHETTE: Record<string, string> = { sumup: 'Paga con carta', paypal: 'Paga con PayPal', prova: 'Pagamento di prova (anteprima)' };
+  const esito = `/prenota/esito/?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}`;
+
+  async function carica() {
+    let p: any;
+    try { p = await api(`/api/prenotazione?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}`); }
+    catch (e) { box.innerHTML = `<h1>Prenotazione non trovata</h1><p>${h((e as Error).message)}</p><div>${wa('Ciao! Non riesco ad aprire il link per pagare.')}</div>`; return; }
+    if (!p.pagabile) {
+      box.innerHTML = p.stato === 'confermata' && p.daPagare === 0
+        ? `<p class="esito__codice">${h(p.codice)}</p><h1>Già pagata</h1><p>Questa prenotazione è già pagata e confermata.</p><div><a class="btn btn--wa" href="${esito}">Vedi la prenotazione</a></div>`
+        : `<p class="esito__codice">${h(p.codice)}</p><h1>Link scaduto</h1><p>Il tempo per pagare è finito e i posti sono tornati disponibili. Scrivici: ti mandiamo un link nuovo se c'è ancora posto.</p><div>${wa(`Ciao! Il link per pagare la prenotazione ${p.codice} è scaduto.`)}</div>`;
+      return;
+    }
+    const scade = p.stato === 'in_attesa' && p.scadeIl ? new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' }).format(new Date(p.scadeIl)) : '';
+    box.innerHTML = `<p class="esito__codice">${h(p.codice)}</p>
+      <h1>Paga la prenotazione</h1>
+      <p>Ciao ${h(p.nome)}, ecco il riepilogo. ${scade ? `Ti teniamo i posti fino a ${h(scade)}.` : ''}</p>
+      <dl>
+        <dt>Escursione</dt><dd>${h(p.escursione)}</dd>
+        <dt>Data</dt><dd>${h(p.dataLeggibile)}</dd>
+        <dt>Orario</dt><dd>${h(p.turno)}${p.orario ? ` · ${h(p.orario)}` : ''}</dd>
+        <dt>Imbarco</dt><dd>${h(p.imbarco)}</dd>
+        <dt>Persone</dt><dd>${h(persone(p.adulti, p.bambini, p.neonati))}</dd>
+        <dt>Da pagare</dt><dd style="font-size:22px;font-weight:800">${euro(p.daPagare)}</dd>
+      </dl>
+      ${p.carburanteEscluso ? `<p class="testo-2">${h(testoCarburante())}</p>` : ''}
+      <p class="testo-2">Cancellazione gratuita fino a ${regole.cancellazioneGratisOre} ore prima. Con mare o vento non sicuri annulliamo noi e scegli tu: rimborso completo o nuova data.</p>
+      <label class="paga__accetto"><input type="checkbox" data-accetto /><span>Ho letto le <a href="/condizioni/" target="_blank" rel="noopener">condizioni di prenotazione</a> e l'<a href="/privacy/" target="_blank" rel="noopener">informativa privacy</a>.</span></label>
+      <p class="avviso" data-errore hidden role="alert"></p>
+      <div class="paga__bottoni">${(p.pagamenti || []).map((m: string, i: number) => `<button type="button" class="btn ${i === 0 ? 'btn--wa' : 'btn--scuro'} btn--grande btn--pieno" data-metodo="${h(m)}">${h(ETICHETTE[m] || m)}</button>`).join('') || '<p class="avviso">I pagamenti online non sono ancora attivi: scrivici.</p>'}</div>
+      <p class="testo-2" style="font-size:13px">Paghi sulla pagina sicura di SumUp o PayPal: i dati della carta non passano dal nostro sito.</p>`;
+    box.querySelector('.paga__bottoni')!.addEventListener('click', async (ev) => {
+      const b = (ev.target as Element).closest<HTMLButtonElement>('[data-metodo]');
+      if (!b) return;
+      const err = box.querySelector<HTMLElement>('[data-errore]')!;
+      err.hidden = true;
+      if (!box.querySelector<HTMLInputElement>('[data-accetto]')!.checked) { err.textContent = 'Per pagare spunta la casella delle condizioni.'; err.hidden = false; return; }
+      b.disabled = true;
+      try { const r = await api('/api/pagamento/avvia', { corpo: { codice, t, metodo: b.dataset.metodo, accetto: true } }); location.assign(r.redirect); }
+      catch (e) { b.disabled = false; err.textContent = (e as Error).message; err.hidden = false; }
+    });
+  }
+  carica();
+</script>

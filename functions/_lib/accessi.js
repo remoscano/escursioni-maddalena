@@ -82,7 +82,8 @@ export async function utenteCollegato(db, request) {
 export async function richiedi(db, request, ruolo) {
   const utente = await utenteCollegato(db, request);
   if (!utente) throw new Errore(401, 'Accesso scaduto: entra di nuovo.');
-  if (ruolo && utente.ruolo !== ruolo) throw new Errore(403, 'Non hai accesso a questa sezione.');
+  const ammessi = Array.isArray(ruolo) ? ruolo : ruolo ? [ruolo] : null;
+  if (ammessi && !ammessi.includes(utente.ruolo)) throw new Errore(403, 'Non hai accesso a questa sezione.');
   if (utente.ruolo === 'partner' && !utente.partner_attivo) throw new Errore(403, 'Questo account non è attivo.');
   return utente;
 }

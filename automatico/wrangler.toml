@@ -1,0 +1,11 @@
+# Worker con il "timer": chiama il sito ogni ora (al minuto 5).
+# Si pubblica una volta sola: vedi LEGGIMI.md in questa cartella.
+name = "escursioni-maddalena-automatico"
+main = "index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+SITO = "https://escursioni-maddalena.pages.dev"
+
+[triggers]
+crons = ["5 * * * *"]

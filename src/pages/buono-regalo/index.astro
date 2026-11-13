@@ -1,0 +1,88 @@
+---
+// Buono regalo: si compra online e vale come credito per prenotare qualsiasi escursione.
+import Base from '../../layouts/Base.astro';
+import { regole } from '../../data/prenotazioni.js';
+import { sito } from '../../data/sito.js';
+const { importi, minimo, massimo, validitaMesi } = regole.buoni;
+---
+<Base titolo="Buono regalo" descrizione={`Regala un'escursione in gommone nell'Arcipelago di La Maddalena: buono regalo da ${minimo} a ${massimo} €, valido ${validitaMesi} mesi su tutte le escursioni.`}>
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Da regalare</p>
+      <h1>Buono regalo</h1>
+      <p class="intro">Regala una giornata nell'arcipelago: chi lo riceve sceglie escursione, giorno e orario. Vale {validitaMesi} mesi su tutte le escursioni, anche in esclusiva.</p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:32px">
+    <div class="contenitore" style="max-width:760px">
+      <form class="buono" data-buono novalidate data-whatsapp={sito.contatti.whatsapp}>
+        <fieldset class="buono__importi">
+          <legend>Importo</legend>
+          <div class="scelte">
+            {importi.map((v, i) => <label class="scelta"><input type="radio" name="valore" value={v} checked={i === 1} />{v} €</label>)}
+            <label class="scelta"><input type="radio" name="valore" value="altro" />Altro</label>
+          </div>
+          <div class="campo" data-altro hidden><label for="b-altro">Importo (da {minimo} a {massimo} €)</label><input id="b-altro" name="altro" type="number" min={minimo} max={massimo} step="1" inputmode="numeric" /></div>
+        </fieldset>
+        <div class="buono__campi">
+          <div class="campo"><label for="b-nome">Il tuo nome e cognome</label><input id="b-nome" name="nome" autocomplete="name" maxlength="100" required /></div>
+          <div class="campo"><label for="b-email">La tua email (ti mandiamo il buono)</label><input id="b-email" name="email" type="email" autocomplete="email" maxlength="160" required /></div>
+          <div class="campo"><label for="b-tel">Telefono (facoltativo)</label><input id="b-tel" name="telefono" type="tel" autocomplete="tel" maxlength="30" /></div>
+          <div class="campo"><label for="b-dest">A chi lo regali (facoltativo)</label><input id="b-dest" name="destinatario" maxlength="100" /></div>
+          <div class="campo buono__intero"><label for="b-msg">Un messaggio sul buono (facoltativo)</label><textarea id="b-msg" name="messaggio" rows="3" maxlength="300"></textarea></div>
+        </div>
+        <ul class="buono__info">
+          <li>Ricevi subito il buono per email, da stampare o inoltrare.</li>
+          <li>Si usa prenotando online: si scrive il codice nel riepilogo. Se l'escursione costa di più, la differenza si paga con carta o PayPal; se costa meno, quello che avanza resta sul buono.</li>
+          <li>Vale {validitaMesi} mesi dall'acquisto. Le escursioni si fanno dal 1° maggio al 31 ottobre.</li>
+        </ul>
+        <label class="prenota__accetto"><input type="checkbox" name="accetto" /><span>Ho letto le <a href="/condizioni/" target="_blank" rel="noopener">condizioni</a> (anche quelle del buono regalo) e l'<a href="/privacy/" target="_blank" rel="noopener">informativa privacy</a>.</span></label>
+        <p class="avviso" data-errore role="alert" hidden></p>
+        <div class="buono__paga" data-metodi><p class="testo-2">Carico i metodi di pagamento…</p></div>
+        <p class="testo-2" style="font-size:13px">Paghi sulla pagina sicura di SumUp o PayPal: i dati della carta non passano dal nostro sito.</p>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .buono { background: var(--bianco); border: 1px solid var(--bordo); border-radius: var(--raggio-m); padding: 28px; display: flex; flex-direction: column; gap: 20px; }
+  .buono__importi { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .buono__importi legend { font-weight: 800; font-size: 20px; margin-bottom: 10px; }
+  .buono__campi { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 14px; }
+  .buono__intero { grid-column: 1 / -1; }
+  .buono textarea { width: 100%; border: 1.5px solid var(--bordo-campo); border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 16px; color: var(--mare); }
+  .buono__info { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; line-height: 1.5; color: var(--testo-2); }
+  .buono__paga { display: flex; flex-direction: column; gap: 10px; max-width: 420px; }
+  .prenota__accetto { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.5; cursor: pointer; }
+  .prenota__accetto input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--mare); flex: none; }
+</style>
+
+<script>
+  import { api, h } from '../../scripts/comune';
+  const f = document.querySelector<HTMLFormElement>('[data-buono]')!;
+  const err = f.querySelector<HTMLElement>('[data-errore]')!;
+  const ETICHETTE: Record<string, string> = { sumup: 'Paga con carta', paypal: 'Paga con PayPal', prova: 'Pagamento di prova (anteprima)' };
+  f.addEventListener('change', () => { f.querySelector<HTMLElement>('[data-altro]')!.hidden = f.valore.value !== 'altro'; });
+  // I metodi di pagamento attivi arrivano dal server (come nella prenotazione).
+  api(`/api/disponibilita?escursione=tour-7-isole&mese=${new Date().toISOString().slice(0, 7)}`)
+    .then((d) => {
+      const box = f.querySelector<HTMLElement>('[data-metodi]')!;
+      box.innerHTML = d.pagamenti.length ? d.pagamenti.map((m: string, i: number) => `<button type="button" class="btn ${i === 0 ? 'btn--wa' : 'btn--scuro'} btn--grande btn--pieno" data-metodo="${h(m)}">${h(ETICHETTE[m] || m)}</button>`).join('')
+        : `<p class="avviso">I pagamenti online non sono ancora attivi.</p>${f.dataset.whatsapp ? `<a class="btn btn--wa" href="https://wa.me/${h(f.dataset.whatsapp)}?text=${encodeURIComponent('Ciao! Vorrei un buono regalo.')}">Chiedilo su WhatsApp</a>` : ''}`;
+    })
+    .catch(() => {});
+  f.addEventListener('click', async (ev) => {
+    const b = (ev.target as Element).closest<HTMLButtonElement>('[data-metodo]');
+    if (!b) return;
+    err.hidden = true;
+    for (const c of [f.nome, f.email] as HTMLInputElement[]) if (!c.value.trim() || !c.checkValidity()) { c.reportValidity(); c.focus(); return; }
+    if (!f.accetto.checked) { err.textContent = 'Per continuare spunta la casella delle condizioni.'; err.hidden = false; return; }
+    const valore = f.valore.value === 'altro' ? Number(f.altro.value) : Number(f.valore.value);
+    b.disabled = true;
+    try {
+      const r = await api('/api/buono', { corpo: { valore, nome: f.nome.value, email: f.email.value, telefono: f.telefono.value, destinatario: f.destinatario.value, messaggio: f.messaggio.value, metodo: b.dataset.metodo, accetto: true } });
+      location.assign(r.redirect);
+    } catch (e) { b.disabled = false; err.textContent = (e as Error).message; err.hidden = false; }
+  });
+</script>

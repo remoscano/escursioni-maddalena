@@ -1,5 +1,5 @@
 ---
-// Controllata l'8 novembre 2026 su quello che il sito usa davvero.
+// Controllata l'13 novembre 2026 su quello che il sito usa davvero.
 // Se si aggiungono statistiche (es. Cloudflare Web Analytics, senza cookie) o un altro servizio esterno,
 // va scritto qui e nella pagina /privacy/.
 import Base from '../layouts/Base.astro';
@@ -18,8 +18,10 @@ import Base from '../layouts/Base.astro';
 
       <h2>Cosa usiamo</h2>
       <ul>
-        <li><strong>Cookie tecnico di accesso</strong> (<code>em_sessione</code>): solo per chi entra nell'area strutture partner o nella gestione. Serve a restare collegati, dura al massimo 12 ore e si cancella uscendo.</li>
+        <li><strong>Cookie tecnico di accesso</strong> (<code>em_sessione</code>): solo per chi entra nell'area strutture partner, nella gestione o nell'area imbarco degli skipper. Serve a restare collegati, dura al massimo 12 ore e si cancella uscendo.</li>
         <li><strong>Codice della struttura partner</strong> (memoria di sessione del browser, <code>em_partner</code>): se arrivi dal link di un hotel o di una struttura partner, il browser ricorda il loro codice finché chiudi la scheda, per attribuire a loro la prenotazione. Non contiene dati su di te e non serve ad altro.</li>
+        <li><strong>Codice del volantino</strong> (memoria di sessione del browser, <code>em_campagna</code>): se arrivi dal QR di un nostro volantino o locandina, il browser ricorda il suo codice finché chiudi la scheda, per contare quante prenotazioni porta. Non contiene dati su di te.</li>
+        <li><strong>Gestione e imbarco installabili</strong> (service worker in <code>/gestione/</code> e <code>/imbarco/</code>): solo per chi lavora con noi, permette di aggiungere queste aree alla schermata Home del telefono. Non salva dati e non c'è nelle pagine pubbliche.</li>
         <li><strong>Cookie di sicurezza di Cloudflare</strong>: Cloudflare, che ospita e protegge il sito, può impostare cookie tecnici (per esempio <code>__cf_bm</code> o <code>cf_clearance</code>) per distinguere le persone dai programmi automatici. Non servono a profilarti.</li>
       </ul>
 
@@ -30,7 +32,7 @@ import Base from '../layouts/Base.astro';
       <h2>Come cancellarli</h2>
       <p>Puoi cancellare cookie e dati dei siti dalle impostazioni del browser quando vuoi. Senza il cookie di accesso le aree riservate non funzionano; il resto del sito sì.</p>
 
-      <p class="testo-2">Ultimo aggiornamento: 8 novembre 2026</p>
+      <p class="testo-2">Ultimo aggiornamento: 13 novembre 2026</p>
     </div>
   </section>
 </Base>

@@ -24,11 +24,31 @@ import { sito } from '../../data/sito.js';
   .esito ul { padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.55; color: var(--testo-2); }
   .esito__azioni { display: flex; flex-wrap: wrap; gap: 12px; }
   .esito--ok h1 { color: var(--turchese); }
+  .biglietto { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 20px; align-items: center; border: 2px dashed var(--bordo-campo); border-radius: 18px; padding: 18px; }
+  @media (max-width: 520px) { .biglietto { grid-template-columns: 1fr; justify-items: center; text-align: center; } }
+  .biglietto__qr { width: 100%; max-width: 220px; }
+  .biglietto__qr svg { width: 100%; height: auto; display: block; }
+  .biglietto p { font-size: 15px; line-height: 1.5; }
+  .biglietto strong { font-size: 22px; letter-spacing: .06em; }
+  .scelta-recupero { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 12px; }
+  .scelta-recupero button { display: flex; flex-direction: column; gap: 4px; text-align: left; padding: 16px; border: 1.5px solid var(--bordo-campo); border-radius: 14px; background: var(--bianco); font: inherit; color: var(--mare); cursor: pointer; min-height: 64px; }
+  .scelta-recupero button strong { font-size: 17px; }
+  .scelta-recupero button span { font-size: 14px; color: var(--testo-2); line-height: 1.45; }
+  .rinvio { display: flex; flex-direction: column; gap: 12px; }
+  .rinvio__mese { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: 800; text-transform: capitalize; }
+  .rinvio__giorni { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr)); gap: 8px; }
+  .rinvio__giorni button, .rinvio__turni button { min-height: 48px; padding: 8px 12px; border: 1.5px solid var(--bordo-campo); border-radius: 12px; background: var(--bianco); font: inherit; font-size: 15px; color: var(--mare); cursor: pointer; text-align: left; }
+  .rinvio__giorni button[aria-pressed="true"], .rinvio__turni button[aria-pressed="true"] { border: 2px solid var(--mare); background: var(--acqua); font-weight: 700; }
+  .rinvio__turni { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cal__freccia { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--bordo-campo); background: var(--bianco); font-size: 24px; line-height: 1; color: var(--mare); cursor: pointer; }
+  .cal__freccia:disabled { opacity: .35; cursor: not-allowed; }
+  @media print { .testata, .piede, .esito__azioni, .esito__nascondi-stampa { display: none !important; } .esito { box-shadow: none; border: 0; } }
 </style>
 
 <script>
-  import { api, h, euro, segnaposto, persone } from '../../scripts/comune';
-  import { regole, testoCarburante, testoRitrovo } from '../../data/prenotazioni.js';
+  import { api, h, euro, segnaposto, persone, dataLunga } from '../../scripts/comune';
+  import { regole, testoCarburante, testoRitrovo, offerte } from '../../data/prenotazioni.js';
+  import { svgQr } from '../../scripts/qr';
 
   const box = document.querySelector<HTMLElement>('[data-esito]')!;
   const q = new URLSearchParams(location.search);
@@ -82,16 +102,122 @@ import { sito } from '../../data/sito.js';
   function riepilogo(p: any) {
     return `<dl>
       <dt>Escursione</dt><dd>${h(p.escursione)}</dd>
-      <dt>Data</dt><dd>${h(p.dataLeggibile)}</dd>
+      <dt>Data</dt><dd>${h(p.dataLeggibile)}${p.dataOriginaleLeggibile && p.dataOriginale !== p.data ? `<br><span class="testo-2" style="font-weight:400">spostata dal ${h(p.dataOriginaleLeggibile)}</span>` : ''}</dd>
       <dt>Orario</dt><dd>${h(p.turno)} · ${p.orario ? h(p.orario) + (p.orarioIndicativo ? ' (indicativo)' : '') : segnaposto('te lo confermiamo')}</dd>
       <dt>Imbarco</dt><dd>${h(p.imbarco)}</dd>
       <dt>Persone</dt><dd>${h(persone(p.adulti, p.bambini, p.neonati))}</dd>
+      ${p.scontoNota && p.sconto ? `<dt>${p.sconto > 0 ? 'Sconto' : 'Maggiorazione'}</dt><dd>${h(p.scontoNota)}</dd>` : ''}
+      ${(p.extra || []).map((e: any) => `<dt>Extra</dt><dd>${h(e.nome)}${e.quantita > 1 ? ` × ${e.quantita}` : ''} · ${euro(e.totale)}</dd>`).join('')}
       <dt>Totale</dt><dd>${euro(p.totale)}</dd>
+      ${p.buono ? `<dt>Buono regalo</dt><dd>${euro(p.buono)}</dd>` : ''}
+      ${p.daPagare > 0 && p.stato !== 'annullata' ? `<dt>Da pagare</dt><dd>${euro(p.daPagare)}</dd>` : ''}
+      ${p.rimborsato ? `<dt>Rimborsato</dt><dd>${euro(p.rimborsato)}</dd>` : ''}
     </dl>`;
+  }
+
+  // Biglietto: codice QR che lo skipper inquadra all'imbarco.
+  const biglietto = (p: any) => `<div class="biglietto">
+      <div class="biglietto__qr">${svgQr(`${location.origin}/imbarco/?codice=${p.codice}`, `Codice QR della prenotazione ${p.codice}`)}</div>
+      <div><p class="testo-2">Il tuo biglietto</p><strong>${h(p.codice)}</strong><p>Mostra questo codice allo skipper all'imbarco${p.checkin ? '. <strong style="font-size:15px;letter-spacing:0">Imbarco già registrato.</strong>' : ': puoi anche stamparlo.'}</p></div>
+    </div>`;
+
+  // ---------- Scelta dopo il maltempo: rinvio o rimborso ----------
+  const MESI = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  function sceltaRecupero(p: any) {
+    const rimborso = p.pagato + p.buono;
+    box.innerHTML = `<p class="esito__codice">${h(p.codice)}</p>
+      <h1>Uscita annullata</h1>
+      <p>Ci dispiace: il ${h(p.dataLeggibile)} il mare non permette di uscire in sicurezza. Scegli tu cosa preferisci.</p>
+      ${riepilogo(p)}
+      <div class="scelta-recupero" data-scelte>
+        <button type="button" data-scegli="rinvio"><strong>Un'altra data</strong><span>Scegli giorno e orario tra quelli con posti liberi. Il prezzo resta quello che hai pagato.</span></button>
+        <button type="button" data-scegli="rimborso"><strong>Il rimborso completo</strong><span>${euro(rimborso)} sullo stesso metodo con cui hai pagato${p.buono ? ' (la parte del buono torna sul buono)' : ''}.</span></button>
+      </div>
+      <div data-rinvio hidden></div>
+      <p class="avviso" data-errore hidden role="alert"></p>
+      <div class="esito__azioni">${wa(`Ciao! Per la prenotazione ${p.codice} annullata per il maltempo vorrei parlarne con voi.`)}</div>`;
+    const err = box.querySelector<HTMLElement>('[data-errore]')!;
+    const mostraErrore = (e: unknown) => { err.textContent = (e as Error).message; err.hidden = false; };
+    box.querySelector('[data-scelte]')!.addEventListener('click', async (ev) => {
+      const b = (ev.target as Element).closest<HTMLButtonElement>('[data-scegli]');
+      if (!b) return;
+      err.hidden = true;
+      if (b.dataset.scegli === 'rimborso') {
+        if (!window.confirm(`Confermi il rimborso completo di ${euro(rimborso)}?`)) return;
+        b.disabled = true;
+        try { const r = await api('/api/prenotazione', { corpo: { codice, t, azione: 'rimborso' } }); mostra(r.prenotazione); }
+        catch (e) { b.disabled = false; mostraErrore(e); }
+        return;
+      }
+      apriRinvio(p);
+    });
+  }
+
+  function apriRinvio(p: any) {
+    const area = box.querySelector<HTMLElement>('[data-rinvio]')!;
+    const err = box.querySelector<HTMLElement>('[data-errore]')!;
+    const stagione = regole.stagione;
+    const domani = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+    let mese = (domani > p.data ? domani : p.data).slice(0, 7);
+    if (mese < stagione.dal.slice(0, 7)) mese = stagione.dal.slice(0, 7);
+    let scelto = { data: '', turno: '' };
+    const turniOfferta = offerte[p.slug]?.turni ?? [];
+    async function carica() {
+      area.hidden = false;
+      area.innerHTML = '<p class="testo-2">Carico i giorni liberi…</p>';
+      try {
+        const d = await api(`/api/disponibilita?escursione=${encodeURIComponent(p.slug)}&mese=${mese}&imbarco=${encodeURIComponent(p.imbarcoId)}`);
+        const giorni = Object.entries(d.giorni as Record<string, any>).filter(([, g]) => g.turni?.some((x: any) => x.disponibile && x.max >= p.persone));
+        area.innerHTML = `<div class="rinvio">
+          <h2 style="font-size:22px;font-weight:800">Scegli la nuova data</h2>
+          <div class="rinvio__mese"><button type="button" class="cal__freccia" data-m="-1" aria-label="Mese precedente" ${mese <= stagione.dal.slice(0, 7) ? 'disabled' : ''}>‹</button><span>${h(MESI.format(new Date(`${mese}-15T12:00:00Z`)))}</span><button type="button" class="cal__freccia" data-m="1" aria-label="Mese successivo" ${mese >= stagione.al.slice(0, 7) ? 'disabled' : ''}>›</button></div>
+          ${giorni.length ? `<div class="rinvio__giorni">${giorni.map(([data]) => `<button type="button" data-g="${data}" aria-pressed="${data === scelto.data}">${h(dataLunga(data))}</button>`).join('')}</div>` : '<p class="testo-2">In questo mese non ci sono giorni con abbastanza posti: prova il mese dopo o scrivici.</p>'}
+          <div data-turni-rinvio></div>
+        </div>`;
+        area.querySelectorAll<HTMLButtonElement>('[data-m]').forEach((b) => b.addEventListener('click', () => {
+          const [a, m] = mese.split('-').map(Number);
+          mese = new Date(Date.UTC(a, m - 1 + Number(b.dataset.m), 1)).toISOString().slice(0, 7);
+          scelto = { data: '', turno: '' };
+          carica();
+        }));
+        area.querySelectorAll<HTMLButtonElement>('[data-g]').forEach((b) => b.addEventListener('click', () => {
+          scelto = { data: b.dataset.g!, turno: '' };
+          area.querySelectorAll('[data-g]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+          const liberi = (d.giorni[scelto.data].turni as any[]).filter((x) => x.disponibile && x.max >= p.persone);
+          const zona = area.querySelector<HTMLElement>('[data-turni-rinvio]')!;
+          zona.innerHTML = `<p style="font-weight:700;margin:6px 0">Orario</p><div class="rinvio__turni">${liberi.map((x) => {
+            const t = turniOfferta.find((y: any) => y.id === x.id);
+            return `<button type="button" data-t="${h(x.id)}" aria-pressed="false">${h(t?.nome ?? x.id)}</button>`;
+          }).join('')}</div><button type="button" class="btn btn--wa btn--grande" style="margin-top:14px" data-conferma-rinvio disabled>Sposta la prenotazione</button>`;
+          zona.querySelectorAll<HTMLButtonElement>('[data-t]').forEach((tb) => tb.addEventListener('click', () => {
+            scelto.turno = tb.dataset.t!;
+            zona.querySelectorAll('[data-t]').forEach((x) => x.setAttribute('aria-pressed', String(x === tb)));
+            zona.querySelector<HTMLButtonElement>('[data-conferma-rinvio]')!.disabled = false;
+          }));
+          if (liberi.length === 1) zona.querySelector<HTMLButtonElement>('[data-t]')!.click();
+          zona.querySelector('[data-conferma-rinvio]')!.addEventListener('click', async (ev) => {
+            const b2 = ev.currentTarget as HTMLButtonElement;
+            b2.disabled = true;
+            err.hidden = true;
+            try { const r = await api('/api/prenotazione', { corpo: { codice, t, azione: 'rinvio', data: scelto.data, turno: scelto.turno } }); mostra(r.prenotazione); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+            catch (e) { b2.disabled = false; err.textContent = (e as Error).message; err.hidden = false; carica(); }
+          });
+          zona.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }));
+      } catch (e) { area.innerHTML = ''; err.textContent = (e as Error).message; err.hidden = false; }
+    }
+    carica();
   }
 
   function mostra(p: any) {
     const riprova = `<a class="btn btn--wa" href="/prenota/?escursione=${encodeURIComponent(p.slug)}">Scegli di nuovo</a>`;
+    const pagaOra = `<a class="btn btn--wa" href="/prenota/paga/?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}">Paga ${euro(p.daPagare)} online</a>`;
+    box.className = 'esito';
+    if (p.stato === 'annullata' && p.recupero === 'proposto') { sceltaRecupero(p); return; }
+    if (p.pagabile && p.stato === 'in_attesa') {
+      box.innerHTML = `<p class="esito__codice">${h(p.codice)}</p><h1>Ti teniamo i posti</h1><p>Per confermare la prenotazione paga online: con carta o PayPal, sulle loro pagine sicure.</p>${riepilogo(p)}<div class="esito__azioni">${pagaOra}${wa(`Ciao! Ho una domanda sulla prenotazione ${p.codice}.`)}</div>`;
+      return;
+    }
     if (p.stato === 'confermata') {
       // Note in HTML: i testi sono protetti con h(), il segnaposto del carburante è già HTML.
       const note = [
@@ -99,17 +225,29 @@ import { sito } from '../../data/sito.js';
         testoRitrovo(p.orario, p.imbarcoId) && h(testoRitrovo(p.orario, p.imbarcoId)),
         p.carburanteEscluso && (regole.carburante ? h(testoCarburante()) : testoCarburante(segnaposto)),
         !p.privato && p.minimo && h(`L'uscita parte con almeno ${p.minimo} persone paganti: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`),
-        h(`Cancellazione gratuita fino a ${p.cancellazioneGratisOre} ore prima: scrivici su WhatsApp. Con mare o vento non sicuri annulliamo noi e scegli tu tra rimborso completo e nuova data.`),
+        h(`Cancellazione gratuita fino a ${p.cancellazioneGratisOre} ore prima${p.annullabile ? ': puoi annullare da questa pagina, il rimborso è automatico' : ': scrivici su WhatsApp'}. Con mare o vento non sicuri annulliamo noi e scegli tu tra rimborso completo e nuova data.`),
       ].filter(Boolean);
       box.className = 'esito esito--ok';
       box.innerHTML = `<p class="esito__codice">${h(p.codice)}</p>
-        <h1>Prenotazione confermata</h1>
-        <p>Grazie ${h(p.nome)}! Conserva il codice: ti servirà all'imbarco.${p.email ? " Ti mandiamo anche un'email con il riepilogo e la copia delle condizioni." : ' Salva o stampa questa pagina.'}</p>
+        <h1>${p.recupero === 'rinviata' ? 'Nuova data confermata' : 'Prenotazione confermata'}</h1>
+        <p>Grazie ${h(p.nome)}! Conserva questa pagina: il codice QR ti serve all'imbarco.${p.email ? " Ti mandiamo anche un'email con il riepilogo e la copia delle condizioni." : ' Salvala o stampala.'}</p>
+        ${biglietto(p)}
         ${riepilogo(p)}
         <ul>${note.map((n) => `<li>${n}</li>`).join('')}</ul>
         <p class="testo-2" style="font-size:15px">Valgono le <a href="/condizioni/">condizioni di prenotazione</a>.</p>
-        <div class="esito__azioni"><a class="btn btn--wa" data-ics download="${h(p.codice)}.ics">Aggiungi al calendario</a>${wa(`Ciao! Ho la prenotazione ${p.codice}.`)}</div>`;
+        <div class="esito__azioni"><a class="btn btn--wa" data-ics download="${h(p.codice)}.ics">Aggiungi al calendario</a>${p.pagabile ? pagaOra : ''}<button type="button" class="btn btn--bordo" onclick="window.print()">Stampa</button>${wa(`Ciao! Ho la prenotazione ${p.codice}.`)}</div>
+        ${p.annullabile ? `<details class="esito__nascondi-stampa"><summary style="cursor:pointer;font-weight:700;color:var(--turchese);min-height:44px;display:inline-flex;align-items:center">Devi annullare?</summary>
+          <p style="margin:8px 0">Fino a ${p.cancellazioneGratisOre} ore prima della partenza il rimborso è completo e automatico: ${euro(p.pagato)} sullo stesso metodo con cui hai pagato${p.buono ? `, e ${euro(p.buono)} tornano sul buono regalo` : ''}.</p>
+          <button type="button" class="btn btn--avviso" data-annulla-cliente>Annulla la prenotazione</button>
+          <p class="avviso" data-errore hidden role="alert"></p></details>` : ''}`;
       box.querySelector<HTMLAnchorElement>('[data-ics]')!.href = ics(p);
+      box.querySelector('[data-annulla-cliente]')?.addEventListener('click', async (ev) => {
+        if (!window.confirm('Vuoi davvero annullare la prenotazione? Il rimborso parte subito.')) return;
+        const b = ev.currentTarget as HTMLButtonElement;
+        b.disabled = true;
+        try { const r = await api('/api/prenotazione', { corpo: { codice, t, azione: 'annulla' } }); mostra(r.prenotazione); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        catch (e) { b.disabled = false; const err = box.querySelector<HTMLElement>('[data-errore]')!; err.textContent = (e as Error).message; err.hidden = false; }
+      });
       return;
     }
     if (q.get('annullato') === '1' && (p.stato === 'in_attesa' || p.stato === 'annullata')) {
@@ -131,7 +269,9 @@ import { sito } from '../../data/sito.js';
       box.innerHTML = `<h1>Tempo scaduto</h1><p>Il pagamento non è stato completato in tempo: nessun addebito e i posti sono tornati disponibili.</p>${riepilogo(p)}<div class="esito__azioni">${riprova}</div>`;
       return;
     }
-    box.innerHTML = `<p class="esito__codice">${h(p.codice)}</p><h1>Prenotazione annullata</h1><p>Per qualsiasi domanda scrivici.</p>${riepilogo(p)}<div class="esito__azioni">${riprova}${wa(`Ciao! Ho una domanda sulla prenotazione ${p.codice}.`)}</div>`;
+    const infoRimborso = p.rimborso === 'fatto' && p.rimborsato ? `Rimborso di ${euro(p.rimborsato)} fatto sullo stesso metodo con cui hai pagato: di solito arriva in pochi giorni lavorativi.`
+      : p.rimborso === 'da_fare' ? 'Il rimborso lo facciamo noi a breve, sullo stesso metodo con cui hai pagato.' : 'Per qualsiasi domanda scrivici.';
+    box.innerHTML = `<p class="esito__codice">${h(p.codice)}</p><h1>Prenotazione annullata</h1><p>${infoRimborso}${p.buono ? ` La parte pagata con il buono regalo (${euro(p.buono)}) è tornata sul buono.` : ''}</p>${riepilogo(p)}<div class="esito__azioni">${riprova}${wa(`Ciao! Ho una domanda sulla prenotazione ${p.codice}.`)}</div>`;
   }
 
   async function carica() {

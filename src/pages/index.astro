@@ -24,12 +24,14 @@ percorsiMezza.splice(0, percorsiMezza.length, ...percorsiMezza.filter((p) => p.s
 // Prezzo più basso a persona tra le uscite di gruppo, per l'apertura.
 const prezzoMinimo = Math.min(...escursioni.filter((e) => !e.prezzoGommone).map((e) => Number(e.prezzoAdulti)));
 const altre = escursioni.filter((e) => !e.inEvidenza);
+import DatiStrutturati from '../components/DatiStrutturati.astro';
 ---
 <Base
   titolo="Escursioni La Maddalena · Escursioni in maxi gommone nell'Arcipelago di La Maddalena"
   descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, mezza giornata, Sunset al tramonto, tour privati e Corsica. Partenza da La Maddalena, Palau e Cannigione: prenoti online."
 
 >
+  <DatiStrutturati slot="head" tipo="attivita" />
   <section slot="hero" class="hero" aria-label="Apertura">
     <div class="hero__griglia">
       <div class="hero__contenuto">

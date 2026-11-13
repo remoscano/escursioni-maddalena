@@ -56,7 +56,9 @@ export const condizioni = [
       [`Spunta la casella delle condizioni e scegli come pagare. Mentre paghi, i posti restano tenuti per te per ${regole.minutiPerPagare} minuti.`],
       ["La prenotazione è confermata quando il pagamento va a buon fine: vedi subito il codice di prenotazione e ricevi un'email con il riepilogo e una copia di queste condizioni. Conserva il codice: ti serve all'imbarco."],
       [`${testoChiusuraOnline} ${testoDopoChiusura}`],
-      ["Il contratto si conclude in italiano. Conserviamo la tua prenotazione: puoi rivederla dal link nell'email di conferma."],
+      ["Il contratto si conclude in italiano. Conserviamo la tua prenotazione: puoi rivederla dal link nell'email di conferma, che è anche il tuo biglietto con il codice QR da mostrare all'imbarco."],
+      ["Se prenoti al telefono o su WhatsApp possiamo mandarti un link per pagare online: i posti restano tenuti fino all'ora scritta nel link, poi tornano disponibili."],
+      ["Se il giorno che vuoi è pieno puoi entrare in lista d'attesa: se si libera un posto ti avvisiamo per email, ma il posto non è riservato finché non prenoti e paghi."],
     ],
   },
   {
@@ -67,6 +69,8 @@ export const condizioni = [
       [`Fino a ${bambiniFinoA} anni c'è il prezzo ridotto.`],
       ['Nelle escursioni in esclusiva il carburante non è compreso nel prezzo e si paga a parte: ', v(regole.carburante, CARBURANTE_MANCA), '.'],
       ['Il ticket del Parco Nazionale è compreso nel prezzo.'],
+      ['Possono esserci promozioni (per esempio per chi prenota prima o per i gruppi) e prezzi diversi nel weekend: le vedi nel riepilogo prima di pagare. Promozioni e codici sconto non si sommano: vale quello che conviene di più.'],
+      ['Puoi aggiungere degli extra a pagamento, quando ci sono: il prezzo è nel riepilogo e si paga insieme alla prenotazione.'],
     ],
   },
   {
@@ -78,17 +82,17 @@ export const condizioni = [
   {
     titolo: 'Se annulli tu',
     punti: [
-      [`Fino a ${regole.cancellazioneGratisOre} ore prima della partenza: rimborso completo. Scrivici su WhatsApp o per email con il codice di prenotazione.`],
+      [`Fino a ${regole.cancellazioneGratisOre} ore prima della partenza: rimborso completo. Puoi annullare da solo dalla pagina della prenotazione (il link è nell'email di conferma): il rimborso parte subito, in automatico. Oppure scrivici su WhatsApp o per email con il codice di prenotazione.`],
       ["Dopo, o se non ti presenti all'imbarco, l'importo non è rimborsabile."],
       ['Per le escursioni prenotate per una data precisa la legge non prevede il diritto di recesso di 14 giorni (art. 59, comma 1, lettera n, del Codice del consumo): valgono le regole qui sopra.'],
-      ['Il rimborso arriva sullo stesso metodo con cui hai pagato.'],
+      ['Il rimborso arriva sullo stesso metodo con cui hai pagato. La parte pagata con un buono regalo torna sul buono.'],
     ],
   },
   {
     titolo: 'Maltempo e se annulliamo noi',
     paragrafi: [
       ["La sicurezza viene prima di tutto: è lo skipper a decidere se e dove si può navigare. L'itinerario può cambiare in base a vento e mare, scegliendo le cale più riparate."],
-      ["Se mare o vento non permettono di uscire, o se dobbiamo annullare per un altro motivo (per esempio un guasto), scegli tu: rimborso completo o un'altra data."],
+      ["Se mare o vento non permettono di uscire, o se dobbiamo annullare per un altro motivo (per esempio un guasto), scegli tu: rimborso completo o un'altra data. Ti mandiamo un link: scegli il giorno e l'orario tra quelli con posti liberi, allo stesso prezzo che hai pagato, oppure il rimborso, che parte in automatico."],
       ['Per proteggerla, alla Spiaggia Rosa di Budelli il Parco vieta sbarco e bagno: si ammira dal mare.'],
     ],
   },
@@ -113,6 +117,15 @@ export const condizioni = [
     paragrafi: [
       ['Se prenoti tramite il tuo hotel o la tua struttura, o dal loro link, il contratto è con noi e valgono queste condizioni. La struttura riceve da noi una provvigione: per te il prezzo non cambia.'],
       ["Se hai prenotato su un'altra piattaforma (per esempio GetYourGuide o Viator), per pagamento e cancellazione valgono le condizioni di quella piattaforma."],
+    ],
+  },
+  {
+    titolo: 'Buoni regalo',
+    punti: [
+      [`Il buono regalo vale ${regole.buoni.validitaMesi} mesi dall'acquisto, su tutte le escursioni prenotabili online. La data di scadenza è scritta sul buono.`],
+      ["Si usa scrivendo il codice nel riepilogo della prenotazione. Se l'escursione costa di più, la differenza si paga con carta o PayPal; se costa meno, quello che avanza resta sul buono per un'altra prenotazione."],
+      ['Il buono non si converte in denaro. Se cambi idea prima di usarlo, scrivici entro 14 giorni dall\'acquisto: te lo rimborsiamo per intero (art. 52 del Codice del consumo).'],
+      ['Se una prenotazione pagata con il buono viene annullata con diritto al rimborso, la parte del buono torna sul buono.'],
     ],
   },
   {

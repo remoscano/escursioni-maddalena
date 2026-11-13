@@ -1,0 +1,230 @@
+---
+// Imbarco: lo skipper vede le uscite di oggi, inquadra il QR del biglietto e segna chi è salito a bordo.
+// Si installa sul telefono come un'app (manifest in public/imbarco/).
+import Base from '../../layouts/Base.astro';
+import '../../styles/area.css';
+---
+<Base titolo="Imbarco" descrizione="Area riservata agli skipper." nascosta senzaBarra senzaTestata>
+  <Fragment slot="head">
+    <link rel="manifest" href="/imbarco/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/img/app-180.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Imbarco" />
+  </Fragment>
+  <section class="area" style="padding-top:20px">
+    <div class="contenitore" style="max-width:860px">
+      <div data-schermo="carico"><p class="testo-2">Un momento…</p></div>
+
+      <div data-schermo="accesso" hidden>
+        <div class="area-scheda accesso">
+          <p class="occhiello">Skipper</p>
+          <h1 style="font-weight:800;font-size:36px;line-height:1.1">Imbarco</h1>
+          <form data-modulo-accesso class="pila" style="gap:14px" novalidate>
+            <div class="campo"><label for="acc-email">Email</label><input id="acc-email" type="email" autocomplete="username" required /></div>
+            <div class="campo"><label for="acc-pw">Password</label><input id="acc-pw" type="password" autocomplete="current-password" required /></div>
+            <p class="avviso" data-errore-accesso hidden></p>
+            <button class="btn btn--wa btn--grande btn--pieno" type="submit">Entra</button>
+          </form>
+        </div>
+      </div>
+
+      <div data-schermo="password" hidden>
+        <div class="area-scheda accesso">
+          <h1 style="font-weight:800;font-size:30px;line-height:1.1">Scegli la tua password</h1>
+          <p class="testo-2">Al primo accesso sostituisci la password provvisoria con una tua (almeno 10 caratteri).</p>
+          <form data-modulo-password class="pila" style="gap:14px" novalidate>
+            <div class="campo"><label for="pw-att">Password attuale</label><input id="pw-att" type="password" autocomplete="current-password" required /></div>
+            <div class="campo"><label for="pw-nuova">Nuova password</label><input id="pw-nuova" type="password" autocomplete="new-password" minlength="10" required /></div>
+            <p class="avviso" data-errore-password hidden></p>
+            <button class="btn btn--wa btn--grande btn--pieno" type="submit">Salva la password</button>
+          </form>
+        </div>
+      </div>
+
+      <div data-schermo="area" hidden>
+        <div class="area-testa" style="margin-bottom:16px">
+          <div><p class="occhiello">Imbarco</p><h1 data-titolo-giorno style="font-size:clamp(28px,4vw,40px)">Oggi</h1></div>
+          <button class="btn btn--bordo btn--piccolo" type="button" data-esci>Esci</button>
+        </div>
+        <div class="area-scheda">
+          <div class="imbarco-cerca">
+            <button class="btn btn--wa btn--grande" type="button" data-scanner hidden>Inquadra il QR</button>
+            <form data-cerca class="imbarco-codice" novalidate>
+              <label for="im-codice" class="visually-hidden">Codice della prenotazione</label>
+              <input id="im-codice" placeholder="Codice, es. EM-AB12CD" autocapitalize="characters" autocomplete="off" maxlength="20" />
+              <button class="btn btn--scuro" type="submit">Cerca</button>
+            </form>
+          </div>
+          <p class="testo-2" data-nota-scanner style="font-size:14px">Puoi anche inquadrare il QR del biglietto con la fotocamera del telefono: si apre questa pagina con la prenotazione.</p>
+          <video data-video playsinline muted hidden style="width:100%;max-height:60vh;border-radius:14px;background:#000"></video>
+        </div>
+        <p class="avviso" data-errore role="alert" hidden></p>
+        <div data-scheda-pren></div>
+        <div data-uscite class="pila" style="gap:16px;margin-top:16px"></div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  .imbarco-cerca { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .imbarco-codice { display: flex; gap: 8px; flex: 1 1 100%; min-width: 0; }
+  .imbarco-codice input { flex: 1; min-width: 0; height: 52px; border: 1.5px solid var(--bordo-campo); border-radius: 12px; padding: 0 14px; font: inherit; font-size: 17px; text-transform: uppercase; }
+  .pren-imbarco { border: 2px solid var(--mare); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 10px; margin-top: 16px; background: var(--bianco); }
+  .pren-imbarco--ok { border-color: #1F5E33; background: #F3FBF5; }
+  .pren-imbarco--ko { border-color: #8A3B26; background: #FFF6F3; }
+  .pren-imbarco h2 { font-size: 26px; font-weight: 800; }
+  .pren-imbarco .grande { font-size: 20px; font-weight: 800; }
+  .passeggero { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--bordo); }
+  .passeggero:last-child { border-bottom: 0; }
+  .passeggero p { font-size: 15px; line-height: 1.4; }
+  .passeggero p strong { font-size: 17px; }
+  .btn-imbarca { min-width: 120px; }
+  .btn-imbarca[aria-pressed="true"] { background: #DFF3E4; color: #1F5E33; border-color: #1F5E33; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+
+<script>
+  import { api, ErroreApi, h, euro, dataLunga, oggiRoma } from '../../scripts/comune';
+  const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+  const schermi = document.querySelectorAll<HTMLElement>('[data-schermo]');
+  const mostra = (nome: string) => schermi.forEach((s) => (s.hidden = s.dataset.schermo !== nome));
+  const errore = (e: unknown) => { const b = $('[data-errore]'); b.textContent = e instanceof Error ? e.message : String(e); b.hidden = !b.textContent; };
+  const persone = (a: number, b: number) => `${a} ${a === 1 ? 'adulto' : 'adulti'}${b ? `, ${b} ${b === 1 ? 'bambino' : 'bambini'}` : ''}`;
+  const oggi = oggiRoma();
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/imbarco/sw.js', { scope: '/imbarco/' }).catch(() => {});
+
+  async function avvio() {
+    try {
+      const u = await api('/api/accesso');
+      if (!['skipper', 'gestione'].includes(u.ruolo)) { mostra('accesso'); $('[data-errore-accesso]').textContent = 'Questo accesso non è per l\'imbarco.'; $('[data-errore-accesso]').hidden = false; return; }
+      if (u.deveCambiare) { mostra('password'); return; }
+      entra();
+    } catch (e) {
+      mostra('accesso');
+      if (!(e instanceof ErroreApi && e.stato === 401)) { $('[data-errore-accesso]').textContent = (e as Error).message; $('[data-errore-accesso]').hidden = false; }
+    }
+  }
+  $('[data-modulo-accesso]').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const err = $('[data-errore-accesso]'); err.hidden = true;
+    try {
+      const u = await api('/api/accesso', { corpo: { email: $<HTMLInputElement>('#acc-email').value, password: $<HTMLInputElement>('#acc-pw').value } });
+      if (!['skipper', 'gestione'].includes(u.ruolo)) { err.textContent = 'Questo accesso non è per l\'imbarco.'; err.hidden = false; return; }
+      if (u.deveCambiare) mostra('password'); else entra();
+    } catch (e) { err.textContent = (e as Error).message; err.hidden = false; }
+  });
+  $('[data-modulo-password]').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    try { await api('/api/accesso/password', { corpo: { attuale: $<HTMLInputElement>('#pw-att').value, nuova: $<HTMLInputElement>('#pw-nuova').value } }); entra(); }
+    catch (e) { $('[data-errore-password]').textContent = (e as Error).message; $('[data-errore-password]').hidden = false; }
+  });
+  $('[data-esci]').addEventListener('click', async () => { await api('/api/accesso', { metodo: 'DELETE', corpo: {} }).catch(() => {}); location.href = '/imbarco/'; });
+
+  function entra() {
+    mostra('area');
+    const giorno = dataLunga(oggi);
+    $('[data-titolo-giorno]').textContent = giorno.charAt(0).toUpperCase() + giorno.slice(1);
+    if ('BarcodeDetector' in window) $('[data-scanner]').hidden = false;
+    caricaUscite();
+    const codice = new URLSearchParams(location.search).get('codice');
+    if (codice) cerca(codice);
+  }
+
+  // ---------- Uscite di oggi ----------
+  async function caricaUscite() {
+    const box = $('[data-uscite]');
+    try {
+      const d = await api(`/api/gestione/giorno?data=${oggi}`);
+      const conUscite = d.gommoni.filter((g: any) => g.uscite.length);
+      box.innerHTML = conUscite.length ? conUscite.map((g: any) => g.uscite.map((u: any) => `
+        <div class="area-scheda">
+          <div class="uscita__testa"><h2 style="font-size:20px">${h(g.nome)} · ${u.orario ? h(u.orario) : h(u.turno)}</h2>
+            <span class="stato ${u.aBordo === u.persone ? 'stato--ok' : ''}">${u.aBordo}/${u.persone} a bordo</span></div>
+          <p class="testo-2">${h(u.escursione)} · ${h(u.turno)}${u.privato ? ' · esclusiva' : u.confermata ? '' : ' · minimo non raggiunto: chiama l\'ufficio'}</p>
+          <div>${u.prenotazioni.map((p: any) => `
+            <div class="passeggero">
+              <p><strong>${h(p.nome)}</strong><br>${h(persone(p.adulti, p.bambini + p.neonati))} · ${h(p.imbarco)} · ${h(p.codice)}
+                ${p.daPagare > 0 ? `<br><span class="stato stato--attenzione">Da pagare ${euro(p.daPagare)}</span>` : ''}
+                ${p.extra?.length ? `<br><span class="testo-2">Extra: ${h(p.extra.join(', '))}</span>` : ''}
+                ${p.note ? `<br><span class="testo-2">Note: ${h(p.note)}</span>` : ''}
+                ${p.telefono ? `<br><a href="tel:${h(p.telefono)}">${h(p.telefono)}</a>` : ''}</p>
+              ${p.stato === 'confermata' ? `<button type="button" class="btn btn--bordo btn-imbarca" data-imbarca="${h(p.codice)}" aria-pressed="${Boolean(p.checkin)}">${p.checkin ? 'A bordo ✓' : 'Imbarca'}</button>` : `<span class="stato stato--attenzione">${h(p.stato === 'in_attesa' ? 'Non pagata' : 'Da verificare')}</span>`}
+            </div>`).join('')}</div>
+        </div>`).join('')).join('') : '<div class="area-scheda"><p class="testo-2">Oggi non ci sono uscite prenotate.</p></div>';
+    } catch (e) { box.innerHTML = ''; errore(e); }
+  }
+  $('[data-uscite]').addEventListener('click', async (ev) => {
+    const b = (ev.target as Element).closest<HTMLButtonElement>('[data-imbarca]');
+    if (!b) return;
+    b.disabled = true;
+    try { await api('/api/imbarco', { corpo: { codice: b.dataset.imbarca, annulla: b.getAttribute('aria-pressed') === 'true' } }); await caricaUscite(); }
+    catch (e) { errore(e); b.disabled = false; }
+  });
+
+  // ---------- Una prenotazione (dal QR o dal codice) ----------
+  async function cerca(codice: string) {
+    const box = $('[data-scheda-pren]');
+    errore('');
+    try {
+      const p = await api(`/api/imbarco?codice=${encodeURIComponent(codice)}`);
+      const ok = p.stato === 'confermata' && p.oggi;
+      box.innerHTML = `<div class="pren-imbarco ${p.checkin ? 'pren-imbarco--ok' : ok ? '' : 'pren-imbarco--ko'}">
+        <p class="occhiello">${h(p.codice)}</p>
+        <h2>${h(p.nome)}</h2>
+        <p class="grande">${p.persone} ${p.persone === 1 ? 'persona' : 'persone'}: ${h(persone(p.adulti, p.bambini))}</p>
+        <p>${h(p.escursione)} · ${h(p.turno)}${p.orario ? ` · ${h(p.orario)}` : ''}<br>${h(p.dataLeggibile)} · imbarco ${h(p.imbarco)} · ${h(p.gommone)}</p>
+        <p>${p.pagata ? '<span class="stato stato--ok">Pagata</span>' : `<span class="stato stato--attenzione">Da pagare ${euro(p.daPagare)}</span>`} ${p.stato !== 'confermata' ? `<span class="stato stato--attenzione">${h(p.stato)}</span>` : ''}</p>
+        ${p.extra.length ? `<p>Extra: ${h(p.extra.map((e: any) => `${e.nome}${e.quantita > 1 ? ` × ${e.quantita}` : ''}`).join(', '))}</p>` : ''}
+        ${p.note ? `<p class="testo-2">Note: ${h(p.note)}</p>` : ''}
+        ${p.checkin ? `<p class="grande" style="color:#1F5E33">Già a bordo</p>` : ''}
+        <div class="azioni-riga">
+          ${p.puoImbarcare && !p.checkin ? `<button type="button" class="btn btn--wa btn--grande" data-imbarca-una="${h(p.codice)}">Imbarca ${p.persone} ${p.persone === 1 ? 'persona' : 'persone'}</button>` : ''}
+          ${p.checkin ? `<button type="button" class="btn btn--bordo" data-togli-una="${h(p.codice)}">Togli l'imbarco</button>` : ''}
+          <button type="button" class="btn btn--bordo" data-chiudi-scheda>Chiudi</button>
+        </div>
+      </div>`;
+      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (e) { box.innerHTML = ''; errore(e); }
+  }
+  $('[data-scheda-pren]').addEventListener('click', async (ev) => {
+    const t = ev.target as Element;
+    if (t.closest('[data-chiudi-scheda]')) { $('[data-scheda-pren]').innerHTML = ''; history.replaceState(null, '', '/imbarco/'); return; }
+    const si = t.closest<HTMLElement>('[data-imbarca-una]'), no = t.closest<HTMLElement>('[data-togli-una]');
+    if (!si && !no) return;
+    try { await api('/api/imbarco', { corpo: { codice: (si || no)!.dataset.imbarcaUna || (si || no)!.dataset.togliUna, annulla: Boolean(no) } }); await cerca((si || no)!.dataset.imbarcaUna || (si || no)!.dataset.togliUna!); caricaUscite(); }
+    catch (e) { errore(e); }
+  });
+  $('[data-cerca]').addEventListener('submit', (ev) => { ev.preventDefault(); const c = $<HTMLInputElement>('#im-codice').value.trim(); if (c) cerca(c); });
+
+  // ---------- Fotocamera (dove il browser sa leggere i QR) ----------
+  let flusso: MediaStream | null = null;
+  $('[data-scanner]').addEventListener('click', async () => {
+    const video = $<HTMLVideoElement>('[data-video]');
+    if (flusso) { flusso.getTracks().forEach((t) => t.stop()); flusso = null; video.hidden = true; return; }
+    try {
+      flusso = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      video.srcObject = flusso; video.hidden = false; await video.play();
+      const lettore = new (window as any).BarcodeDetector({ formats: ['qr_code'] });
+      const giro = async () => {
+        if (!flusso) return;
+        try {
+          const trovati = await lettore.detect(video);
+          const testo = trovati[0]?.rawValue as string | undefined;
+          if (testo) {
+            const codice = /codice=([^&]+)/.exec(testo)?.[1] ?? testo;
+            flusso.getTracks().forEach((t) => t.stop()); flusso = null; video.hidden = true;
+            navigator.vibrate?.(80);
+            cerca(decodeURIComponent(codice));
+            return;
+          }
+        } catch { /* fotogramma non leggibile */ }
+        requestAnimationFrame(giro);
+      };
+      giro();
+    } catch (e) { errore(new Error('Non riesco ad aprire la fotocamera: usa la fotocamera del telefono o scrivi il codice.')); }
+  });
+
+  avvio();
+</script>

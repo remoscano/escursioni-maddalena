@@ -18,12 +18,12 @@ s, r = adm('POST', '/api/gestione/prenotazioni', {'escursione': 'tour-7-isole', 
 
 # maltempo: annulla l'uscita del gommone 1 il 10 giugno
 s, d = adm('GET', '/api/gestione/giorno?data=2027-06-10'); n_prima = sum(len(u['prenotazioni']) for g in d['gommoni'] for u in g['uscite'])
-s, r = adm('POST', '/api/gestione/chiusure', {'azione': 'annulla-uscita', 'data': '2027-06-10', 'barca': 'gruppo-1', 'escursione': 'tour-7-isole', 'turno': 'giornata', 'motivo': 'Maestrale forte'}); ok(s == 200 and len(r['annullate']) >= 3, f'uscita annullata per maltempo: {len(r["annullate"])} prenotazioni da avvisare')
+s, r = adm('POST', '/api/gestione/chiusure', {'azione': 'annulla-uscita', 'data': '2027-06-10', 'barca': 'gruppo-1', 'escursione': 'tour-7-isole', 'turno': 'giornata', 'motivo': 'Maestrale forte'}); ok(s == 200 and len(r['annullate']) >= 1 and all('/prenota/esito/' in a['link'] for a in r['annullate']), f'uscita annullata per maltempo: {len(r["annullate"])} clienti da avvisare, ognuno con il suo link per scegliere')
 s, d = adm('GET', '/api/gestione/giorno?data=2027-06-10'); g1 = d['gommoni'][0]; ok(not g1['uscite'] and len(g1['chiusure']) == 3, 'gommone 1 chiuso tutto il giorno, nessuna uscita attiva')
-ok(any(p['rimborso'] == 'da_fare' for p in d['annullate']), 'le prenotazioni pagate online risultano "rimborso da fare"')
+ok(any(p['recupero'] == 'proposto' for p in d['annullate']), 'chi aveva pagato aspetta di scegliere tra rinvio e rimborso')
 s, r = anon('POST', '/api/prenota', {'escursione': 'mezza-giornata', 'turno': 'mattina', 'data': '2027-06-10', 'adulti': 2, 'imbarco': 'palau', 'nome': 'X', 'email': 'x@example.com', 'telefono': '3330000000', 'metodo': 'prova', 'accetto': True}); ok(s == 409, 'sul gommone chiuso non si prenota più')
-s, l = adm('GET', '/api/gestione/prenotazioni?stato=rimborsi'); da = [p for p in l['prenotazioni'] if p['rimborso'] == 'da_fare']; ok(len(da) >= 1, f'elenco rimborsi da fare: {len(da)}')
-s, r = adm('POST', '/api/gestione/prenotazione', {'id': da[0]['id'], 'azione': 'rimborsata'}); ok(s == 200, 'rimborso segnato come fatto')
+s, l = adm('GET', '/api/gestione/prenotazioni?stato=scelta'); da = l['prenotazioni']; ok(len(da) >= 1, f'elenco "aspettano la scelta": {len(da)}')
+s, r = adm('POST', '/api/gestione/prenotazione', {'id': da[0]['id'], 'azione': 'annulla', 'modo': 'manuale'}); ok(s == 409, 'una prenotazione già annullata non si annulla di nuovo')
 s, c = adm('GET', '/api/gestione/chiusure?dal=2027-06-10&al=2027-06-10'); s, r = adm('DELETE', f'/api/gestione/chiusure?id={c["chiusure"][0]["id"]}', None); ok(s == 200, 'riapertura di un blocco')
 
 # strutture partner

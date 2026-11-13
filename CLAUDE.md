@@ -33,7 +33,21 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
   - `functions/_lib/pagamenti.js`: SumUp (pagina di pagamento ospitata) e PayPal (ordini v2), sempre con reindirizzamento e verifica dal server: sul sito non si carica nessuno script di terze parti. `PAGAMENTI_PROVA=1` (solo anteprime) aggiunge un pagamento simulato.
   - `functions/_lib/accessi.js`: accessi per gestione e strutture (password PBKDF2, sessione in cookie tecnico `em_sessione`, blocco dopo 5 tentativi; tentativi sbagliati cancellati dopo 24 ore).
   - Impronta dell'indirizzo internet (`ip_hash`, limite di 5 prenotazioni in attesa): si cancella appena la prenotazione è pagata, annullata o scaduta. L'informativa privacy lo promette.
-  - Pagine: `/prenota/` (+ `esito/`, `prova/`), `/partner/`, `/gestione/`, `/condizioni/`.
+  - Pagine: `/prenota/` (+ `esito/` = pagina del cliente e biglietto con QR, `prova/`, `paga/` = link di pagamento), `/buono-regalo/` (+ `esito/`), `/imbarco/` (skipper), `/partner/`, `/gestione/`, `/condizioni/`.
+  - Funzioni del 13 novembre 2026 (migrazione `0004_funzioni_nuove.sql`):
+    - `functions/_lib/recupero.js`: annullamenti, rimborsi automatici (`rimborsa` in `pagamenti.js`, SumUp e PayPal, anche parziali), scelta del cliente dopo il maltempo (rinvio o rimborso, colonna `recupero`: proposto | rinviata | rimborso). `spostaPrenotazione` in `motore.js` sposta data o orario con lo stesso controllo dei posti dell'inserimento; il prezzo resta quello pagato.
+    - Il cliente annulla da solo dalla sua pagina fino a 48 ore prima (solo pagate sul sito o con buono): rimborso automatico.
+    - Link di pagamento: la gestione crea la prenotazione con `link: true` (stato `in_attesa`, posti tenuti per le ore scelte in `regole.orePerPagareLink`) o lo manda per una prenotazione confermata non pagata. `pagabileConLink` in `prenotazioni.js`. Il cliente paga da `/prenota/paga/` (`/api/pagamento/avvia`).
+    - Prezzo: `calcolaPrenotazione(slug, turno, data, persone, { regole, codice, extra, extraScelti })` in `src/data/prenotazioni.js`, uguale su sito e server. Regole di prezzo (tabella `regole_prezzo`: anticipo, ultimo-minuto, gruppo, weekend in più), codici sconto e buoni regalo (`codici_sconto`, tipo percentuale | importo | buono), extra (`extra`, `prenotazioni_extra`, con massimo al giorno). Promozione e codice non si sommano: vale il migliore. Si creano tutti dalla gestione (scheda Offerte): nel codice non ci sono prezzi inventati.
+    - In prenotazione: `totale` = prezzo finale (dopo sconti, con extra), `buono` = parte pagata con un buono regalo, `pagato` = soldi incassati con carta o PayPal, `rimborsato`. Da pagare = totale − buono − pagato (`daPagare`). Il codice o il buono si "prendono" all'inserimento e tornano disponibili se la prenotazione scade o si annulla (`istruzioniRestituzione`, colonna `codice_reso`).
+    - Buoni regalo comprati online: `functions/_lib/buoni.js`, `/api/buono`; pagamento come le prenotazioni (`tipo=buono` nei ritorni di PayPal e nel pagamento di prova).
+    - Email (`functions/_lib/email.js`): maltempo con link per scegliere, link di pagamento, annullamento, promemoria, grazie con recensione Google (`sito.recensioniGoogle`), lista d'attesa, buono. Partono da `/api/automatico`, chiamato ogni ora dal Worker in `automatico/` (vedi il suo LEGGIMI) con la chiave `AUTOMATICO_CHIAVE`, o a mano dalla gestione (Account).
+    - Lista d'attesa (`lista_attesa`, `functions/_lib/attesa.js`): avviso per email appena si libera un posto (anche subito dopo un annullamento); i dati si cancellano dopo la data.
+    - Biglietto con QR (`src/scripts/qr.ts`, libreria `qrcode-generator`): il QR apre `/imbarco/?codice=…`. Ruolo `skipper` (accessi creati dalla gestione, scheda Account): vede solo le uscite di oggi e fa il check-in (`/api/imbarco`, colonne `checkin_il`, `checkin_da`).
+    - Statistiche (`/api/gestione/statistiche`) e file Excel per il commercialista creato nel browser (`src/scripts/xlsx.ts`, senza librerie).
+    - Volantini (`campagne`): QR `/v/CODICE` → conta la visita (solo il numero) e porta a `/prenota/?c=CODICE`; la prenotazione salva il codice (`campagna`).
+    - Gestione e imbarco installabili sul telefono: `public/gestione/` e `public/imbarco/` (manifest e service worker che non salva niente), icone `public/img/app-*.png`.
+  - Dati per Google: `src/components/DatiStrutturati.astro` (LocalBusiness in home, TouristTrip + briciole + domande nelle pagine escursione, FAQPage) e `src/pages/sitemap.xml.js`. Scrivono solo dati veri: i campi vuoti di `sito.js` non compaiono.
   - Prove automatiche in `prove/` (vedi `prove/LEGGIMI.md`): prima di ogni push che tocca le prenotazioni devono passare tutte.
 - I contenuti stanno in `src/data/` (`sito.js`, `escursioni.js`, `faq.js`, `menu.js`). Prima di scrivere testo dentro una pagina, chiediti se va in un file dati.
 - Le 5 pagine escursione (7 isole, Corsica, mezza giornata, tramonto, tour privato) nascono tutte da `src/pages/escursioni/[slug].astro`: una nuova escursione si aggiunge in `escursioni.js`, non con un file nuovo.
@@ -93,6 +107,7 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Gommoni: modelli, motori e posti confermati, pagina "I gommoni e lo skipper" aggiornata (8 novembre 2026). Due righe per gommone ok per ora; Honda 9.50 con le dotazioni degli altri tranne il bagno (Remo, 13 novembre 2026)
 - [x] Ritrovo (Remo, 13 novembre 2026): alle 9:00 a Palau e alle 9:15 a La Maddalena per le uscite delle 9:30, cioè 30 e 15 minuti prima (`regole.anticipoRitrovo` per imbarco; Cannigione 15)
 - [x] Sunset, mezza giornata a due giri, 7 isole senza cale, ristoranti convenzionati, nome "Escursioni La Maddalena" (13 novembre 2026)
+- [x] Funzioni nuove sul ramo `prenotazioni` (13 novembre 2026, dopo il confronto con Yorango): rinvio o rimborso scelto dal cliente dopo il maltempo, spostamento dalla gestione, rimborsi automatici (anche parziali), annullamento online del cliente fino a 48 ore prima, link di pagamento, email automatiche (promemoria, grazie, maltempo, lista d'attesa), biglietto con QR e check-in con accesso skipper, statistiche ed Excel per il commercialista, promozioni (anticipo, ultimo minuto, gruppo), aumento nel weekend, codici sconto, buoni regalo comprati online, extra a pagamento con massimo al giorno, lista d'attesa, volantini con QR, gestione e imbarco installabili sul telefono, dati strutturati e sitemap. Prove: `prove/prova_nuove.py` e `prove/prova_ui_nuove.py`
 - [x] Confermati da Remo (8 novembre 2026): Corsica 9:30 – 17:30 con Lavezzi, isola di Cavallo e Bonifacio (dall'11 novembre 2026: isola Piana, Lavezzi e Cavallo, senza Bonifacio); le due regole aggiunte alle condizioni (guasto = regola del maltempo; altre piattaforme = loro condizioni); nessuna autorizzazione da indicare; ritrovo 15 minuti prima della partenza (dal 13 novembre 2026: 9:00 a Palau, 9:15 a La Maddalena)
 
 ### Da decidere o da avere dal cliente (Remo)
@@ -100,12 +115,19 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA (Remo li manda insieme alle foto)
 - [ ] Testi delle soste della Corsica (isola Piana, Lavezzi, Cavallo) scritti da Claude il 13 novembre 2026: da far controllare a Remo
 - [ ] Foto (le note sui segnaposto indicano gli scatti, comprese quelle dei piatti dei ristoranti convenzionati) e logo da rivedere
+- [ ] Proposte di Claude da confermare (13 novembre 2026, in `regole` di `src/data/prenotazioni.js`): buoni regalo da 50/100/150/200/300 € (minimo 30, massimo 2000) validi 12 mesi; durata dei link di pagamento 2/12/24/48 ore; promemoria dalle 18 del giorno prima; grazie 2 ore dopo il rientro. Nelle condizioni: buono rimborsabile se il cliente cambia idea entro 14 giorni (art. 52 Codice del consumo: da far confermare, non è un parere legale)
+- [ ] Da decidere nella gestione (scheda Offerte): promozioni, eventuale aumento nel weekend, codici sconto, extra a pagamento (foto, kit...): ora non ce n'è nessuno
+- [ ] Link alla scheda Google per le recensioni (`recensioniGoogle` in `src/data/sito.js`): serve all'email di ringraziamento
 - [ ] Risposte automatiche di WhatsApp Business (benvenuto, assenza fuori orario, risposte rapide): testi proposti da Claude, li imposta il cliente nell'app
 
 ### Da attivare prima di aprire le prenotazioni vere
 - [ ] Dominio: da GoDaddy a Cloudflare (DNS), collegarlo in Pages → Custom domains; poi `site` in `astro.config.mjs`, `url` in `src/data/sito.js`, `www` che rimanda alla versione senza `www`
 - [ ] Email di conferma, obbligatorie (art. 51, comma 7, Codice del consumo): account Resend, dominio verificato, `RESEND_API_KEY` ed `EMAIL_MITTENTE` in Cloudflare Pages
 - [ ] Conti SumUp e PayPal → chiavi in Cloudflare Pages (Production): `SUMUP_API_KEY`, `SUMUP_MERCHANT_CODE`, `PAYPAL_CLIENT_ID`, `PAYPAL_SECRET`
+- [ ] Migrazione `0004_funzioni_nuove.sql` su entrambi i database (`npx wrangler d1 migrations apply escursioni-prenotazioni-prova --remote` e `... escursioni-prenotazioni --remote`): chiude le sessioni aperte, basta rientrare
+- [ ] Email automatiche: segreto `AUTOMATICO_CHIAVE` (e `SITO_URL` col dominio) in Cloudflare Pages, poi pubblicare il Worker in `automatico/` (istruzioni nel suo LEGGIMI)
+- [ ] Rimborsi automatici: controllare che la chiave SumUp possa fare rimborsi (permesso "payments") e fare una prova con PayPal sandbox
+- [ ] Accessi skipper dalla gestione (Account) e prova dell'imbarco col telefono il primo giorno
 - [ ] Accesso di gestione: Remo cambia la password provvisoria al primo accesso; creare le strutture partner vere dalla gestione
 - [ ] Unire `prenotazioni` in `main` quando Remo dà l'ok (se i pagamenti non sono ancora attivi: `regole.attive: false`)
 
@@ -119,4 +141,5 @@ Aggiorna questa sezione quando qualcosa viene completato.
 ### Lancio e dopo
 - [ ] `inCostruzione: false` in `src/data/sito.js`, `public/robots.txt` aperto (con le esclusioni già scritte nel commento), sitemap, dati strutturati (LocalBusiness e TouristTrip)
 - [ ] Se servono statistiche: Cloudflare Web Analytics (aggiornare privacy e cookie)
-- [ ] Inglese (`/en/`) con hreflang, poi tedesco e francese
+- [ ] Inglese (`/en/`) con hreflang, poi tedesco e francese: tutte le pagine, i testi in `src/data/`, la prenotazione (testi nel JavaScript di `Prenotazione.astro`, `esito.astro`, `paga/`, `buono-regalo/`), le email (`email.js`, `prenotazioni.js`) e le condizioni. Il sito oggi è solo in italiano
+- [ ] Al lancio aggiungere `Sitemap: https://<dominio>/sitemap.xml` in `public/robots.txt`

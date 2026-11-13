@@ -54,3 +54,25 @@ details.azione-extra[open] { background: #EEF7FC; border-radius: 14px; padding: 
 }
 .spunta-riga { display: flex; gap: 10px; align-items: center; min-height: 52px; font-size: 15px; line-height: 1.4; cursor: pointer; }
 .spunta-riga input { width: 20px; height: 20px; accent-color: var(--mare); flex: none; }
+
+/* Finestra delle azioni su una prenotazione */
+.dialogo { border: 0; border-radius: 20px; padding: 0; width: min(640px, calc(100vw - 24px)); max-height: calc(100vh - 32px); box-shadow: 0 24px 80px rgba(0,0,0,.25); color: var(--mare); }
+.dialogo::backdrop { background: rgba(20, 30, 40, .45); }
+.dialogo__testa { position: sticky; top: 0; background: var(--bianco); display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--bordo); z-index: 1; }
+.dialogo__testa h2 { font-size: 20px; font-weight: 800; line-height: 1.2; }
+.dialogo [data-dlg-corpo] { padding: 8px 20px 20px; display: flex; flex-direction: column; gap: 4px; }
+.azione-blocco { border-bottom: 1px solid var(--bordo); padding: 14px 0; display: flex; flex-direction: column; gap: 10px; }
+.azione-blocco:last-child { border-bottom: 0; }
+.azione-blocco h3 { font-size: 17px; font-weight: 800; }
+.scelte-radio { display: flex; flex-direction: column; gap: 4px; }
+.scelte-radio label { display: flex; gap: 10px; align-items: flex-start; min-height: 40px; font-size: 15px; line-height: 1.4; cursor: pointer; padding: 6px 0; }
+.scelte-radio input { width: 20px; height: 20px; accent-color: var(--mare); flex: none; margin-top: 1px; }
+.cifre--piccole .cifra strong { font-size: 24px; }
+.griglia-stat .area-scheda + .area-scheda { margin-top: 0; }
+.griglia-stat { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); gap: 20px; margin-top: 20px; }
+.grafico-barre { display: flex; flex-direction: column; gap: 6px; }
+.grafico-barre div { display: grid; grid-template-columns: minmax(90px, 160px) 1fr max-content; gap: 10px; align-items: center; font-size: 14px; }
+.grafico-barre span.barra { height: 14px; border-radius: 7px; background: var(--laguna); min-width: 2px; }
+.qr-mini { width: 72px; height: 72px; }
+.qr-mini svg { width: 100%; height: 100%; }
+.riga-verde td { background: #F3FBF5; }

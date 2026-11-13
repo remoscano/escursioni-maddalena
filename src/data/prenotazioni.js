@@ -34,6 +34,15 @@ export const regole = {
   // Esclusive: il carburante si paga a parte. La legge chiede di dire prima come si calcola e quando si paga
   // (es. 'a consumo, si paga a bordo a fine uscita'). Finché è vuoto, sul sito e nelle email compare un segnaposto.
   carburante: 'a consumo, si paga a bordo a fine uscita',
+
+  // ----- Proposte di Claude (13 novembre 2026), da far confermare a Remo -----
+  // Link di pagamento mandati dalla gestione: per quante ore tengono i posti (scelta nel modulo).
+  orePerPagareLink: [2, 12, 24, 48],
+  // Email automatiche: il promemoria parte il giorno prima dalle 18; il grazie qualche ora dopo il rientro.
+  promemoria: { ora: '18:00' },
+  grazieOreDopo: 2,
+  // Buoni regalo comprati online: importi proposti e validità.
+  buoni: { importi: [50, 100, 150, 200, 300], minimo: 30, massimo: 2000, validitaMesi: 12 },
 };
 
 // Testo unico sul carburante delle esclusive (riepilogo, conferma, email, condizioni).
@@ -247,9 +256,154 @@ export function prezzoDa(slug, soloTurni) {
   return { adulto: piuEconomica.adulto, bambino: piuEconomica.bambino };
 }
 
-// Calcola persone, posti occupati e totale (in euro) di una prenotazione.
+// ---------- Regole di prezzo, codici sconto, extra e buoni regalo ----------
+// Le regole (promozioni, weekend), i codici e gli extra si creano dalla gestione: qui c'è solo il calcolo,
+// uguale sul sito e sul server (il server ricalcola sempre tutto).
+
+const arrotonda = (n) => Math.round(n * 100) / 100;
+const listaDi = (s) => String(s || '').split(',').map((x) => x.trim()).filter(Boolean);
+
+// Data e ora di Roma (funziona nel browser e sul server).
+export function adessoRoma(adesso = new Date()) {
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Rome', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+  }).formatToParts(adesso).map((x) => [x.type, x.value]));
+  return { data: `${p.year}-${p.month}-${p.day}`, ora: `${p.hour}:${p.minute}` };
+}
+
+// Ore che mancano alla partenza di un turno (ora di Roma).
+export function oreAllaPartenza(data, orario, adesso = new Date()) {
+  const m = /^(\d{1,2}):(\d{2})/.exec(String(orario || '').trim()) || [null, '9', '30'];
+  const [a, me, g] = data.split('-').map(Number);
+  const ipotesi = Date.UTC(a, me - 1, g, Number(m[1]), Number(m[2]));
+  // Ora di Roma = UTC + 1 o + 2: si controlla quale delle due dà l'orario giusto.
+  for (const scarto of [2, 1]) {
+    const istante = new Date(ipotesi - scarto * 3600000);
+    if (adessoRoma(istante).ora === `${String(m[1]).padStart(2, '0')}:${m[2]}`) return (istante - adesso) / 3600000;
+  }
+  return (ipotesi - 3600000 - adesso) / 3600000;
+}
+
+const giorniTra = (da, a) => Math.round((Date.parse(`${a}T12:00:00Z`) - Date.parse(`${da}T12:00:00Z`)) / 86400000);
+const valePer = (r, slug, data) => (!r.escursioni || listaDi(r.escursioni).includes(slug)) && (!r.dal || data >= r.dal) && (!r.al || data <= r.al);
+const eWeekend = (data) => [0, 6].includes(new Date(`${data}T12:00:00Z`).getUTCDay());
+
+// Una regola di prezzo vale per questa prenotazione?
+export function regolaValida(r, { slug, data, orario, persone, adesso = new Date() }) {
+  if (!r || r.attiva === false || r.attiva === 0 || !valePer(r, slug, data)) return false;
+  if (r.tipo === 'weekend') return eWeekend(data);
+  if (r.tipo === 'anticipo') return giorniTra(adessoRoma(adesso).data, data) >= Number(r.soglia);
+  if (r.tipo === 'ultimo-minuto') { const ore = oreAllaPartenza(data, orario, adesso); return ore >= 0 && ore <= Number(r.soglia); }
+  if (r.tipo === 'gruppo') return persone >= Number(r.soglia);
+  return false;
+}
+
+export const NOMI_REGOLE = {
+  anticipo: 'Prenotazione anticipata',
+  'ultimo-minuto': 'Ultimo minuto',
+  gruppo: 'Sconto gruppo',
+  weekend: 'Weekend',
+};
+
+// Il codice sconto vale per questa prenotazione? Restituisce un messaggio se non vale.
+export function erroreCodice(c, slug, data) {
+  if (!c) return 'Codice non valido.';
+  if (c.tipo === 'buono') {
+    if (c.al && adessoRoma().data > c.al) return 'Questo buono regalo è scaduto.';
+    if (!(c.saldo > 0)) return 'Questo buono regalo è già stato usato tutto.';
+    return null;
+  }
+  if (c.escursioni && !listaDi(c.escursioni).includes(slug)) return 'Questo codice non vale per questa escursione.';
+  if ((c.dal && data < c.dal) || (c.al && data > c.al)) return 'Questo codice non vale per questa data.';
+  if (c.esaurito) return 'Questo codice è già stato usato il numero massimo di volte.';
+  return null;
+}
+
+// Calcola persone, posti occupati e totale (in euro) di una prenotazione, con regole di prezzo, codice, extra e buono.
+// opzioni: { regole: [...], codice: {...}, extra: [catalogo], extraScelti: { id: quantità }, adesso }
 // Restituisce { errore } se qualcosa non va.
-export function calcolaPrenotazione(slug, turnoId, data, persone) {
+export function calcolaPrenotazione(slug, turnoId, data, persone, opzioni = {}) {
+  const base = calcolaListino(slug, turnoId, data, persone);
+  if (base.errore) return base;
+  const { regole: rp = [], codice = null, extra = [], extraScelti = {}, adesso = new Date() } = opzioni;
+  const turno = turnoDi(slug, turnoId);
+  const ctx = { slug, data, orario: orarioDi(turno, data), persone: base.persone, adesso };
+  const righe = [...base.righe];
+  let prezzo = base.totale;
+
+  // Weekend: percentuale in più sul listino.
+  const weekend = rp.filter((r) => r.tipo === 'weekend' && regolaValida(r, ctx)).sort((a, b) => b.percentuale - a.percentuale)[0];
+  if (weekend) {
+    const piu = arrotonda((base.totale * weekend.percentuale) / 100);
+    righe.push({ testo: `${weekend.nome || NOMI_REGOLE.weekend} +${weekend.percentuale}%`, importo: piu });
+    prezzo = arrotonda(prezzo + piu);
+  }
+
+  // Sconti: si applica il migliore tra le promozioni e il codice sconto (non si sommano).
+  const promo = rp.filter((r) => r.tipo !== 'weekend' && regolaValida(r, ctx))
+    .map((r) => ({ nota: `${r.nome || NOMI_REGOLE[r.tipo]} −${r.percentuale}%`, importo: arrotonda((prezzo * r.percentuale) / 100) }))
+    .sort((a, b) => b.importo - a.importo)[0];
+  let scontoCodice = null;
+  let codiceErrore = null;
+  if (codice && codice.tipo !== 'buono') {
+    codiceErrore = erroreCodice(codice, slug, data);
+    if (!codiceErrore) {
+      const importo = codice.tipo === 'percentuale' ? arrotonda((prezzo * codice.valore) / 100) : Math.min(prezzo, Number(codice.valore));
+      scontoCodice = { nota: `Codice ${codice.codice}${codice.tipo === 'percentuale' ? ` −${codice.valore}%` : ''}`, importo };
+    }
+  }
+  const migliore = [promo, scontoCodice].filter(Boolean).sort((a, b) => b.importo - a.importo)[0] || null;
+  let codiceNonCumulabile = false;
+  if (scontoCodice && promo && migliore === promo) { codiceErrore = 'Il codice non si somma alla promozione già applicata, che conviene di più.'; codiceNonCumulabile = true; }
+  if (migliore) { righe.push({ testo: migliore.nota, importo: -migliore.importo }); prezzo = arrotonda(prezzo - migliore.importo); }
+
+  // Extra a pagamento (non scontati).
+  const scelti = [];
+  for (const [id, q] of Object.entries(extraScelti || {})) {
+    const quantita = Number(q) || 0;
+    if (!quantita) continue;
+    const e = extra.find((x) => String(x.id) === String(id));
+    if (!e || (e.escursioni && !listaDi(e.escursioni).includes(slug))) return { errore: 'Extra non disponibile per questa escursione.' };
+    const massimo = e.modo === 'persona' ? base.persone : 1;
+    if (!Number.isInteger(quantita) || quantita < 0 || quantita > massimo) return { errore: `Quantità non valida per: ${e.nome}.` };
+    if (e.rimanenti !== null && e.rimanenti !== undefined && quantita > e.rimanenti) return { errore: `${e.nome}: ne restano ${e.rimanenti} per questo giorno.` };
+    const totaleExtra = arrotonda(quantita * e.prezzo);
+    scelti.push({ id: e.id, nome: e.nome, quantita, prezzo: e.prezzo, totale: totaleExtra });
+    righe.push({ testo: `${e.nome}${e.modo === 'persona' ? ` × ${quantita}` : ''}`, importo: totaleExtra });
+  }
+  const extraTotale = arrotonda(scelti.reduce((s, x) => s + x.totale, 0));
+  const totale = arrotonda(prezzo + extraTotale);
+
+  // Buono regalo: paga tutto o una parte del totale.
+  let buono = 0;
+  if (codice && codice.tipo === 'buono') {
+    codiceErrore = erroreCodice(codice, slug, data);
+    if (!codiceErrore) {
+      buono = Math.min(totale, Number(codice.saldo));
+      righe.push({ testo: `Buono regalo ${codice.codice}`, importo: -buono, buono: true });
+    }
+  }
+
+  return {
+    ...base,
+    righe,
+    listino: base.totale,
+    totale,
+    sconto: migliore ? migliore.importo : 0,
+    scontoNota: migliore ? migliore.nota : null,
+    maggiorazione: weekend ? arrotonda((base.totale * weekend.percentuale) / 100) : 0,
+    usaCodice: Boolean((migliore && migliore === scontoCodice) || buono),
+    codiceErrore,
+    codiceNonCumulabile,
+    extraScelti: scelti,
+    extraTotale,
+    buono,
+    daPagare: arrotonda(totale - buono),
+  };
+}
+
+// Solo listino: persone, posti e prezzo base.
+function calcolaListino(slug, turnoId, data, persone) {
   const o = offerte[slug];
   const t = turnoDi(slug, turnoId);
   if (!o || !t) return { errore: 'Escursione o turno non validi.' };

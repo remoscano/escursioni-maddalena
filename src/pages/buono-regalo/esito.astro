@@ -1,0 +1,62 @@
+---
+// Il buono regalo dopo il pagamento: da stampare o inoltrare.
+import Base from '../../layouts/Base.astro';
+import Logo from '../../components/Logo.astro';
+import { sito } from '../../data/sito.js';
+---
+<Base titolo="Il tuo buono regalo" descrizione="Buono regalo Escursioni Maddalena." nascosta senzaBarra>
+  <section class="sezione" style="padding-top:56px">
+    <div class="contenitore" style="max-width:760px">
+      <div data-buono-esito data-whatsapp={sito.contatti.whatsapp}><p class="testo-2">Carico il buono…</p></div>
+      <template data-logo><Logo /></template>
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  .buono-carta { border: 2px solid var(--mare); border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 14px; background: var(--bianco); }
+  @media (max-width: 520px) { .buono-carta { padding: 24px 18px; } }
+  .buono-carta h1 { font-weight: 800; font-size: clamp(30px, 4.4vw, 44px); line-height: 1.05; }
+  .buono-carta__valore { font-family: var(--font-titoli); font-weight: 800; font-size: clamp(44px, 8vw, 72px); line-height: 1; color: var(--turchese); }
+  .buono-carta__codice { align-self: flex-start; background: var(--acqua); border-radius: 999px; padding: 8px 16px; font-weight: 800; letter-spacing: .08em; font-size: 20px; }
+  .buono-carta__messaggio { font-size: 18px; font-style: italic; }
+  .buono-azioni { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+  @media print { .testata, .piede, .buono-azioni { display: none !important; } }
+</style>
+
+<script>
+  import { api, h, euro, dataLunga } from '../../scripts/comune';
+  const box = document.querySelector<HTMLElement>('[data-buono-esito]')!;
+  const logo = document.querySelector<HTMLTemplateElement>('[data-logo]')!.innerHTML;
+  const q = new URLSearchParams(location.search);
+  const codice = q.get('codice') || '', t = q.get('t') || '';
+  const whatsapp = box.dataset.whatsapp || '';
+  const wa = (testo: string) => whatsapp ? `<a class="btn btn--bordo" href="https://wa.me/${h(whatsapp)}?text=${encodeURIComponent(testo)}">Scrivici su WhatsApp</a>` : '';
+  let tentativi = 0;
+  async function carica() {
+    let b: any;
+    try { b = await api(`/api/buono?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}`); }
+    catch (e) { box.innerHTML = `<h1>Buono non trovato</h1><p>${h((e as Error).message)}</p>`; return; }
+    if (b.stato === 'attivo') {
+      box.innerHTML = `<div class="buono-carta">
+          ${logo}
+          <h1>Buono regalo${b.destinatario ? ` per ${h(b.destinatario)}` : ''}</h1>
+          <p class="buono-carta__valore">${euro(b.valore)}</p>
+          ${b.messaggio ? `<p class="buono-carta__messaggio">“${h(b.messaggio)}”</p>` : ''}
+          ${b.acquirente ? `<p>Da ${h(b.acquirente)}</p>` : ''}
+          <p class="buono-carta__codice">${h(b.codice)}</p>
+          <p>Vale su tutte le escursioni in gommone nell'Arcipelago di La Maddalena${b.al ? `, fino al ${h(dataLunga(b.al))}` : ''}. Per usarlo prenota su <strong>${h(location.host)}/prenota/</strong> e scrivi il codice nel riepilogo.</p>
+          ${b.saldo !== b.valore ? `<p class="testo-2">Credito ancora disponibile: ${euro(b.saldo)}</p>` : ''}
+        </div>
+        <div class="buono-azioni"><button type="button" class="btn btn--wa" onclick="window.print()">Stampa o salva in PDF</button><a class="btn btn--bordo" href="/prenota/">Prenota un'escursione</a>${wa(`Ciao! Ho il buono regalo ${b.codice}.`)}</div>`;
+      return;
+    }
+    if (b.stato === 'in_attesa' && !b.scaduto && q.get('annullato') !== '1') {
+      box.innerHTML = `<h1>Aspettiamo la conferma del pagamento…</h1><p class="testo-2">Di solito bastano pochi secondi.</p>`;
+      if (tentativi++ < 20) setTimeout(carica, 3000);
+      return;
+    }
+    box.innerHTML = `<h1>${b.stato === 'annullato' ? 'Buono annullato' : 'Pagamento non completato'}</h1><p>Nessun addebito.</p><div class="buono-azioni"><a class="btn btn--wa" href="/buono-regalo/">Riprova</a>${wa('Ciao! Ho bisogno di aiuto con un buono regalo.')}</div>`;
+  }
+  carica();
+</script>

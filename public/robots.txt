@@ -7,5 +7,9 @@
 #   Disallow: /prenota/esito/
 #   Disallow: /prenota/prova/
 #   Disallow: /api/
+#   Disallow: /imbarco/
+#   Disallow: /prenota/paga/
+#   Disallow: /buono-regalo/esito/
+#   Sitemap: https://<dominio>/sitemap.xml
 User-agent: *
 Disallow: /

@@ -24,7 +24,11 @@ const { azienda, contatti } = sito;
       <h2>Quali dati trattiamo e perché</h2>
       <p><strong>Quando visiti il sito.</strong> Cloudflare, che ospita il sito, registra dati tecnici come indirizzo IP, browser e pagine richieste, per farlo funzionare e proteggerlo da abusi. Base giuridica: il nostro legittimo interesse alla sicurezza del sito. Non usiamo cookie di profilazione né strumenti di pubblicità o di statistica che ti tracciano.</p>
       <p><strong>Quando ci scrivi su WhatsApp o per email.</strong> Il modulo di richiesta non manda dati al sito: compone il messaggio nel tuo browser e lo apre in WhatsApp, e ci arriva solo se decidi di inviarlo, insieme al tuo numero. Usiamo quello che ci scrivi (nome, data, persone, imbarco, domande) per risponderti e organizzare l'escursione. Base giuridica: rispondere a una tua richiesta prima del contratto.</p>
-      <p><strong>Quando prenoti online.</strong> Ci dai nome e cognome, email, telefono, eventuali note e i dettagli dell'escursione (data, orario, numero di adulti e bambini, imbarco). Li usiamo per gestire la prenotazione, mandarti la conferma e avvisarti di cambi dovuti al meteo. Base giuridica: il contratto; per i dati di pagamento e contabili, gli obblighi di legge. Se ci comunichi un'esigenza legata alla salute (per esempio un'allergia per l'aperitivo), la usiamo solo per organizzare l'uscita: la base giuridica è il tuo consenso esplicito, che dai comunicandocela.</p>
+      <p><strong>Quando prenoti online.</strong> Ci dai nome e cognome, email, telefono, eventuali note e i dettagli dell'escursione (data, orario, numero di adulti e bambini, imbarco). Li usiamo per gestire la prenotazione, mandarti la conferma e il promemoria il giorno prima, avvisarti di cambi dovuti al meteo e, se annulli o scegli il rimborso, rimborsarti. All'imbarco lo skipper segna che sei salito a bordo (data e ora del check-in). Base giuridica: il contratto; per i dati di pagamento e contabili, gli obblighi di legge. Se hai usato un codice sconto o un buono regalo, o se sei arrivato dal QR di un nostro volantino, lo registriamo con la prenotazione. Se ci comunichi un'esigenza legata alla salute (per esempio un'allergia per l'aperitivo), la usiamo solo per organizzare l'uscita: la base giuridica è il tuo consenso esplicito, che dai comunicandocela.</p>
+      <p><strong>Email dopo l'escursione.</strong> Qualche ora dopo il rientro ti mandiamo una sola email di ringraziamento, con il link per lasciare una recensione su Google se vuoi. Base giuridica: il nostro legittimo interesse a sapere com'è andata, verso chi ha appena fatto un'escursione con noi. Puoi dirci di no in qualsiasi momento rispondendo all'email.</p>
+      <p><strong>Lista d'attesa.</strong> Se chiedi di essere avvisato quando si libera un posto ci dai nome, email, telefono (facoltativo), data, escursione e numero di persone. Li usiamo solo per mandarti quell'avviso. Base giuridica: la tua richiesta. Li cancelliamo in automatico quando la data è passata.</p>
+      <p><strong>Buoni regalo.</strong> Se compri un buono ci dai nome, email, telefono (facoltativo) e, se vuoi, il nome di chi lo riceve e un messaggio, che stampiamo sul buono. Servono per mandarti il buono, farlo usare e per gli obblighi contabili. Base giuridica: il contratto e gli obblighi di legge.</p>
+      <p><strong>Volantini con il QR.</strong> Quando qualcuno apre il QR di un nostro volantino contiamo solo il numero di visite di quel volantino: nessun dato su di te e nessun cookie.</p>
       <p><strong>Pagamenti.</strong> Paghi sulle pagine di SumUp (carta) o di PayPal: i dati della carta li inserisci lì e non passano dal nostro sito. Riceviamo solo l'esito, l'importo e un codice di riferimento. SumUp e PayPal trattano i dati del pagamento come titolari autonomi, secondo le loro informative.</p>
       <p><strong>Strutture partner.</strong> Se prenoti tramite un hotel o una struttura partner, o dal loro link, la struttura vede nella sua area data, escursione, numero di persone e importo, per il calcolo della sua provvigione. Vede il tuo nome solo se la prenotazione l'ha fatta lei per te: in quel caso i tuoi dati ce li ha passati la struttura.</p>
       <p><strong>Sicurezza delle prenotazioni.</strong> Per evitare che qualcuno blocchi i posti con tante prenotazioni non pagate, mentre paghi teniamo un'impronta del tuo indirizzo internet (non l'indirizzo in chiaro). La cancelliamo in automatico quando la prenotazione è pagata o il tempo per pagare è scaduto. Base giuridica: legittimo interesse alla sicurezza.</p>
@@ -35,7 +39,7 @@ const { azienda, contatti } = sito;
       <ul>
         <li>Cloudflare, Inc.: ospita il sito e il database delle prenotazioni.</li>
         <li>SumUp e PayPal: pagamenti, come titolari autonomi.</li>
-        <li>Resend, Inc.: invio delle email di conferma.</li>
+        <li>Resend, Inc.: invio delle email (conferme, promemoria, avvisi, buoni regalo).</li>
         <li>WhatsApp (Meta) e Google (Gmail): quando ci scrivi su WhatsApp o per email, i messaggi passano e restano su questi servizi.</li>
         <li>Le strutture partner, solo per quanto detto sopra.</li>
         <li>Il nostro commercialista e le autorità, quando lo chiede la legge.</li>
@@ -50,6 +54,8 @@ const { azienda, contatti } = sito;
         <li>Prenotazioni, pagamenti e provvigioni: 10 anni dalla data dell'escursione, come chiede la legge per i documenti contabili (art. 2220 del Codice civile) e per difenderci in caso di contestazioni.</li>
         <li>Messaggi su WhatsApp ed email: per il tempo che serve a risponderti e a gestire l'eventuale prenotazione.</li>
         <li>Impronta dell'indirizzo internet: fino al pagamento o alla scadenza della prenotazione in attesa ({regole.minutiPerPagare} minuti).</li>
+        <li>Lista d'attesa: fino al giorno dell'escursione richiesta, poi si cancella in automatico.</li>
+        <li>Buoni regalo: 10 anni dall'acquisto, come i documenti contabili.</li>
         <li>Tentativi di accesso sbagliati alle aree riservate: 24 ore. Sessione di accesso: al massimo 12 ore.</li>
         <li>Account delle aree riservate: finché dura la collaborazione.</li>
         <li>Registro delle operazioni: come i dati delle prenotazioni a cui si riferisce.</li>
@@ -63,7 +69,7 @@ const { azienda, contatti } = sito;
       <p>Puoi anche presentare reclamo al Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it/">garanteprivacy.it</a>).</p>
       <p>Non prendiamo decisioni automatiche su di te e non facciamo profilazione.</p>
 
-      <p class="testo-2">Ultimo aggiornamento: 8 novembre 2026</p>
+      <p class="testo-2">Ultimo aggiornamento: 13 novembre 2026</p>
     </div>
   </section>
 </Base>

@@ -1,7 +1,8 @@
 // Creazione di una prenotazione: dal sito (cliente o struttura) o dalla gestione (prenotazioni dalle altre piattaforme).
 
 import { offerte, turnoDi, regole, imbarchiPrenotazione, canaliEsterni, calcolaPrenotazione, testoChiusuraOnline } from '../../src/data/prenotazioni.js';
-import { prima } from './db.js';
+import { prima, esegui } from './db.js';
+import { regoleAttive, catalogoExtra, trovaCodice, vistaCodice, riservaCodice, salvaExtra, campagnaValida } from './offerte.js';
 import { caricaGiorni, situazioneTurno, inserisciPrenotazione, prenotabileOnline, prenotabileGestione } from './motore.js';
 import { Errore, testo, testoLungo, intero, email, telefono, dataValida, codicePrenotazione, tokenSicuro, adessoISO, traMinutiISO } from './util.js';
 
@@ -28,8 +29,19 @@ export async function creaPrenotazione(contesto, b, { modo, utente = null, ipHas
     bambini: intero(b.bambini ?? 0, { campo: 'bambini', min: 0, max: 20 }),
     neonati: intero(b.neonati ?? 0, { campo: 'neonati', min: 0, max: 20 }),
   };
-  const calcolo = calcolaPrenotazione(slug, turnoId, b.data, persone);
+  // Promozioni, codice sconto o buono regalo, extra: il server ricalcola tutto da capo.
+  const extraScelti = b.extra && typeof b.extra === 'object' && !Array.isArray(b.extra) ? b.extra : {};
+  const voluti = Object.values(extraScelti).some((q) => Number(q) > 0);
+  const codiceRiga = typeof b.codice === 'string' && b.codice.trim() ? await trovaCodice(db, b.codice) : null;
+  if (typeof b.codice === 'string' && b.codice.trim() && !codiceRiga) throw new Errore(400, 'Codice sconto o buono regalo non valido.');
+  const calcolo = calcolaPrenotazione(slug, turnoId, b.data, persone, {
+    regole: await regoleAttive(db),
+    codice: vistaCodice(codiceRiga),
+    extra: voluti ? await catalogoExtra(db, slug, b.data) : [],
+    extraScelti,
+  });
   if (calcolo.errore) throw new Errore(400, calcolo.errore);
+  if (calcolo.codiceErrore && !calcolo.codiceNonCumulabile) throw new Errore(400, calcolo.codiceErrore);
   if (!imbarchiPrenotazione.some((i) => i.id === b.imbarco)) throw new Errore(400, "Scegli il punto d'imbarco.");
   if (!offerta.imbarchi.includes(b.imbarco)) throw new Errore(400, "Da questo punto d'imbarco l'escursione non parte: scegline un altro.");
 
@@ -40,6 +52,14 @@ export async function creaPrenotazione(contesto, b, { modo, utente = null, ipHas
   const note = testoLungo(b.note, 1000);
 
   let totale = Math.round(calcolo.totale * 100);
+  let buono = Math.round(calcolo.buono * 100);
+  let importoAMano = false;
+  const link = modo === 'gestione' && b.link === true;
+  let orePerPagare = 0;
+  if (link) {
+    orePerPagare = Number(b.ore) || regole.orePerPagareLink[2];
+    if (!regole.orePerPagareLink.includes(orePerPagare)) throw new Errore(400, 'Durata del link non valida.');
+  }
   let partner = null;
   let canale = 'sito';
   let creataDa = 'cliente';
@@ -54,8 +74,10 @@ export async function creaPrenotazione(contesto, b, { modo, utente = null, ipHas
       const importo = Number(String(b.importo).replace(',', '.'));
       if (!Number.isFinite(importo) || importo < 0 || importo > 100000) throw new Errore(400, 'Importo non valido.');
       totale = Math.round(importo * 100);
+      importoAMano = true;
+      buono = 0;
     }
-    if (b.pagato === true) pagato = totale;
+    if (b.pagato === true && !link) pagato = totale - buono;
     if (b.partnerId) {
       partner = await prima(db, 'SELECT id, provvigione_pct FROM partner WHERE id = :id AND attivo = 1', { id: Number(b.partnerId) });
       if (!partner) throw new Errore(400, 'Struttura non trovata.');
@@ -103,14 +125,22 @@ export async function creaPrenotazione(contesto, b, { modo, utente = null, ipHas
     totale,
     pagato,
     provvigione,
-    stato: gestione ? 'confermata' : 'in_attesa',
+    stato: gestione && !link ? 'confermata' : 'in_attesa',
     canale,
     partner_id: partner?.id ?? null,
-    metodo: gestione ? 'esterno' : b.metodo,
+    metodo: link ? null : gestione ? 'esterno' : b.metodo,
     rif_esterno: rifEsterno,
     ip_hash: ipHash,
-    scade_il: gestione ? null : traMinutiISO(regole.minutiPerPagare),
+    scade_il: link ? traMinutiISO(orePerPagare * 60) : gestione ? null : traMinutiISO(regole.minutiPerPagare),
     creata_da: creataDa,
+    listino: Math.round(calcolo.listino * 100),
+    // Sconto netto (negativo se c'è la maggiorazione del weekend). Con l'importo scritto a mano non si calcola.
+    sconto: importoAMano ? 0 : Math.round((calcolo.sconto - calcolo.maggiorazione) * 100),
+    sconto_nota: importoAMano ? null : calcolo.scontoNota,
+    codice_id: !importoAMano && calcolo.usaCodice ? codiceRiga.id : null,
+    buono,
+    extra_totale: importoAMano ? 0 : Math.round(calcolo.extraTotale * 100),
+    campagna: gestione ? null : await campagnaValida(db, b.campagna),
   };
 
   let inserita = null;
@@ -124,5 +154,13 @@ export async function creaPrenotazione(contesto, b, { modo, utente = null, ipHas
     }
   }
   if (!inserita) throw new Errore(409, 'Qualcuno ha appena preso gli ultimi posti: scegli un altro turno o un altro giorno.');
-  return { ...dati, id: inserita.id, barca: inserita.barca };
+  if (!importoAMano) await salvaExtra(db, inserita.id, calcolo.extraScelti);
+  if (dati.codice_id) await riservaCodice(db, inserita.id, dati.codice_id, dati.buono);
+  // Tutto pagato con il buono regalo: confermata subito, senza passare dal pagamento.
+  if (!gestione && dati.buono > 0 && dati.buono >= dati.totale) {
+    await esegui(db, "UPDATE prenotazioni SET stato = 'confermata', metodo = 'buono', ip_hash = NULL, aggiornata_il = :ora WHERE id = :id", { ora: adessoISO(), id: inserita.id });
+    dati.stato = 'confermata';
+    dati.metodo = 'buono';
+  }
+  return { ...dati, id: inserita.id, barca: inserita.barca, calcolo };
 }

@@ -7,6 +7,12 @@ import '../../styles/area.css';
 const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map((e) => [e.slug, e.titolo]));
 ---
 <Base titolo="Gestione prenotazioni" descrizione="Area riservata." nascosta senzaBarra>
+  <Fragment slot="head">
+    <link rel="manifest" href="/gestione/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/img/app-180.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Gestione" />
+  </Fragment>
   <section class="area">
     <div class="contenitore">
       <script type="application/json" data-titoli set:html={JSON.stringify(titoli)} />
@@ -47,6 +53,10 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
           <button role="tab" type="button" data-scheda="giorno" aria-selected="true">Giornata</button>
           <button role="tab" type="button" data-scheda="nuova" aria-selected="false">Inserisci prenotazione</button>
           <button role="tab" type="button" data-scheda="elenco" aria-selected="false">Prenotazioni</button>
+          <button role="tab" type="button" data-scheda="attesa" aria-selected="false">Lista d'attesa</button>
+          <button role="tab" type="button" data-scheda="statistiche" aria-selected="false">Statistiche</button>
+          <button role="tab" type="button" data-scheda="offerte" aria-selected="false">Offerte</button>
+          <button role="tab" type="button" data-scheda="volantini" aria-selected="false">Volantini</button>
           <button role="tab" type="button" data-scheda="strutture" aria-selected="false">Strutture</button>
           <button role="tab" type="button" data-scheda="provvigioni" aria-selected="false">Provvigioni</button>
           <button role="tab" type="button" data-scheda="account" aria-selected="false">Account</button>
@@ -98,6 +108,11 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
               <div class="campo"><label for="n-importo">Importo (€)</label><input id="n-importo" name="importo" inputmode="decimal" /></div>
               <label class="spunta-riga"><input type="checkbox" name="pagato" /><span>Già pagato (sulla piattaforma o al molo)</span></label>
             </div>
+            <div class="riga-campi">
+              <label class="spunta-riga"><input type="checkbox" name="link" /><span>Il cliente paga online: crea il link di pagamento (i posti restano tenuti)</span></label>
+              <div class="campo" data-campo-ore hidden><label for="n-ore">Il link vale per</label><select id="n-ore" name="ore">{regole.orePerPagareLink.map((o) => <option value={o} selected={o === 24}>{o} ore</option>)}</select></div>
+            </div>
+            <div data-esito-link></div>
             <div class="campo"><label for="n-note">Note</label><textarea id="n-note" name="note" rows="2" maxlength="1000"></textarea></div>
             <p class="messaggio-ok" data-esito-nuova hidden></p>
             <button class="btn btn--wa btn--grande" type="submit">Inserisci prenotazione</button>
@@ -109,16 +124,123 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
           <form class="area-scheda non-stampare" data-filtri>
             <div class="riga-campi">
               <div class="campo"><label for="f-q">Cerca</label><input id="f-q" name="q" placeholder="Codice, nome, telefono, email" /></div>
-              <div class="campo"><label for="f-stato">Stato</label><select id="f-stato" name="stato"><option value="">Tutte</option><option value="confermata">Confermate</option><option value="da_verificare">Da verificare</option><option value="rimborsi">Rimborsi da fare</option><option value="annullata">Annullate</option></select></div>
+              <div class="campo"><label for="f-stato">Stato</label><select id="f-stato" name="stato"><option value="">Tutte</option><option value="confermata">Confermate</option><option value="in_attesa">Aspettano il pagamento (link)</option><option value="da_verificare">Da verificare</option><option value="scelta">Maltempo: aspettano la scelta</option><option value="rimborsi">Rimborsi da fare</option><option value="annullata">Annullate</option></select></div>
               <div class="campo"><label for="f-dal">Dal</label><input id="f-dal" name="dal" type="date" /></div>
               <div class="campo"><label for="f-al">Al</label><input id="f-al" name="al" type="date" /></div>
             </div>
             <div class="azioni-riga"><button class="btn btn--scuro btn--piccolo" type="submit">Cerca</button><button class="btn btn--bordo btn--piccolo" type="button" data-csv="elenco">Scarica CSV</button></div>
           </form>
           <div class="tabella-box" style="margin-top:20px"><table class="tabella" data-tabella-elenco>
-            <thead><tr><th>Data</th><th>Codice</th><th>Escursione</th><th>Cliente</th><th class="num">Persone</th><th class="num">Totale</th><th>Canale</th><th>Stato</th><th>Azioni</th></tr></thead>
+            <thead><tr><th>Data</th><th>Codice</th><th>Escursione</th><th>Cliente</th><th class="num">Persone</th><th class="num">Totale</th><th>Canale</th><th>Stato</th><th></th></tr></thead>
             <tbody data-elenco></tbody>
           </table></div>
+        </div>
+
+
+        <!-- Lista d'attesa -->
+        <div role="tabpanel" data-pannello="attesa" hidden>
+          <div class="area-scheda">
+            <h2>Lista d'attesa</h2>
+            <p class="testo-2">Chi ha chiesto di essere avvisato se si libera un posto. Con le email attive l'avviso parte da solo; altrimenti scrivi tu su WhatsApp quando la riga diventa verde.</p>
+            <div class="tabella-box"><table class="tabella">
+              <thead><tr><th>Data</th><th>Escursione</th><th class="num">Persone</th><th>Cliente</th><th>Stato</th><th></th></tr></thead>
+              <tbody data-attesa></tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <!-- Statistiche -->
+        <div role="tabpanel" data-pannello="statistiche" hidden>
+          <form class="area-scheda non-stampare" data-filtri-stat>
+            <div class="riga-campi">
+              <div class="campo"><label for="st-periodo">Periodo</label><select id="st-periodo" name="periodo"><option value="stagione" selected>Stagione {regole.stagione.dal.slice(0, 4)}</option><option value="anno">Quest'anno</option><option value="mese">Questo mese</option><option value="scorso">Mese scorso</option><option value="altro">Scegli le date</option></select></div>
+              <div class="campo"><label for="st-dal">Dal</label><input id="st-dal" name="dal" type="date" /></div>
+              <div class="campo"><label for="st-al">Al</label><input id="st-al" name="al" type="date" /></div>
+              <div class="campo"><label for="st-base">Le date sono</label><select id="st-base" name="base"><option value="escursione">dell'escursione</option><option value="prenotazione">della prenotazione</option></select></div>
+            </div>
+            <div class="azioni-riga"><button class="btn btn--scuro btn--piccolo" type="submit">Aggiorna</button><button class="btn btn--bordo btn--piccolo" type="button" data-excel>Scarica Excel per il commercialista</button><button class="btn btn--bordo btn--piccolo" type="button" onclick="window.print()">Stampa</button></div>
+          </form>
+          <div data-statistiche style="margin-top:20px"></div>
+        </div>
+
+        <!-- Offerte: promozioni, codici sconto, buoni regalo, extra -->
+        <div role="tabpanel" data-pannello="offerte" hidden>
+          <div class="area-scheda">
+            <h2>Promozioni automatiche</h2>
+            <p class="testo-2">Si applicano da sole sul sito. Se valgono più promozioni, il cliente ha la migliore (non si sommano, e un codice sconto vale solo se conviene di più). Il weekend è un aumento di prezzo il sabato e la domenica.</p>
+            <form class="riga-campi" data-modulo-regola novalidate>
+              <div class="campo"><label for="r-tipo">Tipo</label><select id="r-tipo" name="regola"><option value="anticipo">Prenotazione anticipata</option><option value="ultimo-minuto">Ultimo minuto</option><option value="gruppo">Sconto gruppo</option><option value="weekend">Weekend (aumento)</option></select></div>
+              <div class="campo" data-soglia><label for="r-soglia" data-etichetta-soglia>Almeno quanti giorni prima</label><input id="r-soglia" name="soglia" type="number" min="1" max="400" /></div>
+              <div class="campo"><label for="r-pct" data-etichetta-pct>Sconto %</label><input id="r-pct" name="percentuale" type="number" min="1" max="90" step="0.5" required /></div>
+              <div class="campo"><label for="r-nome">Nome (facoltativo)</label><input id="r-nome" name="nome" maxlength="60" placeholder="Es. Prenota prima" /></div>
+              <div class="campo"><label for="r-esc">Escursione</label><select id="r-esc" name="escursioni" data-escursioni-tutte></select></div>
+              <div class="campo"><label for="r-dal">Per uscite dal (facoltativo)</label><input id="r-dal" name="dal" type="date" /></div>
+              <div class="campo"><label for="r-al">al</label><input id="r-al" name="al" type="date" /></div>
+              <button class="btn btn--wa btn--piccolo" type="submit">Aggiungi</button>
+            </form>
+            <div class="tabella-box"><table class="tabella"><thead><tr><th>Promozione</th><th>Regola</th><th>Vale per</th><th>Stato</th><th></th></tr></thead><tbody data-regole></tbody></table></div>
+          </div>
+
+          <div class="area-scheda">
+            <h2>Codici sconto</h2>
+            <p class="testo-2">Il cliente scrive il codice nel riepilogo, prima di pagare.</p>
+            <form class="riga-campi" data-modulo-codice novalidate>
+              <div class="campo"><label for="c-codice">Codice</label><input id="c-codice" name="codice" maxlength="20" placeholder="ESTATE10" style="text-transform:uppercase" required /></div>
+              <div class="campo"><label for="c-tipo">Sconto</label><select id="c-tipo" name="sconto"><option value="percentuale">In percentuale</option><option value="importo">In euro</option></select></div>
+              <div class="campo"><label for="c-valore">Quanto (% o €)</label><input id="c-valore" name="valore" type="number" min="1" step="0.5" required /></div>
+              <div class="campo"><label for="c-usi">Quante volte si può usare</label><input id="c-usi" name="usiMax" type="number" min="1" placeholder="senza limite" /></div>
+              <div class="campo"><label for="c-esc">Escursione</label><select id="c-esc" name="escursioni" data-escursioni-tutte></select></div>
+              <div class="campo"><label for="c-dal">Per uscite dal (facoltativo)</label><input id="c-dal" name="dal" type="date" /></div>
+              <div class="campo"><label for="c-al">al</label><input id="c-al" name="al" type="date" /></div>
+              <div class="campo"><label for="c-note">Note</label><input id="c-note" name="note" maxlength="200" placeholder="Es. per l'hotel X" /></div>
+              <button class="btn btn--wa btn--piccolo" type="submit">Crea codice</button>
+            </form>
+            <div class="tabella-box"><table class="tabella"><thead><tr><th>Codice</th><th>Sconto</th><th>Vale per</th><th class="num">Usato</th><th class="num">Scontato</th><th>Stato</th><th></th></tr></thead><tbody data-codici></tbody></table></div>
+          </div>
+
+          <div class="area-scheda">
+            <h2>Buoni regalo</h2>
+            <p class="testo-2">Si comprano online su <a href="/buono-regalo/" target="_blank">/buono-regalo/</a>. Da qui puoi farne uno a mano (pagato in contanti, omaggio o credito al posto di un rimborso).</p>
+            <form class="riga-campi" data-modulo-buono novalidate>
+              <div class="campo"><label for="b-valore">Importo (€)</label><input id="b-valore" name="valore" type="number" min="1" step="1" required /></div>
+              <div class="campo"><label for="b-acq">Chi lo compra</label><input id="b-acq" name="acquirente" maxlength="100" /></div>
+              <div class="campo"><label for="b-dest">Per chi</label><input id="b-dest" name="destinatario" maxlength="100" /></div>
+              <div class="campo"><label for="b-al">Scade il</label><input id="b-al" name="al" type="date" /></div>
+              <label class="spunta-riga"><input type="checkbox" name="pagato" /><span>Pagato (contanti o POS)</span></label>
+              <button class="btn btn--wa btn--piccolo" type="submit">Crea buono</button>
+            </form>
+            <div data-esito-buono></div>
+            <div class="tabella-box"><table class="tabella"><thead><tr><th>Codice</th><th>Per</th><th class="num">Valore</th><th class="num">Resta</th><th>Scade</th><th>Stato</th><th></th></tr></thead><tbody data-buoni></tbody></table></div>
+          </div>
+
+          <div class="area-scheda">
+            <h2>Extra a pagamento</h2>
+            <p class="testo-2">Il cliente li aggiunge prima di pagare. Se metti un massimo al giorno, quando finiscono non si vedono più per quella data.</p>
+            <form class="riga-campi" data-modulo-extra novalidate>
+              <div class="campo"><label for="x-nome">Nome</label><input id="x-nome" name="nome" maxlength="60" placeholder="Es. Foto ricordo" required /></div>
+              <div class="campo"><label for="x-prezzo">Prezzo (€)</label><input id="x-prezzo" name="prezzo" type="number" min="0.5" step="0.5" required /></div>
+              <div class="campo"><label for="x-modo">Il prezzo è</label><select id="x-modo" name="modo"><option value="prenotazione">Uno per prenotazione</option><option value="persona">A persona</option></select></div>
+              <div class="campo"><label for="x-max">Massimo al giorno</label><input id="x-max" name="maxGiorno" type="number" min="1" placeholder="senza limite" /></div>
+              <div class="campo"><label for="x-esc">Escursione</label><select id="x-esc" name="escursioni" data-escursioni-tutte></select></div>
+              <div class="campo"><label for="x-desc">Descrizione breve</label><input id="x-desc" name="descrizione" maxlength="200" /></div>
+              <button class="btn btn--wa btn--piccolo" type="submit">Aggiungi extra</button>
+            </form>
+            <div class="tabella-box"><table class="tabella"><thead><tr><th>Extra</th><th class="num">Prezzo</th><th>Massimo al giorno</th><th class="num">Venduti</th><th>Stato</th><th></th></tr></thead><tbody data-extra-gestione></tbody></table></div>
+          </div>
+        </div>
+
+        <!-- Volantini -->
+        <div role="tabpanel" data-pannello="volantini" hidden>
+          <div class="area-scheda">
+            <h2>Volantini e locandine</h2>
+            <p class="testo-2">Ogni volantino ha il suo codice QR: chi lo inquadra arriva alla prenotazione, e qui vedi quante visite e quante prenotazioni porta. Si conta solo il numero, nessun dato personale.</p>
+            <form class="riga-campi" data-modulo-volantino novalidate>
+              <div class="campo"><label for="v-nome">Dove lo metti</label><input id="v-nome" name="nome" maxlength="80" placeholder="Es. Locandina bar del porto di Palau" required /></div>
+              <div class="campo"><label for="v-codice">Codice (facoltativo)</label><input id="v-codice" name="codice" maxlength="20" placeholder="Es. BARPALAU" style="text-transform:uppercase" /></div>
+              <button class="btn btn--wa btn--piccolo" type="submit">Crea volantino</button>
+            </form>
+            <div class="tabella-box"><table class="tabella"><thead><tr><th>Volantino</th><th class="num">Visite</th><th class="num">Prenotazioni</th><th class="num">Incasso</th><th>QR</th></tr></thead><tbody data-volantini></tbody></table></div>
+          </div>
         </div>
 
         <!-- Strutture -->
@@ -169,15 +291,41 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
             <p class="messaggio-ok" data-ok-password hidden>Password cambiata.</p>
             <button class="btn btn--wa" type="submit">Salva</button>
           </form>
+          <div class="area-scheda" style="margin-top:20px">
+            <h2>Accessi skipper</h2>
+            <p class="testo-2">Lo skipper entra da <strong data-indirizzo-imbarco></strong>: vede solo le uscite di oggi e segna chi sale a bordo (anche inquadrando il QR del biglietto). Dal telefono si installa come un'app: nel browser, "Aggiungi a schermata Home".</p>
+            <form class="riga-campi" data-modulo-skipper novalidate>
+              <div class="campo"><label for="sk-nome">Nome</label><input id="sk-nome" name="nome" maxlength="100" required /></div>
+              <div class="campo"><label for="sk-email">Email (per l'accesso)</label><input id="sk-email" name="email" type="email" maxlength="160" required /></div>
+              <button class="btn btn--wa btn--piccolo" type="submit">Crea accesso</button>
+            </form>
+            <div data-esito-skipper></div>
+            <div class="tabella-box"><table class="tabella"><thead><tr><th>Skipper</th><th>Ultimo accesso</th><th></th></tr></thead><tbody data-skipper></tbody></table></div>
+          </div>
+          <div class="area-scheda" style="margin-top:20px">
+            <h2>Email automatiche</h2>
+            <p class="testo-2">Ogni ora partono da sole: promemoria il giorno prima (dalle {regole.promemoria.ora}), grazie con il link per la recensione dopo l'uscita, avvisi di maltempo, lista d'attesa. Qui puoi farle partire subito.</p>
+            <div class="azioni-riga"><button class="btn btn--bordo btn--piccolo" type="button" data-automatico>Controlla e manda adesso</button></div>
+            <p class="testo-2" data-esito-automatico aria-live="polite"></p>
+          </div>
         </div>
       </div>
     </div>
   </section>
+  <dialog class="dialogo" data-dialogo aria-labelledby="dlg-titolo">
+    <div class="dialogo__testa"><h2 id="dlg-titolo" data-dlg-titolo></h2><button type="button" class="btn btn--bordo btn--piccolo" data-dlg-chiudi>Chiudi</button></div>
+    <div data-dlg-corpo></div>
+  </dialog>
 </Base>
 
 <script>
-  import { offerte, canaliEsterni, calcolaPrenotazione } from '../../data/prenotazioni.js';
+  import { offerte, canaliEsterni, calcolaPrenotazione, NOMI_REGOLE, regole } from '../../data/prenotazioni.js';
   import { api, ErroreApi, h, euro, dataBreve, dataLunga, oggiRoma, aggiungiGiorni, persone } from '../../scripts/comune';
+  import { svgQr, pngQr } from '../../scripts/qr';
+  import { scaricaXlsx } from '../../scripts/xlsx';
+
+  // Installabile sul telefono come un'app.
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/gestione/sw.js', { scope: '/gestione/' }).catch(() => {});
 
   const titoli: Record<string, string> = JSON.parse(document.querySelector('[data-titoli]')!.textContent || '{}');
   const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
@@ -204,7 +352,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
   async function avvio() {
     try {
       const u = await api('/api/accesso');
-      if (u.ruolo !== 'gestione') { mostra('accesso'); $('[data-errore-accesso]').textContent = 'Questo accesso è di una struttura: la sua area è su /partner/.'; $('[data-errore-accesso]').hidden = false; return; }
+      if (u.ruolo !== 'gestione') { mostra('accesso'); $('[data-errore-accesso]').textContent = u.ruolo === 'skipper' ? 'Il tuo accesso è per l\'imbarco: vai su /imbarco/.' : 'Questo accesso è di una struttura: la sua area è su /partner/.'; $('[data-errore-accesso]').hidden = false; return; }
       if (u.deveCambiare) { mostra('password'); return; }
       entra();
     } catch (e) {
@@ -230,7 +378,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
     try {
       const u = await api('/api/accesso', { corpo: { email: $<HTMLInputElement>('#acc-email').value, password: $<HTMLInputElement>('#acc-pw').value } });
       $<HTMLInputElement>('#acc-pw').value = '';
-      if (u.ruolo !== 'gestione') { err.textContent = 'Questo accesso è di una struttura: la sua area è su /partner/.'; err.hidden = false; return; }
+      if (u.ruolo !== 'gestione') { err.textContent = u.ruolo === 'skipper' ? 'Il tuo accesso è per l\'imbarco: vai su /imbarco/.' : 'Questo accesso è di una struttura: la sua area è su /partner/.'; err.hidden = false; return; }
       if (u.deveCambiare) mostra('password'); else entra();
     } catch (e) { err.textContent = (e as Error).message; err.hidden = false; }
   });
@@ -255,7 +403,8 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
     document.querySelectorAll<HTMLButtonElement>('[data-scheda]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
     document.querySelectorAll<HTMLElement>('[data-pannello]').forEach((p) => (p.hidden = p.dataset.pannello !== b.dataset.scheda));
     pulisciErrore();
-    ({ giorno: caricaGiorno, nuova: () => {}, elenco: caricaElenco, strutture: caricaStrutture, provvigioni: caricaProvvigioni, account: () => {} } as Record<string, () => void>)[b.dataset.scheda!]();
+    ({ giorno: caricaGiorno, nuova: () => {}, elenco: caricaElenco, strutture: caricaStrutture, provvigioni: caricaProvvigioni, account: caricaSkipper,
+       attesa: caricaAttesa, statistiche: caricaStatistiche, offerte: caricaOfferte, volantini: caricaVolantini } as Record<string, () => void>)[b.dataset.scheda!]();
   }));
 
   // ---------- Giornata ----------
@@ -274,19 +423,20 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
             <div class="uscita">
               <div class="uscita__testa">
                 <strong>${h(u.escursione)} · ${h(u.turno)}${u.orario ? ` · ${h(u.orario)}` : ''}</strong>
-                <span class="stato ${u.confermata ? 'stato--ok' : 'stato--attenzione'}">${u.persone}/${g.posti} a bordo${u.privato ? ' · privato' : ` · ${u.paganti} paganti · ${u.confermata ? 'confermata' : `mancano ${u.minimo - u.paganti} per il minimo`}`}</span>
+                <span class="stato ${u.confermata ? 'stato--ok' : 'stato--attenzione'}">${u.persone}/${g.posti} prenotati${u.aBordo ? ` · ${u.aBordo} a bordo` : ''}${u.privato ? ' · privato' : ` · ${u.paganti} paganti · ${u.confermata ? 'confermata' : `mancano ${u.minimo - u.paganti} per il minimo`}`}</span>
               </div>
               <div class="tabella-box"><table class="tabella">
-                <thead><tr><th>Codice</th><th>Nome</th><th>Contatti</th><th class="num">Persone</th><th>Imbarco</th><th>Canale</th><th>Note</th><th class="non-stampare"></th></tr></thead>
-                <tbody>${u.prenotazioni.map((p: any) => `<tr>
+                <thead><tr><th>Codice</th><th>Nome</th><th>Contatti</th><th class="num">Persone</th><th>Imbarco</th><th>Canale</th><th>Note</th><th>A bordo</th><th class="non-stampare"></th></tr></thead>
+                <tbody>${u.prenotazioni.map((p: any) => { ricorda(p); return `<tr>
                   <td>${h(p.codice)}${p.stato !== 'confermata' ? `<br><span class="stato stato--${h(p.stato)}">${h(STATI[p.stato] || p.stato)}</span>` : ''}</td>
                   <td>${h(p.nome)}</td>
                   <td>${p.telefono ? `<a href="tel:${h(p.telefono)}">${h(p.telefono)}</a><br>${wa(p.telefono)}` : ''}${p.email ? `<br><span class="testo-2">${h(p.email)}</span>` : ''}</td>
                   <td class="num">${h(persone(p.adulti, p.bambini, p.neonati))}</td>
                   <td>${h(p.imbarco)}</td>
-                  <td>${h(p.canale)}${p.struttura ? `<br><span class="testo-2">${h(p.struttura)}</span>` : ''}${p.rifEsterno ? `<br><span class="testo-2">${h(p.rifEsterno)}</span>` : ''}<br><span class="testo-2">${p.pagato ? `pagato ${euro(p.pagato)}` : `da pagare ${euro(p.totale)}`}</span></td>
-                  <td>${h(p.note || '')}</td>
-                  <td class="non-stampare">${p.stato === 'confermata' || p.stato === 'da_verificare' ? `<button class="btn btn--avviso btn--piccolo" type="button" data-annulla="${p.id}" data-codice="${h(p.codice)}">Annulla</button>` : ''}</td></tr>`).join('')}</tbody>
+                  <td>${h(p.canale)}${p.struttura ? `<br><span class="testo-2">${h(p.struttura)}</span>` : ''}${p.rifEsterno ? `<br><span class="testo-2">${h(p.rifEsterno)}</span>` : ''}<br>${p.daPagare > 0 ? `<span class="stato stato--attenzione">da pagare ${euro(p.daPagare)}</span>` : `<span class="testo-2">pagato ${euro(p.pagato + p.buono)}</span>`}</td>
+                  <td>${h(p.note || '')}${p.extra?.length ? `<br><span class="testo-2">Extra: ${h(p.extra.join(', '))}</span>` : ''}${p.dataOriginale && p.dataOriginale !== data ? `<br><span class="testo-2">spostata dal ${h(dataBreve(p.dataOriginale))}</span>` : ''}</td>
+                  <td>${p.checkin ? '<span class="stato stato--ok">A bordo</span>' : '—'}</td>
+                  <td class="non-stampare"><button class="btn btn--bordo btn--piccolo" type="button" data-gestisci="${p.id}">Gestisci</button></td></tr>`; }).join('')}</tbody>
               </table></div>
               <details class="azione-extra non-stampare">
                 <summary>Annulla questa uscita (maltempo)</summary>
@@ -308,8 +458,8 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
         </div>`).join('') + (d.annullate.length ? `
         <div class="gommone-giorno"><h3 style="font-size:18px;font-weight:800">Annullate</h3>
           <div class="tabella-box"><table class="tabella"><thead><tr><th>Codice</th><th>Nome</th><th>Escursione</th><th>Contatti</th><th>Rimborso</th></tr></thead><tbody>
-          ${d.annullate.map((p: any) => `<tr><td>${h(p.codice)}</td><td>${h(p.nome)}</td><td>${h(p.escursione)} · ${h(p.turno)}</td><td>${p.telefono ? `${h(p.telefono)} ${wa(p.telefono)}` : ''}</td>
-            <td>${p.rimborso === 'da_fare' ? `<span class="stato stato--attenzione">Da fare: ${euro(p.pagato)} (${h(p.metodo)})</span> <button class="btn btn--bordo btn--piccolo non-stampare" type="button" data-rimborsata="${p.id}">Fatto</button>` : p.rimborso === 'fatto' ? '<span class="stato stato--ok">Fatto</span>' : '—'}</td></tr>`).join('')}
+          ${d.annullate.map((p: any) => { ricorda(p); return `<tr><td>${h(p.codice)}</td><td>${h(p.nome)}</td><td>${h(p.escursione)} · ${h(p.turno)}</td><td>${p.telefono ? `${h(p.telefono)} ${wa(p.telefono)}` : ''}</td>
+            <td>${statoRimborso(p)} <button class="btn btn--bordo btn--piccolo non-stampare" type="button" data-gestisci="${p.id}">Gestisci</button></td></tr>`; }).join('')}
           </tbody></table></div></div>` : '');
     } catch (e) { box.innerHTML = ''; errore(e); }
   }
@@ -343,20 +493,13 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
         const r = await api('/api/gestione/chiusure', { corpo: { azione: 'annulla-uscita', data, barca: uscita.dataset.barca, escursione: uscita.dataset.escursione, turno: uscita.dataset.turno, motivo } });
         await caricaGiorno();
         if (r.annullate.length) {
-          const testo = (p: any) => `Ciao ${p.nome}, purtroppo l'uscita del ${dataLunga(data)} è annullata per le condizioni del mare${motivo ? ` (${motivo})` : ''}. Preferisci il rimborso completo o un'altra data? Prenotazione ${p.codice}.`;
-          $('[data-giornata]').insertAdjacentHTML('afterbegin', `<div class="area-scheda"><h3>Avvisa i clienti dell'uscita annullata</h3><ul>${r.annullate.map((p: any) => `<li>${h(p.nome)} (${h(p.codice)}) ${p.telefono ? wa(p.telefono, testo(p)) : ''} ${p.email ? `<a href="mailto:${h(p.email)}?subject=${encodeURIComponent(`Uscita annullata ${p.codice}`)}&body=${encodeURIComponent(testo(p))}">Email</a>` : ''}</li>`).join('')}</ul></div>`);
+          const testo = (p: any) => `Ciao ${p.nome}, purtroppo l'uscita del ${dataLunga(data)} è annullata per le condizioni del mare${motivo ? ` (${motivo})` : ''}. Scegli tu: un'altra data o il rimborso completo, da qui: ${p.link}`;
+          $('[data-giornata]').insertAdjacentHTML('afterbegin', `<div class="area-scheda"><h3>Clienti dell'uscita annullata</h3><p class="testo-2">Ognuno sceglie da solo tra un'altra data e il rimborso completo, dal suo link. Chi ha l'email l'ha già ricevuto; agli altri mandalo su WhatsApp.</p><ul>${r.annullate.map((p: any) => `<li>${h(p.nome)} (${h(p.codice)}) ${p.emailInviata ? '<span class="stato stato--ok">email mandata</span>' : ''} ${p.telefono ? wa(p.telefono, testo(p)) : ''} <button type="button" class="btn btn--bordo btn--piccolo" data-copia="${h(p.link)}">Copia il link</button></li>`).join('')}</ul></div>`);
         }
         return;
       }
-      const annulla = t.closest<HTMLElement>('[data-annulla]');
-      if (annulla) {
-        const motivo = window.prompt(`Annullare la prenotazione ${annulla.dataset.codice}? Scrivi il motivo (facoltativo):`, '');
-        if (motivo === null) return;
-        await api('/api/gestione/prenotazione', { corpo: { id: Number(annulla.dataset.annulla), azione: 'annulla', motivo } });
-        return caricaGiorno();
-      }
-      const fatto = t.closest<HTMLElement>('[data-rimborsata]');
-      if (fatto) { await api('/api/gestione/prenotazione', { corpo: { id: Number(fatto.dataset.rimborsata), azione: 'rimborsata' } }); return caricaGiorno(); }
+      const gestisci = t.closest<HTMLElement>('[data-gestisci]');
+      if (gestisci) { apriAzioni(Number(gestisci.dataset.gestisci), caricaGiorno); return; }
     } catch (e) { errore(e); }
   });
 
@@ -393,6 +536,11 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
   }
   $('#n-esc').addEventListener('change', aggiornaTurni);
   ['#n-data', '#n-turno', '#n-adulti', '#n-bambini', '#n-imbarco'].forEach((s) => $(s).addEventListener('change', controllaPosti));
+  $('[data-modulo-nuova]').addEventListener('change', (ev) => {
+    const f = ev.currentTarget as HTMLFormElement;
+    if ((ev.target as HTMLInputElement).name === 'link') { $('[data-campo-ore]').hidden = !f.link.checked; if (f.link.checked) f.pagato.checked = false; }
+    if ((ev.target as HTMLInputElement).name === 'pagato' && f.pagato.checked) { f.link.checked = false; $('[data-campo-ore]').hidden = true; }
+  });
   $('#n-canale').addEventListener('change', async () => {
     const struttura = $<HTMLSelectElement>('#n-canale').value === 'Struttura partner';
     $('[data-campo-struttura]').hidden = !struttura;
@@ -407,12 +555,15 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
     if (!f.nome.value.trim()) { f.nome.focus(); return errore(new Error('Inserisci il nome del cliente.')); }
     const corpo: any = Object.fromEntries(new FormData(f).entries());
     corpo.pagato = f.pagato.checked;
+    corpo.link = f.link.checked;
+    corpo.ore = Number(corpo.ore);
     if (corpo.canale !== 'Struttura partner') delete corpo.partnerId;
     try {
       const r = await api('/api/gestione/prenotazioni', { corpo });
       const ok = $('[data-esito-nuova]');
-      ok.textContent = `Inserita: ${r.codice} su ${r.gommone}.`;
+      ok.textContent = corpo.link ? `Posti tenuti: ${r.codice} su ${r.gommone}. Manda il link al cliente.` : `Inserita: ${r.codice} su ${r.gommone}.`;
       ok.hidden = false;
+      $('[data-esito-link]').innerHTML = corpo.link && r.link ? boxLink(r.link, r.nome, r.telefono, r.daPagare, r.inviata) : '';
       ['nome', 'telefono', 'email', 'rifEsterno', 'importo', 'note'].forEach((k) => (f[k].value = ''));
       f.pagato.checked = false;
       controllaPosti();
@@ -429,6 +580,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
       if (!f.dal.value) f.dal.value = d.dal;
       if (!f.al.value) f.al.value = d.al;
       ultimeRighe = d.prenotazioni;
+      d.prenotazioni.forEach(ricorda);
       $('[data-elenco]').innerHTML = d.prenotazioni.length ? d.prenotazioni.map((p: any) => `<tr>
         <td>${h(dataBreve(p.data))}</td><td>${h(p.codice)}</td>
         <td>${h(p.escursione)}<br><span class="testo-2">${h(p.turno)} · ${h(p.gommone)}</span></td>
@@ -436,21 +588,14 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
         <td class="num">${p.adulti + p.bambini + p.neonati}</td>
         <td class="num">${euro(p.totale)}${p.pagato && p.pagato !== p.totale ? `<br><span class="testo-2">pagato ${euro(p.pagato)}</span>` : ''}</td>
         <td>${h(p.canale)}${p.struttura ? `<br><span class="testo-2">${h(p.struttura)}</span>` : ''}</td>
-        <td><span class="stato stato--${h(p.stato)}">${h(STATI[p.stato] || p.stato)}</span>${p.rimborso === 'da_fare' ? '<br><span class="stato stato--attenzione">Rimborso da fare</span>' : p.rimborso === 'fatto' ? '<br><span class="stato stato--ok">Rimborsata</span>' : ''}</td>
-        <td><div class="azioni-riga">
-          ${p.stato === 'confermata' || p.stato === 'da_verificare' ? `<button class="btn btn--avviso btn--piccolo" type="button" data-azione="annulla" data-id="${p.id}" data-codice="${h(p.codice)}">Annulla</button>` : ''}
-          ${p.stato === 'da_verificare' ? `<button class="btn btn--scuro btn--piccolo" type="button" data-azione="conferma" data-id="${p.id}">Conferma</button>` : ''}
-          ${p.rimborso === 'da_fare' ? `<button class="btn btn--bordo btn--piccolo" type="button" data-azione="rimborsata" data-id="${p.id}">Rimborso fatto</button>` : ''}
-        </div></td></tr>`).join('') : '<tr><td class="vuota" colspan="9">Nessuna prenotazione.</td></tr>';
+        <td><span class="stato stato--${h(p.stato)}">${h(p.stato === 'in_attesa' ? 'Aspetta il pagamento' : STATI[p.stato] || p.stato)}</span>${statoRimborso(p) !== '—' ? `<br>${statoRimborso(p)}` : ''}${p.daPagare > 0 && p.stato === 'confermata' ? `<br><span class="stato stato--attenzione">da pagare ${euro(p.daPagare)}</span>` : ''}${p.checkin ? '<br><span class="stato stato--ok">A bordo</span>' : ''}</td>
+        <td><button class="btn btn--bordo btn--piccolo" type="button" data-gestisci="${p.id}">Gestisci</button></td></tr>`).join('') : '<tr><td class="vuota" colspan="9">Nessuna prenotazione.</td></tr>';
     } catch (e) { errore(e); }
   }
   $('[data-filtri]').addEventListener('submit', (ev) => { ev.preventDefault(); caricaElenco(); });
-  $('[data-elenco]').addEventListener('click', async (ev) => {
-    const b = (ev.target as Element).closest<HTMLElement>('[data-azione]');
-    if (!b) return;
-    let motivo: string | null = '';
-    if (b.dataset.azione === 'annulla') { motivo = window.prompt(`Annullare la prenotazione ${b.dataset.codice}? Scrivi il motivo (facoltativo):`, ''); if (motivo === null) return; }
-    try { await api('/api/gestione/prenotazione', { corpo: { id: Number(b.dataset.id), azione: b.dataset.azione, motivo } }); caricaElenco(); } catch (e) { errore(e); }
+  $('[data-elenco]').addEventListener('click', (ev) => {
+    const b = (ev.target as Element).closest<HTMLElement>('[data-gestisci]');
+    if (b) apriAzioni(Number(b.dataset.gestisci), caricaElenco);
   });
 
   // ---------- Strutture ----------
@@ -539,9 +684,380 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
   document.querySelectorAll<HTMLButtonElement>('[data-csv]').forEach((b) => b.addEventListener('click', () => {
     if (b.dataset.csv === 'elenco') scaricaCsv('prenotazioni.csv', ['Data', 'Codice', 'Escursione', 'Orario', 'Gommone', 'Nome', 'Telefono', 'Email', 'Adulti', 'Bambini 0–10', 'Imbarco', 'Totale', 'Pagato', 'Provvigione', 'Canale', 'Struttura', 'Stato', 'Rimborso', 'Note'],
       ultimeRighe.map((p) => [p.data, p.codice, p.escursione, p.turno, p.gommone, p.nome, p.telefono, p.email, p.adulti, p.bambini + p.neonati, p.imbarco, String(p.totale).replace('.', ','), String(p.pagato).replace('.', ','), String(p.provvigione).replace('.', ','), p.canale, p.struttura, p.stato, p.rimborso, p.note]));
+    // (le colonne restano quelle di sempre; il report completo è nelle Statistiche)
     else scaricaCsv(`provvigioni-${periodoCorrente?.dal}.csv`, ['Struttura', 'Email', 'Prenotazioni', 'Venduto', 'Provvigione', 'Pagata il'],
       righeProvvigioni.map((s) => [s.nome, s.email, s.numero, String(s.venduto).replace('.', ','), String(s.provvigione).replace('.', ','), s.pagataIl ? new Date(s.pagataIl).toLocaleDateString('it-IT') : '']));
   }));
+
+
+  // ---------- Strumenti comuni ----------
+  const prenotazioniViste = new Map<number, any>();
+  const ricorda = (p: any) => prenotazioniViste.set(p.id, p);
+  const PAGATA_SUL_SITO = ['sumup', 'paypal', 'prova'];
+  function statoRimborso(p: any) {
+    if (p.stato === 'annullata' && p.recupero === 'proposto') return '<span class="stato stato--attenzione">Maltempo: aspetta la scelta</span>';
+    if (p.rimborso === 'da_fare') return `<span class="stato stato--attenzione">Rimborso da fare: ${euro(p.pagato - (p.rimborsato || 0))}</span>`;
+    if (p.rimborso === 'fatto') return `<span class="stato stato--ok">Rimborsata ${p.rimborsato ? euro(p.rimborsato) : ''}</span>`;
+    if (p.recupero === 'rinviata') return '<span class="stato stato--ok">Rinviata</span>';
+    return '—';
+  }
+  async function copia(testo: string, bottone?: HTMLElement) {
+    try { await navigator.clipboard.writeText(testo); if (bottone) { const v = bottone.textContent; bottone.textContent = 'Copiato'; setTimeout(() => (bottone.textContent = v), 1500); } }
+    catch { window.prompt('Copia questo testo:', testo); }
+  }
+  document.addEventListener('click', (ev) => {
+    const b = (ev.target as Element).closest<HTMLElement>('[data-copia]');
+    if (b) copia(b.dataset.copia!, b);
+  });
+  const boxLink = (link: string, nome: string, telefono: string, importo: number, inviata: boolean) => {
+    const testo = `Ciao ${nome || ''}, ecco il link per pagare la prenotazione con carta o PayPal (${euro(importo)}): ${link}`;
+    return `<div class="area-scheda" style="background:#EEF7FC;margin-top:12px"><p><strong>Link di pagamento</strong>${inviata ? ' · <span class="stato stato--ok">mandato per email</span>' : ''}</p>
+      <div class="copia"><input readonly value="${h(link)}" aria-label="Link di pagamento" /><button type="button" class="btn btn--bordo btn--piccolo" data-copia="${h(link)}">Copia</button></div>
+      <div class="azioni-riga">${telefono ? wa(telefono, testo).replace('>WhatsApp<', ' class="btn btn--wa btn--piccolo">Manda su WhatsApp<') : ''}<button type="button" class="btn btn--bordo btn--piccolo" data-copia="${h(testo)}">Copia il messaggio</button></div></div>`;
+  };
+  const opzioniEscursioni = (tutte = true) => (tutte ? '<option value="">Tutte</option>' : '') + Object.entries(titoli).map(([slug, t]) => `<option value="${h(slug)}">${h(t)}</option>`).join('');
+  document.querySelectorAll<HTMLSelectElement>('[data-escursioni-tutte]').forEach((s) => (s.innerHTML = opzioniEscursioni()));
+  const nomeEscursioni = (csv: string | null) => (csv ? csv.split(',').map((x) => titoli[x] || x).join(', ') : 'Tutte le escursioni');
+  const periodoTesto = (dal: string | null, al: string | null) => (dal || al ? `${dal ? `dal ${dataBreve(dal)}` : ''} ${al ? `al ${dataBreve(al)}` : ''}`.trim() : '');
+
+  // ---------- Finestra delle azioni su una prenotazione ----------
+  const dialogo = $<HTMLDialogElement>('[data-dialogo]');
+  $('[data-dlg-chiudi]').addEventListener('click', () => dialogo.close());
+  let dopoAzione: () => void = () => {};
+  let corrente: any = null;
+  function apriAzioni(id: number, aggiorna: () => void) {
+    const p = prenotazioniViste.get(id);
+    if (!p) return;
+    corrente = p;
+    dopoAzione = aggiorna;
+    const attiva = p.stato === 'confermata' || p.stato === 'da_verificare';
+    const maltempo = p.stato === 'annullata' && p.recupero === 'proposto';
+    const rimborsabile = (p.pagato || 0) - (p.rimborsato || 0);
+    const online = PAGATA_SUL_SITO.includes(p.metodo);
+    const turni = offerte[p.escursioneSlug]?.turni ?? [];
+    $('[data-dlg-titolo]').textContent = `${p.codice} · ${p.nome}`;
+    const blocchi: string[] = [];
+    blocchi.push(`<div class="azione-blocco"><p>${h(p.escursione)} · ${h(p.turno)}<br>${h(dataLunga(p.data))} · ${h(persone(p.adulti, p.bambini, p.neonati))} · ${h(p.imbarco)}<br>
+      Totale ${euro(p.totale)} · pagato ${euro(p.pagato || 0)}${p.buono ? ` · buono ${euro(p.buono)}` : ''}${p.rimborsato ? ` · rimborsato ${euro(p.rimborsato)}` : ''} ${p.metodo ? `(${h(p.metodo)})` : ''}</p>
+      ${p.telefono ? `<p>${h(p.telefono)} ${wa(p.telefono)}${p.email ? ` · ${h(p.email)}` : ''}</p>` : p.email ? `<p>${h(p.email)}</p>` : ''}
+      <p class="avviso" data-dlg-errore hidden role="alert"></p><p class="messaggio-ok" data-dlg-ok hidden></p></div>`);
+    if (p.stato === 'da_verificare') blocchi.push(`<div class="azione-blocco"><h3>Pagamento arrivato in ritardo</h3><p class="testo-2">Controlla che ci sia ancora posto, poi conferma.</p><div class="azioni-riga"><button type="button" class="btn btn--scuro btn--piccolo" data-az="conferma">Conferma la prenotazione</button></div></div>`);
+    if (attiva || maltempo) blocchi.push(`<div class="azione-blocco"><h3>${maltempo ? 'Rinvia (al posto del cliente)' : 'Sposta a un altro giorno o orario'}</h3>
+      <div class="riga-campi"><div class="campo"><label for="dlg-data">Giorno</label><input id="dlg-data" type="date" value="${h(p.data)}" /></div>
+      <div class="campo"><label for="dlg-turno">Orario</label><select id="dlg-turno">${turni.map((t: any) => `<option value="${h(t.id)}" ${t.id === p.turnoId ? 'selected' : ''}>${h(t.nome)}</option>`).join('')}</select></div></div>
+      <p class="testo-2" data-dlg-posti aria-live="polite"></p>
+      <label class="spunta-riga"><input type="checkbox" data-dlg-avvisa checked /><span>Manda al cliente l'email con la nuova data</span></label>
+      <div class="azioni-riga"><button type="button" class="btn btn--scuro btn--piccolo" data-az="sposta">Sposta</button></div><p class="testo-2" style="font-size:13px">Il prezzo resta quello già pagato.</p></div>`);
+    if (p.pagabile) blocchi.push(`<div class="azione-blocco"><h3>Link di pagamento</h3><p class="testo-2">${p.stato === 'in_attesa' ? 'I posti sono tenuti finché il cliente non paga o il link scade.' : 'Il cliente paga online quello che manca.'}</p>
+      <div class="azioni-riga"><button type="button" class="btn btn--scuro btn--piccolo" data-az="link">Mostra il link</button>${p.email ? '<button type="button" class="btn btn--bordo btn--piccolo" data-az="link-email">Manda il link per email</button>' : ''}</div><div data-dlg-link></div></div>`);
+    if (rimborsabile > 0 && online && (p.stato !== 'annullata' || p.rimborso === 'da_fare')) blocchi.push(`<div class="azione-blocco"><h3>Rimborso automatico</h3><p class="testo-2">Con ${p.metodo === 'paypal' ? 'PayPal' : p.metodo === 'sumup' ? 'SumUp' : 'il pagamento di prova'}, sullo stesso metodo del cliente. Si può rimborsare anche solo una parte.</p>
+      <div class="riga-campi"><div class="campo"><label for="dlg-importo">Importo (€)</label><input id="dlg-importo" inputmode="decimal" value="${String(rimborsabile).replace('.', ',')}" /></div>
+      <div class="azioni-riga"><button type="button" class="btn btn--scuro btn--piccolo" data-az="rimborsa">Rimborsa</button></div></div></div>`);
+    if (p.rimborso === 'da_fare') blocchi.push(`<div class="azione-blocco"><h3>Rimborso fatto a mano</h3><p class="testo-2">Se hai già rimborsato dal pannello di SumUp o PayPal, dalla piattaforma o in contanti.</p><div class="azioni-riga"><button type="button" class="btn btn--bordo btn--piccolo" data-az="rimborsata">Segna come fatto</button></div></div>`);
+    if (attiva || p.stato === 'in_attesa') blocchi.push(`<div class="azione-blocco"><h3>Annulla la prenotazione</h3>
+      <div class="scelte-radio">
+        ${p.pagato > 0 && online ? '<label><input type="radio" name="dlg-modo" value="rimborso" checked /><span><strong>Rimborso completo automatico</strong><br>Il cliente riceve i soldi e un\'email.</span></label>' : ''}
+        ${p.stato !== 'in_attesa' ? `<label><input type="radio" name="dlg-modo" value="proposta" ${p.pagato > 0 && online ? '' : 'checked'} /><span><strong>Lascia scegliere il cliente</strong><br>Riceve un link per scegliere un'altra data o il rimborso (come per il maltempo).</span></label>` : ''}
+        ${p.pagato > 0 && !online ? '<label><input type="radio" name="dlg-modo" value="manuale" /><span><strong>Rimborso da fare a mano</strong><br>Sulla piattaforma, in contanti o con bonifico: resta nell\'elenco "rimborsi da fare".</span></label>' : ''}
+        <label><input type="radio" name="dlg-modo" value="senza-rimborso" ${p.stato === 'in_attesa' ? 'checked' : ''} /><span><strong>Senza rimborso</strong><br>Per esempio: annullata a meno di ${regole.cancellazioneGratisOre} ore dalla partenza, o cliente che non si presenta.</span></label>
+      </div>
+      <div class="campo"><label for="dlg-motivo">Motivo (facoltativo)</label><input id="dlg-motivo" maxlength="200" /></div>
+      <div class="azioni-riga"><button type="button" class="btn btn--avviso btn--piccolo" data-az="annulla">Annulla la prenotazione</button></div></div>`);
+    if (maltempo) blocchi.push(`<div class="azione-blocco"><h3>Il cliente deve ancora scegliere</h3><p class="testo-2">Mandagli il suo link: sceglie lui tra un'altra data e il rimborso.</p><div class="azioni-riga"><button type="button" class="btn btn--bordo btn--piccolo" data-az="link-scelta">Mostra il link</button>${online && rimborsabile > 0 ? '<button type="button" class="btn btn--scuro btn--piccolo" data-az="rimborsa-tutto">Rimborsa adesso (al posto suo)</button>' : ''}</div><div data-dlg-link></div></div>`);
+    $('[data-dlg-corpo]').innerHTML = blocchi.join('');
+    dialogo.showModal();
+    if (attiva || maltempo) controllaPostiSposta(p);
+  }
+  async function controllaPostiSposta(p: any) {
+    const data = $<HTMLInputElement>('#dlg-data')?.value, turno = $<HTMLSelectElement>('#dlg-turno')?.value;
+    const box = document.querySelector<HTMLElement>('[data-dlg-posti]');
+    if (!box || !data) return;
+    try {
+      const d = await api(`/api/disponibilita?escursione=${p.escursioneSlug}&mese=${data.slice(0, 7)}&gestione=1&imbarco=${p.imbarcoId}`);
+      const t = d.giorni[data]?.turni?.find((x: any) => x.id === turno);
+      const persone = p.adulti + p.bambini + p.neonati;
+      box.textContent = data === p.data && turno === p.turnoId && p.stato !== 'annullata' ? 'È il giorno e l\'orario di adesso.' : !t ? 'Data fuori stagione o passata.' : t.disponibile && t.max >= persone ? `C'è posto (fino a ${t.max} persone).` : `Non c'è posto per ${persone} persone.`;
+    } catch (e) { box.textContent = (e as Error).message; }
+  }
+  dialogo.addEventListener('change', (ev) => {
+    if ((ev.target as HTMLElement).matches('#dlg-data, #dlg-turno') && corrente) controllaPostiSposta(corrente);
+  });
+  dialogo.addEventListener('click', async (ev) => {
+    const b = (ev.target as Element).closest<HTMLButtonElement>('[data-az]');
+    if (!b) return;
+    const p = corrente;
+    if (!p) return;
+    const err = dialogo.querySelector<HTMLElement>('[data-dlg-errore]')!;
+    const ok = dialogo.querySelector<HTMLElement>('[data-dlg-ok]')!;
+    err.hidden = true; ok.hidden = true;
+    const az = b.dataset.az!;
+    const chiama = (corpo: any) => api('/api/gestione/prenotazione', { corpo: { id: p.id, ...corpo } });
+    b.disabled = true;
+    try {
+      if (az === 'sposta') {
+        await chiama({ azione: 'sposta', data: $<HTMLInputElement>('#dlg-data').value, turno: $<HTMLSelectElement>('#dlg-turno').value, avvisa: dialogo.querySelector<HTMLInputElement>('[data-dlg-avvisa]')!.checked });
+        dialogo.close(); dopoAzione(); return;
+      }
+      if (az === 'link' || az === 'link-email') {
+        const r = await chiama({ azione: 'link', invia: az === 'link-email' });
+        b.closest('.azione-blocco')!.querySelector('[data-dlg-link]')!.innerHTML = boxLink(r.link, p.nome, p.telefono, p.daPagare, r.inviata);
+        b.disabled = false; return;
+      }
+      if (az === 'link-scelta') {
+        const r = await chiama({ azione: 'link-cliente' });
+        const testo = `Ciao ${p.nome}, purtroppo l'uscita del ${dataLunga(p.data)} è annullata per le condizioni del mare. Scegli tu: un'altra data o il rimborso completo, da qui: ${r.link}`;
+        b.closest('.azione-blocco')!.querySelector('[data-dlg-link]')!.innerHTML = `<div class="copia" style="margin-top:8px"><input readonly value="${h(r.link)}" aria-label="Link del cliente" /><button type="button" class="btn btn--bordo btn--piccolo" data-copia="${h(r.link)}">Copia</button></div><div class="azioni-riga" style="margin-top:8px">${p.telefono ? wa(p.telefono, testo).replace('>WhatsApp<', ' class="btn btn--wa btn--piccolo">Manda su WhatsApp<') : ''}<button type="button" class="btn btn--bordo btn--piccolo" data-copia="${h(testo)}">Copia il messaggio</button></div>`;
+        b.disabled = false; return;
+      }
+      if (az === 'rimborsa' || az === 'rimborsa-tutto') {
+        const importo = az === 'rimborsa' ? $<HTMLInputElement>('#dlg-importo').value : String(p.pagato - (p.rimborsato || 0));
+        if (!window.confirm(`Rimborsare ${importo.replace('.', ',')} € a ${p.nome}?`)) { b.disabled = false; return; }
+        if (az === 'rimborsa-tutto') await chiama({ azione: 'rimborso-maltempo' });
+        else await chiama({ azione: 'rimborsa', importo });
+        dialogo.close(); dopoAzione(); return;
+      }
+      if (az === 'annulla') {
+        const modo = dialogo.querySelector<HTMLInputElement>('[name="dlg-modo"]:checked')?.value || 'senza-rimborso';
+        if (!window.confirm(`Annullare la prenotazione ${p.codice}?`)) { b.disabled = false; return; }
+        const r = await chiama({ azione: 'annulla', modo, motivo: $<HTMLInputElement>('#dlg-motivo').value });
+        if (r.rimborso && r.rimborso.ok === false) { err.textContent = `Annullata, ma il rimborso non è riuscito: ${r.rimborso.errore}`; err.hidden = false; dopoAzione(); return; }
+        if (r.link) { ok.innerHTML = `Annullata. ${r.email ? 'Il cliente ha ricevuto l\'email per scegliere.' : 'Manda al cliente il suo link per scegliere:'}`; ok.hidden = false; b.closest('.azione-blocco')!.innerHTML = boxLink(r.link, p.nome, p.telefono, 0, r.email).replace('Link di pagamento', 'Link per scegliere rinvio o rimborso').replace(/ecco il link per pagare la prenotazione con carta o PayPal \([^)]*\)/, 'la tua uscita è annullata per il maltempo: scegli un\'altra data o il rimborso'); dopoAzione(); return; }
+        dialogo.close(); dopoAzione(); return;
+      }
+      await chiama({ azione: az });
+      dialogo.close(); dopoAzione();
+    } catch (e) { err.textContent = (e as Error).message; err.hidden = false; b.disabled = false; }
+  });
+
+
+  // ---------- Lista d'attesa ----------
+  async function caricaAttesa() {
+    try {
+      const d = await api('/api/gestione/attesa');
+      $('[data-attesa]').innerHTML = d.attesa.length ? d.attesa.map((a: any) => {
+        const testo = `Ciao ${a.nome}, si è liberato un posto per ${a.escursione} (${a.turno}) del ${dataLunga(a.data)}. Prenota da qui: ${a.link}`;
+        return `<tr class="${a.libero ? 'riga-verde' : ''}"><td>${h(dataBreve(a.data))}</td><td>${h(a.escursione)}<br><span class="testo-2">${h(a.turno)} · ${h(a.imbarco)}</span></td>
+          <td class="num">${a.posti}</td><td>${h(a.nome)}<br><span class="testo-2">${h(a.email || '')}${a.telefono ? ` · ${h(a.telefono)}` : ''}</span></td>
+          <td>${a.stato === 'avvisato' ? `<span class="stato stato--ok">Avvisato${a.avvisataIl ? ` il ${h(new Date(a.avvisataIl).toLocaleDateString('it-IT'))}` : ''}</span>` : a.libero ? '<span class="stato stato--ok">C\'è posto adesso</span>' : '<span class="stato">Aspetta</span>'}</td>
+          <td><div class="azioni-riga">${a.telefono ? wa(a.telefono, testo) : ''}${a.stato === 'attesa' ? `<button class="btn btn--bordo btn--piccolo" type="button" data-attesa-az="avvisato" data-id="${a.id}">Avvisato</button>` : ''}<button class="btn btn--bordo btn--piccolo" type="button" data-attesa-az="chiudi" data-id="${a.id}">Togli</button></div></td></tr>`;
+      }).join('') : '<tr><td class="vuota" colspan="6">Nessuno in lista d\'attesa.</td></tr>';
+    } catch (e) { errore(e); }
+  }
+  $('[data-attesa]').addEventListener('click', async (ev) => {
+    const b = (ev.target as Element).closest<HTMLElement>('[data-attesa-az]');
+    if (!b) return;
+    try { await api('/api/gestione/attesa', { corpo: { id: Number(b.dataset.id), azione: b.dataset.attesaAz } }); caricaAttesa(); } catch (e) { errore(e); }
+  });
+
+  // ---------- Statistiche ----------
+  let ultimeStat: any = null;
+  function periodoStat() {
+    const f = $<HTMLFormElement>('[data-filtri-stat]');
+    const oggi = oggiRoma();
+    const [a, m] = oggi.split('-');
+    const fine = (anno: number, mese: number) => new Date(Date.UTC(anno, mese, 0)).toISOString().slice(0, 10);
+    const scelta = f.periodo.value;
+    if (scelta === 'anno') { f.dal.value = `${a}-01-01`; f.al.value = `${a}-12-31`; }
+    if (scelta === 'stagione') { f.dal.value = regole.stagione.dal; f.al.value = regole.stagione.al; }
+    if (scelta === 'mese') { f.dal.value = `${a}-${m}-01`; f.al.value = fine(Number(a), Number(m)); }
+    if (scelta === 'scorso') { const d = new Date(Date.UTC(Number(a), Number(m) - 2, 1)); f.dal.value = d.toISOString().slice(0, 10); f.al.value = fine(d.getUTCFullYear(), d.getUTCMonth() + 1); }
+  }
+  $('#st-periodo').addEventListener('change', () => { periodoStat(); caricaStatistiche(); });
+  ['#st-dal', '#st-al'].forEach((x) => $(x).addEventListener('change', () => { $<HTMLSelectElement>('#st-periodo').value = 'altro'; }));
+  $('[data-filtri-stat]').addEventListener('submit', (ev) => { ev.preventDefault(); caricaStatistiche(); });
+  const barre = (righe: any[], campo = 'lordo') => {
+    const max = Math.max(1, ...righe.map((r) => r[campo]));
+    return `<div class="grafico-barre">${righe.map((r) => `<div><span>${h(r.nome)}</span><span class="barra" style="width:${Math.round((r[campo] / max) * 100)}%"></span><span>${euro(r[campo])}</span></div>`).join('')}</div>`;
+  };
+  const tabellaStat = (titolo: string, righe: any[]) => `<div class="area-scheda"><h2>${h(titolo)}</h2>${righe.length ? barre(righe) : ''}
+    <div class="tabella-box"><table class="tabella"><thead><tr><th></th><th class="num">Prenotazioni</th><th class="num">Persone</th><th class="num">Lordo</th><th class="num">Medio</th><th class="num">A persona</th></tr></thead>
+    <tbody>${righe.length ? righe.map((r) => `<tr><td>${h(r.nome)}</td><td class="num">${r.prenotazioni}</td><td class="num">${r.persone}</td><td class="num">${euro(r.lordo)}</td><td class="num">${euro(r.medio)}</td><td class="num">${euro(r.perPersona)}</td></tr>`).join('') : '<tr><td class="vuota" colspan="6">Niente in questo periodo.</td></tr>'}</tbody></table></div></div>`;
+  async function caricaStatistiche() {
+    const f = $<HTMLFormElement>('[data-filtri-stat]');
+    if (!f.dal.value) periodoStat();
+    const box = $('[data-statistiche]');
+    box.innerHTML = '<p class="testo-2">Carico…</p>';
+    try {
+      const d = await api(`/api/gestione/statistiche?dal=${f.dal.value}&al=${f.al.value}&base=${f.base.value}`);
+      ultimeStat = d;
+      const t = d.totali;
+      const cifra = (nome: string, valore: string, nota = '', evidenza = false) => `<div class="cifra${evidenza ? ' cifra--evidenza' : ''}"><span>${h(nome)}</span><strong>${valore}</strong>${nota ? `<small>${nota}</small>` : ''}</div>`;
+      box.innerHTML = `<div class="cifre">
+          ${cifra('Incassato netto', euro(t.netto), `incassato ${euro(t.incassato)} − rimborsi ${euro(t.rimborsato)}`, true)}
+          ${cifra('Valore prenotazioni', euro(t.lordo), `${t.prenotazioni} prenotazioni confermate`)}
+          ${cifra('Persone', String(t.persone), `${euro(t.medioPersona)} a persona`)}
+          ${cifra('Prenotazione media', euro(t.medioPrenotazione))}
+        </div>
+        <div class="cifre cifre--piccole">
+          ${cifra('Da incassare', euro(t.daIncassare), 'confermate non ancora pagate')}
+          ${cifra('Provvigioni strutture', euro(t.provvigioni))}
+          ${cifra('Sconti dati', euro(t.sconti), t.maggiorazioni ? `aumenti weekend ${euro(t.maggiorazioni)}` : '')}
+          ${cifra('Extra venduti', euro(t.extra))}
+          ${cifra('Pagato con buoni', euro(t.buoniUsati), `buoni venduti: ${d.buoniVenduti.numero} (${euro(d.buoniVenduti.incassato)}), ancora da usare ${euro(d.buoniVenduti.ancoraDaUsare)}`)}
+          ${cifra('Maltempo', `${d.maltempo.rinviate} rinviate`, `${euro(d.maltempo.rinviateValore)} salvati · ${d.maltempo.rimborsate} rimborsate · ${d.maltempo.inAttesaDiScelta} aspettano`)}
+          ${cifra('Clienti', String(t.clienti), `${t.clientiAbituali} hanno prenotato più di una volta`)}
+          ${cifra('Check-in', String(t.checkin), 'prenotazioni imbarcate')}
+        </div>
+        <div class="griglia-stat">
+          ${tabellaStat('Per escursione', d.perEscursione)}
+          ${tabellaStat('Per canale', d.perCanale)}
+          ${tabellaStat('Per mese', d.perMese)}
+          ${tabellaStat('Per orario', d.perTurno)}
+          ${tabellaStat('Per giorno della settimana', d.perGiorno)}
+          <div class="area-scheda"><h2>Extra</h2><div class="tabella-box"><table class="tabella"><thead><tr><th>Extra</th><th class="num">Quantità</th><th class="num">Totale</th></tr></thead><tbody>${d.extra.length ? d.extra.map((e: any) => `<tr><td>${h(e.nome)}</td><td class="num">${e.quantita}</td><td class="num">${euro(e.totale)}</td></tr>`).join('') : '<tr><td class="vuota" colspan="3">Nessun extra venduto.</td></tr>'}</tbody></table></div></div>
+        </div>`;
+    } catch (e) { box.innerHTML = ''; errore(e); }
+  }
+  $('[data-excel]').addEventListener('click', async () => {
+    if (!ultimeStat) await caricaStatistiche();
+    const d = ultimeStat;
+    if (!d) return;
+    const t = d.totali;
+    const riga = (r: any) => [r.nome, r.prenotazioni, r.persone, r.lordo, r.incassato, r.medio, r.perPersona];
+    const intest = ['', 'Prenotazioni', 'Persone', 'Lordo €', 'Incassato netto €', 'Medio €', 'A persona €'];
+    scaricaXlsx(`escursioni-maddalena-${d.dal}-${d.al}.xlsx`, [
+      { nome: 'Riepilogo', righe: [
+        ['Voce', 'Valore'],
+        ['Periodo', `dal ${d.dal} al ${d.al} (date ${d.base === 'prenotazione' ? 'della prenotazione' : "dell'escursione"})`],
+        ['Prenotazioni confermate', t.prenotazioni], ['Persone', t.persone], ['Valore prenotazioni €', t.lordo],
+        ['Incassato con carta e PayPal €', t.incassato], ['Rimborsato €', t.rimborsato], ['Incassato netto €', t.netto],
+        ['Pagato con buoni regalo €', t.buoniUsati], ['Da incassare €', t.daIncassare], ['Sconti dati €', t.sconti], ['Aumenti weekend €', t.maggiorazioni],
+        ['Extra venduti €', t.extra], ['Provvigioni strutture €', t.provvigioni],
+        ['Buoni regalo venduti (numero)', d.buoniVenduti.numero], ['Buoni regalo venduti €', d.buoniVenduti.incassato], ['Buoni ancora da usare €', d.buoniVenduti.ancoraDaUsare],
+        ['Maltempo: rinviate', d.maltempo.rinviate], ['Maltempo: rimborsate', d.maltempo.rimborsate],
+      ] },
+      { nome: 'Per mese', righe: [intest, ...d.perMese.map(riga)] },
+      { nome: 'Per escursione', righe: [intest, ...d.perEscursione.map(riga)] },
+      { nome: 'Per canale', righe: [intest, ...d.perCanale.map(riga)] },
+      { nome: 'Prenotazioni', righe: [
+        ['Data escursione', 'Prenotata il', 'Codice', 'Stato', 'Escursione', 'Orario', 'Gommone', 'Imbarco', 'Cliente', 'Email', 'Adulti', 'Bambini', 'Listino €', 'Sconto €', 'Sconto', 'Codice sconto', 'Extra €', 'Totale €', 'Buono regalo €', 'Pagato €', 'Rimborsato €', 'Metodo', 'Riferimento pagamento', 'Canale', 'Struttura', 'Provvigione €', 'Codice piattaforma', 'Volantino', 'Maltempo'],
+        ...d.prenotazioni.map((p: any) => [p.data, p.prenotataIl, p.codice, p.stato, p.escursione, p.turno, p.gommone, p.imbarco, p.cliente, p.email, p.adulti, p.bambini, p.listino, p.sconto, p.scontoNota, p.codiceSconto, p.extra, p.totale, p.buono, p.pagato, p.rimborsato, p.metodo, p.rifPagamento, p.canale, p.struttura, p.provvigione, p.rifEsterno, p.campagna, p.maltempo]),
+      ] },
+    ]);
+  });
+
+  // ---------- Offerte: promozioni, codici, buoni, extra ----------
+  const TESTO_SOGLIA: Record<string, string> = { anticipo: 'Almeno quanti giorni prima', 'ultimo-minuto': 'Entro quante ore dalla partenza', gruppo: 'Da quante persone', weekend: '' };
+  $('#r-tipo').addEventListener('change', () => {
+    const tipo = $<HTMLSelectElement>('#r-tipo').value;
+    $('[data-soglia]').hidden = tipo === 'weekend';
+    $('[data-etichetta-soglia]').textContent = TESTO_SOGLIA[tipo];
+    $('[data-etichetta-pct]').textContent = tipo === 'weekend' ? 'Aumento %' : 'Sconto %';
+  });
+  async function caricaOfferte() {
+    try {
+      const d = await api('/api/gestione/offerte');
+      const stato = (attivo: boolean) => `<span class="stato ${attivo ? 'stato--ok' : ''}">${attivo ? 'Attivo' : 'Spento'}</span>`;
+      $('[data-regole]').innerHTML = d.regole.length ? d.regole.map((r: any) => `<tr><td><strong>${h(r.nome || NOMI_REGOLE[r.tipo])}</strong></td>
+        <td>${r.tipo === 'weekend' ? `+${r.percentuale}% sabato e domenica` : `−${r.percentuale}% ${r.tipo === 'anticipo' ? `prenotando almeno ${r.soglia} giorni prima` : r.tipo === 'ultimo-minuto' ? `nelle ${r.soglia} ore prima della partenza` : `da ${r.soglia} persone`}`}</td>
+        <td>${h(nomeEscursioni(r.escursioni))}${periodoTesto(r.dal, r.al) ? `<br><span class="testo-2">${h(periodoTesto(r.dal, r.al))}</span>` : ''}</td><td>${stato(r.attiva)}</td>
+        <td><div class="azioni-riga"><button class="btn btn--bordo btn--piccolo" type="button" data-off="regola" data-az="${r.attiva ? 'disattiva' : 'attiva'}" data-id="${r.id}">${r.attiva ? 'Spegni' : 'Accendi'}</button><button class="btn btn--bordo btn--piccolo" type="button" data-off="regola" data-az="elimina" data-id="${r.id}">Elimina</button></div></td></tr>`).join('')
+        : '<tr><td class="vuota" colspan="5">Nessuna promozione.</td></tr>';
+      $('[data-codici]').innerHTML = d.codici.length ? d.codici.map((c: any) => `<tr><td><strong>${h(c.codice)}</strong>${c.note ? `<br><span class="testo-2">${h(c.note)}</span>` : ''}</td>
+        <td>${c.tipo === 'percentuale' ? `−${c.valore}%` : `−${euro(c.valore)}`}</td><td>${h(nomeEscursioni(c.escursioni))}${periodoTesto(c.dal, c.al) ? `<br><span class="testo-2">${h(periodoTesto(c.dal, c.al))}</span>` : ''}</td>
+        <td class="num">${c.usati}${c.usiMax ? ` / ${c.usiMax}` : ''}</td><td class="num">${euro(c.scontato)}</td><td>${stato(c.attivo)}</td>
+        <td><button class="btn btn--bordo btn--piccolo" type="button" data-off="codice" data-az="${c.attivo ? 'disattiva' : 'attiva'}" data-id="${c.id}">${c.attivo ? 'Spegni' : 'Accendi'}</button></td></tr>`).join('')
+        : '<tr><td class="vuota" colspan="7">Nessun codice.</td></tr>';
+      $('[data-buoni]').innerHTML = d.buoni.length ? d.buoni.map((b: any) => `<tr><td><strong>${h(b.codice)}</strong><br><span class="testo-2">${h(b.acquirente || '')}${b.email ? ` · ${h(b.email)}` : ''}${b.creatoDa !== 'cliente' ? ' · fatto dall\'ufficio' : ''}</span></td>
+        <td>${h(b.destinatario || '')}</td><td class="num">${euro(b.valore)}</td><td class="num">${euro(b.saldo)}</td><td>${b.al ? h(dataBreve(b.al)) : '—'}</td>
+        <td>${b.stato === 'attivo' ? (b.al && b.al < oggiRoma() ? '<span class="stato">Scaduto</span>' : '<span class="stato stato--ok">Attivo</span>') : `<span class="stato stato--annullata">${h(b.stato)}</span>`}</td>
+        <td><div class="azioni-riga"><a class="btn btn--bordo btn--piccolo" href="/buono-regalo/esito/?codice=${encodeURIComponent(b.codice)}&t=${encodeURIComponent(b.token)}" target="_blank" rel="noopener">Apri</a>${b.stato === 'attivo' ? `<button class="btn btn--bordo btn--piccolo" type="button" data-off="buono" data-az="annulla" data-id="${b.id}" data-rimborsabile="${b.saldo === b.valore && ['sumup', 'paypal', 'prova'].includes(b.metodo) ? 1 : 0}">Annulla</button>` : ''}</div></td></tr>`).join('')
+        : '<tr><td class="vuota" colspan="7">Nessun buono.</td></tr>';
+      $('[data-extra-gestione]').innerHTML = d.extra.length ? d.extra.map((e: any) => `<tr><td><strong>${h(e.nome)}</strong><br><span class="testo-2">${h(nomeEscursioni(e.escursioni))}${e.descrizione ? ` · ${h(e.descrizione)}` : ''}</span></td>
+        <td class="num">${euro(e.prezzo)}${e.modo === 'persona' ? ' a persona' : ''}</td><td>${e.maxGiorno ?? 'senza limite'}</td><td class="num">${e.venduti}</td><td>${stato(e.attivo)}</td>
+        <td><button class="btn btn--bordo btn--piccolo" type="button" data-off="extra" data-az="${e.attivo ? 'disattiva' : 'attiva'}" data-id="${e.id}">${e.attivo ? 'Spegni' : 'Accendi'}</button></td></tr>`).join('')
+        : '<tr><td class="vuota" colspan="6">Nessun extra.</td></tr>';
+    } catch (e) { errore(e); }
+  }
+  $('[data-pannello="offerte"]').addEventListener('click', async (ev) => {
+    const b = (ev.target as Element).closest<HTMLElement>('[data-off]');
+    if (!b) return;
+    pulisciErrore();
+    let rimborsa = false;
+    if (b.dataset.off === 'buono') {
+      if (!window.confirm('Annullare il buono? Non si potrà più usare.')) return;
+      rimborsa = b.dataset.rimborsabile === '1' && window.confirm('Il buono non è mai stato usato ed è stato pagato online: vuoi anche rimborsarlo in automatico?');
+    }
+    if (b.dataset.az === 'elimina' && !window.confirm('Eliminare la promozione?')) return;
+    try { await api('/api/gestione/offerte', { corpo: { tipo: b.dataset.off, azione: b.dataset.az, id: Number(b.dataset.id), rimborsa } }); caricaOfferte(); } catch (e) { errore(e); }
+  });
+  const inviaOfferta = (selettore: string, tipo: string, dopo?: (r: any, f: HTMLFormElement) => void) => $(selettore).addEventListener('submit', async (ev) => {
+    ev.preventDefault(); pulisciErrore();
+    const f = ev.target as HTMLFormElement;
+    const corpo: any = Object.fromEntries(new FormData(f).entries());
+    if (f.pagato) corpo.pagato = f.pagato.checked;
+    try { const r = await api('/api/gestione/offerte', { corpo: { tipo, azione: 'crea', ...corpo } }); f.reset(); dopo?.(r, f); caricaOfferte(); } catch (e) { errore(e); }
+  });
+  inviaOfferta('[data-modulo-regola]', 'regola', () => $('#r-tipo').dispatchEvent(new Event('change')));
+  inviaOfferta('[data-modulo-codice]', 'codice');
+  inviaOfferta('[data-modulo-extra]', 'extra');
+  inviaOfferta('[data-modulo-buono]', 'buono', (r) => {
+    $('[data-esito-buono]').innerHTML = `<div class="messaggio-ok">Buono creato: <strong>${h(r.codice)}</strong>. <a href="${h(r.link)}" target="_blank" rel="noopener">Apri il buono da stampare</a> · <button type="button" class="btn btn--bordo btn--piccolo" data-copia="${h(r.link)}">Copia il link</button></div>`;
+  });
+
+  // ---------- Volantini ----------
+  async function caricaVolantini() {
+    try {
+      const d = await api('/api/gestione/campagne');
+      $('[data-volantini]').innerHTML = d.campagne.length ? d.campagne.map((c: any) => `<tr><td><strong>${h(c.nome)}</strong><br><span class="testo-2">${h(c.codice)} · ${h(c.link)}</span>${c.attiva ? '' : '<br><span class="stato">Spento</span>'}</td>
+        <td class="num">${c.visite}</td><td class="num">${c.prenotazioni}${c.visite ? `<br><span class="testo-2">${Math.round((c.prenotazioni / c.visite) * 100)}%</span>` : ''}</td><td class="num">${euro(c.incasso)}</td>
+        <td><div class="azioni-riga"><span class="qr-mini">${svgQr(c.link, `QR ${c.nome}`)}</span><button class="btn btn--bordo btn--piccolo" type="button" data-png="${h(c.link)}" data-nome="${h(c.codice)}">Scarica QR</button><button class="btn btn--bordo btn--piccolo" type="button" data-copia="${h(c.link)}">Copia link</button><button class="btn btn--bordo btn--piccolo" type="button" data-vol-az="${c.attiva ? 'disattiva' : 'attiva'}" data-id="${c.id}">${c.attiva ? 'Spegni' : 'Accendi'}</button></div></td></tr>`).join('')
+        : '<tr><td class="vuota" colspan="5">Nessun volantino.</td></tr>';
+    } catch (e) { errore(e); }
+  }
+  $('[data-volantini]').addEventListener('click', async (ev) => {
+    const png = (ev.target as Element).closest<HTMLElement>('[data-png]');
+    if (png) { const a = document.createElement('a'); a.href = pngQr(png.dataset.png!, 1200, png.dataset.png!.replace(/^https?:\/\//, '')); a.download = `qr-${png.dataset.nome}.png`; a.click(); return; }
+    const b = (ev.target as Element).closest<HTMLElement>('[data-vol-az]');
+    if (!b) return;
+    try { await api('/api/gestione/campagne', { corpo: { azione: b.dataset.volAz, id: Number(b.dataset.id) } }); caricaVolantini(); } catch (e) { errore(e); }
+  });
+  $('[data-modulo-volantino]').addEventListener('submit', async (ev) => {
+    ev.preventDefault(); pulisciErrore();
+    const f = ev.target as HTMLFormElement;
+    try { await api('/api/gestione/campagne', { corpo: { azione: 'crea', nome: f.nome.value, codice: f.codice.value } }); f.reset(); caricaVolantini(); } catch (e) { errore(e); }
+  });
+
+  // ---------- Account: skipper ed email automatiche ----------
+  async function caricaSkipper() {
+    $('[data-indirizzo-imbarco]').textContent = `${location.host}/imbarco/`;
+    try {
+      const d = await api('/api/gestione/utenti');
+      $('[data-skipper]').innerHTML = d.skipper.length ? d.skipper.map((u: any) => `<tr><td><strong>${h(u.nome)}</strong><br><span class="testo-2">${h(u.email)}${u.attivo ? '' : ' · disattivato'}</span></td>
+        <td>${u.ultimo_accesso ? h(new Date(u.ultimo_accesso).toLocaleString('it-IT')) : 'mai'}</td>
+        <td><div class="azioni-riga"><button class="btn btn--bordo btn--piccolo" type="button" data-sk="${u.attivo ? 'disattiva' : 'attiva'}" data-id="${u.id}">${u.attivo ? 'Disattiva' : 'Riattiva'}</button><button class="btn btn--bordo btn--piccolo" type="button" data-sk="nuova-password" data-id="${u.id}">Nuova password</button></div><div data-sk-pw="${u.id}"></div></td></tr>`).join('')
+        : '<tr><td class="vuota" colspan="3">Nessuno skipper ancora.</td></tr>';
+    } catch (e) { errore(e); }
+  }
+  const messaggioSkipper = (email: string, password: string) => `Ciao! Ecco il tuo accesso per l'imbarco di Escursioni Maddalena.\nIndirizzo: ${location.origin}/imbarco/ (dal telefono puoi aggiungerlo alla schermata Home)\nEmail: ${email}\nPassword provvisoria: ${password} (al primo accesso ne scegli una tua)`;
+  $('[data-skipper]').addEventListener('click', async (ev) => {
+    const b = (ev.target as Element).closest<HTMLElement>('[data-sk]');
+    if (!b) return;
+    try {
+      const r = await api('/api/gestione/utenti', { corpo: { azione: b.dataset.sk, id: Number(b.dataset.id) } });
+      if (b.dataset.sk === 'nuova-password') { document.querySelector(`[data-sk-pw="${b.dataset.id}"]`)!.innerHTML = `<textarea rows="4" readonly>${h(messaggioSkipper(r.email, r.password))}</textarea>`; return; }
+      caricaSkipper();
+    } catch (e) { errore(e); }
+  });
+  $('[data-modulo-skipper]').addEventListener('submit', async (ev) => {
+    ev.preventDefault(); pulisciErrore();
+    const f = ev.target as HTMLFormElement;
+    try {
+      const r = await api('/api/gestione/utenti', { corpo: { azione: 'crea', nome: f.nome.value, email: f.email.value } });
+      $('[data-esito-skipper]').innerHTML = `<div class="messaggio-ok">Accesso creato. Manda questi dati allo skipper (la password non sarà più visibile):</div><textarea rows="4" readonly>${h(messaggioSkipper(r.email, r.password))}</textarea>`;
+      f.reset(); caricaSkipper();
+    } catch (e) { errore(e); }
+  });
+  $('[data-automatico]').addEventListener('click', async () => {
+    const box = $('[data-esito-automatico]');
+    box.textContent = 'Controllo…';
+    try {
+      const r = await api('/api/automatico', { corpo: {} });
+      box.textContent = !r.email ? 'Le email non sono ancora attive (manca il collegamento a Resend): per ora le avvisi le mandi tu.'
+        : `Fatto: ${r.promemoria} promemoria, ${r.grazie} ringraziamenti, ${r.avvisiMaltempo} avvisi di maltempo, ${r.listaAttesa} avvisi della lista d'attesa.`;
+    } catch (e) { box.textContent = (e as Error).message; }
+  });
+
 
   avvio();
 </script>

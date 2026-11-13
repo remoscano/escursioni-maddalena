@@ -25,13 +25,23 @@ export const faq = [
         id: 'cancellare',
         domanda: 'Posso annullare la prenotazione?',
         risposta:
-          "Sì: se annulli almeno 48 ore prima ti rimborsiamo per intero. Scrivici su WhatsApp con il codice di prenotazione. Dopo, il rimborso non è previsto.",
+          "Sì: se annulli almeno 48 ore prima ti rimborsiamo per intero. Puoi farlo da solo dalla pagina della prenotazione (il link è nell'email di conferma): il rimborso parte subito. Oppure scrivici su WhatsApp con il codice di prenotazione. Dopo, il rimborso non è previsto.",
       },
       {
         id: 'minimo',
         domanda: 'E se non si arriva al numero minimo?',
         risposta:
           "Le uscite di gruppo partono con almeno 6 persone. Se la sera prima non si raggiungono, ti proponiamo un'altra data o un altro tour, oppure ti rimborsiamo per intero.",
+      },
+      {
+        id: 'buono',
+        domanda: 'Si può regalare un\'escursione?',
+        risposta: "Sì, con il buono regalo: lo compri online dalla pagina Buono regalo, scegli l'importo e lo ricevi subito per email, da stampare o inoltrare. Chi lo riceve sceglie escursione, giorno e orario e scrive il codice quando prenota.",
+      },
+      {
+        id: 'attesa',
+        domanda: 'Il giorno che voglio è pieno: cosa posso fare?',
+        risposta: "Mettiti in lista d'attesa dalla pagina Prenota: se si libera un posto ti scriviamo per email e prenoti tu, se vuoi.",
       },
       {
         id: 'anticipo',

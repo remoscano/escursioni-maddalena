@@ -2,12 +2,14 @@
 import Base from '../layouts/Base.astro';
 import Faq from '../components/Faq.astro';
 import SezioneRichiesta from '../components/SezioneRichiesta.astro';
-import { faq } from '../data/faq.js';
+import DatiStrutturati from '../components/DatiStrutturati.astro';
+import { faq, tutteLeDomande } from '../data/faq.js';
 ---
 <Base
   titolo="Domande frequenti"
   descrizione="Come si prenota e si paga, cosa succede con il maestrale, bambini e animali a bordo, Spiaggia Rosa e regole del Parco: le risposte prima di scriverci."
 >
+  <DatiStrutturati slot="head" tipo="faq" domande={tutteLeDomande} />
   <section class="testa-pagina">
     <div class="contenitore">
       <p class="occhiello">Domande frequenti</p>

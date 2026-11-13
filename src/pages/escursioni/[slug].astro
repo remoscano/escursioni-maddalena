@@ -7,6 +7,7 @@ import Dato from '../../components/Dato.astro';
 import Mappa from '../../components/Mappa.astro';
 import Faq from '../../components/Faq.astro';
 import SezioneRichiesta from '../../components/SezioneRichiesta.astro';
+import DatiStrutturati from '../../components/DatiStrutturati.astro';
 import { escursioni } from '../../data/escursioni.js';
 import { domande } from '../../data/faq.js';
 import { sito } from '../../data/sito.js';
@@ -39,6 +40,7 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
   titolo={e.titoloPagina}
   descrizione={`${e.breve} ${e.fatti.find((f: string) => f.startsWith('Imbarco')) ?? ''}${prenotabile ? ', prenoti online.' : ', richiesta su WhatsApp.'}`.slice(0, 160)}
 >
+  <DatiStrutturati slot="head" tipo="escursione" slug={e.slug} domande={domande(faqPerEscursione[e.slug] ?? [])} />
   <section class="testa-tour" aria-labelledby="tour-titolo">
     <div class="contenitore">
       <nav class="briciole" aria-label="Sei qui">

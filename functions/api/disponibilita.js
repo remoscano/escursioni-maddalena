@@ -5,6 +5,7 @@ import { prima } from '../_lib/db.js';
 import { calendarioMese, pulisciScadute } from '../_lib/motore.js';
 import { metodiDisponibili } from '../_lib/pagamenti.js';
 import { utenteCollegato } from '../_lib/accessi.js';
+import { regoleAttive } from '../_lib/offerte.js';
 import { Errore, json } from '../_lib/util.js';
 
 export async function onRequestGet(contesto) {
@@ -28,5 +29,5 @@ export async function onRequestGet(contesto) {
     const p = await prima(env.DB, 'SELECT nome FROM partner WHERE codice = :c AND attivo = 1', { c: url.searchParams.get('partner').toUpperCase().slice(0, 20) });
     if (p) partner = { nome: p.nome, collegato: false };
   }
-  return json({ escursione: slug, mese, imbarco, giorni, stagione: regole.stagione, pagamenti: metodiDisponibili(env), partner });
+  return json({ escursione: slug, mese, imbarco, giorni, stagione: regole.stagione, pagamenti: metodiDisponibili(env), partner, regole: await regoleAttive(env.DB) });
 }

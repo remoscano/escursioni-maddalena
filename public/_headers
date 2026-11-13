@@ -19,3 +19,16 @@
 
 /prenota/prova/*
   X-Robots-Tag: noindex, nofollow
+
+/prenota/paga/*
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+
+/buono-regalo/esito/*
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+
+/imbarco/*
+  X-Robots-Tag: noindex, nofollow
+  X-Frame-Options: DENY
+  Cache-Control: no-store

@@ -24,15 +24,16 @@ import Base from '../../layouts/Base.astro';
   import { api, h, euro } from '../../scripts/comune';
   const q = new URLSearchParams(location.search);
   const codice = q.get('codice') || '', t = q.get('t') || '';
+  const buono = q.get('tipo') === 'buono';
   const err = document.querySelector<HTMLElement>('[data-errore]')!;
-  api(`/api/prenotazione?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}`)
-    .then((p) => { document.querySelector('[data-dati]')!.innerHTML = `${h(p.escursione)} · ${h(p.dataLeggibile)} · <strong>${euro(p.totale)}</strong> (${h(p.codice)})`; })
+  api(buono ? `/api/buono?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}` : `/api/prenotazione?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}`)
+    .then((p) => { document.querySelector('[data-dati]')!.innerHTML = buono ? `Buono regalo · <strong>${euro(p.valore)}</strong> (${h(p.codice)})` : `${h(p.escursione)} · ${h(p.dataLeggibile)} · <strong>${euro(p.daPagare)}</strong> (${h(p.codice)})`; })
     .catch((e) => { err.textContent = e.message; err.hidden = false; });
   document.querySelectorAll<HTMLButtonElement>('[data-esito]').forEach((b) => b.addEventListener('click', async () => {
     b.disabled = true;
     try {
-      await api('/api/pagamento/prova', { corpo: { codice, t, esito: b.dataset.esito } });
-      location.assign(`/prenota/esito/?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}${b.dataset.esito === 'ko' ? '&annullato=1' : ''}`);
+      await api('/api/pagamento/prova', { corpo: { codice, t, esito: b.dataset.esito, tipo: buono ? 'buono' : undefined } });
+      location.assign(`/${buono ? 'buono-regalo' : 'prenota'}/esito/?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}${b.dataset.esito === 'ko' ? '&annullato=1' : ''}`);
     } catch (e) { err.textContent = (e as Error).message; err.hidden = false; b.disabled = false; }
   }));
 </script>

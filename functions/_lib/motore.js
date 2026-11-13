@@ -3,7 +3,8 @@
 
 import { offerte, gommoni, regole, turnoDi, inStagione, gommoniPer, postiPer } from '../../src/data/prenotazioni.js';
 import { tutte, esegui, istruzione } from './db.js';
-import { oraRoma, aggiungiGiorni } from './util.js';
+import { istruzioniRestituzione } from './offerte.js';
+import { oraRoma, aggiungiGiorni, Errore } from './util.js';
 
 // Una prenotazione occupa posti se è confermata o se è in attesa di pagamento e non è scaduta.
 const ATTIVA = `(p.stato IN ('confermata', 'da_verificare') OR (p.stato = 'in_attesa' AND p.scade_il > :ora))`;
@@ -113,7 +114,7 @@ function condizioniPosto(turno, escludiSe = false) {
 const COLONNE = [
   'codice', 'token', 'escursione', 'turno', 'data', 'barca', 'blocchi', 'adulti', 'bambini', 'neonati', 'posti', 'paganti',
   'imbarco', 'nome', 'email', 'telefono', 'note', 'totale', 'pagato', 'provvigione', 'stato', 'canale', 'partner_id', 'metodo',
-  'rif_esterno', 'ip_hash', 'scade_il', 'creata_da',
+  'rif_esterno', 'ip_hash', 'scade_il', 'creata_da', 'listino', 'sconto', 'sconto_nota', 'codice_id', 'buono', 'extra_totale', 'campagna',
 ];
 
 // Inserisce la prenotazione sul primo gommone libero tra i candidati. Restituisce { id, barca } o null se i posti sono finiti.
@@ -149,6 +150,36 @@ export async function riattivaSeLibero(db, pren, nuovoStato, campiExtra = {}) {
   return r.meta?.changes === 1;
 }
 
+// Sposta una prenotazione su un'altra data o un altro turno (rinvio per maltempo o cambio chiesto dal cliente).
+// Stesso controllo dei posti dell'inserimento: o c'è posto, o non si sposta. Il prezzo resta quello pagato.
+// Restituisce { barca } oppure lancia un errore leggibile.
+export async function spostaPrenotazione(db, p, data, turnoId, { gestione = false, stato = 'confermata', recupero = null } = {}) {
+  const turno = turnoDi(p.escursione, turnoId);
+  if (!turno) throw new Errore(400, 'Orario non valido.');
+  const ok = gestione ? prenotabileGestione(data) : prenotabileOnline(data);
+  if (!ok.ok) throw new Errore(409, ok.motivo === 'fuori-stagione' ? 'In questa data non ci sono uscite.' : ok.motivo === 'passato' ? 'La data è già passata.' : 'Questa data non si può più scegliere online: scrivici su WhatsApp.');
+  const persone = p.adulti + p.bambini + p.neonati;
+  const ora = new Date().toISOString();
+  const giorni = await caricaGiorni(db, data, data, ora);
+  const s = situazioneTurno(p.escursione, turnoId, giorni.giorno(data), persone, p.id, p.imbarco);
+  const esclusiva = offerte[p.escursione].tipo === 'esclusiva';
+  for (const barca of s.candidati) {
+    const gommone = gommoni.find((g) => g.id === barca);
+    const valori = {
+      id: p.id, data, turno: turnoId, barca, escursione: p.escursione, ora, stato, recupero, vecchia: p.data,
+      blocchi: `,${turno.blocchi.join(',')},`,
+      posti: esclusiva ? gommone.posti : persone,
+      capienza: esclusiva ? gommone.posti : postiPer(offerte[p.escursione], gommone),
+    };
+    const r = await esegui(db, `UPDATE prenotazioni SET data = :data, turno = :turno, barca = :barca, blocchi = :blocchi, posti = :posti,
+        stato = :stato, recupero = COALESCE(:recupero, recupero), data_originale = COALESCE(data_originale, :vecchia),
+        promemoria_il = NULL, grazie_il = NULL, checkin_il = NULL, aggiornata_il = :ora
+      WHERE id = :id AND ${condizioniPosto(turno, true)}`, valori);
+    if (r.meta?.changes === 1) return { barca };
+  }
+  throw new Errore(409, s.disponibile ? `Per quell'orario restano posti per massimo ${s.maxPersone} persone.` : 'Nessun posto libero per quell\'orario: scegli un altro giorno o un altro orario.');
+}
+
 // Calendario di un mese per un'escursione: stato di ogni giorno e di ogni turno.
 export async function calendarioMese(db, slug, mese, { gestione = false, imbarco = null } = {}) {
   const offerta = offerte[slug];
@@ -178,12 +209,14 @@ export async function calendarioMese(db, slug, mese, { gestione = false, imbarco
 // e l'impronta dell'indirizzo internet si cancella appena non serve più (lo promette l'informativa privacy).
 export async function pulisciScadute(db) {
   const ora = new Date().toISOString();
+  // margine di 15 minuti: chi sta finendo di pagare non viene toccato
+  const limite = new Date(Date.now() - 15 * 60000).toISOString();
+  // Codici sconto e buoni delle prenotazioni non pagate tornano disponibili.
+  const conCodice = await tutte(db, `SELECT id FROM prenotazioni WHERE stato = 'in_attesa' AND scade_il <= :limite
+                                     AND codice_id IS NOT NULL AND codice_reso = 0`, { limite });
+  for (const p of conCodice) await db.batch(istruzioniRestituzione(db, p.id));
   await esegui(db, `UPDATE prenotazioni SET stato = 'scaduta', aggiornata_il = :ora
-                    WHERE stato = 'in_attesa' AND scade_il <= :limite`, {
-    ora,
-    // margine di 15 minuti: chi sta finendo di pagare non viene toccato
-    limite: new Date(Date.now() - 15 * 60000).toISOString(),
-  });
+                    WHERE stato = 'in_attesa' AND scade_il <= :limite`, { ora, limite });
   await esegui(db, `UPDATE prenotazioni SET ip_hash = NULL
                     WHERE ip_hash IS NOT NULL AND (stato != 'in_attesa' OR scade_il <= :ora)`, { ora });
 }

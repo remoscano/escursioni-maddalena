@@ -2,13 +2,15 @@
 import { gommoni, offerte, turnoDi, orarioDi } from '../../../src/data/prenotazioni.js';
 import { tutte } from '../../_lib/db.js';
 import { richiedi } from '../../_lib/accessi.js';
-import { titoloEscursione, nomeImbarco } from '../../_lib/prenotazioni.js';
-import { Errore, json, dataValida, adessoISO } from '../../_lib/util.js';
+import { titoloEscursione, nomeImbarco, daPagare, pagabileConLink } from '../../_lib/prenotazioni.js';
+import { Errore, json, dataValida, adessoISO, oraRoma } from '../../_lib/util.js';
 
 export async function onRequestGet({ request, env }) {
-  await richiedi(env.DB, request, 'gestione');
+  const utente = await richiedi(env.DB, request, ['gestione', 'skipper']);
   const data = new URL(request.url).searchParams.get('data');
   if (!dataValida(data)) throw new Errore(400, 'Data non valida.');
+  // Lo skipper vede solo le uscite di oggi.
+  if (utente.ruolo === 'skipper' && data !== oraRoma().data) throw new Errore(403, 'Con l\'accesso skipper vedi solo le uscite di oggi.');
   const ora = adessoISO();
   const [pren, chiusure] = await Promise.all([
     tutte(env.DB, `SELECT p.*, pa.nome AS partner_nome FROM prenotazioni p LEFT JOIN partner pa ON pa.id = p.partner_id
@@ -16,12 +18,17 @@ export async function onRequestGet({ request, env }) {
                    ORDER BY p.creata_il`, { data, ora }),
     tutte(env.DB, 'SELECT id, barca, blocco, motivo FROM blocchi WHERE data = :data ORDER BY barca, blocco', { data }),
   ]);
+  const extra = await tutte(env.DB, `SELECT x.prenotazione_id, x.nome, x.quantita FROM prenotazioni_extra x JOIN prenotazioni p ON p.id = x.prenotazione_id
+                                     WHERE p.data = :data ORDER BY x.id`, { data });
   const vista = (p) => ({
-    id: p.id, codice: p.codice, nome: p.nome, telefono: p.telefono, email: p.email,
+    id: p.id, codice: p.codice, nome: p.nome, telefono: p.telefono, email: p.email, data: p.data,
     adulti: p.adulti, bambini: p.bambini, neonati: p.neonati, imbarco: nomeImbarco(p.imbarco),
     stato: p.stato, rimborso: p.rimborso, canale: p.canale, metodo: p.metodo, rifEsterno: p.rif_esterno,
     totale: p.totale / 100, pagato: p.pagato / 100, note: p.note, struttura: p.partner_nome,
     escursione: titoloEscursione(p.escursione), turno: turnoDi(p.escursione, p.turno)?.nome ?? p.turno,
+    escursioneSlug: p.escursione, turnoId: p.turno, imbarcoId: p.imbarco, recupero: p.recupero, rimborsato: p.rimborsato / 100,
+    checkin: p.checkin_il, daPagare: daPagare(p) / 100, pagabile: pagabileConLink(p), buono: p.buono / 100,
+    dataOriginale: p.data_originale, extra: extra.filter((e) => e.prenotazione_id === p.id).map((e) => `${e.nome}${e.quantita > 1 ? ` × ${e.quantita}` : ''}`),
   });
   const attive = pren.filter((p) => p.stato !== 'annullata');
   const risultato = gommoni.map((g) => {
@@ -31,10 +38,11 @@ export async function onRequestGet({ request, env }) {
       const k = `${p.escursione}|${p.turno}`;
       if (!uscite.has(k)) {
         const t = turnoDi(p.escursione, p.turno);
-        uscite.set(k, { escursioneSlug: p.escursione, turnoId: p.turno, escursione: titoloEscursione(p.escursione), turno: t?.nome ?? p.turno, orario: orarioDi(t, p.data), minimo: offerte[p.escursione]?.minimo ?? null, privato: offerte[p.escursione]?.tipo === 'esclusiva', persone: 0, paganti: 0, prenotazioni: [] });
+        uscite.set(k, { escursioneSlug: p.escursione, turnoId: p.turno, escursione: titoloEscursione(p.escursione), turno: t?.nome ?? p.turno, orario: orarioDi(t, p.data), minimo: offerte[p.escursione]?.minimo ?? null, privato: offerte[p.escursione]?.tipo === 'esclusiva', persone: 0, aBordo: 0, paganti: 0, prenotazioni: [] });
       }
       const u = uscite.get(k);
       u.persone += p.adulti + p.bambini + p.neonati;
+      if (p.checkin_il) u.aBordo += p.adulti + p.bambini + p.neonati;
       u.paganti += p.paganti;
       u.prenotazioni.push(vista(p));
     }
@@ -44,5 +52,5 @@ export async function onRequestGet({ request, env }) {
       uscite: [...uscite.values()].map((u) => ({ ...u, confermata: u.privato || (u.minimo ? u.paganti >= u.minimo : true) })),
     };
   });
-  return json({ data, gommoni: risultato, annullate: pren.filter((p) => p.stato === 'annullata').map(vista) });
+  return json({ data, gommoni: risultato, annullate: utente.ruolo === 'skipper' ? [] : pren.filter((p) => p.stato === 'annullata').map(vista) });
 }
