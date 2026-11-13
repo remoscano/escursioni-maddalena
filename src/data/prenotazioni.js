@@ -20,9 +20,9 @@ export const regole = {
   stagione: { dal: '2027-05-01', al: '2027-10-31' },
   // Online si prenota fino alle 20 del giorno prima; per l'ultimo minuto si scrive su WhatsApp.
   chiusuraOnline: { giorniPrima: 1, ora: '20:00' },
-  // Ritrovo al molo: quanti minuti prima della partenza, per imbarco (Remo, 13 novembre 2026:
-  // alle 9 a Palau e alle 9:15 a La Maddalena per le uscite delle 9:30).
-  anticipoRitrovo: { maddalena: 15, palau: 30, cannigione: 15 },
+  // Ritrovo al molo: quanti minuti prima della partenza da quel molo. Le partenze cambiano per imbarco
+  // (orariImbarco nei turni); l'orario esatto ai clienti lo conferma l'ufficio con un messaggio (Remo, 13 novembre 2026).
+  anticipoRitrovo: { maddalena: 15, palau: 15, cannigione: 15 },
   // Per quanti minuti i posti restano tenuti da parte mentre il cliente paga.
   minutiPerPagare: 30,
   // Rimborso completo se il cliente annulla almeno 48 ore prima.
@@ -103,6 +103,7 @@ const mezzaPersona = [
 ];
 // Sunset, aperitivo al tramonto. Remo: "100 € a persona" (11 novembre 2026), in esclusiva "700 – 800 € a seconda del periodo"
 // (13 novembre 2026). Periodi e ridotti proposti da Claude (ridotto 10 € in meno), confermati da Remo il 13 novembre 2026.
+// Partenza sempre tra le 18:30 e le 19:00, dopo aver preparato il gommone (Remo, 13 novembre 2026): niente più orari per mese.
 const tramontoPersona = [
   { dal: '05-01', al: '06-30', adulto: 100, bambino: 90 },
   { dal: '07-01', al: '07-31', adulto: 110, bambino: 100 },
@@ -116,14 +117,6 @@ const tramontoEsclusiva = [
   { dal: '08-01', al: '08-31', barca: 800 },
   { dal: '09-01', al: '09-30', barca: 750 },
   { dal: '10-01', al: '10-31', barca: 700 },
-];
-// Orari del tramonto: seguono la luce, quindi cambiano nei mesi e sono indicativi (proposti da Claude, confermati da Remo il 13 novembre 2026).
-const orariTramonto = [
-  { dal: '05-01', al: '05-31', orario: '18:30 – 21:00' },
-  { dal: '06-01', al: '06-30', orario: '19:00 – 21:30' },
-  { dal: '07-01', al: '08-31', orario: '18:30 – 21:00' },
-  { dal: '09-01', al: '09-30', orario: '18:00 – 20:30' },
-  { dal: '10-01', al: '10-31', orario: '17:30 – 20:00' },
 ];
 const giornataEsclusiva = [
   { dal: '05-01', al: '06-30', barca: 1200 },
@@ -143,13 +136,17 @@ const mezzaEsclusiva = [
 // - la giornata intera occupa anche la sera (chi fa la giornata non esce al tramonto)
 // - il pomeriggio finisce alle 18:00, quando parte il tramonto: occupa anche la sera
 // "orario" vuoto = sul sito compare un segnaposto finché non viene confermato.
+// "orario" è quello di La Maddalena; "orariImbarco" lo cambia per gli altri moli. Uscite di gruppo (Remo, 13 novembre 2026):
+// si parte alle 9:00 da La Maddalena e si passa a Palau alle 9:30; al ritorno prima Palau, poi La Maddalena.
+// Le esclusive restano 9:30 – 17:30 per la giornata intera. Cannigione: orari di prima, da confermare.
 export const offerte = {
   'tour-7-isole': {
     tipo: 'gruppo',
     minimo: 6,
     imbarchi: ['maddalena', 'palau'],
     turni: [
-      { id: 'giornata', nome: 'Giornata intera', orario: '9:30 – 17:30', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataPersona },
+      // Rientro a Palau alle 17:00 calcolato da Claude come nella mezza giornata (mezz'ora prima di La Maddalena): da confermare.
+      { id: 'giornata', nome: 'Giornata intera', orario: '9:00 – 17:30', orariImbarco: { palau: '9:30 – 17:00' }, blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataPersona },
     ],
   },
   // Corsica: solo in esclusiva, giornata intera con gli orari e i prezzi delle altre giornate in esclusiva.
@@ -169,8 +166,8 @@ export const offerte = {
     minimo: 6,
     imbarchi: ['maddalena', 'palau', 'cannigione'],
     turni: [
-      { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '9:30 – 13:30', blocchi: ['mattina'], prezzi: mezzaPersona },
-      { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:00 – 18:00', blocchi: ['pomeriggio', 'sera'], prezzi: mezzaPersona },
+      { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '9:00 – 13:00', orariImbarco: { palau: '9:30 – 12:30', cannigione: '9:30 – 13:30' }, blocchi: ['mattina'], prezzi: mezzaPersona },
+      { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:00 – 18:00', orariImbarco: { palau: '14:30 – 17:30', cannigione: '14:00 – 18:00' }, blocchi: ['pomeriggio', 'sera'], prezzi: mezzaPersona },
     ],
   },
   tramonto: {
@@ -180,7 +177,7 @@ export const offerte = {
     postiMax: 10,
     imbarchi: ['maddalena', 'palau', 'cannigione'],
     turni: [
-      { id: 'tramonto', nome: 'Sunset, aperitivo al tramonto', orario: '18:30 – 21:00', orari: orariTramonto, indicativo: true, blocchi: ['sera'], prezzi: tramontoPersona },
+      { id: 'tramonto', nome: 'Sunset, aperitivo al tramonto', orario: '18:30 – 21:00', indicativo: true, blocchi: ['sera'], prezzi: tramontoPersona },
     ],
   },
   'tour-privato': {
@@ -191,7 +188,7 @@ export const offerte = {
     turni: [
       { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '9:30 – 13:30', blocchi: ['mattina'], prezzi: mezzaEsclusiva },
       { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:00 – 18:00', blocchi: ['pomeriggio', 'sera'], prezzi: mezzaEsclusiva },
-      { id: 'tramonto', nome: 'Sunset, aperitivo al tramonto', orario: '18:30 – 21:00', orari: orariTramonto, indicativo: true, blocchi: ['sera'], prezzi: tramontoEsclusiva },
+      { id: 'tramonto', nome: 'Sunset, aperitivo al tramonto', orario: '18:30 – 21:00', indicativo: true, blocchi: ['sera'], prezzi: tramontoEsclusiva },
       { id: 'giornata', nome: 'Giornata intera', orario: '9:30 – 17:30', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataEsclusiva },
     ],
   },
@@ -215,9 +212,10 @@ export const imbarchiPrenotazione = [
 export const offertaDi = (slug) => offerte[slug] ?? null;
 export const turnoDi = (slug, turno) => offerte[slug]?.turni.find((t) => t.id === turno) ?? null;
 
-// Orario di un turno in una certa data: alcuni turni (il tramonto) cambiano orario nei mesi.
-export function orarioDi(turno, data) {
+// Orario di un turno per un punto d'imbarco (e, se il turno lo prevede, per periodo dell'anno).
+export function orarioDi(turno, data, imbarco) {
   if (!turno) return '';
+  if (imbarco && turno.orariImbarco?.[imbarco]) return turno.orariImbarco[imbarco];
   const riga = data && turno.orari ? rigaPrezzo(turno.orari, data) : null;
   return riga?.orario ?? turno.orario ?? '';
 }

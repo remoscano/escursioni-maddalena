@@ -85,7 +85,7 @@ import DatiStrutturati from '../components/DatiStrutturati.astro';
           <p class="occhiello">Tour delle 7 isole</p>
           <h2 id="percorso-titolo" class="titolo-sezione">Il giro dell'arcipelago, sosta per sosta</h2>
         </div>
-        <p class="intestazione__lato">Partenza da La Maddalena, con passaggio a Palau; rientro alle <Dato v={tour.oraRientro} e="ora" />. L'ordine delle soste può cambiare in base a vento e mare.</p>
+        <p class="intestazione__lato">Partenza da La Maddalena alle {tour.partenze}; rientro <Dato v={tour.oraRientro} e="ora" />. L'ordine delle soste può cambiare in base a vento e mare.</p>
       </div>
       <div class="percorso">
         <Mappa />

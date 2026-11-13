@@ -32,8 +32,10 @@ const faqPerEscursione: Record<string, string[]> = {
 const suRichiesta = e.prezzoAdulti === 'su richiesta';
 const prenotabile = regole.attive && Boolean(offerte[e.slug]);
 const carburanteEscluso = Boolean(offerte[e.slug]?.carburanteEscluso);
-// Uscite serali (tramonto): l'orario cambia nei mesi, quindi niente "9:15 per le uscite delle 9:30".
-const serale = Boolean(offerte[e.slug]?.turni.every((t: any) => t.orari));
+// Uscite serali (Sunset): l'orario è indicativo, quindi niente "alle 8:45 per le uscite del mattino".
+const serale = Boolean(offerte[e.slug]?.turni.every((t: any) => t.indicativo));
+// L'ora di ritrovo d'esempio vale per le uscite di gruppo del mattino (non per Sunset ed esclusive).
+const orarioRitrovo = !serale && offerte[e.slug]?.tipo === 'gruppo';
 const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
 ---
 <Base
@@ -209,19 +211,19 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
         </div>
         <div class="box">
           <h3>Partenza da La Maddalena</h3>
-          <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.maddalena} minuti prima della partenza{!serale && <Fragment> (alle <Dato v={imbarchi.maddalena.ritrovo} e=\"ora\" /> per le uscite delle 9:30)</Fragment>}.</p>
+          <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.maddalena} minuti prima della partenza{orarioRitrovo && <Fragment> (alle <Dato v={imbarchi.maddalena.ritrovo} e=\"ora\" /> per le uscite di gruppo del mattino)</Fragment>}.</p>
           <p>Il nostro porto di partenza. Comodo se dormi sull'isola.</p>
         </div>
         <div class="box">
           <h3>Passaggio a Palau</h3>
           <p>Il gommone parte da La Maddalena e passa a prendere chi si imbarca a Palau.</p>
-          <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.palau} minuti prima della partenza{!serale && <Fragment> (alle <Dato v={imbarchi.palau.ritrovo} e=\"ora\" /> per le uscite delle 9:30)</Fragment>}.</p>
+          <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.palau} minuti prima della partenza{orarioRitrovo && <Fragment> (alle <Dato v={imbarchi.palau.ritrovo} e=\"ora\" /> per le uscite di gruppo del mattino)</Fragment>}.</p>
           <p>Comodo se dormi in Gallura. Parcheggio: <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" />.</p>
         </div>
         {offerte[e.slug]?.imbarchi.includes('cannigione') && (
           <div class="box">
             <h3>Imbarco a Cannigione</h3>
-            <p><Dato v={imbarchi.cannigione.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.cannigione} minuti prima della partenza{!serale && <Fragment> (alle <Dato v={imbarchi.cannigione.ritrovo} e=\"ora\" /> per le uscite delle 9:30)</Fragment>}.</p>
+            <p><Dato v={imbarchi.cannigione.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.cannigione} minuti prima della partenza{orarioRitrovo && <Fragment> (alle <Dato v={imbarchi.cannigione.ritrovo} e=\"ora\" /> per le uscite di gruppo del mattino)</Fragment>}.</p>
             <p>Comodo se dormi a Cannigione, ad Arzachena o in Costa Smeralda: da qui parte un gommone dedicato.</p>
           </div>
         )}

@@ -47,7 +47,7 @@ async def prenota_cliente(b, w):
     ok(await pg.locator('[data-ics]').count() == 1, f'{w}px conferma con "Aggiungi al calendario"')
     ics = await pg.evaluate("fetch(document.querySelector('[data-ics]').href).then((r) => r.text())")
     righe = ics.split('\r\n')
-    ok(f'DTSTART;TZID=Europe/Rome:{giorno.replace("-", "")}T093000' in righe and 'BEGIN:VTIMEZONE' in righe and any(r.startswith('DTSTAMP:') for r in righe)
+    ok(f'DTSTART;TZID=Europe/Rome:{giorno.replace("-", "")}T090000' in righe and 'BEGIN:VTIMEZONE' in righe and any(r.startswith('DTSTAMP:') for r in righe)
        and 'TRIGGER:-P1D' in righe and all(len(r.encode()) <= 75 for r in righe), f'{w}px file del calendario: ora di Roma, promemoria il giorno prima, righe a norma')
     await ctx.close()
 

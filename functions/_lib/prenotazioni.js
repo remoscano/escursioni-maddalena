@@ -34,7 +34,7 @@ export function annullabileDalCliente(p) {
   if (p.stato !== 'confermata' || p.checkin_il) return false;
   if (!['sumup', 'paypal', 'prova', 'buono'].includes(p.metodo)) return false;
   const t = turnoDi(p.escursione, p.turno);
-  return oreAllaPartenza(p.data, orarioDi(t, p.data)) >= regole.cancellazioneGratisOre;
+  return oreAllaPartenza(p.data, orarioDi(t, p.data, p.imbarco)) >= regole.cancellazioneGratisOre;
 }
 
 // Link di pagamento mandato dalla gestione: si può pagare online se la prenotazione è stata creata dalla gestione
@@ -75,7 +75,7 @@ export function vistaCliente(p) {
     turno: t?.nome ?? p.turno,
     data: p.data,
     dataLeggibile: dataLeggibile(p.data),
-    orario: orarioDi(t, p.data),
+    orario: orarioDi(t, p.data, p.imbarco),
     orarioIndicativo: Boolean(t?.indicativo),
     carburanteEscluso: Boolean(offerta?.carburanteEscluso),
     imbarco: nomeImbarco(p.imbarco),

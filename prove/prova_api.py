@@ -105,4 +105,10 @@ s, r = prenota(pub, email='nonvalida'); ok(s == 400, f'email non valida: {r.get(
 # 7. limite di prenotazioni in attesa dallo stesso indirizzo
 stesso = client(ip='10.9.9.9'); esiti = [prenota(stesso, data='2027-10-01', adulti=1)[0] for _ in range(6)]
 ok(esiti == [200]*5 + [429], f'stesso indirizzo: 5 in attesa poi blocco ({esiti})')
+# 8. orari per punto d'imbarco: si parte da La Maddalena e si passa a Palau mezz'ora dopo (Remo, 13 novembre 2026)
+for imb, atteso in [('palau', '9:30 – 12:30'), ('maddalena', '9:00 – 13:00')]:
+    s, r = prenota(pub, escursione='mezza-giornata', turno='mattina', data='2027-09-14', adulti=1, imbarco=imb); (s2, r2), q = paga(pub, r)
+    s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['orario'] == atteso, f'mezza giornata da {imb}: {v["orario"]}')
+s, r = prenota(pub, escursione='tour-7-isole', data='2027-09-15', adulti=1, imbarco='palau'); (s2, r2), q = paga(pub, r)
+s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['orario'] == '9:30 – 17:00', f'7 isole da Palau: {v["orario"]}')
 print('TUTTO OK (pubblico)')

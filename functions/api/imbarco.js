@@ -15,7 +15,7 @@ async function vista(db, p, utente) {
   const t = turnoDi(p.escursione, p.turno);
   return {
     codice: p.codice, nome: p.nome, telefono: p.telefono,
-    escursione: titoloEscursione(p.escursione), turno: t?.nome ?? p.turno, orario: orarioDi(t, p.data),
+    escursione: titoloEscursione(p.escursione), turno: t?.nome ?? p.turno, orario: orarioDi(t, p.data, p.imbarco),
     data: p.data, dataLeggibile: dataLeggibile(p.data), oggi: p.data === oggi,
     imbarco: nomeImbarco(p.imbarco), gommone: nomeGommone(p.barca),
     adulti: p.adulti, bambini: p.bambini + p.neonati, persone: p.adulti + p.bambini + p.neonati,

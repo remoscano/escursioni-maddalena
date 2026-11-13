@@ -105,7 +105,7 @@ export const condizioni = [
   {
     titolo: 'A bordo',
     punti: [
-      [`Il ritrovo al molo è ${regole.anticipoRitrovo.maddalena} minuti prima della partenza a La Maddalena e a Cannigione, ${regole.anticipoRitrovo.palau} minuti prima a Palau (per le uscite delle 9:30: alle 9:15 a La Maddalena e a Cannigione, alle 9:00 a Palau). L'uscita non può aspettare chi arriva in ritardo.`],
+      [`Il ritrovo al molo è ${regole.anticipoRitrovo.maddalena} minuti prima della partenza da quel molo. Nelle uscite di gruppo il gommone parte da La Maddalena e passa a Palau mezz'ora dopo: per il mattino ritrovo alle 8:45 a La Maddalena e alle 9:15 a Palau. Ti confermiamo l'orario con un messaggio prima dell'uscita. L'uscita non può aspettare chi arriva in ritardo.`],
       ["Segui le indicazioni dello skipper, che è responsabile della sicurezza a bordo."],
       ['I minori partecipano accompagnati da un adulto.'],
       ['Gli animali non sono ammessi a bordo.'],

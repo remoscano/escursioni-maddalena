@@ -416,7 +416,7 @@ const perOspite = area === 'struttura';
         }
         return `<button type="button" class="opzione" role="radio" aria-checked="${t.id === st.turno}" data-turno="${h(t.id)}" ${s.disponibile ? '' : 'disabled'}>
           <strong>${h(t.nome)}</strong>
-          <span>${orarioDi(t, st.data) ? h(orarioDi(t, st.data)) + (t.indicativo ? ' (indicativo)' : '') : segnaposto('orario da confermare')}</span>
+          <span>${orarioDi(t, st.data, imbarco()) ? h(orarioDi(t, st.data, imbarco())) + (t.indicativo ? ' (indicativo)' : '') : segnaposto('orario da confermare')}</span>
           <span>${prezzo}</span>
           <span class="opzione__stato">${disponibilita}</span>
         </button>${!s.disponibile && config.area !== 'struttura' ? `<button type="button" class="opzione__attesa" data-attesa-turno="${h(t.id)}">Avvisami se si libera un posto</button>` : ''}`;
@@ -581,14 +581,14 @@ const perOspite = area === 'struttura';
       const info: string[] = [];
       if (offerta.tipo === 'gruppo') info.push(h(`L'uscita parte con almeno ${offerta.minimo} persone paganti: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.`));
       if (turno.indicativo) info.push(h("L'orario del tramonto è indicativo: segue la luce della giornata."));
-      if (testoRitrovo(orarioDi(turno, st.data), imbarco())) info.push(h(testoRitrovo(orarioDi(turno, st.data), imbarco())));
+      if (testoRitrovo(orarioDi(turno, st.data, imbarco()), imbarco())) info.push(h(testoRitrovo(orarioDi(turno, st.data, imbarco()), imbarco())));
       if (calcolo.carburanteEscluso) info.push(regole.carburante ? h(testoCarburante()) : testoCarburante(segnaposto));
       if (offerta.documento || turno.documento) info.push(h("Si va in Corsica: serve un documento valido per l'espatrio per ogni persona, anche per i bambini."));
       info.push(h(`Cancellazione gratuita fino a ${regole.cancellazioneGratisOre} ore prima. Con mare o vento non sicuri annulliamo noi: rimborso completo o nuova data, scegli tu.`));
       $('[data-righe]').innerHTML = `
         <div class="riepilogo__voce"><span>Escursione</span><span>${h(titolo)}</span></div>
         <div class="riepilogo__voce"><span>Data</span><span>${h(dataLunga(st.data))}</span></div>
-        <div class="riepilogo__voce"><span>Orario</span><span>${h(turno.nome)}<br>${orarioDi(turno, st.data) ? h(orarioDi(turno, st.data)) + (turno.indicativo ? ' (indicativo)' : '') : segnaposto('da confermare')}</span></div>
+        <div class="riepilogo__voce"><span>Orario</span><span>${h(turno.nome)}<br>${orarioDi(turno, st.data, imbarco()) ? h(orarioDi(turno, st.data, imbarco())) + (turno.indicativo ? ' (indicativo)' : '') : segnaposto('da confermare')}</span></div>
         <div class="riepilogo__voce"><span>Imbarco</span><span>${h(nomeImbarco)}</span></div>
         <div class="riepilogo__voce"><span>Persone</span><span>${h(testoPersone(st.adulti, st.bambini))}</span></div>
         ${calcolo.errore ? `<p class="avviso">${h(calcolo.errore)}</p>` : calcolo.righe.filter((r: any) => !r.buono).map((r: any) => `<div class="riepilogo__voce${r.importo < 0 ? ' riepilogo__voce--sconto' : ''}"><span>${h(r.testo)}</span><span class="riepilogo__importo">${r.importo < 0 ? '−' : ''}${euro(Math.abs(r.importo))}</span></div>`).join('')}

@@ -36,7 +36,7 @@ export const sito = {
     palau: {
       nome: 'Palau',
       molo: '', // es. 'Porto turistico, banchina ...'
-      ritrovo: '9:00', // uscite delle 9:30; in generale 30 minuti prima della partenza (regole.anticipoRitrovo, Remo 13 novembre 2026)
+      ritrovo: '9:15', // uscite di gruppo del mattino: il gommone passa alle 9:30 (Remo, 13 novembre 2026)
       parcheggio: '',
       mappa: '', // link Google Maps del punto di ritrovo
     },
@@ -44,13 +44,13 @@ export const sito = {
     cannigione: {
       nome: 'Cannigione',
       molo: 'Pontile La Sciumara, Via Lungomare A. Doria 7, 07021 Cannigione (SS)',
-      ritrovo: '9:15',
+      ritrovo: '9:15', // partenza 9:30, orari di prima: da confermare
       mappa: 'https://share.google/pqI5W7O5CTVevSFsE',
     },
     maddalena: {
       nome: 'La Maddalena',
       molo: 'Il Porticciolo, Via Padule, 07024 La Maddalena', // molo principale, dove i gommoni passano la notte
-      ritrovo: '9:15',
+      ritrovo: '8:45', // uscite di gruppo del mattino: partenza alle 9:00 (Remo, 13 novembre 2026)
       mappa: 'https://maps.app.goo.gl/ipWyZCHfEdG4hvKQA',
     },
   },
@@ -75,7 +75,7 @@ export const sito = {
   },
 
   // "Cosa portare": un'unica lista per home, Info utili e pagine escursione (Remo, 13 novembre 2026:
-  // niente acqua né contanti; cibo e bevande stanno nel "Non incluso" di ogni escursione).
+  // niente acqua né contanti: da bere lo diamo noi, il resto sta in "Incluso" e "Non incluso" di ogni escursione).
   cosaPortare: [
     'Costume, telo e un cambio',
     'Crema solare, cappello e occhiali',

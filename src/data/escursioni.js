@@ -9,13 +9,11 @@ const da = (slug) => prezzoDa(slug) ?? {};
 // "Palau, La Maddalena o Cannigione": da dove parte un'escursione.
 const daDove = (slug) => { const n = imbarchiPer(slug).map((i) => i.nome); return n.length > 1 ? `${n.slice(0, -1).join(', ')} o ${n.at(-1)}` : n[0]; };
 const posti = (slug) => String(Math.max(...gommoniPer(slug).map((g) => postiPer(offerte[slug], g))));
-// '05-01', '05-31' → 'Maggio'; '07-01', '08-31' → 'Luglio e agosto'.
-const MESI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
-const nomeMesi = (dal, al) => {
-  const [m1, m2] = [Number(dal.slice(0, 2)), Number(al.slice(0, 2))];
-  const t = m1 === m2 ? MESI[m1 - 1] : `${MESI[m1 - 1]} e ${MESI[m2 - 1]}`;
-  return t[0].toUpperCase() + t.slice(1);
-};
+// Orari dal listino: '9:00 – 13:00' → ['9:00', '13:00']; per Palau e Cannigione valgono gli orariImbarco del turno.
+const ore = (o) => String(o).split('–').map((x) => x.trim());
+const breveOrario = (o) => String(o).replace(' – ', '–');
+const turno7 = offerte['tour-7-isole'].turni[0];
+const [mattina, pomeriggio] = offerte['mezza-giornata'].turni;
 // Partenza e rientro della Corsica, dall'orario del listino (es. '9:30 – 17:30').
 const [partenzaCorsica, rientroCorsica] = offerte['corsica-lavezzi-bonifacio'].turni[0].orario.split('–').map((x) => x.trim());
 
@@ -31,9 +29,10 @@ export const escursioni = [
     intro:
       'Una giornata intera tra La Maddalena, Santo Stefano, Caprera, Spargi, Budelli, Razzoli e Santa Maria, con la Spiaggia Rosa vista dal mare.',
     durata: 'Giornata intera',
-    orari: offerte['tour-7-isole'].turni[0].orario,
-    ore: '8',
-    oraRientro: '17:30',
+    orari: `${breveOrario(turno7.orario)} (da Palau ${breveOrario(turno7.orariImbarco.palau)})`,
+    durataTesto: '8 ore e mezza da La Maddalena, 7 e mezza da Palau',
+    partenze: `${ore(turno7.orario)[0]}, a Palau alle ${ore(turno7.orariImbarco.palau)[0]}`,
+    oraRientro: `alle ${ore(turno7.orariImbarco.palau)[1]} a Palau e alle ${ore(turno7.orario)[1]} a La Maddalena`,
     prezzoAdulti: String(da('tour-7-isole').adulto),
     prezzoBambini: String(da('tour-7-isole').bambino),
     postiMax: posti('tour-7-isole'),
@@ -53,8 +52,8 @@ export const escursioni = [
       { etichetta: 'Isole', valore: '7' },
     ],
     programma: [
-      { tipo: 'imbarco', titolo: 'Partenza da La Maddalena', testo: 'Si parte dal porto di La Maddalena.', moloDi: 'maddalena' },
-      { tipo: 'imbarco', titolo: 'Passaggio a Palau', luogo: 'Per chi si imbarca a Palau', testo: 'Il gommone passa a prendere chi parte da Palau, poi rotta verso Santo Stefano.', moloDi: 'palau' },
+      { tipo: 'imbarco', ora: ore(turno7.orario)[0], titolo: 'Partenza da La Maddalena', testo: `Si parte alle ${ore(turno7.orario)[0]} dal porto di La Maddalena.`, moloDi: 'maddalena' },
+      { tipo: 'imbarco', ora: ore(turno7.orariImbarco.palau)[0], titolo: 'Passaggio a Palau', luogo: 'Per chi si imbarca a Palau', testo: `Alle ${ore(turno7.orariImbarco.palau)[0]} il gommone passa a prendere chi parte da Palau, poi rotta verso Santo Stefano. Alla prima sosta si aprono le bibite.`, moloDi: 'palau' },
       // Solo le isole, senza i nomi delle cale: dove fermarsi lo decide lo skipper col meteo (Remo, 13 novembre 2026).
       { tipo: 'percorso', titolo: 'Le cale le sceglie lo skipper', testo: 'Il giro tocca sette isole. In quale cala fermarsi lo decide lo skipper la mattina stessa, in base al vento e al mare del giorno.' },
       { tipo: 'sosta', n: '1', titolo: 'Santo Stefano', luogo: 'Bagno', testo: "A pochi minuti da La Maddalena: il primo tuffo della giornata, nella cala più riparata del momento." },
@@ -63,11 +62,19 @@ export const escursioni = [
       { tipo: 'sosta', n: '4', titolo: 'Spargi', luogo: 'Bagno', testo: 'Sabbia bianca tra graniti modellati da vento e mare. Si arriva solo dal mare.' },
       { tipo: 'vista', titolo: 'Budelli e la Spiaggia Rosa', luogo: 'Senza sosta', testo: 'Passaggio lento davanti alla spiaggia. Per proteggerla il Parco vieta sbarco e bagno: la si ammira dal mare.' },
       { tipo: 'sosta', n: '5', titolo: 'Razzoli e Santa Maria', luogo: 'Porto della Madonna · bagno', testo: "Lo specchio d'acqua chiuso tra Budelli, Razzoli e Santa Maria, riparato dalle correnti: l'effetto è quello di una piscina naturale. L'ultimo tuffo prima di rientrare." },
-      { tipo: 'rientro', titolo: 'Rientro a La Maddalena e Palau', testo: 'Si scende dove si è saliti.' },
+      { tipo: 'rientro', titolo: 'Mirto, dolcetti e rientro', testo: `Si chiude con mirto e dolcetti, poi si scende dove si è saliti: alle ${ore(turno7.orariImbarco.palau)[1]} a Palau, alle ${ore(turno7.orario)[1]} a La Maddalena.` },
     ],
-    incluso: ['Skipper per tutta la giornata', 'Carburante', 'Ticket del Parco'],
+    // Bevande, mirto e dolcetti solo nel Tour delle 7 isole; niente tagliere nelle uscite di gruppo (Remo, 13 novembre 2026).
+    incluso: [
+      'Skipper per tutta la giornata',
+      'Carburante',
+      'Ticket del Parco',
+      'Due bibite in lattina a testa: acqua naturale o gassata, Coca-Cola, aranciata, tè al limone o alla pesca, birra',
+      'Acqua in bottigliette da mezzo litro',
+      'Mirto e dolcetti a fine giro',
+    ],
     inclusoMancante: null,
-    nonIncluso: ['Pranzo: libero a La Maddalena, anche in un ristorante convenzionato a prezzo agevolato, oppure al sacco', 'Altro cibo e bevande a bordo', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
+    nonIncluso: ['Pranzo: libero a La Maddalena, anche in un ristorante convenzionato a prezzo agevolato, oppure al sacco', 'Altro cibo a bordo', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
     nonInclusoMancante: null,
     note: [],
     // Ristoranti convenzionati a La Maddalena, senza nomi (Remo, 13 novembre 2026): la sezione mostra le foto dei piatti.
@@ -91,7 +98,7 @@ export const escursioni = [
     intro:
       "Per chi ha poco tempo ma non vuole rinunciare al mare dell'arcipelago: quattro ore, al mattino o al pomeriggio, su uno dei due giri. Caprera, oppure le isole del nord.",
     durata: 'Mezza giornata',
-    orari: offerte['mezza-giornata'].turni.map((t) => t.orario.replace(' – ', '–')).join(' · '),
+    orari: `${breveOrario(mattina.orario)} · ${breveOrario(pomeriggio.orario)}`,
     ore: '4',
     prezzoAdulti: String(da('mezza-giornata').adulto),
     prezzoBambini: String(da('mezza-giornata').bambino),
@@ -110,7 +117,7 @@ export const escursioni = [
     mappa: 'mezza',
     numeri: [],
     programma: [
-      { tipo: 'imbarco', titolo: `Partenza da ${daDove('mezza-giornata')}`, testo: "Mattina 9:30–13:30 o pomeriggio 14:00–18:00. Si parte da La Maddalena; a Palau il gommone passa a prendere chi si imbarca lì. Da Cannigione parte l'Honda 9.50." },
+      { tipo: 'imbarco', titolo: `Partenza da ${daDove('mezza-giornata')}`, testo: `Da La Maddalena mattina ${breveOrario(mattina.orario)} o pomeriggio ${breveOrario(pomeriggio.orario)}. A Palau il gommone passa mezz'ora dopo e ti riporta lì mezz'ora prima: ${breveOrario(mattina.orariImbarco.palau)} o ${breveOrario(pomeriggio.orariImbarco.palau)}. Da Cannigione parte l'Honda 9.50: ${breveOrario(mattina.orariImbarco.cannigione)} o ${breveOrario(pomeriggio.orariImbarco.cannigione)}.` },
       // Due giri distinti, mai insieme: in mezza giornata non c'è tempo (Remo, 13 novembre 2026). Sceglie lo skipper col meteo.
       { tipo: 'percorso', titolo: 'Un giro su due, scelto col vento', testo: "In quattro ore non si fanno Caprera e le isole del nord insieme: si starebbe sempre in navigazione. Lo skipper sceglie uno dei due giri la mattina stessa, in base al vento e al mare." },
       { tipo: 'percorso', titolo: 'Giro 1 · Caprera', testo: "Tutta la mezza giornata intorno a Caprera, l'isola di Garibaldi." },
@@ -122,9 +129,10 @@ export const escursioni = [
       { tipo: 'sosta', n: '2', titolo: 'Porto della Madonna', luogo: 'Razzoli e Santa Maria · bagno', testo: "Lo specchio d'acqua tra Budelli, Razzoli e Santa Maria, riparato dalle correnti: una piscina naturale." },
       { tipo: 'rientro', titolo: 'Rientro diretto', testo: 'Si scende dove si è saliti.' },
     ],
-    incluso: ['Skipper', 'Carburante', 'Ticket del Parco'],
+    // Nella mezza giornata solo acqua e bibite (Remo, 13 novembre 2026).
+    incluso: ['Skipper', 'Carburante', 'Ticket del Parco', 'Acqua e bibite in lattina'],
     inclusoMancante: null,
-    nonIncluso: ['Cibo e bevande', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
+    nonIncluso: ['Cibo', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
     nonInclusoMancante: null,
     note: [],
   },
@@ -139,7 +147,7 @@ export const escursioni = [
     intro:
       "Il Sunset è un aperitivo in gommone: si brinda con il prosecco, si assaggia qualcosa e ci si ferma in acqua bassa e riparata mentre il sole scende sulle isole.",
     durata: 'Due ore e mezza',
-    orari: 'verso il tramonto, orario indicativo',
+    orari: 'partenza tra le 18:30 e le 19:00',
     ore: '2,5',
     durataTesto: '2 ore e mezza',
     prezzoAdulti: String(da('tramonto').adulto),
@@ -150,15 +158,15 @@ export const escursioni = [
       copertina: 'Il gommone controluce al tramonto',
       galleria: [
         'Il brindisi con il prosecco a bordo',
-        'Il tagliere di salumi e formaggi e gli spiedini di frutta',
+        'Il tagliere con salsiccia e formaggio e gli spiedini di frutta',
         'Il cielo arancione sul mare',
         'Il gommone fermo in una baia, con la luce della sera',
         'Il rientro in porto con le prime luci',
       ],
     },
     mappa: false,
-    // Orari del mese, dal listino (src/data/prenotazioni.js): sono indicativi.
-    numeri: offerte.tramonto.turni[0].orari.map((o) => ({ etichetta: `Orario ${nomeMesi(o.dal, o.al).toLowerCase()}`, valore: o.orario.replace(' – ', '–') })),
+    // Partenza sempre tra le 18:30 e le 19:00 (Remo, 13 novembre 2026).
+    numeri: [{ etichetta: 'Partenza', valore: '18:30–19:00' }],
     programma: [
       { tipo: 'imbarco', titolo: `Partenza da ${daDove('tramonto')}`, testo: "Ti consigliamo La Maddalena: al rientro è già buio e la strada più corta rende il ritorno più breve e sicuro. A Palau il gommone passa a prendere chi si imbarca lì; da Cannigione parte l'Honda 9.50." },
       { tipo: 'percorso', titolo: 'La sosta, scelta in base al vento', testo: "Nelle uscite di gruppo la sosta la sceglie il comandante, quasi sempre in base al vento: niente trasferimenti lunghi, niente mare mosso né spruzzi." },
@@ -169,14 +177,14 @@ export const escursioni = [
       'Skipper',
       'Carburante',
       'Ticket del Parco',
-      'Da bere, dal frigo di bordo: prosecco, birra, Coca-Cola e acqua',
-      'Da mangiare: tagliere di salumi e formaggi (o solo formaggi) con spiedini di frutta fresca',
+      'Da bere, dal frigo di bordo: prosecco per il brindisi (una bottiglia ogni 6 persone), birra, Coca-Cola e acqua',
+      'Da mangiare: tagliere con salsiccia e formaggio, oppure spiedini di frutta o taralli e ciliege',
     ],
     inclusoMancante: null,
-    nonIncluso: ['Cena', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
+    nonIncluso: ['Cena', 'Altre bottiglie di prosecco, se le chiedete: si pagano a parte', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
     nonInclusoMancante: null,
     note: [
-      'Gli orari sono indicativi: seguono la luce del tramonto, che cambia da un mese all\'altro.',
+      "Si parte tra le 18:30 e le 19:00, dopo aver preparato il gommone: l'orario esatto te lo confermiamo con un messaggio.",
       `Al Sunset di gruppo siete al massimo ${posti('tramonto')} persone. Con il tour privato il gommone è solo vostro: potete allungare fino a Spargi o Budelli, o chiedere il tramonto a Porto della Madonna o a Caprera, se il meteo lo permette (carburante a parte).`,
     ],
   },
@@ -214,9 +222,10 @@ export const escursioni = [
       { tipo: 'sosta', n: '1', titolo: 'Le soste che scegliete voi', luogo: 'Su misura', testo: "Il giro delle 7 isole o solo le cale più tranquille: lo skipper vi propone l'itinerario in base al vento del giorno. Per la Corsica c'è l'escursione dedicata, anche quella solo per voi." },
       { tipo: 'rientro', titolo: 'Rientro', testo: 'Quando volete, entro la durata concordata.' },
     ],
-    incluso: ['Il gommone e lo skipper solo per il vostro gruppo', 'Bevande a bordo', 'Ticket del Parco'],
+    // Prosecco e tagliere in tutte le esclusive (Remo, 13 novembre 2026).
+    incluso: ['Il gommone e lo skipper solo per il vostro gruppo', 'Bevande a bordo', 'Prosecco per il brindisi: una bottiglia ogni 6 persone', 'Tagliere con salsiccia e formaggio, oppure spiedini di frutta o taralli e ciliege', 'Ticket del Parco'],
     inclusoMancante: null,
-    nonIncluso: ['Carburante: a consumo, si paga a bordo a fine uscita', 'Cibo', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
+    nonIncluso: ['Carburante: a consumo, si paga a bordo a fine uscita', 'Pranzo, nella giornata intera', 'Altre bottiglie di prosecco, se le chiedete: si pagano a parte', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
     nonInclusoMancante: null,
     note: [],
   },
@@ -256,9 +265,9 @@ export const escursioni = [
       { tipo: 'sosta', n: '3', titolo: 'Isola di Cavallo', luogo: 'Dal mare · bagno', testo: "Accanto alle Lavezzi, tra ville nascoste nella macchia e piccoli approdi: la si costeggia e ci si ferma per un ultimo tuffo prima della traversata di ritorno." },
       { tipo: 'rientro', ora: rientroCorsica, titolo: 'Rientro', testo: 'Si scende dove si è saliti.' },
     ],
-    incluso: ['Il gommone e lo skipper solo per il vostro gruppo', 'Bevande a bordo', 'Ticket del Parco', 'Eventuali tasse di sbarco'],
+    incluso: ['Il gommone e lo skipper solo per il vostro gruppo', 'Bevande a bordo', 'Prosecco per il brindisi: una bottiglia ogni 6 persone', 'Tagliere con salsiccia e formaggio, oppure spiedini di frutta o taralli e ciliege', 'Ticket del Parco', 'Eventuali tasse di sbarco'],
     inclusoMancante: null,
-    nonIncluso: ['Carburante: a consumo, si paga a bordo a fine uscita', 'Pranzo: libero, ti suggeriamo dove mangiare oppure porta il pranzo al sacco', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
+    nonIncluso: ['Carburante: a consumo, si paga a bordo a fine uscita', 'Pranzo: libero, ti suggeriamo dove mangiare oppure porta il pranzo al sacco', 'Altre bottiglie di prosecco, se le chiedete: si pagano a parte', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
     nonInclusoMancante: null,
     note: [
       "Si entra in Francia: ognuno deve avere con sé carta d'identità valida per l'espatrio o passaporto, anche i bambini.",

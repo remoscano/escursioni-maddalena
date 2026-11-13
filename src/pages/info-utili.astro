@@ -35,7 +35,7 @@ const { imbarchi } = sito;
           <span class="box__icona"><Icona nome="ancora" size={24} tratto={1.8} /></span>
           <h3>La Maddalena · porto di partenza</h3>
           <p><strong>Molo:</strong> <Dato v={imbarchi.maddalena.molo} e="molo e indirizzo" /></p>
-          <p><strong>Ritrovo:</strong> {regole.anticipoRitrovo.maddalena} minuti prima della partenza (alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
+          <p><strong>Ritrovo:</strong> {regole.anticipoRitrovo.maddalena} minuti prima della partenza (alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" /> per le uscite di gruppo del mattino).</p>
           <p>È il nostro porto di partenza: tutti i gommoni partono da qui, tranne quello di Cannigione. Comodo se dormi sull'isola.</p>
           {imbarchi.maddalena.mappa
             ? <a href={imbarchi.maddalena.mappa} class="link-freccia" rel="noopener">Apri in Google Maps<Icona nome="destra" size={18} /></a>
@@ -46,7 +46,7 @@ const { imbarchi } = sito;
           <h3>Palau · ti passiamo a prendere</h3>
           <p>Il gommone parte da La Maddalena e passa a prendere chi si imbarca a Palau.</p>
           <p><strong>Molo:</strong> <Dato v={imbarchi.palau.molo} e="molo e indirizzo" /></p>
-          <p><strong>Ritrovo:</strong> {regole.anticipoRitrovo.palau} minuti prima della partenza (alle <Dato v={imbarchi.palau.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
+          <p><strong>Ritrovo:</strong> {regole.anticipoRitrovo.palau} minuti prima della partenza (alle <Dato v={imbarchi.palau.ritrovo} e="ora" /> per le uscite di gruppo del mattino).</p>
           <p><strong>Parcheggio:</strong> <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" /></p>
           <p>Comodo se dormi in Gallura: Santa Teresa, Porto Pollo, Baja Sardinia.</p>
           {imbarchi.palau.mappa
@@ -57,7 +57,7 @@ const { imbarchi } = sito;
           <span class="box__icona"><Icona nome="ancora" size={24} tratto={1.8} /></span>
           <h3>Cannigione</h3>
           <p><strong>Molo:</strong> <Dato v={imbarchi.cannigione.molo} e="molo e indirizzo" /></p>
-          <p><strong>Ritrovo:</strong> {regole.anticipoRitrovo.cannigione} minuti prima della partenza (alle <Dato v={imbarchi.cannigione.ritrovo} e="ora" /> per le uscite delle 9:30).</p>
+          <p><strong>Ritrovo:</strong> {regole.anticipoRitrovo.cannigione} minuti prima della partenza (alle <Dato v={imbarchi.cannigione.ritrovo} e="ora" /> per le uscite di gruppo del mattino).</p>
           <p>Comodo se dormi a Cannigione, ad Arzachena o in Costa Smeralda. Da qui parte un gommone dedicato per mezze giornate, Sunset al tramonto ed esclusive; il Tour delle 7 isole e la Corsica partono da La Maddalena, con passaggio a Palau.</p>
           {imbarchi.cannigione.mappa
             ? <a href={imbarchi.cannigione.mappa} class="link-freccia" rel="noopener">Apri in Google Maps<Icona nome="destra" size={18} /></a>

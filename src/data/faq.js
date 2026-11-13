@@ -89,7 +89,7 @@ export const faq = [
         id: 'portare',
         domanda: 'Cosa devo portare?',
         risposta:
-          "Costume, telo e un cambio, crema solare, cappello e occhiali. Se vuoi fare snorkeling porta maschera e boccaglio: per igiene non li forniamo, anche se a bordo ne teniamo qualcuno. Per i bambini, se vuoi, un giubbotto di salvataggio della loro misura. Cibo e bevande: nelle uscite di gruppo sono a carico tuo, nel Sunset c'è l'aperitivo e nei tour in esclusiva le bevande sono incluse. Ogni escursione lo dice nella lista \"Non incluso\". E soprattutto porta la voglia di divertirti e passare una giornata indimenticabile.",
+          "Costume, telo e un cambio, crema solare, cappello e occhiali. Se vuoi fare snorkeling porta maschera e boccaglio: per igiene non li forniamo, anche se a bordo ne teniamo qualcuno. Per i bambini, se vuoi, un giubbotto di salvataggio della loro misura. Da bere ci pensiamo noi: nel Tour delle 7 isole due bibite in lattina a testa e l'acqua, con mirto e dolcetti a fine giro; nella mezza giornata acqua e bibite; nel Sunset e nelle esclusive prosecco e tagliere. Il resto del cibo è a carico tuo: ogni escursione lo dice nelle liste \"Incluso\" e \"Non incluso\". E soprattutto porta la voglia di divertirti e passare una giornata indimenticabile.",
       },
     ],
   },
