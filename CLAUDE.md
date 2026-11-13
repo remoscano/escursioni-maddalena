@@ -126,7 +126,7 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [ ] Dominio: da GoDaddy a Cloudflare (DNS), collegarlo in Pages → Custom domains; poi `site` in `astro.config.mjs`, `url` in `src/data/sito.js`, `www` che rimanda alla versione senza `www`
 - [ ] Email di conferma, obbligatorie (art. 51, comma 7, Codice del consumo): account Resend, dominio verificato, `RESEND_API_KEY` ed `EMAIL_MITTENTE` in Cloudflare Pages
 - [ ] Conti SumUp e PayPal → chiavi in Cloudflare Pages (Production): `SUMUP_API_KEY`, `SUMUP_MERCHANT_CODE`, `PAYPAL_CLIENT_ID`, `PAYPAL_SECRET`
-- [ ] Migrazione `0004_funzioni_nuove.sql` su entrambi i database (`npx wrangler d1 migrations apply escursioni-prenotazioni-prova --remote` e `... escursioni-prenotazioni --remote`): chiude le sessioni aperte, basta rientrare
+- [ ] Migrazione `0004_funzioni_nuove.sql` sul database vero (`npx wrangler d1 migrations apply escursioni-prenotazioni --remote`, oppure il testo di `0004` più `INSERT OR IGNORE INTO d1_migrations (name) VALUES ('0004_funzioni_nuove.sql');` nella Console D1): chiude le sessioni aperte, basta rientrare. Sul database di prova è già fatta (Claude, 13 novembre 2026)
 - [ ] Email automatiche: segreto `AUTOMATICO_CHIAVE` (e `SITO_URL` col dominio) in Cloudflare Pages, poi pubblicare il Worker in `automatico/` (istruzioni nel suo LEGGIMI)
 - [ ] Rimborsi automatici: controllare che la chiave SumUp possa fare rimborsi (permesso "payments") e fare una prova con PayPal sandbox
 - [ ] Accessi skipper dalla gestione (Account) e prova dell'imbarco col telefono il primo giorno
