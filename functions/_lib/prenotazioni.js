@@ -52,7 +52,6 @@ export function vistaCliente(p) {
   const offerta = offerte[p.escursione];
   return {
     turnoId: p.turno,
-    imbarcoId: p.imbarco,
     persone: p.adulti + p.bambini + p.neonati,
     pagato: p.pagato / 100,
     daPagare: daPagare(p) / 100,

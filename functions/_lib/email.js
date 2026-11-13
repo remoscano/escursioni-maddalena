@@ -88,7 +88,7 @@ export async function inviaEmailPromemoria(env, p, origine) {
     '',
     ...testa(v),
     v.orario ? `Orario: ${v.orario}${v.orarioIndicativo ? ' (indicativo: segue la luce del tramonto)' : ''}` : null,
-    testoRitrovo(v.orario) || null,
+    testoRitrovo(v.orario, p.imbarco) || null,
     imbarco?.molo ? `Dove: ${imbarco.molo}${imbarco.mappa ? ` (mappa: ${imbarco.mappa})` : ''}` : null,
     p.imbarco === 'palau' ? "Si parte da La Maddalena: a Palau il gommone passa a prenderti." : null,
     '',
