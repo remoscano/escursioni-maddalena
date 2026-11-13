@@ -40,6 +40,14 @@ import { sito } from '../../data/sito.js';
   .rinvio__giorni button, .rinvio__turni button { min-height: 48px; padding: 8px 12px; border: 1.5px solid var(--bordo-campo); border-radius: 12px; background: var(--bianco); font: inherit; font-size: 15px; color: var(--mare); cursor: pointer; text-align: left; }
   .rinvio__giorni button[aria-pressed="true"], .rinvio__turni button[aria-pressed="true"] { border: 2px solid var(--mare); background: var(--acqua); font-weight: 700; }
   .rinvio__turni { display: flex; flex-wrap: wrap; gap: 8px; }
+  .calendario { position: relative; }
+  .calendario summary { list-style: none; cursor: pointer; }
+  .calendario summary::-webkit-details-marker { display: none; }
+  .calendario__scelte { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; padding: 8px; border: 1px solid var(--bordo); border-radius: 16px; background: var(--bianco); box-shadow: var(--ombra-grande); min-width: min(280px, 100%); }
+  @media (min-width: 640px) { .calendario__scelte { position: absolute; z-index: 5; top: 100%; left: 0; } }
+  .calendario__scelta { display: flex; flex-direction: column; gap: 2px; padding: 10px 14px; min-height: 48px; border-radius: 12px; font-weight: 700; color: var(--mare); text-decoration: none; cursor: pointer; }
+  .calendario__scelta:hover, .calendario__scelta:focus-visible { background: var(--acqua); }
+  .calendario__scelta span { font-weight: 500; font-size: 14px; color: var(--testo-2); }
   .cal__freccia { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--bordo-campo); background: var(--bianco); font-size: 24px; line-height: 1; color: var(--mare); cursor: pointer; }
   .cal__freccia:disabled { opacity: .35; cursor: not-allowed; }
   @media print { .testata, .piede, .esito__azioni, .esito__nascondi-stampa { display: none !important; } .esito { box-shadow: none; border: 0; } }
@@ -80,24 +88,76 @@ import { sito } from '../../data/sito.js';
     return fuori;
   }
 
-  function ics(p: any) {
+  // Giorno e orari dell'uscita: 'AAAAMMGG' e 'HHMM' (vuoti se l'orario non c'è: evento di tutto il giorno).
+  function tempi(p: any) {
     const giorno = p.data.replace(/-/g, '');
     const [ini, fin] = String(p.orario || '').split('–').map((s: string) => s.trim().replace(':', '').padStart(4, '0'));
-    const conOrario = Boolean(ini && fin);
+    return { giorno, ini, fin, conOrario: Boolean(ini && fin) };
+  }
+  const titoloEvento = (p: any) => `${p.escursione} (${p.codice})`;
+  const luogoEvento = (p: any) => `Imbarco ${p.imbarco}`;
+  const dettagliEvento = (p: any) => [`Codice ${p.codice}`, p.turno, persone(p.adulti, p.bambini, p.neonati),
+    p.documento ? "Porta un documento valido per l'espatrio per ogni persona, anche per i bambini." : '',
+    `La tua prenotazione: ${location.href}`].filter(Boolean).join('\n');
+  const giornoDopo = (data: string) => { const d = new Date(`${data}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + 1); return d.toISOString().slice(0, 10); };
+
+  // Google Calendar: si apre nel browser (o nell'app) con l'evento già compilato.
+  function linkGoogle(p: any) {
+    const t = tempi(p);
+    const date = t.conOrario ? `${t.giorno}T${t.ini}00/${t.giorno}T${t.fin}00` : `${t.giorno}/${giornoDopo(p.data).replace(/-/g, '')}`;
+    const q = new URLSearchParams({ action: 'TEMPLATE', text: titoloEvento(p), dates: date, details: dettagliEvento(p), location: luogoEvento(p), ctz: 'Europe/Rome' });
+    return `https://calendar.google.com/calendar/render?${q}`;
+  }
+
+  // Scarto dell'ora di Roma in quel giorno ('+02:00' d'estate).
+  function scartoRoma(data: string) {
+    try {
+      const nome = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Rome', timeZoneName: 'shortOffset' }).formatToParts(new Date(`${data}T12:00:00Z`)).find((x) => x.type === 'timeZoneName')?.value || 'GMT+2';
+      const ore = Number((/GMT([+-]\d+)/.exec(nome) || [])[1] ?? 2);
+      return `${ore < 0 ? '-' : '+'}${String(Math.abs(ore)).padStart(2, '0')}:00`;
+    } catch { return '+02:00'; }
+  }
+
+  // Outlook (Outlook.com e Microsoft 365): si apre nel browser con l'evento già compilato.
+  function linkOutlook(p: any) {
+    const t = tempi(p);
+    const ora = (hhmm: string) => `${p.data}T${hhmm.slice(0, 2)}:${hhmm.slice(2)}:00${scartoRoma(p.data)}`;
+    const q = new URLSearchParams({
+      path: '/calendar/action/compose', rru: 'addevent', subject: titoloEvento(p), body: dettagliEvento(p), location: luogoEvento(p),
+      ...(t.conOrario ? { startdt: ora(t.ini), enddt: ora(t.fin) } : { startdt: p.data, enddt: giornoDopo(p.data), allday: 'true' }),
+    });
+    return `https://outlook.live.com/calendar/0/deeplink/compose?${q}`;
+  }
+
+  // iPhone, iPad e Mac: file .ics (standard RFC 5545), che il Calendario apre direttamente, con un promemoria il giorno prima.
+  function ics(p: any) {
+    const { giorno, ini, fin, conOrario } = tempi(p);
     const adesso = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-    const dettagli = [`Codice ${p.codice}`, p.turno, persone(p.adulti, p.bambini, p.neonati),
-      p.documento ? "Porta un documento valido per l'espatrio per ogni persona, anche per i bambini." : ''].filter(Boolean).join('\n');
     const righe = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Escursioni La Maddalena//IT', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
       ...(conOrario ? ORA_ROMA : []),
       'BEGIN:VEVENT', `UID:${p.codice}@escursioni-maddalena`, `DTSTAMP:${adesso}`,
       ...(conOrario ? [`DTSTART;TZID=Europe/Rome:${giorno}T${ini}00`, `DTEND;TZID=Europe/Rome:${giorno}T${fin}00`] : [`DTSTART;VALUE=DATE:${giorno}`]),
-      `SUMMARY:${testoIcs(`${p.escursione} (${p.codice})`)}`,
-      `LOCATION:${testoIcs(`Imbarco ${p.imbarco}`)}`,
-      `DESCRIPTION:${testoIcs(dettagli)}`,
+      `SUMMARY:${testoIcs(titoloEvento(p))}`,
+      `LOCATION:${testoIcs(luogoEvento(p))}`,
+      `DESCRIPTION:${testoIcs(dettagliEvento(p))}`,
       'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${testoIcs(`Domani: ${p.escursione}`)}`, 'TRIGGER:-P1D', 'END:VALARM',
       'END:VEVENT', 'END:VCALENDAR'];
     return URL.createObjectURL(new Blob([righe.map(piega).join('\r\n') + '\r\n'], { type: 'text/calendar;charset=utf-8' }));
   }
+
+  // Le tre scelte del bottone "Aggiungi al calendario": prima quella del telefono che si sta usando.
+  function sceltaCalendario(p: any) {
+    const ua = navigator.userAgent;
+    const apple = /iPhone|iPad|iPod|Macintosh/.test(ua) && !/Android/.test(ua);
+    const scelte = [
+      { chiave: 'google', html: `<a class="calendario__scelta" href="${h(linkGoogle(p))}" target="_blank" rel="noopener">Google Calendar<span>anche per i telefoni Android</span></a>` },
+      { chiave: 'apple', html: `<a class="calendario__scelta" data-ics download="${h(p.codice)}.ics">iPhone e Mac<span>si apre nel Calendario di Apple</span></a>` },
+      { chiave: 'outlook', html: `<a class="calendario__scelta" href="${h(linkOutlook(p))}" target="_blank" rel="noopener">Outlook<span>Outlook.com e Microsoft 365</span></a>` },
+    ];
+    if (apple) scelte.unshift(scelte.splice(1, 1)[0]);
+    return `<details class="calendario"><summary class="btn btn--wa">Aggiungi al calendario</summary><div class="calendario__scelte">${scelte.map((x) => x.html).join('')}</div></details>`;
+  }
+
 
   function riepilogo(p: any) {
     return `<dl>
@@ -235,7 +295,7 @@ import { sito } from '../../data/sito.js';
         ${riepilogo(p)}
         <ul>${note.map((n) => `<li>${n}</li>`).join('')}</ul>
         <p class="testo-2" style="font-size:15px">Valgono le <a href="/condizioni/">condizioni di prenotazione</a>.</p>
-        <div class="esito__azioni"><a class="btn btn--wa" data-ics download="${h(p.codice)}.ics">Aggiungi al calendario</a>${p.pagabile ? pagaOra : ''}<button type="button" class="btn btn--bordo" onclick="window.print()">Stampa</button>${wa(`Ciao! Ho la prenotazione ${p.codice}.`)}</div>
+        <div class="esito__azioni">${sceltaCalendario(p)}${p.pagabile ? pagaOra : ''}<button type="button" class="btn btn--bordo" onclick="window.print()">Stampa</button>${wa(`Ciao! Ho la prenotazione ${p.codice}.`)}</div>
         ${p.annullabile ? `<details class="esito__nascondi-stampa"><summary style="cursor:pointer;font-weight:700;color:var(--turchese);min-height:44px;display:inline-flex;align-items:center">Devi annullare?</summary>
           <p style="margin:8px 0">Fino a ${p.cancellazioneGratisOre} ore prima della partenza il rimborso è completo e automatico: ${euro(p.pagato)} sullo stesso metodo con cui hai pagato${p.buono ? `, e ${euro(p.buono)} tornano sul buono regalo` : ''}.</p>
           <button type="button" class="btn btn--avviso" data-annulla-cliente>Annulla la prenotazione</button>
