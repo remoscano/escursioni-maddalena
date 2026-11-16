@@ -237,7 +237,7 @@ export const escursioni = [
     inclusoMancante: null,
     nonIncluso: ['Carburante: a consumo, si paga a bordo a fine uscita', 'Pranzo, nella giornata intera: al sacco oppure al ristorante, scegli tu', 'Altre bottiglie di prosecco, se le chiedete: si pagano a parte', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
     nonInclusoMancante: null,
-    note: [],
+    note: [sito.notaOrariEsclusiva],
   },
   {
     slug: 'corsica',
@@ -281,6 +281,7 @@ export const escursioni = [
     nonInclusoMancante: null,
     note: [
       "Si entra in Francia: ognuno deve avere con sé carta d'identità valida per l'espatrio o passaporto, anche i bambini.",
+      sito.notaOrariEsclusiva,
       'La traversata dipende dal mare: con vento forte l\'uscita può essere spostata.',
     ],
   },

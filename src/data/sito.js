@@ -79,6 +79,15 @@ export const sito = {
     nonIncluso: 'Pranzo: libero a La Maddalena, nei ristoranti convenzionati a prezzi agevolati oppure al sacco',
   },
 
+  // Prenotazione su WhatsApp (Remo, 16 novembre 2026): dopo la conferma l'ufficio manda un link di pagamento SumUp o PayPal.
+  pagamentoLink: {
+    breve: 'Paghi dopo la conferma, con il link che ti mandiamo',
+    testo: 'Quando ti confermiamo la disponibilità su WhatsApp, ti mandiamo un link per pagare online, con carta (SumUp) o con PayPal.',
+  },
+
+  // Esclusive: i clienti possono chiedere piccole modifiche all'orario (Remo, 16 novembre 2026).
+  notaOrariEsclusiva: "Gli orari sono indicativi: se ti serve, chiedici una piccola modifica quando prenoti.",
+
   skipper: {
     nome: '',
     descrizione: '', // anni di mare, lingue parlate

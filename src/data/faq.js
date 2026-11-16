@@ -17,13 +17,13 @@ export const faq = [
         domanda: 'Come si prenota?',
         risposta: online
           ? `Online, dalla pagina Prenota: scegli escursione, giorno e orario, vedi subito i posti liberi e paghi con carta o PayPal. Ricevi il codice di prenotazione da mostrare all'imbarco. ${testoChiusuraOnline} ${testoDopoChiusura}`
-          : "Con un messaggio WhatsApp: dalla pagina Richiesta scegli escursione, giorno, persone e punto d'imbarco, e il messaggio è già pronto da inviare. Ti rispondiamo con la disponibilità e l'orario di ritrovo.",
+          : `Con un messaggio WhatsApp: dalla pagina Richiesta scegli escursione, giorno, persone e punto d'imbarco, e il messaggio è già pronto da inviare. Ti rispondiamo con la disponibilità e l'orario di ritrovo. ${sito.pagamentoLink.testo}`,
       },
       {
         id: 'pagare',
         domanda: 'Come si paga?',
         // Senza prenotazione online: niente modo di pagare inventato, si spiega su WhatsApp (Remo, 16 novembre 2026).
-        risposta: online ? '' : 'Te lo spieghiamo su WhatsApp quando confermiamo la prenotazione. Nei tour in esclusiva il carburante è a parte.',
+        risposta: online ? '' : `${sito.pagamentoLink.testo} Nei tour in esclusiva il carburante è a parte e si paga a bordo, a consumo.`,
         regola: online ? 'pagamento' : undefined,
         mancante: online ? 'Pagamento: a bordo, in contanti o con carta? Serve un acconto?' : undefined,
       },

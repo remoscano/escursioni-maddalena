@@ -84,7 +84,7 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
           ) : (
             <Fragment>
               <a href="#richiesta" class="btn btn--wa btn--grande btn--pieno"><Icona nome="whatsapp" />Chiedi disponibilità su WhatsApp</a>
-              <p class="box-prezzo__nota">Nessun pagamento online. Oppure chiama {contatti.telefonoVisibile
+              <p class="box-prezzo__nota">{sito.pagamentoLink.breve}. Oppure chiama {contatti.telefonoVisibile
                 ? <a href={`tel:+${contatti.whatsapp}`}>{contatti.telefonoVisibile}</a>
                 : <Dato e="+39 numero" />}</p>
             </Fragment>

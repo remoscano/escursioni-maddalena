@@ -16,7 +16,7 @@ const { contatti } = sito;
       <h1>Tre scelte e il messaggio è pronto</h1>
       <p class="intro">Ti rispondiamo su WhatsApp con disponibilità, orario di ritrovo e molo.{regole.attive
         ? <Fragment> Per prenotare e pagare subito, senza aspettare la risposta: <a href="/prenota/">prenota online</a>.</Fragment>
-        : ' Nessun pagamento online.'}</p>
+        : ` ${sito.pagamentoLink.breve}.`}</p>
     </div>
   </section>
   <section class="sezione" style="padding-top:40px">
