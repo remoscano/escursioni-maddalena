@@ -27,7 +27,7 @@ export const faq = [
         id: 'pagare',
         domanda: 'Come si paga?',
         // Senza prenotazione online: niente modo di pagare inventato, si spiega su WhatsApp (Remo, 16 novembre 2026).
-        risposta: online ? '' : `${sito.pagamentoLink.testo} Nei tour in esclusiva il carburante è a parte e si paga a bordo, a consumo.`,
+        risposta: online ? '' : `${sito.pagamentoLink.testo} Nei tour in esclusiva il carburante è a parte: ${regoleP.carburante}.`,
         regola: online ? 'pagamento' : undefined,
         mancante: online ? 'Pagamento: a bordo, in contanti o con carta? Serve un acconto?' : undefined,
       },

@@ -35,7 +35,9 @@ export const regole = {
   eta: { bambiniFinoA: 10 },
   // Esclusive: il carburante si paga a parte. La legge chiede di dire prima come si calcola e quando si paga
   // (es. 'a consumo, si paga a bordo a fine uscita'). Finché è vuoto, sul sito e nelle email compare un segnaposto.
-  carburante: 'a consumo, si paga a bordo a fine uscita',
+  // Come si calcola (Remo, 16 novembre 2026): alla partenza si mostra il pieno, al rientro si contano insieme i litri consumati.
+  // Manca ancora il prezzo al litro (quale prezzo si applica): da chiedere a Remo e aggiungere qui.
+  carburante: 'a consumo. Alla partenza ti mostriamo il serbatoio pieno; al rientro calcoliamo insieme i litri consumati, che paghi a bordo a fine uscita',
 
   // ----- Proposte di Claude (13 novembre 2026), da far confermare a Remo -----
   // Link di pagamento mandati dalla gestione: per quante ore tengono i posti (scelta nel modulo).

@@ -2,7 +2,7 @@
 // con lo stesso modello della pagina "Tour delle 7 isole".
 // I valori vuoti ('') diventano segnaposto rosa sul sito.
 
-import { prezzoDa, offerte, gommoniPer, imbarchiPer, postiPer } from './prenotazioni.js';
+import { prezzoDa, offerte, gommoniPer, imbarchiPer, postiPer, regole } from './prenotazioni.js';
 import { sito } from './sito.js';
 
 const pranzo7 = sito.pranzo7; // testo unico del pranzo del Tour delle 7 isole
@@ -252,7 +252,7 @@ export const escursioni = [
     // Prosecco e tagliere in tutte le esclusive (Remo, 13 novembre 2026).
     incluso: ['Il gommone in esclusiva, con lo skipper', 'Bevande a bordo', 'Prosecco per il brindisi: una bottiglia ogni 6 persone', sito.tagliere, 'Ticket del Parco'],
     inclusoMancante: null,
-    nonIncluso: ['Carburante: a consumo, si paga a bordo a fine uscita', 'Pranzo, nella giornata intera: al sacco oppure al ristorante, scegli tu', 'Altre bottiglie di prosecco, se le chiedete: si pagano a parte', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
+    nonIncluso: [`Carburante: ${regole.carburante}`, 'Pranzo, nella giornata intera: al sacco oppure al ristorante, scegli tu', 'Altre bottiglie di prosecco, se le chiedete: si pagano a parte', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
     nonInclusoMancante: null,
     note: [sito.notaOrariEsclusiva],
   },
@@ -298,7 +298,7 @@ export const escursioni = [
     ],
     incluso: ['Il gommone in esclusiva, con lo skipper', 'Bevande a bordo', 'Prosecco per il brindisi: una bottiglia ogni 6 persone', sito.tagliere, 'Ticket del Parco', 'Eventuali tasse di sbarco'],
     inclusoMancante: null,
-    nonIncluso: ['Carburante: a consumo, si paga a bordo a fine uscita', 'Pranzo: al sacco oppure al ristorante, scegli tu', 'Altre bottiglie di prosecco, se le chiedete: si pagano a parte', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
+    nonIncluso: [`Carburante: ${regole.carburante}`, 'Pranzo: al sacco oppure al ristorante, scegli tu', 'Altre bottiglie di prosecco, se le chiedete: si pagano a parte', 'Maschere e boccagli: per igiene portali tu (a bordo ne teniamo qualcuno)'],
     nonInclusoMancante: null,
     note: [
       "Si entra in Francia: ognuno deve avere con sé carta d'identità valida per l'espatrio o passaporto, anche i bambini.",
