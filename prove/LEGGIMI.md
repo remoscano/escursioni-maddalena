@@ -20,6 +20,10 @@ python3 prove/prova_ui_nuove.py    # le stesse funzioni dal browser, 1440 e 390 
 # Avviso automatico di PayPal, con un finto PayPal (porta 8797): sito avviato a parte sulla porta 8789
 npx wrangler pages dev dist --port 8789 --ip 127.0.0.1 --binding PAYPAL_CLIENT_ID=prova --binding PAYPAL_SECRET=prova --binding PAYPAL_API_URL=http://127.0.0.1:8797
 python3 prove/prova_paypal.py
+
+# Accessibilità (WCAG 2.2 AA) di tutte le pagine, sul sito della porta 8788
+npm i --no-save axe-core@4
+python3 prove/prova_accessibilita.py
 ```
 
 Le prove usano date della stagione 2027 e vanno lanciate su un database locale vuoto (tranne l'accesso di gestione):
