@@ -1,14 +1,14 @@
 # Escursioni La Maddalena — sito web
 
-Sito statico fatto con [Astro](https://astro.build): produce HTML, CSS e un po' di JavaScript, senza server né database.
+Sito fatto con [Astro](https://astro.build): le pagine sono statiche (HTML, CSS e un po' di JavaScript); le prenotazioni online usano le funzioni e il database di Cloudflare (vedi sotto).
 Viene pubblicato su Cloudflare Pages a ogni modifica salvata su GitHub.
 
 ## Dove si cambiano i contenuti
 
 | Cosa | File |
 |---|---|
-| Numero WhatsApp, telefono, email, dati dell'azienda (ragione sociale, P. IVA, REA), moli, orari di ritrovo, dati del gommone e dello skipper, regole (maltempo, pagamento, bambini, animali, ticket del Parco) | `src/data/sito.js` |
-| Le 4 escursioni: titoli, prezzi, orari, programma, incluso/non incluso | `src/data/escursioni.js` |
+| Numero WhatsApp, telefono, email, dati dell'azienda (ragione sociale, P. IVA, REA), moli e orari di ritrovo (La Maddalena, Palau, Cannigione), i quattro gommoni, cosa portare, regole (maltempo, pagamento, bambini, animali, ticket del Parco) | `src/data/sito.js` |
+| Le 5 escursioni: titoli, programma, soste, incluso/non incluso (prezzi, orari e posti arrivano da `src/data/prenotazioni.js`) | `src/data/escursioni.js` |
 | Domande frequenti | `src/data/faq.js` |
 | Voci del menu | `src/data/menu.js` |
 | Colori, caratteri, spaziature | `src/styles/global.css` |
@@ -22,7 +22,8 @@ Appena si compila il campo, il segnaposto sparisce in tutte le pagine.
 - `/escursioni/` catalogo
 - `/escursioni/tour-7-isole/`, `/escursioni/corsica-lavezzi-bonifacio/`, `/escursioni/mezza-giornata/`, `/escursioni/tramonto/`, `/escursioni/tour-privato/` — tutte generate dallo stesso modello (`src/pages/escursioni/[slug].astro`)
 - `/richiesta/` modulo WhatsApp (accetta `?escursione=<slug>` per preselezionare l'escursione)
-- `/gommone/`, `/info-utili/`, `/domande-frequenti/`, `/contatti/`, `/privacy/`, `/cookie/`
+- `/gommone/` (i quattro gommoni), `/info-utili/`, `/domande-frequenti/`, `/contatti/`, `/condizioni/`, `/privacy/`, `/cookie/`
+- Prenotazioni: `/prenota/`, `/buono-regalo/`, `/partner/` (strutture), `/gestione/` (ufficio), `/imbarco/` (skipper)
 
 ## Prenotazioni online
 
@@ -31,7 +32,9 @@ Appena si compila il campo, il segnaposto sparisce in tutte le pagine.
 | Prezzi per periodo, orari dei turni, gommoni e posti, regole (chiusura online, cancellazione, provvigione strutture, carburante delle esclusive) | `src/data/prenotazioni.js` |
 | Prenotazione per i clienti | `/prenota/` (anche `/prenota/?escursione=tour-7-isole`) |
 | Area delle strutture partner | `/partner/` (link per i loro ospiti: `/prenota/?p=CODICE`) |
-| Gestione interna: giornata per gommone, inserimento prenotazioni dalle altre piattaforme, maltempo, strutture, provvigioni | `/gestione/` |
+| Gestione interna: giornata per gommone, inserimento prenotazioni dalle altre piattaforme, maltempo e rimborsi, offerte e codici sconto, buoni regalo, strutture, provvigioni, statistiche, spese di bordo | `/gestione/` |
+| App degli skipper: check-in col QR del biglietto e spese di bordo | `/imbarco/` |
+| Email automatiche (promemoria, grazie, maltempo, lista d'attesa) | Worker in `automatico/` (vedi il suo LEGGIMI) |
 | Condizioni di prenotazione (lo stesso testo parte nell'email di conferma) | `/condizioni/`, testo in `src/data/condizioni.js` |
 
 Le prenotazioni girano su Cloudflare: funzioni in `functions/`, database D1 (struttura in `migrations/`), collegamenti in `wrangler.toml`.
@@ -83,8 +86,9 @@ npx wrangler pages dev dist   # sito + prenotazioni con database locale (vedi pr
 
 - [ ] Compilare tutti i segnaposto (cercare `''` nei file di `src/data/` e `[` nelle pagine)
 - [ ] Inserire le foto
-- [ ] Compilare i dati in rosa di condizioni e privacy (azienda, carburante delle esclusive, ticket del Parco)
+- [ ] Compilare i dati in rosa di condizioni e privacy (dati dell'azienda)
 - [ ] Attivare le email di conferma (dominio + Resend)
+- [ ] Attivare SumUp e PayPal, le email automatiche e unire il ramo `prenotazioni` in `main` (elenco completo in CLAUDE.md)
 - [ ] Collegare il dominio e aggiornare l'indirizzo in `astro.config.mjs` e in `src/data/sito.js`
 - [ ] Mettere `inCostruzione: false` in `src/data/sito.js` e aprire `public/robots.txt` all'indicizzazione
 - [ ] Inglese, poi tedesco e francese

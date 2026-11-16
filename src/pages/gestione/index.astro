@@ -1120,7 +1120,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
         : '<tr><td class="vuota" colspan="3">Nessuno skipper ancora.</td></tr>';
     } catch (e) { errore(e); }
   }
-  const messaggioSkipper = (email: string, password: string) => `Ciao! Ecco il tuo accesso per l'imbarco di Escursioni Maddalena.\nIndirizzo: ${location.origin}/imbarco/ (dal telefono puoi aggiungerlo alla schermata Home)\nEmail: ${email}\nPassword provvisoria: ${password} (al primo accesso ne scegli una tua)`;
+  const messaggioSkipper = (email: string, password: string) => `Ciao! Ecco il tuo accesso per l'imbarco di Escursioni La Maddalena.\nIndirizzo: ${location.origin}/imbarco/ (dal telefono puoi aggiungerlo alla schermata Home)\nEmail: ${email}\nPassword provvisoria: ${password} (al primo accesso ne scegli una tua)`;
   $('[data-skipper]').addEventListener('click', async (ev) => {
     const b = (ev.target as Element).closest<HTMLElement>('[data-sk]');
     if (!b) return;
