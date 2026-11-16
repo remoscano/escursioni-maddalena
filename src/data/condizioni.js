@@ -6,7 +6,12 @@
 // (sul sito diventa un segnaposto rosa, nell'email "[etichetta]"). Si compila in sito.js e prenotazioni.js.
 //
 // Controllate sulle norme l'8 novembre 2026: Codice del consumo (artt. 33, 49, 51, 59, 62, 66-bis),
-// D.Lgs. 70/2003 (artt. 7, 12, 13). Non sono un parere legale.
+// D.Lgs. 70/2003 (artt. 7, 12, 13). Ricontrollate il 16 novembre 2026 sulle norme UE in vigore (direttiva 2011/83/UE
+// con le modifiche 2023/2673 e 2024/825, regolamento 2024/3228 che ha chiuso la piattaforma ODR, GDPR) e sul sito
+// in modalità WhatsApp. Non sono un parere legale.
+//
+// Con la prenotazione online spenta (regole.attive = false) le condizioni descrivono la prenotazione su WhatsApp
+// con link di pagamento; buoni regalo e lista d'attesa spariscono, come nel resto del sito.
 
 import { sito } from './sito.js';
 import { escursioni } from './escursioni.js';
@@ -27,7 +32,8 @@ const minimo = Math.min(...Object.values(offerte).filter((o) => o.tipo === 'grup
 const piuPiccolo = Math.min(...gommoni.map((g) => g.posti));
 const { bambiniFinoA } = regole.eta;
 
-export const aggiornamento = '13 novembre 2026';
+export const aggiornamento = '16 novembre 2026';
+const online = regole.attive;
 
 export const condizioni = [
   {
@@ -48,7 +54,7 @@ export const condizioni = [
       ['Orari, programma e cosa è compreso sono nella pagina di ogni escursione e nel riepilogo prima di pagare.'],
     ],
   },
-  {
+  online ? {
     titolo: 'Come si prenota online',
     punti: [
       ["Scegli escursione, giorno, orario, numero di persone e punto d'imbarco, poi inserisci nome, email e telefono."],
@@ -60,17 +66,30 @@ export const condizioni = [
       ["Se prenoti al telefono o su WhatsApp possiamo mandarti un link per pagare online: i posti restano tenuti fino all'ora scritta nel link, poi tornano disponibili."],
       ["Se il giorno che vuoi è pieno puoi entrare in lista d'attesa: se si libera un posto ti avvisiamo per email, ma il posto non è riservato finché non prenoti e paghi."],
     ],
+  } : {
+    titolo: 'Come si prenota',
+    punti: [
+      ["Scrivici su WhatsApp, chiamaci o mandaci un'email (anche dalla pagina Richiesta del sito) con escursione, giorno, numero di persone e punto d'imbarco."],
+      ["Ti rispondiamo con la disponibilità, il prezzo totale e l'orario di ritrovo. Se ti va bene, ti mandiamo un link per pagare online: nella pagina del link vedi il riepilogo con il totale prima di pagare."],
+      ["I posti restano tenuti per te fino all'ora scritta nel link, poi tornano disponibili."],
+      ["La prenotazione è confermata, e il contratto è concluso, quando il pagamento va a buon fine. Ti mandiamo la conferma con il codice di prenotazione e una copia di queste condizioni, da conservare. Il codice ti serve all'imbarco."],
+      ['Il contratto si conclude in italiano.'],
+    ],
   },
   {
     titolo: 'Prezzi e pagamento',
     punti: [
-      ["I prezzi sono in euro e comprendono l'IVA. Cambiano in base al periodo: quello della tua data lo vedi nel calendario e nel riepilogo."],
-      ['Si paga tutto al momento della prenotazione, con carta (tramite SumUp) o con PayPal, sulle loro pagine sicure. Non ci sono costi in più per il metodo di pagamento.'],
+      [online
+        ? "I prezzi sono in euro e comprendono l'IVA. Cambiano in base al periodo: quello della tua data lo vedi nel calendario e nel riepilogo."
+        : "I prezzi sono in euro e comprendono l'IVA. Cambiano in base al periodo: quello della tua data te lo diciamo con la disponibilità e lo vedi nel riepilogo del link, prima di pagare."],
+      [online
+        ? 'Si paga tutto al momento della prenotazione, con carta (tramite SumUp) o con PayPal, sulle loro pagine sicure. Non ci sono costi in più per il metodo di pagamento.'
+        : 'Si paga tutto con il link che ti mandiamo, con carta (tramite SumUp) o con PayPal, sulle loro pagine sicure. Non ci sono costi in più per il metodo di pagamento.'],
       [`Fino a ${bambiniFinoA} anni c'è il prezzo ridotto.`],
       ['Nelle escursioni in esclusiva il carburante non è compreso nel prezzo e si paga a parte: ', v(regole.carburante, CARBURANTE_MANCA), '.'],
       ['Il ticket del Parco Nazionale è compreso nel prezzo.'],
       ['Possono esserci promozioni (per esempio per chi prenota prima o per i gruppi) e prezzi diversi nel weekend: le vedi nel riepilogo prima di pagare. Promozioni e codici sconto non si sommano: vale quello che conviene di più.'],
-      ['Puoi aggiungere degli extra a pagamento, quando ci sono: il prezzo è nel riepilogo e si paga insieme alla prenotazione.'],
+      online && ['Puoi aggiungere degli extra a pagamento, quando ci sono: il prezzo è nel riepilogo e si paga insieme alla prenotazione.'],
     ],
   },
   {
@@ -82,10 +101,12 @@ export const condizioni = [
   {
     titolo: 'Se annulli tu',
     punti: [
-      [`Fino a ${regole.cancellazioneGratisOre} ore prima della partenza: rimborso completo. Puoi annullare da solo dalla pagina della prenotazione (il link è nell'email di conferma): il rimborso parte subito, in automatico. Oppure scrivici su WhatsApp o per email con il codice di prenotazione.`],
+      [online
+        ? `Fino a ${regole.cancellazioneGratisOre} ore prima della partenza: rimborso completo. Puoi annullare da solo dalla pagina della prenotazione (il link è nell'email di conferma): il rimborso parte subito, in automatico. Oppure scrivici su WhatsApp o per email con il codice di prenotazione.`
+        : `Fino a ${regole.cancellazioneGratisOre} ore prima della partenza: rimborso completo. Scrivici su WhatsApp o per email con il codice di prenotazione: il rimborso arriva sullo stesso metodo con cui hai pagato.`],
       ["Dopo, o se non ti presenti all'imbarco, l'importo non è rimborsabile."],
       ['Per le escursioni prenotate per una data precisa la legge non prevede il diritto di recesso di 14 giorni (art. 59, comma 1, lettera n, del Codice del consumo): valgono le regole qui sopra.'],
-      ['Il rimborso arriva sullo stesso metodo con cui hai pagato. La parte pagata con un buono regalo torna sul buono.'],
+      ['Il rimborso arriva sullo stesso metodo con cui hai pagato.' + (online ? ' La parte pagata con un buono regalo torna sul buono.' : '')],
     ],
   },
   {
@@ -119,12 +140,12 @@ export const condizioni = [
       ["Se hai prenotato su un'altra piattaforma (per esempio GetYourGuide o Viator), per pagamento e cancellazione valgono le condizioni di quella piattaforma."],
     ],
   },
-  {
+  online && {
     titolo: 'Buoni regalo',
     punti: [
       [`Il buono regalo vale ${regole.buoni.validitaMesi} mesi dall'acquisto, su tutte le escursioni prenotabili online. La data di scadenza è scritta sul buono.`],
       ["Si usa scrivendo il codice nel riepilogo della prenotazione. Se l'escursione costa di più, la differenza si paga con carta o PayPal; se costa meno, quello che avanza resta sul buono per un'altra prenotazione."],
-      ['Il buono non si converte in denaro. Se cambi idea prima di usarlo, scrivici entro 14 giorni dall\'acquisto: te lo rimborsiamo per intero (art. 52 del Codice del consumo).'],
+      ['Il buono non si converte in denaro. Se cambi idea prima di usarlo, entro 14 giorni dall\'acquisto puoi recedere senza dare spiegazioni (art. 52 del Codice del consumo): dalla pagina "Recedi dal contratto qui" del sito (indirizzo /recesso/), oppure scrivendoci. Annulliamo il buono, ti mandiamo la ricevuta per email e ti rimborsiamo per intero entro 14 giorni, sullo stesso metodo di pagamento.'],
       ['Se una prenotazione pagata con il buono viene annullata con diritto al rimborso, la parte del buono torna sul buono.'],
     ],
   },
@@ -137,7 +158,13 @@ export const condizioni = [
   },
 ];
 
-// Versione in testo semplice, per l'email di conferma.
+// Sezioni e punti che valgono solo con la prenotazione online accesa sono "false" quando è spenta: si tolgono qui.
+for (let i = condizioni.length - 1; i >= 0; i--) {
+  if (!condizioni[i]) condizioni.splice(i, 1);
+  else if (condizioni[i].punti) condizioni[i].punti = condizioni[i].punti.filter(Boolean);
+}
+
+// Versione in testo semplice, per l'email di conferma e per il file /condizioni.txt (da mandare su WhatsApp).
 const riga = (pezzi) => pezzi.map((x) => (typeof x === 'string' ? x : `[${x.manca}]`)).join('');
 export function condizioniInTesto() {
   return condizioni

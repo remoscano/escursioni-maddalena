@@ -16,6 +16,7 @@ python3 prove/prova_gestione.py    # gestione, maltempo, strutture, provvigioni
 python3 prove/prova_ui.py          # dal browser (Playwright), 1440 e 390 px
 python3 prove/prova_nuove.py       # rinvio e rimborsi, link di pagamento, sconti, buoni, extra, lista d'attesa, volantini, skipper, email, statistiche
 python3 prove/prova_ui_nuove.py    # le stesse funzioni dal browser, 1440 e 390 px (serve openpyxl per controllare l'Excel)
+python3 prove/prova_recesso.py     # recesso online dai buoni regalo (art. 54-bis Codice del consumo), API e pagina a 1440 e 390 px
 
 # Avviso automatico di PayPal, con un finto PayPal (porta 8797): sito avviato a parte sulla porta 8789
 npx wrangler pages dev dist --port 8789 --ip 127.0.0.1 --binding PAYPAL_CLIENT_ID=prova --binding PAYPAL_SECRET=prova --binding PAYPAL_API_URL=http://127.0.0.1:8797

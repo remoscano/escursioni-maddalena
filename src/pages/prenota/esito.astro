@@ -294,7 +294,7 @@ import { sito } from '../../data/sito.js';
         ${biglietto(p)}
         ${riepilogo(p)}
         <ul>${note.map((n) => `<li>${n}</li>`).join('')}</ul>
-        <p class="testo-2" style="font-size:15px">Valgono le <a href="/condizioni/">condizioni di prenotazione</a>.</p>
+        <p class="testo-2" style="font-size:15px">Valgono le <a href="/condizioni/">condizioni di prenotazione</a>: <a href="/condizioni.txt" download="condizioni-escursioni-la-maddalena.txt">scarica la copia da conservare</a>.</p>
         <div class="esito__azioni">${sceltaCalendario(p)}${p.pagabile ? pagaOra : ''}<button type="button" class="btn btn--bordo" onclick="window.print()">Stampa</button>${wa(`Ciao! Ho la prenotazione ${p.codice}.`)}</div>
         ${p.annullabile ? `<details class="esito__nascondi-stampa"><summary style="cursor:pointer;font-weight:700;color:var(--turchese);min-height:44px;display:inline-flex;align-items:center">Devi annullare?</summary>
           <p style="margin:8px 0">Fino a ${p.cancellazioneGratisOre} ore prima della partenza il rimborso è completo e automatico: ${euro(p.pagato)} sullo stesso metodo con cui hai pagato${p.buono ? `, e ${euro(p.buono)} tornano sul buono regalo` : ''}.</p>

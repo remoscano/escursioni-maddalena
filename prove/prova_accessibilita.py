@@ -6,7 +6,7 @@ from playwright.async_api import async_playwright
 import os
 # axe-core non è tra le dipendenze del sito: si scarica solo per la prova con  npm i --no-save axe-core@4
 AXE = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'node_modules', 'axe-core', 'axe.min.js')).read()
-pub = ['/','/escursioni/','/escursioni/giro-delle-isole-la-maddalena/','/escursioni/escursione-mezza-giornata-la-maddalena/','/escursioni/aperitivo-al-tramonto-la-maddalena/','/escursioni/gommone-con-skipper-la-maddalena/','/escursioni/escursione-corsica-da-palau/','/escursioni-la-maddalena-da-palau/','/escursioni-la-maddalena-da-cannigione/','/gommone/','/info-utili/','/domande-frequenti/','/contatti/','/richiesta/','/condizioni/','/privacy/','/cookie/','/404.html']
+pub = ['/','/escursioni/','/escursioni/giro-delle-isole-la-maddalena/','/escursioni/escursione-mezza-giornata-la-maddalena/','/escursioni/aperitivo-al-tramonto-la-maddalena/','/escursioni/gommone-con-skipper-la-maddalena/','/escursioni/escursione-corsica-da-palau/','/escursioni-la-maddalena-da-palau/','/escursioni-la-maddalena-da-cannigione/','/gommone/','/info-utili/','/domande-frequenti/','/contatti/','/richiesta/','/condizioni/','/recesso/','/privacy/','/cookie/','/404.html']
 pren = ['/prenota/','/prenota/?escursione=tour-7-isole','/buono-regalo/','/partner/','/gestione/','/imbarco/','/prenota/paga/?codice=X&t=Y','/prenota/esito/?codice=X&t=Y']
 siti = [('sito','http://127.0.0.1:8788',pub+pren)]
 async def main():

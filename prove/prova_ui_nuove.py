@@ -182,7 +182,7 @@ async def gestione(b, w):
 async def imbarco(b, w):
     s, r = adm('POST', '/api/gestione/utenti', {'azione': 'crea', 'nome': f'Skipper {w}', 'email': f'skipper{w}@prova.it'})
     pw = r['password']
-    oggi = sql("SELECT date('now') AS d")[0]['d']
+    import datetime, zoneinfo; oggi = datetime.datetime.now(zoneinfo.ZoneInfo('Europe/Rome')).date().isoformat()  # data italiana, come il sito
     codice = f'EM-UI{w}'
     sql(f"INSERT INTO prenotazioni (codice, token, escursione, turno, data, barca, blocchi, adulti, bambini, posti, paganti, imbarco, nome, totale, pagato, stato, canale, metodo) VALUES ('{codice}', 'tok{w}', 'mezza-giornata', 'mattina', '{oggi}', 'gruppo-2', ',mattina,', 2, 1, 3, 3, 'palau', 'Famiglia Imbarco', 21000, 21000, 'confermata', 'sito', 'prova')")
     ctx, pg = await nuova_pagina(b, w)

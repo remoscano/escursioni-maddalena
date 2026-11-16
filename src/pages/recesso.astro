@@ -1,0 +1,65 @@
+---
+// Recesso online (art. 54-bis del Codice del consumo, dal 19 giugno 2026): ci si arriva dal link "Recedi dal contratto qui"
+// (piè di pagina e pagina del buono). Vale per i buoni regalo comprati sul sito: le escursioni con una data precisa
+// non hanno il recesso di 14 giorni (art. 59, comma 1, lettera n), e si annullano con le regole delle condizioni.
+import Base from '../layouts/Base.astro';
+import { regole } from '../data/prenotazioni.js';
+import { sito } from '../data/sito.js';
+---
+<Base titolo="Recedi dal contratto qui" descrizione="Recesso online entro 14 giorni dall'acquisto di un buono regalo Escursioni La Maddalena." nascosta>
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Recesso</p>
+      <h1>Recedi dal contratto qui</h1>
+      <p class="intro">Hai comprato un buono regalo sul sito e hai cambiato idea? Entro 14 giorni dall'acquisto puoi recedere da qui, senza dare spiegazioni: annulliamo il buono e ti rimborsiamo per intero.</p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:32px">
+    <div class="contenitore testo-lungo pila" style="gap:24px">
+      <form class="modulo modulo--chiaro" data-recesso novalidate>
+        <h2 style="font-size:22px">La tua dichiarazione di recesso</h2>
+        <div class="campo"><label for="r-nome">Nome e cognome</label><input id="r-nome" name="nome" autocomplete="name" required maxlength="100" /></div>
+        <div class="campo"><label for="r-codice">Codice del buono</label><input id="r-codice" name="codice" placeholder="BR-…" required maxlength="20" autocapitalize="characters" /></div>
+        <div class="campo"><label for="r-email">Email con cui l'hai comprato (lì ti mandiamo la ricevuta)</label><input id="r-email" name="email" type="email" autocomplete="email" required maxlength="200" /></div>
+        <p class="avviso" data-errore hidden role="alert"></p>
+        <button type="submit" class="btn btn--wa btn--grande btn--pieno">Conferma recesso</button>
+      </form>
+      <div data-ricevuta hidden aria-live="polite"></div>
+      <h2>Le escursioni prenotate</h2>
+      <p>Per le escursioni prenotate per una data precisa la legge non prevede il recesso di 14 giorni (art. 59, comma 1, lettera n, del Codice del consumo). Puoi però annullare gratis fino a {regole.cancellazioneGratisOre} ore prima: come si fa è scritto nelle <a href="/condizioni/">condizioni di prenotazione</a>{sito.contatti.telefonoVisibile && <Fragment>, oppure scrivici su WhatsApp al {sito.contatti.telefonoVisibile}</Fragment>}.</p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { api, h, euro } from '../scripts/comune';
+  const form = document.querySelector<HTMLFormElement>('[data-recesso]')!;
+  const err = form.querySelector<HTMLElement>('[data-errore]')!;
+  const ricevuta = document.querySelector<HTMLElement>('[data-ricevuta]')!;
+  // Dalla pagina del buono si arriva con il codice già scritto.
+  const q = new URLSearchParams(location.search);
+  if (q.get('codice')) (form.elements.namedItem('codice') as HTMLInputElement).value = q.get('codice')!.toUpperCase();
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    err.hidden = true;
+    const f = form.elements as any;
+    if (!form.reportValidity()) return;
+    const bottone = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+    bottone.disabled = true;
+    try {
+      const r = await api('/api/recesso', { corpo: { nome: f.nome.value, codice: f.codice.value, email: f.email.value } });
+      form.hidden = true;
+      ricevuta.hidden = false;
+      ricevuta.innerHTML = `<div class="box box--acqua"><h2 style="font-size:24px">Recesso ricevuto</h2>
+        <p><strong>Dichiarazione:</strong> ${h(r.dichiarazione)}</p>
+        <p><strong>Inviata il:</strong> ${h(r.inviataIl)}</p>
+        <p>${r.rimborsoFatto ? `Il buono è annullato e il rimborso di ${euro(r.importo)} è partito.` : `Il buono è annullato: ti rimborsiamo ${euro(r.importo)} entro 14 giorni, sullo stesso metodo con cui hai pagato.`}
+        ${r.emailInviata ? 'Ti abbiamo mandato la ricevuta per email.' : 'Salva questa pagina: è la tua ricevuta (ti scriviamo anche noi).'}</p></div>`;
+      ricevuta.focus?.();
+    } catch (e) {
+      bottone.disabled = false;
+      err.textContent = (e as Error).message;
+      err.hidden = false;
+    }
+  });
+</script>

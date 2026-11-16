@@ -238,7 +238,7 @@ const perOspite = area === 'struttura';
   import { api, ErroreApi, h, euro, dataLunga, oggiRoma, segnaposto, persone as testoPersone } from '../scripts/comune';
 
   const NOMI_MESI = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric', timeZone: 'UTC' });
-  const ETICHETTE_PAGA: Record<string, string> = { sumup: 'Paga con carta', paypal: 'Paga con PayPal', prova: 'Pagamento di prova (anteprima)', buono: 'Conferma con il buono regalo' };
+  const ETICHETTE_PAGA: Record<string, string> = { sumup: 'Paga con carta', paypal: 'Paga con PayPal', prova: 'Pagamento di prova (anteprima)', buono: 'Prenota e paga con il buono' };
   // Testo breve di una promozione, per il riquadro sotto il calendario.
   const testoRegola = (r: any) => r.tipo === 'weekend' ? '' : `${r.nome || NOMI_REGOLE[r.tipo]}: −${r.percentuale}% ${r.tipo === 'anticipo' ? `prenotando almeno ${r.soglia} giorni prima` : r.tipo === 'ultimo-minuto' ? `nelle ultime ${r.soglia} ore prima della partenza` : `da ${r.soglia} persone in su`}`;
 

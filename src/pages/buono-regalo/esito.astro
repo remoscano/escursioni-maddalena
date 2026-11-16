@@ -48,7 +48,8 @@ import { sito } from '../../data/sito.js';
           <p>Vale su tutte le escursioni in gommone nell'Arcipelago di La Maddalena${b.al ? `, fino al ${h(dataLunga(b.al))}` : ''}. Per usarlo prenota su <strong>${h(location.host)}/prenota/</strong> e scrivi il codice nel riepilogo.</p>
           ${b.saldo !== b.valore ? `<p class="testo-2">Credito ancora disponibile: ${euro(b.saldo)}</p>` : ''}
         </div>
-        <div class="buono-azioni"><button type="button" class="btn btn--wa" onclick="window.print()">Stampa o salva in PDF</button><a class="btn btn--bordo" href="/prenota/">Prenota un'escursione</a>${wa(`Ciao! Ho il buono regalo ${b.codice}.`)}</div>`;
+        <div class="buono-azioni"><button type="button" class="btn btn--wa" onclick="window.print()">Stampa o salva in PDF</button><a class="btn btn--bordo" href="/prenota/">Prenota un'escursione</a>${wa(`Ciao! Ho il buono regalo ${b.codice}.`)}</div>
+        ${b.saldo === b.valore ? `<p class="buono-azioni testo-2" style="font-size:15px">Hai cambiato idea? Entro 14 giorni dall'acquisto: <a href="/recesso/?codice=${encodeURIComponent(b.codice)}">Recedi dal contratto qui</a></p>` : ''}`;
       return;
     }
     if (b.stato === 'in_attesa' && !b.scaduto && q.get('annullato') !== '1') {
@@ -56,7 +57,7 @@ import { sito } from '../../data/sito.js';
       if (tentativi++ < 20) setTimeout(carica, 3000);
       return;
     }
-    box.innerHTML = `<h1>${b.stato === 'annullato' ? 'Buono annullato' : 'Pagamento non completato'}</h1><p>Nessun addebito.</p><div class="buono-azioni"><a class="btn btn--wa" href="/buono-regalo/">Riprova</a>${wa('Ciao! Ho bisogno di aiuto con un buono regalo.')}</div>`;
+    box.innerHTML = `<h1>${b.stato === 'annullato' ? 'Buono annullato' : 'Pagamento non completato'}</h1><p>${b.stato === 'annullato' && b.pagato ? 'Il rimborso è partito o è in arrivo sullo stesso metodo con cui hai pagato.' : 'Nessun addebito.'}</p><div class="buono-azioni"><a class="btn btn--wa" href="/buono-regalo/">${b.stato === 'annullato' && b.pagato ? 'Compra un altro buono' : 'Riprova'}</a>${wa('Ciao! Ho bisogno di aiuto con un buono regalo.')}</div>`;
   }
   carica();
 </script>

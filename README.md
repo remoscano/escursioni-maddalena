@@ -23,7 +23,7 @@ Appena si compila il campo, il segnaposto sparisce in tutte le pagine.
 - `/escursioni/giro-delle-isole-la-maddalena/`, `/escursioni/escursione-mezza-giornata-la-maddalena/`, `/escursioni/aperitivo-al-tramonto-la-maddalena/`, `/escursioni/gommone-con-skipper-la-maddalena/`, `/escursioni/escursione-corsica-da-palau/` — tutte generate dallo stesso modello (`src/pages/escursioni/[slug].astro`); l'indirizzo è `indirizzo` in `src/data/escursioni.js`, i vecchi indirizzi rimandano ai nuovi
 - `/escursioni-la-maddalena-da-palau/` e `/escursioni-la-maddalena-da-cannigione/` — punti di partenza (`src/pages/[imbarco].astro`, dati in `src/data/imbarchi.js`)
 - `/richiesta/` modulo WhatsApp (accetta `?escursione=<slug>` per preselezionare l'escursione)
-- `/gommone/` (i quattro gommoni), `/info-utili/`, `/domande-frequenti/`, `/contatti/`, `/condizioni/`, `/privacy/`, `/cookie/`
+- `/gommone/` (i quattro gommoni), `/info-utili/`, `/domande-frequenti/`, `/contatti/`, `/condizioni/` (anche in testo, `/condizioni.txt`, da mandare su WhatsApp), `/recesso/` (recesso online dai buoni regalo), `/privacy/`, `/cookie/`
 - Prenotazioni: `/prenota/`, `/buono-regalo/`, `/partner/` (strutture), `/gestione/` (ufficio), `/imbarco/` (skipper)
 
 ## Prenotazioni online

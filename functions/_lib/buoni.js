@@ -20,6 +20,7 @@ export function vistaBuono(b) {
     codice: b.codice, valore: b.valore / 100, saldo: b.saldo / 100, al: b.al, stato: b.stato,
     scaduto: b.stato === 'in_attesa' && b.scade_il <= adessoISO(),
     acquirente: b.acquirente, destinatario: b.destinatario, messaggio: b.messaggio,
+    pagato: b.pagato > 0,
   };
 }
 

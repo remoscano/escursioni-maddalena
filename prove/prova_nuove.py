@@ -130,7 +130,7 @@ s, cmp = adm('GET', '/api/gestione/campagne'); cc = cmp['campagne'][0]; ok(cc['v
 # ---------- 9. skipper e check-in ----------
 s, r = adm('POST', '/api/gestione/utenti', {'azione': 'crea', 'nome': 'Skipper Prova', 'email': 'skipper@prova.it'}); ok(s == 200 and r['password'], 'accesso skipper creato')
 sk = client(); s, x = sk('POST', '/api/accesso', {'email': 'skipper@prova.it', 'password': r['password']}); sk('POST', '/api/accesso/password', {'attuale': r['password'], 'nuova': 'skipper-password-1'})
-oggi = sql("SELECT date('now') AS d")[0]['d']
+import datetime, zoneinfo; oggi = datetime.datetime.now(zoneinfo.ZoneInfo('Europe/Rome')).date().isoformat()  # data italiana, come il sito
 sql(f"INSERT INTO prenotazioni (codice, token, escursione, turno, data, barca, blocchi, adulti, posti, paganti, imbarco, nome, telefono, totale, pagato, stato, canale, metodo) VALUES ('EM-OGGI01', 'tok', 'tour-7-isole', 'giornata', '{oggi}', 'gruppo-1', ',mattina,pomeriggio,sera,', 3, 3, 3, 'maddalena', 'Imbarco Oggi', '3330001111', 30000, 30000, 'confermata', 'sito', 'prova')")
 s, r = sk('GET', '/api/gestione/strutture'); ok(s == 403, 'lo skipper non vede la gestione')
 s, r = sk('GET', '/api/gestione/giorno?data=2027-06-26'); ok(s == 403, 'lo skipper non vede gli altri giorni')
