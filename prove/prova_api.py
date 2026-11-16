@@ -79,7 +79,7 @@ t = {x['id']: x for x in giorno('tour-7-isole', '2027-07-16')['turni']}; ok(t['g
 t = {x['id']: x for x in giorno('mezza-giornata', '2027-07-16')['turni']}; ok(t['pomeriggio']['max'] == 12, 'il pomeriggio è libero anche sul gommone del privato del mattino')
 s, r = prenota(pub, escursione='tour-privato', turno='mattina', data='2027-07-17', adulti=13); ok(s == 400, f'13 persone in esclusiva: {r.get("errore")}')
 s, r = prenota(pub, escursione='corsica', turno='giornata', data='2027-08-12', adulti=3); (s2, r2), q = paga(pub, r)
-s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['totale'] == 1620 and v['privato'] and v['carburanteEscluso'] and v['documento'] and v['orario'] == '9:30 – 17:30', f'Corsica in esclusiva ad agosto = {v["totale"]} €, carburante escluso, documento, {v["orario"]}')
+s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['totale'] == 1620 and v['privato'] and v['carburanteEscluso'] and v['documento'] and v['orario'] == '11:00 – 17:30', f'Corsica in esclusiva ad agosto = {v["totale"]} €, carburante escluso, documento, {v["orario"]}')
 s, r = prenota(pub, escursione='tramonto', turno='tramonto', data='2027-07-20', adulti=2, bambini=1); (s2, r2), q = paga(pub, r)
 s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['totale'] == 110*2+100 and v['orario'] == '18:30 – 21:00', f'tramonto a luglio, listino suo: {v["totale"]} €, orario {v["orario"]}')
 s, r = prenota(pub, escursione='tramonto', turno='tramonto', data='2027-07-22', adulti=11); ok(s == 400, f'Sunset di gruppo: massimo 10 persone ({r.get("errore")})')
@@ -105,10 +105,10 @@ s, r = prenota(pub, email='nonvalida'); ok(s == 400, f'email non valida: {r.get(
 # 7. limite di prenotazioni in attesa dallo stesso indirizzo
 stesso = client(ip='10.9.9.9'); esiti = [prenota(stesso, data='2027-10-01', adulti=1)[0] for _ in range(6)]
 ok(esiti == [200]*5 + [429], f'stesso indirizzo: 5 in attesa poi blocco ({esiti})')
-# 8. orari per punto d'imbarco: si parte da La Maddalena e si passa a Palau mezz'ora dopo (Remo, 13 novembre 2026)
-for imb, atteso in [('palau', '9:30 – 12:30'), ('maddalena', '9:00 – 13:00')]:
+# 8. orari per punto d'imbarco: si parte da La Maddalena e si passa a Palau mezz'ora dopo (Remo, 16 novembre 2026)
+for imb, atteso in [('palau', '11:00 – 13:30'), ('maddalena', '10:30 – 14:00')]:
     s, r = prenota(pub, escursione='mezza-giornata', turno='mattina', data='2027-09-14', adulti=1, imbarco=imb); (s2, r2), q = paga(pub, r)
     s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['orario'] == atteso, f'mezza giornata da {imb}: {v["orario"]}')
 s, r = prenota(pub, escursione='tour-7-isole', data='2027-09-15', adulti=1, imbarco='palau'); (s2, r2), q = paga(pub, r)
-s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['orario'] == '9:30 – 17:00', f'7 isole da Palau: {v["orario"]}')
+s, v = pub('GET', f'/api/prenotazione?codice={q["codice"][0]}&t={q["t"][0]}'); ok(v['orario'] == '11:00 – 17:30', f'7 isole da Palau: {v["orario"]}')
 print('TUTTO OK (pubblico)')

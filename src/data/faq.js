@@ -3,6 +3,7 @@
 // "regola" collega la risposta a un campo di sito.regole: quando lo compili, il segnaposto sparisce.
 
 import { regole as regoleP, testoChiusuraOnline, testoDopoChiusura } from './prenotazioni.js';
+import { sito } from './sito.js';
 
 // Prenotazione online accesa o spenta (regole.attive): alcune risposte cambiano, buono regalo e lista d'attesa spariscono.
 const online = regoleP.attive;
@@ -76,7 +77,7 @@ export const faq = [
       {
         id: 'pranzo',
         domanda: 'Il pranzo è incluso nel Tour delle 7 isole?',
-        risposta: "No, il pranzo è libero. Durante la sosta a La Maddalena, se vuoi, lo skipper ti accompagna in un ristorante tipico convenzionato, con cucina sarda a prezzo agevolato. Oppure puoi portare il pranzo al sacco.",
+        risposta: `No, il pranzo è libero, a La Maddalena. ${sito.pranzo7.testo}`,
       },
       {
         id: 'bambini',

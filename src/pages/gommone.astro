@@ -17,8 +17,8 @@ const barche = sito.flotta.map((f) => {
   const fa = escursioni.filter((e) => gommoniPer(e.slug).some((x) => x.id === f.id));
   const dotazioni = f.dotazioni ? f.dotazioni.split(',').map((d) => d.trim()) : [];
   const nota = g.tipo === 'esclusiva'
-    ? `Solo per gruppi privati, fino a ${g.posti} persone.`
-    : `Uscite di gruppo con almeno 6 persone, oppure tutto per voi in esclusiva, fino a ${g.posti} persone.`;
+    ? `Solo in esclusiva, fino a ${g.posti} persone.`
+    : `Uscite di gruppo con almeno 6 persone, oppure in esclusiva, fino a ${g.posti} persone.`;
   return { ...f, posti: g.posti, uso, partenze, fa, dotazioni, nota };
 });
 ---

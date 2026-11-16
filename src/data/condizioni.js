@@ -42,7 +42,7 @@ export const condizioni = [
     titolo: 'Le escursioni',
     punti: [
       [`Uscite di gruppo (${nomi('gruppo')}): prenoti i posti per le persone del tuo gruppo, a bordo con altri ospiti, fino a ${postiMassimi} persone sul gommone${postiSunset ? ` (${postiSunset} al Sunset)` : ''}.`],
-      [`In esclusiva (${nomi('esclusiva')}): il gommone è solo per il tuo gruppo, fino a ${postiMassimi} persone. In base a quante siete vi assegniamo il gommone da ${piuPiccolo} posti o uno da ${postiMassimi}. Il prezzo è per gommone, non a persona.`],
+      [`In esclusiva (${nomi('esclusiva')}): il gommone è in esclusiva per il tuo gruppo, fino a ${postiMassimi} persone. In base a quante siete vi assegniamo il gommone da ${piuPiccolo} posti o uno da ${postiMassimi}. Il prezzo è per gommone, non a persona.`],
       [`Partenza da La Maddalena, con passaggio a Palau per chi si imbarca lì, oppure da Cannigione. Da Cannigione parte un gommone dedicato, solo per ${nomiDa('cannigione')}.`],
       ["Con te c'è sempre lo skipper: non noleggiamo gommoni senza skipper."],
       ['Orari, programma e cosa è compreso sono nella pagina di ogni escursione e nel riepilogo prima di pagare.'],
@@ -105,7 +105,7 @@ export const condizioni = [
   {
     titolo: 'A bordo',
     punti: [
-      [`Il ritrovo al molo è ${regole.anticipoRitrovo.maddalena} minuti prima della partenza da quel molo. Nelle uscite di gruppo il gommone parte da La Maddalena e passa a Palau mezz'ora dopo: per il mattino ritrovo alle 8:45 a La Maddalena e alle 9:15 a Palau. Ti confermiamo l'orario con un messaggio prima dell'uscita. L'uscita non può aspettare chi arriva in ritardo.`],
+      [`Il ritrovo al molo è ${regole.anticipoRitrovo.maddalena} minuti prima della partenza da quel molo. Nelle uscite di gruppo il gommone parte da La Maddalena e passa a Palau mezz'ora dopo: per il mattino ritrovo alle ${sito.imbarchi.maddalena.ritrovo} a La Maddalena e alle ${sito.imbarchi.palau.ritrovo} a Palau. Ti confermiamo l'orario con un messaggio prima dell'uscita. L'uscita non può aspettare chi arriva in ritardo.`],
       ["Segui le indicazioni dello skipper, che è responsabile della sicurezza a bordo."],
       ['I minori partecipano accompagnati da un adulto.'],
       ['Gli animali non sono ammessi a bordo.'],

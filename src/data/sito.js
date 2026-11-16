@@ -36,7 +36,7 @@ export const sito = {
     palau: {
       nome: 'Palau',
       molo: '', // es. 'Porto turistico, banchina ...'
-      ritrovo: '9:15', // uscite di gruppo del mattino: il gommone passa alle 9:30 (Remo, 13 novembre 2026)
+      ritrovo: '10:45', // uscite di gruppo del mattino: il gommone passa alle 11:00 (Remo, 16 novembre 2026)
       parcheggio: '',
       mappa: '', // link Google Maps del punto di ritrovo
     },
@@ -50,7 +50,7 @@ export const sito = {
     maddalena: {
       nome: 'La Maddalena',
       molo: 'Il Porticciolo, Via Padule, 07024 La Maddalena', // molo principale, dove i gommoni passano la notte
-      ritrovo: '8:45', // uscite di gruppo del mattino: partenza alle 9:00 (Remo, 13 novembre 2026)
+      ritrovo: '10:15', // uscite di gruppo del mattino: partenza alle 10:30 (Remo, 16 novembre 2026)
       mappa: 'https://maps.app.goo.gl/ipWyZCHfEdG4hvKQA',
     },
   },
@@ -67,6 +67,16 @@ export const sito = {
   gommone: {
     // Scritta da Claude su richiesta di Remo (11 novembre 2026), solo con i dati della flotta già confermati.
     descrizione: "Gommoni grandi e stabili, con lo skipper sempre a bordo: arrivi nelle cale più belle senza fatica e ti godi il mare in sicurezza. Ombra a bordo e al massimo 12 persone: lo spazio giusto per famiglie con bambini e gruppi di amici.", // due righe di presentazione della flotta
+  },
+
+  // Pranzo del Tour delle 7 isole: UN SOLO testo, usato da pagina escursione, sezione pranzo, "non incluso" e domande
+  // frequenti (Remo, 16 novembre 2026). Si cambia qui e cambia ovunque.
+  pranzo7: {
+    breve: 'Pranzo libero a La Maddalena',
+    arrivo: '12:30', // entro quest'ora si è al porto di La Maddalena, per trovare posto e pranzare con calma
+    ripartenza: '14:00',
+    testo: "Arriviamo al porto di La Maddalena entro le 12:30, così trovi posto e pranzi con calma: si riparte alle 14:00. Se vuoi, il nostro skipper, maddalenino, ti accompagna nei ristoranti dei suoi amici convenzionati con noi, dove si mangia la cucina tipica del posto a prezzi agevolati per i nostri clienti. Se preferisci, porta il pranzo al sacco.",
+    nonIncluso: 'Pranzo: libero a La Maddalena, nei ristoranti convenzionati a prezzi agevolati oppure al sacco',
   },
 
   skipper: {

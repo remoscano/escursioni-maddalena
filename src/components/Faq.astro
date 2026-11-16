@@ -16,8 +16,8 @@ const regole = sito.regole as Record<string, string>;
         <p>
           {d.risposta}
           {d.mancante && (valoreRegola
-            ? <Fragment> {valoreRegola}</Fragment>
-            : <Fragment> <Dato e={d.mancante} /></Fragment>)}
+            ? <Fragment>{' '}{valoreRegola}</Fragment>
+            : <Fragment>{' '}<Dato e={d.mancante} /></Fragment>)}
         </p>
       </details>
     );

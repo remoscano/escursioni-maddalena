@@ -65,7 +65,7 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
           </ul>
         </div>
         <aside class="box-prezzo" aria-label="Prezzo e prenotazione">
-          <p class="box-prezzo__etichetta">{e.prezzoGommone ? 'Gommone solo per voi' : 'Prezzo a persona'}</p>
+          <p class="box-prezzo__etichetta">{e.prezzoGommone ? 'Gommone in esclusiva' : 'Prezzo a persona'}</p>
           {suRichiesta ? (
             <p class="box-prezzo__cifra">Su richiesta</p>
           ) : (
@@ -128,7 +128,7 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
           ) : (
             <li class="tappa">
               <span class="tappa__linea" aria-hidden="true">
-                {t.tipo === 'sosta' && <span class="tappa__punto">{t.n}</span>}
+                {t.tipo === 'sosta' && <span class={`tappa__punto ${t.rosa ? 'tappa__punto--rosa' : ''}`}>{t.n}</span>}
                 {t.tipo === 'vista' && <span class="tappa__punto tappa__punto--rosa"><Icona nome="occhio" size={18} /></span>}
                 {(t.tipo === 'imbarco' || t.tipo === 'rientro') && <span class="tappa__punto tappa__punto--imbarco"><Icona nome="ancora" size={18} /></span>}
               </span>
@@ -148,11 +148,11 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
         </ol>
         <div style="display:flex;flex-direction:column;gap:20px">
           {e.mappa === 'mezza' && <Mappa variante="mezza" didascalia="Percorsi indicativi della mezza giornata: lo skipper sceglie il giro in base al vento." />}
-          {e.mappa === true && <Mappa didascalia="Percorso indicativo. Il punto rosa è la Spiaggia Rosa, che si vede solo dal mare." />}
+          {e.mappa === true && <Mappa didascalia="Percorso indicativo: l'ordine delle tappe può cambiare con vento e mare." />}
           <dl class="numeri">
             {e.numeri.map((n: any) => <div><dt>{n.etichetta}</dt><dd>{n.valore}</dd></div>)}
-            <div><dt>Durata</dt><dd><Dato v={durata} e="ore" /></dd></div>
-            <div><dt>Imbarco</dt><dd>{(e.fatti.find((f: string) => f.startsWith('Imbarco a ')) ?? 'Imbarco a La Maddalena o Palau').slice(10)}</dd></div>
+            {!e.soloNumeri && <div><dt>Durata</dt><dd><Dato v={durata} e="ore" /></dd></div>}
+            {!e.soloNumeri && <div><dt>Imbarco</dt><dd>{(e.fatti.find((f: string) => f.startsWith('Imbarco a ')) ?? 'Imbarco a La Maddalena o Palau').slice(10)}</dd></div>}
           </dl>
           {e.note.length > 0 && (
             <ul class="note">
@@ -215,10 +215,12 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
           <p>Il nostro porto di partenza. Comodo se dormi sull'isola.</p>
         </div>
         <div class="box">
-          <h3>Passaggio a Palau</h3>
-          <p>Il gommone parte da La Maddalena e passa a prendere chi si imbarca a Palau.</p>
+          <h3>{offerte[e.slug]?.tipo === 'esclusiva' ? 'Partenza da Palau' : 'Passaggio a Palau'}</h3>
+          <p>{offerte[e.slug]?.tipo === 'esclusiva'
+            ? 'In esclusiva parti da uno solo dei due porti: se ti è più comodo, il gommone viene a prenderti a Palau.'
+            : 'Il gommone parte da La Maddalena e passa a prendere chi si imbarca a Palau.'}</p>
           <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.palau} minuti prima della partenza{orarioRitrovo && <Fragment> (alle <Dato v={imbarchi.palau.ritrovo} e=\"ora\" /> per le uscite di gruppo del mattino)</Fragment>}.</p>
-          <p>Comodo se dormi in Gallura. Parcheggio: <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" />.</p>
+          <p>Comodo se dormi in Gallura{!serale && <Fragment> o arrivi da fuori, per esempio da Olbia: con la partenza alle 11:00 non devi alzarti presto e hai il tempo di parcheggiare</Fragment>}. Parcheggio: <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" />.</p>
         </div>
         {offerte[e.slug]?.imbarchi.includes('cannigione') && (
           <div class="box">

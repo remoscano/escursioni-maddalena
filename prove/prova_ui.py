@@ -47,7 +47,7 @@ async def prenota_cliente(b, w):
     ok(await pg.locator('[data-ics]').count() == 1, f'{w}px conferma con "Aggiungi al calendario"')
     ics = await pg.evaluate("fetch(document.querySelector('[data-ics]').href).then((r) => r.text())")
     righe = ics.split('\r\n')
-    ok(f'DTSTART;TZID=Europe/Rome:{giorno.replace("-", "")}T090000' in righe and 'BEGIN:VTIMEZONE' in righe and any(r.startswith('DTSTAMP:') for r in righe)
+    ok(f'DTSTART;TZID=Europe/Rome:{giorno.replace("-", "")}T103000' in righe and 'BEGIN:VTIMEZONE' in righe and any(r.startswith('DTSTAMP:') for r in righe)
        and 'TRIGGER:-P1D' in righe and all(len(r.encode()) <= 75 for r in righe), f'{w}px file del calendario: ora di Roma, promemoria il giorno prima, righe a norma')
     await ctx.close()
 
@@ -95,7 +95,7 @@ async def corsica(b):
     await pg.click('[data-data="2027-06-15"]')
     await pg.wait_for_selector('[data-riepilogo]:not([hidden])')
     t = await pg.inner_text('[data-righe]')
-    ok('1200 €' in t and 'gommone solo per voi' in t and 'espatrio' in t and 'carburante' in t.lower(), 'Corsica 15 giugno: 1200 € il gommone, documento e carburante nel riepilogo')
+    ok('1200 €' in t and 'gommone in esclusiva' in t and 'espatrio' in t and 'carburante' in t.lower(), 'Corsica 15 giugno: 1200 € il gommone, documento e carburante nel riepilogo')
     ok('a consumo, si paga a bordo a fine uscita' in t, 'nel riepilogo c\'è come si paga il carburante')
     await larghezza(pg, 390, 'prenota Corsica')
     await pg.screenshot(path=f'{OUT}/prenota-corsica-390.png', full_page=True)

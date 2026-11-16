@@ -63,8 +63,8 @@ async def cliente(b, w):
     link = await pg.eval_on_selector_all('.calendario__scelta', 'xs => xs.map((x) => x.getAttribute("href") || "")')
     g = [x for x in link if 'calendar.google.com' in x][0]; o = [x for x in link if 'outlook.live.com' in x][0]
     giorno_c = giorno.replace('-', '')
-    ok(f'dates={giorno_c}T090000%2F{giorno_c}T173000' in g and 'ctz=Europe%2FRome' in g, f'{w}px Google Calendar: 9:00–17:30 ora di Roma')
-    ok(f'startdt={giorno}T09%3A00%3A00%2B02%3A00' in o and 'enddt=' in o, f'{w}px Outlook: inizio alle 9:00 (+02:00)')
+    ok(f'dates={giorno_c}T103000%2F{giorno_c}T180000' in g and 'ctz=Europe%2FRome' in g, f'{w}px Google Calendar: 10:30–18:00 ora di Roma')
+    ok(f'startdt={giorno}T10%3A30%3A00%2B02%3A00' in o and 'enddt=' in o, f'{w}px Outlook: inizio alle 10:30 (+02:00)')
     ok(await pg.locator('.calendario [data-ics]').count() == 1, f'{w}px iPhone e Mac: file del calendario')
     await larghezza(pg, w, 'scelte del calendario aperte')
     await pg.screenshot(path=f'{OUT}/nuove-calendario-{w}.png')

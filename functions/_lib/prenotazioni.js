@@ -208,7 +208,7 @@ export async function inviaEmailConferma(env, p, origine) {
     p.stato === 'confermata' ? 'la tua prenotazione è confermata.' : 'abbiamo ricevuto il tuo pagamento: ti contattiamo a breve per confermare il posto.',
     '',
     `Codice: ${p.codice}`,
-    `${v.escursione} · ${v.turno}${v.privato ? ' · gommone solo per voi' : ''}`,
+    `${v.escursione} · ${v.turno}${v.privato ? ' · gommone in esclusiva' : ''}`,
     `Data: ${v.dataLeggibile}`,
     `Imbarco: ${v.imbarco}`,
     v.orario ? `Orario: ${v.orario}${v.orarioIndicativo ? ' (indicativo: segue la luce del tramonto)' : ''}` : 'Orario: te lo confermiamo noi',

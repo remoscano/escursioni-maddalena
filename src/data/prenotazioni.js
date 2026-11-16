@@ -141,17 +141,20 @@ const mezzaEsclusiva = [
 // - la giornata intera occupa anche la sera (chi fa la giornata non esce al tramonto)
 // - il pomeriggio finisce alle 18:00, quando parte il tramonto: occupa anche la sera
 // "orario" vuoto = sul sito compare un segnaposto finché non viene confermato.
-// "orario" è quello di La Maddalena; "orariImbarco" lo cambia per gli altri moli. Uscite di gruppo (Remo, 13 novembre 2026):
-// si parte alle 9:00 da La Maddalena e si passa a Palau alle 9:30; al ritorno prima Palau, poi La Maddalena.
-// Le esclusive restano 9:30 – 17:30 per la giornata intera. Cannigione: 9:30 – 13:30 e 14:00 – 18:00 (confermati da Remo, 13 novembre 2026).
+// "orario" è quello di La Maddalena; "orariImbarco" lo cambia per gli altri moli (Remo, 16 novembre 2026):
+// si parte alle 10:30 da La Maddalena e si passa a Palau alle 11:00; al ritorno prima Palau, poi La Maddalena.
+// Giornata intera (Tour delle 7 isole ed esclusive): 10:30 – 18:00, da Palau 11:00 – 17:30.
+// Mezza giornata (3 ore e mezza): 10:30 – 14:00 e 14:30 – 18:00, da Palau 11:00 – 13:30 e 15:00 – 17:30.
+// Nelle uscite di gruppo il gommone passa da tutti e due i porti; in esclusiva si parte da uno solo dei due.
+// Cannigione resta 9:30 – 13:30 e 14:00 – 18:00; il Sunset parte tra le 18:30 e le 19:00.
 export const offerte = {
   'tour-7-isole': {
     tipo: 'gruppo',
     minimo: 6,
     imbarchi: ['maddalena', 'palau'],
     turni: [
-      // Rientro a Palau alle 17:00, mezz'ora prima di La Maddalena (confermato da Remo, 13 novembre 2026).
-      { id: 'giornata', nome: 'Giornata intera', orario: '9:00 – 17:30', orariImbarco: { palau: '9:30 – 17:00' }, blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataPersona },
+      // Rientro a Palau alle 17:30, mezz'ora prima di La Maddalena (Remo, 16 novembre 2026).
+      { id: 'giornata', nome: 'Giornata intera', orario: '10:30 – 18:00', orariImbarco: { palau: '11:00 – 17:30' }, blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataPersona },
     ],
   },
   // Corsica: solo in esclusiva, giornata intera con gli orari e i prezzi delle altre giornate in esclusiva.
@@ -162,7 +165,7 @@ export const offerte = {
     imbarchi: ['maddalena', 'palau'],
     gommoni: tuttiIGommoni,
     turni: [
-      { id: 'giornata', nome: 'Giornata intera', orario: '9:30 – 17:30', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataEsclusiva },
+      { id: 'giornata', nome: 'Giornata intera', orario: '10:30 – 18:00', orariImbarco: { palau: '11:00 – 17:30' }, blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataEsclusiva },
     ],
   },
   // Mezza giornata e tramonto sono due attività diverse, con due pagine (Remo, 11 novembre 2026).
@@ -171,8 +174,8 @@ export const offerte = {
     minimo: 6,
     imbarchi: ['maddalena', 'palau', 'cannigione'],
     turni: [
-      { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '9:00 – 13:00', orariImbarco: { palau: '9:30 – 12:30', cannigione: '9:30 – 13:30' }, blocchi: ['mattina'], prezzi: mezzaPersona },
-      { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:00 – 18:00', orariImbarco: { palau: '14:30 – 17:30', cannigione: '14:00 – 18:00' }, blocchi: ['pomeriggio', 'sera'], prezzi: mezzaPersona },
+      { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '10:30 – 14:00', orariImbarco: { palau: '11:00 – 13:30', cannigione: '9:30 – 13:30' }, blocchi: ['mattina'], prezzi: mezzaPersona },
+      { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:30 – 18:00', orariImbarco: { palau: '15:00 – 17:30', cannigione: '14:00 – 18:00' }, blocchi: ['pomeriggio', 'sera'], prezzi: mezzaPersona },
     ],
   },
   tramonto: {
@@ -191,10 +194,10 @@ export const offerte = {
     imbarchi: ['maddalena', 'palau', 'cannigione'],
     gommoni: tuttiIGommoni,
     turni: [
-      { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '9:30 – 13:30', blocchi: ['mattina'], prezzi: mezzaEsclusiva },
-      { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:00 – 18:00', blocchi: ['pomeriggio', 'sera'], prezzi: mezzaEsclusiva },
+      { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '10:30 – 14:00', orariImbarco: { palau: '11:00 – 13:30', cannigione: '9:30 – 13:30' }, blocchi: ['mattina'], prezzi: mezzaEsclusiva },
+      { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:30 – 18:00', orariImbarco: { palau: '15:00 – 17:30', cannigione: '14:00 – 18:00' }, blocchi: ['pomeriggio', 'sera'], prezzi: mezzaEsclusiva },
       { id: 'tramonto', nome: 'Sunset, aperitivo al tramonto', orario: '18:30 – 21:00', indicativo: true, blocchi: ['sera'], prezzi: tramontoEsclusiva },
-      { id: 'giornata', nome: 'Giornata intera', orario: '9:30 – 17:30', blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataEsclusiva },
+      { id: 'giornata', nome: 'Giornata intera', orario: '10:30 – 18:00', orariImbarco: { palau: '11:00 – 17:30', cannigione: '9:30 – 17:30' }, blocchi: ['mattina', 'pomeriggio', 'sera'], prezzi: giornataEsclusiva },
     ],
   },
 };
@@ -428,7 +431,7 @@ function calcolaListino(slug, turnoId, data, persone) {
     // "posti" viene poi portato alla capienza del gommone scelto: in esclusiva il gommone è tutto vostro.
     return {
       adulti, bambini, neonati, persone: totPersone, paganti, posti: totPersone, totale: riga.barca,
-      righe: [{ testo: `${t.nome}, gommone solo per voi`, importo: riga.barca }],
+      righe: [{ testo: `${t.nome}, gommone in esclusiva`, importo: riga.barca }],
       carburanteEscluso: Boolean(o.carburanteEscluso),
     };
   }
