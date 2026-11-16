@@ -3,12 +3,13 @@ import ModuloRichiesta from './ModuloRichiesta.astro';
 import Dato from './Dato.astro';
 import { sito } from '../data/sito.js';
 
-interface Props { escursione?: string; titolo?: string; titoloModulo?: string; testo?: string }
+interface Props { escursione?: string; titolo?: string; titoloModulo?: string; testo?: string; imbarco?: string }
 const {
   escursione,
   titolo = 'Scegli la data, ti rispondiamo su WhatsApp',
   titoloModulo,
   testo,
+  imbarco,
 } = Astro.props;
 const { contatti } = sito;
 ---
@@ -31,7 +32,7 @@ const { contatti } = sito;
             : <Dato e="+39 numero" />}, rispondiamo <Dato v={contatti.orariRisposta} e="giorni e orari" />.
         </p>
       </div>
-      <ModuloRichiesta escursione={escursione} titolo={titoloModulo} />
+      <ModuloRichiesta escursione={escursione} titolo={titoloModulo} imbarco={imbarco} />
     </div>
   </div>
 </section>

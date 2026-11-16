@@ -23,14 +23,14 @@ const barche = sito.flotta.map((f) => {
 });
 ---
 <Base
-  titolo="I maxi gommoni"
-  descrizione="I quattro maxi gommoni con cui esploriamo l'Arcipelago di La Maddalena: Joker Clubman 28, BWA 30, Joker 35 e Honda 9.50."
+  titolo="Maxi gommone La Maddalena: i nostri gommoni con skipper"
+  descrizione="I quattro maxi gommoni con skipper delle nostre escursioni a La Maddalena: Joker Clubman 28, BWA 30, Joker 35 e Honda 9.50. Ombra a bordo, massimo 12 persone."
 >
   <section class="sezione" style="padding-top:56px" aria-labelledby="gommone-titolo">
     <div class="contenitore pila">
       <div class="intestazione__testo">
         <p class="occhiello">La flotta</p>
-        <h1 id="gommone-titolo" class="titolo-sezione">I nostri maxi gommoni</h1>
+        <h1 id="gommone-titolo" class="titolo-sezione">I nostri maxi gommoni a La Maddalena</h1>
         <p class="testo-2"><Dato v={sito.gommone.descrizione} e="Presenta i gommoni in due righe: comodità, perché sono adatti a famiglie e gruppi" /></p>
       </div>
       <nav class="flotta-indice" aria-label="I gommoni">
@@ -65,7 +65,7 @@ const barche = sito.flotta.map((f) => {
             <h3 class="barca__sotto">Con questo gommone</h3>
             <ul class="barca__escursioni">
               {b.fa.map((e) => (
-                <li><a href={`/escursioni/${e.slug}/`} class="link-freccia">{e.titolo}<Icona nome="destra" size={18} /></a></li>
+                <li><a href={`/escursioni/${e.indirizzo}/`} class="link-freccia">{e.titolo}<Icona nome="destra" size={18} /></a></li>
               ))}
             </ul>
           </div>

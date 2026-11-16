@@ -1,8 +1,9 @@
 // Mappa del sito per Google: solo le pagine pubbliche (niente aree riservate, esiti, pagamenti).
 import { sito } from '../data/sito.js';
 import { escursioni } from '../data/escursioni.js';
+import { pagineImbarco } from '../data/imbarchi.js';
 
-const pagine = ['/', '/escursioni/', ...escursioni.map((e) => `/escursioni/${e.slug}/`), '/prenota/', '/buono-regalo/', '/gommone/',
+const pagine = ['/', '/escursioni/', ...escursioni.map((e) => `/escursioni/${e.indirizzo}/`), ...pagineImbarco.map((p) => p.href), '/prenota/', '/buono-regalo/', '/gommone/',
   '/info-utili/', '/domande-frequenti/', '/contatti/', '/richiesta/', '/condizioni/', '/privacy/', '/cookie/'];
 
 export function GET() {

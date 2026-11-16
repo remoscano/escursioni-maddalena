@@ -25,19 +25,20 @@ percorsiMezza.splice(0, percorsiMezza.length, ...percorsiMezza.filter((p) => p.s
 const prezzoMinimo = Math.min(...escursioni.filter((e) => !e.prezzoGommone).map((e) => Number(e.prezzoAdulti)));
 const altre = escursioni.filter((e) => !e.inEvidenza);
 import DatiStrutturati from '../components/DatiStrutturati.astro';
+import { pagineImbarco } from '../data/imbarchi.js';
+const partenze = pagineImbarco.map((p) => ({ href: p.href, titolo: p.titoloPagina, testo: p.breve }));
 ---
 <Base
-  titolo="Escursioni La Maddalena · Escursioni in maxi gommone nell'Arcipelago di La Maddalena"
-  descrizione="Escursioni in maxi gommone nell'Arcipelago di La Maddalena: Tour delle 7 isole, mezza giornata, Sunset al tramonto, tour privati e Corsica. Partenza da La Maddalena, Palau e Cannigione: prenoti online."
-
+  titolo="Escursioni La Maddalena: gite e tour in barca da Palau e La Maddalena"
+  descrizione={`Escursioni in barca a La Maddalena da Palau, La Maddalena e Cannigione: giro delle isole, mezza giornata, aperitivo al tramonto, gommone con skipper. Da ${prezzoMinimo} €.`}
 >
   <DatiStrutturati slot="head" tipo="attivita" />
   <section slot="hero" class="hero" aria-label="Apertura">
     <div class="hero__griglia">
       <div class="hero__contenuto">
         <p class="hero__occhiello">Arcipelago di La Maddalena · Sardegna</p>
-        <h1 class="hero__titolo">L'arcipelago di La Maddalena in maxi gommone.</h1>
-        <p class="hero__testo">Il Tour delle 7 isole, la mezza giornata, il Sunset con aperitivo al tramonto, il tour privato e la Corsica. Partenze da La Maddalena, Palau e Cannigione.</p>
+        <h1 class="hero__titolo">Escursioni La Maddalena in barca, da Palau e La Maddalena.</h1>
+        <p class="hero__testo">Gite in gommone con skipper nell'arcipelago di La Maddalena: il giro delle isole (Tour delle 7 isole), l'escursione di mezza giornata, l'aperitivo al tramonto, il tour privato in esclusiva e l'escursione in Corsica. Partenze da La Maddalena, Palau e Cannigione.</p>
         <div class="hero__azioni">
           {regole.attive
             ? <a href="/prenota/" class="btn btn--wa btn--grande">Prenota online</a>
@@ -67,9 +68,9 @@ import DatiStrutturati from '../components/DatiStrutturati.astro';
       <div class="intestazione">
         <div class="intestazione__testo">
           <p class="occhiello">Escursioni</p>
-          <h2 id="escursioni-titolo" class="titolo-sezione">Scegli la tua giornata in mare</h2>
+          <h2 id="escursioni-titolo" class="titolo-sezione">Gite in barca a La Maddalena: scegli la tua</h2>
         </div>
-        <p class="intestazione__lato">{regole.attive ? 'Cinque uscite in maxi gommone: vedi i posti liberi e prenoti online in pochi minuti.' : 'Cinque uscite in maxi gommone, tutte prenotabili con un messaggio WhatsApp.'}</p>
+        <p class="intestazione__lato">{regole.attive ? 'Cinque escursioni in gommone con skipper: vedi i posti liberi e prenoti online in pochi minuti.' : 'Cinque escursioni in gommone con skipper, tutte prenotabili con un messaggio WhatsApp.'}</p>
       </div>
       <SchedaEscursione e={tour} grande />
       <div class="griglia-schede">
@@ -83,7 +84,7 @@ import DatiStrutturati from '../components/DatiStrutturati.astro';
       <div class="intestazione">
         <div class="intestazione__testo">
           <p class="occhiello">Tour delle 7 isole</p>
-          <h2 id="percorso-titolo" class="titolo-sezione">Il giro dell'arcipelago, sosta per sosta</h2>
+          <h2 id="percorso-titolo" class="titolo-sezione">Il giro delle isole di La Maddalena, sosta per sosta</h2>
         </div>
         <p class="intestazione__lato">Partenza da La Maddalena alle {tour.partenze}; rientro <Dato v={tour.oraRientro} e="ora" />. L'ordine delle soste può cambiare in base a vento e mare.</p>
       </div>
@@ -91,7 +92,7 @@ import DatiStrutturati from '../components/DatiStrutturati.astro';
         <Mappa />
         <div style="display:flex;flex-direction:column;gap:24px">
           <ElencoSoste programma={tour.programma} rientro={tour.oraRientro} />
-          <a href="/escursioni/tour-7-isole/" class="link-freccia">Programma completo del tour<Icona nome="destra" size={18} /></a>
+          <a href="/escursioni/giro-delle-isole-la-maddalena/" class="link-freccia">Il giro delle isole in barca: programma completo<Icona nome="destra" size={18} /></a>
         </div>
       </div>
     </div>
@@ -102,7 +103,7 @@ import DatiStrutturati from '../components/DatiStrutturati.astro';
       <div class="intestazione">
         <div class="intestazione__testo">
           <p class="occhiello">Mezza giornata</p>
-          <h2 id="mezza-titolo" class="titolo-sezione">Due giri, a seconda del vento</h2>
+          <h2 id="mezza-titolo" class="titolo-sezione">Escursione di mezza giornata: due giri, a seconda del vento</h2>
         </div>
         <p class="intestazione__lato">Mattina o pomeriggio, da La Maddalena (con passaggio a Palau) o da Cannigione. In tre ore e mezza si fa un giro solo: Caprera oppure le isole del nord, lo sceglie lo skipper in base al vento.</p>
       </div>
@@ -116,8 +117,27 @@ import DatiStrutturati from '../components/DatiStrutturati.astro';
               <ElencoSoste programma={p.soste} turchese={i === 1} />
             </div>
           ))}
-          <a href="/escursioni/mezza-giornata/" class="link-freccia">La mezza giornata<Icona nome="destra" size={18} /></a>
+          <a href="/escursioni/escursione-mezza-giornata-la-maddalena/" class="link-freccia">L'escursione di mezza giornata<Icona nome="destra" size={18} /></a>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="partenze" class="sezione" aria-labelledby="partenze-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione">
+        <div class="intestazione__testo">
+          <p class="occhiello">Da dove si parte</p>
+          <h2 id="partenze-titolo" class="titolo-sezione">Escursioni La Maddalena da Palau e da Cannigione</h2>
+        </div>
+        <p class="intestazione__lato">Il gommone parte dal porto di La Maddalena e passa a prendere chi si imbarca a Palau. Da Cannigione parte un gommone dedicato.</p>
+      </div>
+      <div class="griglia-schede">
+        {partenze.map((p) => (
+          <a href={p.href} class="altra">
+            <span><strong>{p.titolo}</strong><span>{p.testo}</span></span>
+          </a>
+        ))}
       </div>
     </div>
   </section>

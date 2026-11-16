@@ -4,19 +4,22 @@ import SchedaEscursione from '../../components/SchedaEscursione.astro';
 import SezioneRichiesta from '../../components/SezioneRichiesta.astro';
 import { escursioni } from '../../data/escursioni.js';
 import { regole } from '../../data/prenotazioni.js';
+import { pagineImbarco } from '../../data/imbarchi.js';
+import Icona from '../../components/Icona.astro';
+const prezzoMinimo = Math.min(...escursioni.filter((e) => !e.prezzoGommone).map((e) => Number(e.prezzoAdulti)));
 const [evidenza, ...altre] = [...escursioni].sort((a, b) => Number(!!b.inEvidenza) - Number(!!a.inEvidenza));
 ---
 <Base
-  titolo="Escursioni in maxi gommone a La Maddalena"
-  descrizione="Tour delle 7 isole, mezza giornata, Sunset al tramonto, tour privati e Corsica in maxi gommone. Partenza da La Maddalena, Palau e Cannigione."
+  titolo="Gite in barca La Maddalena: tour in gommone e prezzi"
+  descrizione={`Gite e tour in barca a La Maddalena: giro delle isole, escursione di mezza giornata, aperitivo al tramonto, gommone con skipper e Corsica. Da ${prezzoMinimo} € a persona.`}
 >
   <section class="testa-pagina">
     <div class="contenitore">
       <p class="occhiello">Escursioni</p>
-      <h1>Scegli la tua giornata in mare</h1>
+      <h1>Gite in barca a La Maddalena: tour in gommone e prezzi</h1>
       <p class="intro">{regole.attive
-        ? "Escursioni in maxi gommone nell'Arcipelago di La Maddalena, con partenza da La Maddalena, Palau e Cannigione: vedi i posti liberi e prenoti online."
-        : "Escursioni in maxi gommone nell'Arcipelago di La Maddalena, con partenza da La Maddalena, Palau e Cannigione, prenotabili con un messaggio WhatsApp."}</p>
+        ? "Tour in barca nell'arcipelago di La Maddalena, in gommone con skipper, con partenza da La Maddalena, Palau e Cannigione: vedi i posti liberi e prenoti online."
+        : "Tour in barca nell'arcipelago di La Maddalena, in gommone con skipper, con partenza da La Maddalena, Palau e Cannigione, prenotabili con un messaggio WhatsApp."}</p>
     </div>
   </section>
   <section class="sezione" style="padding-top:48px">
@@ -25,6 +28,10 @@ const [evidenza, ...altre] = [...escursioni].sort((a, b) => Number(!!b.inEvidenz
       <SchedaEscursione e={evidenza} grande />
       <div class="griglia-schede">
         {altre.map((e) => <SchedaEscursione e={e} />)}
+      </div>
+      <div class="pila" style="gap:12px">
+        <h2 class="titolo-medio">Da dove si parte</h2>
+        {pagineImbarco.map((p) => <a href={p.href} class="link-freccia">{p.titoloPagina}<Icona nome="destra" size={18} /></a>)}
       </div>
     </div>
   </section>

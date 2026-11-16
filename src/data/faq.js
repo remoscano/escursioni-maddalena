@@ -2,7 +2,11 @@
 // sul sito compare un segnaposto rosa al posto del dato ancora da inserire.
 // "regola" collega la risposta a un campo di sito.regole: quando lo compili, il segnaposto sparisce.
 
-import { regole as regoleP, testoChiusuraOnline, testoDopoChiusura } from './prenotazioni.js';
+import { regole as regoleP, testoChiusuraOnline, testoDopoChiusura, prezzoDa, offerte } from './prenotazioni.js';
+
+// Prezzi "da" per la risposta sui prezzi: dal listino unico, mai scritti a mano.
+const p7 = prezzoDa('tour-7-isole'), pM = prezzoDa('mezza-giornata'), pT = prezzoDa('tramonto'), pP = prezzoDa('tour-privato'), pC = prezzoDa('corsica');
+const palauMattina = offerte['tour-7-isole'].turni[0].orariImbarco.palau.split('–')[0].trim();
 import { sito } from './sito.js';
 
 // Prenotazione online accesa o spenta (regole.attive): alcune risposte cambiano, buono regalo e lista d'attesa spariscono.
@@ -26,6 +30,18 @@ export const faq = [
         risposta: online ? '' : `${sito.pagamentoLink.testo} Nei tour in esclusiva il carburante è a parte e si paga a bordo, a consumo.`,
         regola: online ? 'pagamento' : undefined,
         mancante: online ? 'Pagamento: a bordo, in contanti o con carta? Serve un acconto?' : undefined,
+      },
+      {
+        // Ricerche "escursioni la maddalena prezzi", "quanto costa" (Semrush e Google, 16 novembre 2026).
+        id: 'prezzi',
+        domanda: "Quanto costa un'escursione a La Maddalena?",
+        risposta: `Nelle uscite di gruppo: escursione di mezza giornata da ${pM.adulto} € a persona, giro delle isole (Tour delle 7 isole) da ${p7.adulto} €, aperitivo al tramonto da ${pT.adulto} €. Fino a 10 anni c'è il ridotto (da ${pM.bambino} € nella mezza giornata). Il gommone con skipper in esclusiva costa da ${pP.barca} € (Corsica da ${pC.barca} €), con il carburante a parte. I prezzi cambiano con il periodo della stagione.`,
+      },
+      {
+        // Ricerche "escursioni la maddalena da palau" (Semrush, 16 novembre 2026).
+        id: 'palau',
+        domanda: 'Si può partire da Palau?',
+        risposta: `Sì. Nelle uscite di gruppo il gommone parte dal porto di La Maddalena e passa a prendere chi si imbarca a Palau: al mattino alle ${palauMattina}, e al ritorno ti riporta a Palau prima di rientrare a La Maddalena. In esclusiva (tour privato e Corsica) puoi partire direttamente da Palau. Prezzi uguali per tutti i porti.`,
       },
       {
         id: 'cancellare',
@@ -76,8 +92,9 @@ export const faq = [
     domande: [
       {
         id: 'pranzo',
-        domanda: 'Il pranzo è incluso nel Tour delle 7 isole?',
-        risposta: `No, il pranzo è libero, a La Maddalena. ${sito.pranzo7.testo}`,
+        // Ricerca "escursioni la maddalena con pranzo a bordo": risposta vera, il pranzo non è a bordo.
+        domanda: 'Il pranzo è a bordo? È incluso nel Tour delle 7 isole?',
+        risposta: `No, il pranzo non è a bordo e non è incluso: è libero, a La Maddalena. ${sito.pranzo7.testo}`,
       },
       {
         id: 'bambini',

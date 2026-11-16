@@ -1,4 +1,4 @@
-// Le cinque escursioni. Ogni voce genera la sua pagina in /escursioni/<slug>/
+// Le cinque escursioni. Ogni voce genera la sua pagina in /escursioni/<indirizzo>/ (dal 16 novembre 2026; prima /escursioni/<slug>/)
 // con lo stesso modello della pagina "Tour delle 7 isole".
 // I valori vuoti ('') diventano segnaposto rosa sul sito.
 
@@ -23,8 +23,13 @@ const [partenzaCorsica, rientroCorsica] = offerte['corsica'].turni[0].orario.spl
 export const escursioni = [
   {
     slug: 'tour-7-isole',
+    indirizzo: 'giro-delle-isole-la-maddalena',
+    nomeLink: 'Giro delle isole in barca (Tour delle 7 isole)', // testo dei link interni: le parole delle ricerche
     titolo: 'Tour delle 7 isole',
-    titoloPagina: 'Tour delle 7 isole in maxi gommone',
+    // Parole delle ricerche su Google (Semrush e suggerimenti di Google, 16 novembre 2026): vedi "SEO" in CLAUDE.md.
+    titoloSeo: 'Giro delle isole La Maddalena in barca: tour delle 7 isole',
+    titoloPagina: 'Giro delle isole La Maddalena in barca: il tour delle 7 isole',
+    descrizioneSeo: `Escursione in barca di un giorno nell'arcipelago di La Maddalena, da Palau o La Maddalena: 7 isole, Spiaggia Rosa dal mare. Da ${da('tour-7-isole').adulto} € a persona.`,
     inEvidenza: true,
     etichette: ['Giornata intera', '7 isole', pranzo7.breve],
     breve:
@@ -100,8 +105,12 @@ export const escursioni = [
   },
   {
     slug: 'mezza-giornata',
+    indirizzo: 'escursione-mezza-giornata-la-maddalena',
+    nomeLink: 'Escursione di mezza giornata', // testo dei link interni: le parole delle ricerche
     titolo: 'Mezza giornata',
-    titoloPagina: 'Mezza giornata in maxi gommone',
+    titoloSeo: 'Escursione mezza giornata La Maddalena in barca',
+    titoloPagina: 'Escursione di mezza giornata a La Maddalena in barca',
+    descrizioneSeo: `Tour in barca di mezza giornata a La Maddalena, mattina o pomeriggio, da Palau, La Maddalena o Cannigione: Caprera o isole del nord. Da ${da('mezza-giornata').adulto} € a persona.`,
     etichette: ['Mattina o pomeriggio', 'Caprera o isole del nord'],
     breve: 'Tre ore e mezza su uno dei due giri: Caprera, oppure Spargi, la Spiaggia Rosa e Porto della Madonna. Lo skipper sceglie in base al vento.',
     intro:
@@ -150,7 +159,11 @@ export const escursioni = [
     slug: 'tramonto',
     titolo: 'Sunset, aperitivo al tramonto',
     nomeBreve: 'Sunset', // negli elenchi con altre escursioni
-    titoloPagina: 'Sunset: aperitivo al tramonto in maxi gommone',
+    indirizzo: 'aperitivo-al-tramonto-la-maddalena',
+    nomeLink: 'Aperitivo al tramonto in barca', // testo dei link interni: le parole delle ricerche
+    titoloSeo: 'Aperitivo al tramonto La Maddalena in barca',
+    titoloPagina: 'Aperitivo al tramonto a La Maddalena in barca',
+    descrizioneSeo: `Aperitivo in barca al tramonto a La Maddalena: prosecco, tagliere e bagno a Santo Stefano. Partenza tra le 18:30 e le 19:00. Da ${da('tramonto').adulto} € a persona.`,
     etichette: ['Aperitivo a bordo', `Massimo ${posti('tramonto')} persone`],
     breve: "L'aperitivo in gommone al tramonto: prosecco, un tagliere e una sosta in acqua calma a Santo Stefano.",
     intro:
@@ -199,12 +212,16 @@ export const escursioni = [
   },
   {
     slug: 'tour-privato',
+    indirizzo: 'gommone-con-skipper-la-maddalena',
+    nomeLink: 'Gommone con skipper in esclusiva', // testo dei link interni: le parole delle ricerche
     titolo: 'Tour privato in esclusiva',
-    titoloPagina: 'Tour privato in maxi gommone',
+    titoloSeo: 'Gommone con skipper La Maddalena: tour privato in esclusiva',
+    titoloPagina: 'Gommone con skipper a La Maddalena: tour privato in esclusiva',
+    descrizioneSeo: `Noleggio gommone con skipper a La Maddalena: tour privato in esclusiva fino a ${posti('tour-privato')} persone, da Palau, La Maddalena o Cannigione, anche al tramonto. Da ${da('tour-privato').barca} €.`,
     etichette: ['Esclusiva', 'Su misura'],
     breve: 'Il gommone in esclusiva per famiglie, amici o aziende, con l\'itinerario su misura.',
     intro:
-      "Il maxi gommone in esclusiva per il tuo gruppo: famiglie, amici, aziende o un'occasione speciale. Itinerario e soste si decidono insieme allo skipper.",
+      "Il gommone con skipper in esclusiva per il tuo gruppo: famiglie, amici, aziende o un'occasione speciale. Itinerario e soste si decidono insieme allo skipper.",
     durata: 'Mezza giornata, giornata intera o Sunset',
     orari: 'da concordare', // niente orari ripetuti in testata: sono nel programma
     ore: '',
@@ -242,7 +259,11 @@ export const escursioni = [
   {
     slug: 'corsica',
     titolo: 'Corsica',
-    titoloPagina: 'Corsica in maxi gommone: isola Piana, Lavezzi e Cavallo',
+    indirizzo: 'escursione-corsica-da-palau',
+    nomeLink: 'Escursione in Corsica', // testo dei link interni: le parole delle ricerche
+    titoloSeo: 'Escursione in Corsica da Palau in barca: Lavezzi e Cavallo',
+    titoloPagina: 'Escursione in Corsica da Palau e La Maddalena: Lavezzi e Cavallo',
+    descrizioneSeo: `Escursione in barca dalla Sardegna alla Corsica, da Palau o La Maddalena: isola Piana, isole Lavezzi e Cavallo, gommone in esclusiva. Da ${da('corsica').barca} €.`,
     etichette: ['Esclusiva', 'Giornata intera'],
     breve: "Gommone in esclusiva, giornata intera con visita all'isola Piana, Lavezzi e isola di Cavallo.",
     intro:
@@ -288,3 +309,5 @@ export const escursioni = [
 ];
 
 export const trovaEscursione = (slug) => escursioni.find((e) => e.slug === slug);
+// Indirizzo pubblico della pagina (parole delle ricerche). Lo slug resta il nome interno, usato da prenotazioni e database.
+export const urlEscursione = (slug) => `/escursioni/${trovaEscursione(slug)?.indirizzo ?? slug}/`;

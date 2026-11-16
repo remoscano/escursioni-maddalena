@@ -10,8 +10,9 @@ interface Props {
   titolo?: string;
   chiaro?: boolean;      // stile per sfondo chiaro
   id?: string;
+  imbarco?: string;      // 'La Maddalena' | 'Palau' | 'Cannigione': punto d'imbarco già scelto
 }
-const { escursione, titolo = 'Richiesta di disponibilità', chiaro = false, id = 'modulo' } = Astro.props;
+const { escursione, titolo = 'Richiesta di disponibilità', chiaro = false, id = 'modulo', imbarco = 'La Maddalena' } = Astro.props;
 const fissa = escursione ? escursioni.find((e) => e.slug === escursione) : undefined;
 ---
 <form
@@ -53,9 +54,9 @@ const fissa = escursione ? escursioni.find((e) => e.slug === escursione) : undef
   <fieldset>
     <legend>Imbarco</legend>
     <div class="scelte">
-      <label class="scelta"><input type="radio" name="imbarco" value="La Maddalena" checked />La Maddalena</label>
-      <label class="scelta"><input type="radio" name="imbarco" value="Palau" />Palau</label>
-      <label class="scelta"><input type="radio" name="imbarco" value="Cannigione" />Cannigione</label>
+      <label class="scelta"><input type="radio" name="imbarco" value="La Maddalena" checked={imbarco === 'La Maddalena'} />La Maddalena</label>
+      <label class="scelta"><input type="radio" name="imbarco" value="Palau" checked={imbarco === 'Palau'} />Palau</label>
+      <label class="scelta"><input type="radio" name="imbarco" value="Cannigione" checked={imbarco === 'Cannigione'} />Cannigione</label>
     </div>
   </fieldset>
 

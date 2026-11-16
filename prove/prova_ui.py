@@ -172,7 +172,7 @@ async def strutture_e_gestione(b):
 async def pagine(b):
     for w in (1440, 390):
         ctx = await b.new_context(viewport={'width': w, 'height': 900}); pg = await ctx.new_page()
-        for path in ['/', '/escursioni/tour-7-isole/', '/escursioni/tour-privato/', '/escursioni/corsica/', '/escursioni/mezza-giornata/', '/escursioni/tramonto/', '/gommone/', '/info-utili/', '/escursioni/', '/prenota/', '/condizioni/', '/privacy/', '/cookie/', '/domande-frequenti/']:
+        for path in ['/', '/escursioni/giro-delle-isole-la-maddalena/', '/escursioni/gommone-con-skipper-la-maddalena/', '/escursioni/escursione-corsica-da-palau/', '/escursioni/escursione-mezza-giornata-la-maddalena/', '/escursioni/aperitivo-al-tramonto-la-maddalena/', '/gommone/', '/info-utili/', '/escursioni/', '/escursioni-la-maddalena-da-palau/', '/escursioni-la-maddalena-da-cannigione/', '/prenota/', '/condizioni/', '/privacy/', '/cookie/', '/domande-frequenti/']:
             await pg.goto(B + path, wait_until='networkidle')
             await larghezza(pg, w, path)
             nome = path.strip('/').replace('/', '_') or 'home'

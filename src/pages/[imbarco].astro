@@ -1,0 +1,95 @@
+---
+// Pagine dei punti di partenza: /escursioni-la-maddalena-da-palau/ e /escursioni-la-maddalena-da-cannigione/.
+// Testi, orari e prezzi in src/data/imbarchi.js (che li prende da prenotazioni.js e sito.js).
+import Base from '../layouts/Base.astro';
+import Icona from '../components/Icona.astro';
+import Dato from '../components/Dato.astro';
+import Faq from '../components/Faq.astro';
+import SezioneRichiesta from '../components/SezioneRichiesta.astro';
+import DatiStrutturati from '../components/DatiStrutturati.astro';
+import { pagineImbarco } from '../data/imbarchi.js';
+import { urlEscursione } from '../data/escursioni.js';
+import { domande } from '../data/faq.js';
+import { regole } from '../data/prenotazioni.js';
+
+export function getStaticPaths() {
+  return pagineImbarco.map((p) => ({ params: { imbarco: p.href.replaceAll('/', '') }, props: { p } }));
+}
+const { p } = Astro.props;
+const richiesta = (slug: string) => (regole.attive ? `/prenota/?escursione=${slug}` : `/richiesta/?escursione=${slug}`);
+const altre = pagineImbarco.filter((x) => x.id !== p.id);
+---
+<Base titolo={p.titoloSeo} descrizione={p.descrizioneSeo}>
+  <DatiStrutturati slot="head" tipo="faq" domande={domande(p.faq)} />
+  <section class="testa-tour" aria-labelledby="imbarco-titolo">
+    <div class="contenitore">
+      <nav class="briciole" aria-label="Sei qui">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li aria-hidden="true">›</li>
+          <li><a href="/escursioni/">Escursioni</a></li>
+          <li aria-hidden="true">›</li>
+          <li aria-current="page">Da {p.imbarco}</li>
+        </ol>
+      </nav>
+      <div class="pila" style="gap:24px;max-width:820px">
+        <h1 id="imbarco-titolo">{p.titoloPagina}</h1>
+        <p class="testa-tour__intro">{p.intro}</p>
+        <ul class="fatti">
+          <li><Icona nome="ancora" size={18} />Imbarco: <Dato v={p.molo.molo} e="molo e indirizzo" />{p.molo.mappa && <Fragment> · <a href={p.molo.mappa} target="_blank" rel="noopener">Apri su Google Maps</a></Fragment>}</li>
+          <li><Icona nome="orologio" size={18} />Ritrovo alle {p.molo.ritrovo} per le uscite del mattino</li>
+          {p.id === 'palau' && <li><Icona nome="auto" size={18} />Parcheggio: <Dato v={p.molo.parcheggio} e="dove lasciare l'auto" /></li>}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="escursioni" class="sezione sezione--calda" aria-labelledby="elenco-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione__testo">
+        <p class="occhiello">Orari e prezzi</p>
+        <h2 id="elenco-titolo" class="titolo-sezione">Escursioni in barca da {p.imbarco}: orari e prezzi</h2>
+      </div>
+      <div class="griglia-info">
+        {p.escursioni.map(({ e, turni }: any) => (
+          <article class="box">
+            <h3><a href={urlEscursione(e.slug)}>{e.nomeLink}</a></h3>
+            <p>{e.breve}</p>
+            <ul>
+              {turni.map((t: any) => <li><strong>{t.nome}</strong>: {t.orario}</li>)}
+            </ul>
+            <p><strong>Da {e.prezzoAdulti} € {e.prezzoGommone ? 'a gommone' : 'a persona'}</strong>{e.prezzoBambini !== null && <Fragment> · ridotto fino a 10 anni {e.prezzoBambini} €</Fragment>}</p>
+            <p style="display:flex;flex-wrap:wrap;gap:8px 20px">
+              <a href={urlEscursione(e.slug)} class="link-freccia">Il programma<Icona nome="destra" size={18} /></a>
+              <a href={richiesta(e.slug)} class="link-freccia">{regole.attive ? 'Prenota' : 'Chiedi su WhatsApp'}<Icona nome="destra" size={18} /></a>
+            </p>
+          </article>
+        ))}
+      </div>
+      {p.nota && <p class="testo-2" style="font-size:16px;max-width:820px">{p.nota}</p>}
+    </div>
+  </section>
+
+  <section class="sezione" aria-labelledby="perche-titolo">
+    <div class="contenitore pila">
+      <h2 id="perche-titolo" class="titolo-sezione">{p.perche.titolo}</h2>
+      <ul class="note">
+        {p.perche.punti.map((x: string) => <li><Icona nome="spunta" />{x}</li>)}
+      </ul>
+      {altre.map((x) => <a href={x.href} class="link-freccia">{x.titoloPagina}<Icona nome="destra" size={18} /></a>)}
+    </div>
+  </section>
+
+  <section id="faq" class="sezione sezione--calda" aria-labelledby="faq-titolo">
+    <div class="contenitore due-colonne due-colonne--alto">
+      <div class="intestazione__testo">
+        <p class="occhiello">Domande frequenti</p>
+        <h2 id="faq-titolo" class="titolo-sezione">Escursioni da {p.imbarco}: le domande</h2>
+        <a href="/domande-frequenti/" class="link-freccia">Tutte le domande<Icona nome="destra" size={18} /></a>
+      </div>
+      <Faq domande={domande(p.faq)} />
+    </div>
+  </section>
+
+  <SezioneRichiesta imbarco={p.imbarco} titolo={`Escursione da ${p.imbarco}: scegli la data`} />
+</Base>

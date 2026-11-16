@@ -6,7 +6,7 @@ import { regole } from '../data/prenotazioni.js';
 
 interface Props { e: any; grande?: boolean }
 const { e, grande = false } = Astro.props;
-const href = `/escursioni/${e.slug}/`;
+const href = `/escursioni/${e.indirizzo}/`;
 const richiesta = regole.attive ? `/prenota/?escursione=${e.slug}` : `/richiesta/?escursione=${e.slug}`;
 const tono = 'acqua';
 ---

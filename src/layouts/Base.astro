@@ -16,7 +16,10 @@ interface Props {
   senzaBarra?: boolean;    // true = niente barra in basso su telefono
 }
 const { titolo, descrizione, testataScura = false, senzaTestata = false, nascosta = false, senzaBarra = false } = Astro.props;
-const titoloCompleto = Astro.url.pathname === '/' ? titolo : `${titolo} · ${sito.nome}`;
+// Il nome del sito si aggiunge solo se il titolo resta entro 65 caratteri (oltre, Google lo taglia o lo riscrive)
+// e se non c'è già: i titoli con le parole delle ricerche contengono quasi tutti "La Maddalena" (SEO, 16 novembre 2026).
+const conNome = `${titolo} · ${sito.nome}`;
+const titoloCompleto = Astro.url.pathname === '/' || titolo.includes(sito.nome) || conNome.length > 65 ? titolo : conNome;
 const canonico = new URL(Astro.url.pathname, sito.url).href;
 const telefono = sito.contatti.whatsapp ? `tel:+${sito.contatti.whatsapp}` : '/contatti/';
 ---

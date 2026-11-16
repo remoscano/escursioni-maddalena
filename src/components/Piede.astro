@@ -4,6 +4,7 @@ import Dato from './Dato.astro';
 import { sito } from '../data/sito.js';
 import { escursioni } from '../data/escursioni.js';
 import { regole } from '../data/prenotazioni.js';
+import { pagineImbarco } from '../data/imbarchi.js';
 const { contatti, azienda } = sito;
 const anno = new Date().getFullYear();
 ---
@@ -12,11 +13,12 @@ const anno = new Date().getFullYear();
     <div class="piede__griglia">
       <div class="piede__col su-scuro">
         <Logo size={42} />
-        <p style="max-width: 30ch">Escursioni in maxi gommone nell'Arcipelago di La Maddalena, con partenza da La Maddalena, Palau e Cannigione.</p>
+        <p style="max-width: 30ch">Escursioni in barca a La Maddalena, in gommone con skipper, con partenza da La Maddalena, Palau e Cannigione.</p>
       </div>
       <nav class="piede__col" aria-labelledby="piede-escursioni">
         <h2 id="piede-escursioni">Escursioni</h2>
-        {escursioni.map((e) => <a href={`/escursioni/${e.slug}/`}>{e.titolo}</a>)}
+        {escursioni.map((e) => <a href={`/escursioni/${e.indirizzo}/`}>{e.nomeLink}</a>)}
+        {pagineImbarco.map((p) => <a href={p.href}>{p.titoloPagina}</a>)}
       </nav>
       <nav class="piede__col" aria-labelledby="piede-info">
         <h2 id="piede-info">Informazioni</h2>

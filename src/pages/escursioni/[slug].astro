@@ -8,13 +8,13 @@ import Mappa from '../../components/Mappa.astro';
 import Faq from '../../components/Faq.astro';
 import SezioneRichiesta from '../../components/SezioneRichiesta.astro';
 import DatiStrutturati from '../../components/DatiStrutturati.astro';
-import { escursioni } from '../../data/escursioni.js';
+import { escursioni, urlEscursione } from '../../data/escursioni.js';
 import { domande } from '../../data/faq.js';
 import { sito } from '../../data/sito.js';
 import { regole, offerte, testoChiusuraOnline, testoDopoChiusura } from '../../data/prenotazioni.js';
 
 export function getStaticPaths() {
-  return escursioni.map((e) => ({ params: { slug: e.slug }, props: { e } }));
+  return escursioni.map((e) => ({ params: { slug: e.indirizzo }, props: { e } }));
 }
 
 const { e } = Astro.props;
@@ -23,9 +23,9 @@ const altre = escursioni.filter((x) => x.slug !== e.slug);
 const toni = ['acqua', 'rosa', 'acqua', 'sabbia', 'acqua'] as const;
 
 const faqPerEscursione: Record<string, string[]> = {
-  'tour-7-isole': ['maestrale', 'cancellare', 'minimo', 'pranzo', 'spiaggia-rosa', 'bambini', 'pagare', 'animali'],
+  'tour-7-isole': ['prezzi', 'palau', 'maestrale', 'cancellare', 'minimo', 'pranzo', 'spiaggia-rosa', 'bambini', 'pagare', 'animali'],
   'corsica': ['pagare', 'maestrale', 'cancellare', 'bambini', 'animali'],
-  'mezza-giornata': ['maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
+  'mezza-giornata': ['prezzi', 'palau', 'maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
   tramonto: ['maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
   'tour-privato': ['pagare', 'maestrale', 'cancellare', 'bambini', 'animali'],
 };
@@ -39,8 +39,8 @@ const orarioRitrovo = !serale && offerte[e.slug]?.tipo === 'gruppo';
 const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
 ---
 <Base
-  titolo={e.titoloPagina}
-  descrizione={`${e.breve} ${e.fatti.find((f: string) => f.startsWith('Imbarco')) ?? ''}${prenotabile ? ', prenoti online.' : ', richiesta su WhatsApp.'}`.slice(0, 160)}
+  titolo={e.titoloSeo}
+  descrizione={e.descrizioneSeo}
 >
   <DatiStrutturati slot="head" tipo="escursione" slug={e.slug} domande={domande(faqPerEscursione[e.slug] ?? [])} />
   <section class="testa-tour" aria-labelledby="tour-titolo">
@@ -221,12 +221,14 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
             : 'Il gommone parte da La Maddalena e passa a prendere chi si imbarca a Palau.'}</p>
           <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.palau} minuti prima della partenza{orarioRitrovo && <Fragment> (alle <Dato v={imbarchi.palau.ritrovo} e=\"ora\" /> per le uscite di gruppo del mattino)</Fragment>}.</p>
           <p>Comodo se dormi in Gallura{!serale && <Fragment> o arrivi da fuori, per esempio da Olbia: con la partenza alle 11:00 non devi alzarti presto e hai il tempo di parcheggiare</Fragment>}. Parcheggio: <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" />.</p>
+          <p><a href="/escursioni-la-maddalena-da-palau/" class="link-freccia">Escursioni La Maddalena da Palau<Icona nome="destra" size={18} /></a></p>
         </div>
         {offerte[e.slug]?.imbarchi.includes('cannigione') && (
           <div class="box">
             <h3>Imbarco a Cannigione</h3>
             <p><Dato v={imbarchi.cannigione.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.cannigione} minuti prima della partenza{orarioRitrovo && <Fragment> (alle <Dato v={imbarchi.cannigione.ritrovo} e=\"ora\" /> per le uscite di gruppo del mattino)</Fragment>}.</p>
             <p>Comodo se dormi a Cannigione, ad Arzachena o in Costa Smeralda: da qui parte un gommone dedicato.</p>
+            <p><a href="/escursioni-la-maddalena-da-cannigione/" class="link-freccia">Escursioni La Maddalena da Cannigione<Icona nome="destra" size={18} /></a></p>
           </div>
         )}
         <div class="box">
@@ -257,10 +259,10 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
 
   <section class="sezione" aria-labelledby="altre-titolo" style="padding:96px 0">
     <div class="contenitore pila" style="gap:32px">
-      <h2 id="altre-titolo" class="titolo-medio">Altre uscite in maxi gommone</h2>
+      <h2 id="altre-titolo" class="titolo-medio">Altre escursioni in barca a La Maddalena</h2>
       <div class="altre">
         {altre.map((x) => (
-          <a href={`/escursioni/${x.slug}/`} class="altra">
+          <a href={urlEscursione(x.slug)} class="altra">
             <span class="altra__foto" aria-hidden="true"></span>
             <span><strong>{x.titolo}</strong><span>{x.breve}</span></span>
           </a>

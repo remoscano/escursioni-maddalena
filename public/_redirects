@@ -1,6 +1,16 @@
-# Vecchio indirizzo: mezza giornata e tramonto erano una pagina sola (fino all'11 novembre 2026).
-/escursioni/tramonto-mezza-giornata/ /escursioni/mezza-giornata/ 301
-/escursioni/tramonto-mezza-giornata /escursioni/mezza-giornata/ 301
-# La Corsica non passa più da Bonifacio: nuovo indirizzo dal 16 novembre 2026.
-/escursioni/corsica-lavezzi-bonifacio/ /escursioni/corsica/ 301
-/escursioni/corsica-lavezzi-bonifacio /escursioni/corsica/ 301
+# Indirizzi delle escursioni con le parole delle ricerche su Google (16 novembre 2026). I vecchi rimandano ai nuovi.
+/escursioni/tour-7-isole/ /escursioni/giro-delle-isole-la-maddalena/ 301
+/escursioni/tour-7-isole /escursioni/giro-delle-isole-la-maddalena/ 301
+/escursioni/mezza-giornata/ /escursioni/escursione-mezza-giornata-la-maddalena/ 301
+/escursioni/mezza-giornata /escursioni/escursione-mezza-giornata-la-maddalena/ 301
+/escursioni/tramonto/ /escursioni/aperitivo-al-tramonto-la-maddalena/ 301
+/escursioni/tramonto /escursioni/aperitivo-al-tramonto-la-maddalena/ 301
+/escursioni/tour-privato/ /escursioni/gommone-con-skipper-la-maddalena/ 301
+/escursioni/tour-privato /escursioni/gommone-con-skipper-la-maddalena/ 301
+/escursioni/corsica/ /escursioni/escursione-corsica-da-palau/ 301
+/escursioni/corsica /escursioni/escursione-corsica-da-palau/ 301
+# Indirizzi ancora più vecchi (mezza giornata e tramonto insieme fino all'11 novembre; Corsica con Bonifacio fino al 16 novembre 2026).
+/escursioni/tramonto-mezza-giornata/ /escursioni/escursione-mezza-giornata-la-maddalena/ 301
+/escursioni/tramonto-mezza-giornata /escursioni/escursione-mezza-giornata-la-maddalena/ 301
+/escursioni/corsica-lavezzi-bonifacio/ /escursioni/escursione-corsica-da-palau/ 301
+/escursioni/corsica-lavezzi-bonifacio /escursioni/escursione-corsica-da-palau/ 301
