@@ -1,14 +1,15 @@
 ---
-// Marchio: un sole e due onde che disegnano la M di Maddalena.
+// Marchio "Libero" (scelto da Remo il 16 novembre 2026): la M dei promontori di un'isoletta, il sole e un'onda, senza cerchio.
+// La M prende il colore del testo (grafite in testata, bianca nel piè di pagina scuro).
 interface Props { size?: number; href?: string; etichetta?: string }
 // Il nome letto dal lettore di schermo comincia con la scritta visibile (WCAG 2.5.3): niente aria-label.
 const { size = 46, href = '/' } = Astro.props;
 ---
 <a href={href} class="logo">
   <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
-    <circle cx="24" cy="24" r="24" fill="#2BA6DE" />
-    <circle cx="33.5" cy="14.5" r="5" fill="#FFFFFF" />
-    <path d="M9.5 32.5C12.5 22 18 22 24 30.5C30 22 35.5 22 38.5 32.5" fill="none" stroke="#282828" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="35" cy="11" r="5" fill="#2BA6DE" />
+    <path d="M5 33C9 19.5 15.5 19.5 24 30C32.5 19.5 39 19.5 43 33" fill="none" stroke="currentColor" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M9 40.5Q16.5 37.5 24 40.5T39 40.5" fill="none" stroke="#2BA6DE" stroke-width="3" stroke-linecap="round" />
   </svg>
   <span class="logo__testo">
     <span class="logo__sopra">Escursioni</span>
