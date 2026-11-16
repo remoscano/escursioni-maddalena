@@ -75,9 +75,12 @@ export const sito = {
     breve: 'Pranzo libero a La Maddalena',
     arrivo: '12:30', // entro quest'ora si è al porto di La Maddalena, per trovare posto e pranzare con calma
     ripartenza: '14:00',
-    testo: "Arriviamo al porto di La Maddalena entro le 12:30, così trovi posto e pranzi con calma: si riparte alle 14:00. Se vuoi, il nostro skipper, maddalenino, ti accompagna nei ristoranti dei suoi amici convenzionati con noi, dove si mangia la cucina tipica del posto a prezzi agevolati per i nostri clienti. Se preferisci, porta il pranzo al sacco.",
-    nonIncluso: 'Pranzo: libero a La Maddalena, nei ristoranti convenzionati a prezzi agevolati oppure al sacco',
+    testo: "Arriviamo al porto di La Maddalena entro le 12:30, così trovi posto e pranzi con calma: si riparte alle 14:00. Se vuoi, il nostro skipper, maddalenino, ti accompagna nei ristoranti dei suoi amici convenzionati con noi, dove si mangia la cucina tipica del posto, con tariffe trasparenti ed eque. Se preferisci, porta il pranzo al sacco.",
+    nonIncluso: 'Pranzo: libero a La Maddalena, nei ristoranti convenzionati (tariffe trasparenti ed eque) oppure al sacco',
   },
+
+  // Tagliere di Sunset ed esclusive: un solo testo (Remo, 16 novembre 2026: niente più taralli e ciliege).
+  tagliere: 'Tagliere con salsiccia e formaggio, oppure spiedini di frutta',
 
   // Prenotazione su WhatsApp (Remo, 16 novembre 2026): dopo la conferma l'ufficio manda un link di pagamento SumUp o PayPal.
   pagamentoLink: {
