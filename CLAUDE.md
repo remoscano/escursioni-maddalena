@@ -127,7 +127,11 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Nuovi orari (10:30 La Maddalena, 11:00 Palau), Tour delle 7 isole in 7 tappe con cartina rinumerata, testo unico del pranzo, mezza giornata di 3 ore e mezza, "gommone in esclusiva" ovunque; rilette tutte le frasi pubbliche (16 novembre 2026)
 
 ### Prossimi controlli (Remo, 16 novembre 2026, in quest'ordine)
-- [ ] 🧪 Reality Checker: pronti ad accendere le prenotazioni? Pagamenti, email, rimborsi, giornata tipo di ufficio e skipper
+- [x] 🧪 Reality Checker (16 novembre 2026): esito NON ANCORA PRONTO, per configurazione e non per il codice. Prove: sul sito vero `/api/disponibilita` risponde `pagamenti: []` (nessuna chiave SumUp/PayPal), quindi oggi i link di pagamento mandati dopo WhatsApp non si possono pagare; `/api/automatico` attivo ma senza Worker che lo chiama; email non attive. Codice confrontato con la documentazione SumUp (pagina ospitata, avviso `return_url` riletto dal server, rimborso `/v0.1/me/refund`) e PayPal (ordini v2): corretto. Pagamento arrivato dopo la scadenza: conferma se il posto è libero, altrimenti "da verificare". Fuso orario provato (48 ore, chiusura 20:00, cambio dell'ora): corretto. Giornata tipo provata a 390 px: prenotazione dalla gestione con link e bottone "Manda su WhatsApp", pagamento, biglietto con QR, check-in skipper, spese
+  - Da fare prima di mandare il primo link di pagamento: chiavi SumUp e/o PayPal in Cloudflare Pages (Production), poi un pagamento vero da 1 € e il suo rimborso
+  - PayPal: se il cliente approva ma chiude la pagina prima di tornare sul sito, il pagamento non viene incassato e dopo 30 minuti la prenotazione scade (nessun soldo preso). Valutare l'avviso automatico di PayPal (webhook) prima della stagione
+  - App imbarco: il nome dell'uscita compare doppio ("Mezza giornata · Mezza giornata, mattina"): piccola correzione
+  - Il biglietto dice "ti mandiamo anche un'email": vero solo con le email attive
 - [ ] ♿ Accessibility Auditor: telefono, tastiera, lettore di schermo, contrasti
 - [ ] 🔍 SEO Specialist: titoli e descrizioni, ricerche dei turisti, dati strutturati, piano di lancio
 - [ ] ⚖️ Legal Compliance Checker: condizioni, privacy e cookie con il sito in modalità WhatsApp. Già notato: la pagina `/condizioni/` descrive solo la prenotazione online ("si paga tutto al momento della prenotazione"), mentre ora si prenota su WhatsApp
