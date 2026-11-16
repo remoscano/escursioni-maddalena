@@ -42,7 +42,7 @@ Appena si compila il campo, il segnaposto sparisce in tutte le pagine.
 Le prenotazioni girano su Cloudflare: funzioni in `functions/`, database D1 (struttura in `migrations/`), collegamenti in `wrangler.toml`.
 
 **Pagamenti.** Si attivano inserendo le chiavi in Cloudflare Pages → progetto → Impostazioni → Variabili e segreti (ambiente Production, tipo "segreto"):
-`SUMUP_API_KEY` e `SUMUP_MERCHANT_CODE` (carta, dalla sezione sviluppatori di SumUp), `PAYPAL_CLIENT_ID` e `PAYPAL_SECRET` (app "Live" su developer.paypal.com). Senza chiavi il sito mostra "pagamenti non ancora attivi" e rimanda a WhatsApp. Nelle anteprime c'è il pagamento simulato.
+`SUMUP_API_KEY` e `SUMUP_MERCHANT_CODE` (carta, dalla sezione sviluppatori di SumUp), `PAYPAL_CLIENT_ID` e `PAYPAL_SECRET` (app "Live" su developer.paypal.com). Nella stessa app PayPal, sezione Webhooks, aggiungere l'indirizzo `https://<dominio>/api/pagamento/paypal-notifica` con gli eventi `CHECKOUT.ORDER.APPROVED` e `PAYMENT.CAPTURE.COMPLETED`: così la prenotazione si conferma anche se il cliente chiude la pagina dopo aver pagato (SumUp lo fa già da solo). Senza chiavi il sito mostra "pagamenti non ancora attivi" e rimanda a WhatsApp. Nelle anteprime c'è il pagamento simulato.
 
 **Email di conferma.** Con `RESEND_API_KEY` ed `EMAIL_MITTENTE` (serve il dominio) partono la conferma al cliente, con riepilogo e copia delle condizioni, e l'avviso a `maddalena.escursioni@gmail.com`. Vanno attivate prima di aprire le prenotazioni vere: la legge chiede di mandare al cliente la conferma con le condizioni su un supporto durevole (art. 51, comma 7, Codice del consumo). Senza, la conferma si vede solo a schermo e nella gestione.
 

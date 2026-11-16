@@ -18,7 +18,8 @@ export function metodiDisponibili(env) {
 }
 
 const euro = (cent) => (Math.round(cent) / 100).toFixed(2);
-const basePaypal = (env) => (env.PAYPAL_AMBIENTE === 'sandbox' ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com');
+// PAYPAL_API_URL serve solo alle prove automatiche (finto PayPal in locale).
+const basePaypal = (env) => env.PAYPAL_API_URL || (env.PAYPAL_AMBIENTE === 'sandbox' ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com');
 
 async function tokenPaypal(env) {
   const r = await fetch(`${basePaypal(env)}/v1/oauth2/token`, {

@@ -118,6 +118,9 @@ export async function confermaPagamento(contesto, p, { importo, rif, chi }) {
   const r = await esegui(db, `UPDATE prenotazioni SET stato = 'confermata', pagato = :i, pagamento_rif = :rif, aggiornata_il = :ora
                               WHERE id = :id AND stato = 'in_attesa' AND scade_il > :ora`, { i: importo, rif, ora, id: p.id });
   if (r.meta?.changes !== 1) {
+    // Già confermata da un'altra strada (ritorno del cliente e avviso automatico arrivati insieme): niente da fare.
+    const ora2 = await prima(db, 'SELECT stato, pagato, pagamento_rif FROM prenotazioni WHERE id = :id', { id: p.id });
+    if (ora2?.stato === 'confermata' && ora2.pagato > 0 && ora2.pagamento_rif === rif) return 'confermata';
     // Pagamento arrivato dopo la scadenza: si conferma solo se il posto è ancora libero
     // e se lo sconto o il buono usati non sono già tornati disponibili.
     const ok = !p.codice_reso && await riattivaSeLibero(db, p, 'confermata', { pagato: importo, pagamento_rif: rif });

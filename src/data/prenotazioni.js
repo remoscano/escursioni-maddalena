@@ -169,13 +169,14 @@ export const offerte = {
     ],
   },
   // Mezza giornata e tramonto sono due attività diverse, con due pagine (Remo, 11 novembre 2026).
+  // Nomi dei turni brevi: si leggono sempre dopo il nome dell'escursione ("Mezza giornata · Mattina"), Remo 16 novembre 2026.
   'mezza-giornata': {
     tipo: 'gruppo',
     minimo: 6,
     imbarchi: ['maddalena', 'palau', 'cannigione'],
     turni: [
-      { id: 'mattina', nome: 'Mezza giornata, mattina', orario: '10:30 – 14:00', orariImbarco: { palau: '11:00 – 13:30', cannigione: '9:30 – 13:30' }, blocchi: ['mattina'], prezzi: mezzaPersona },
-      { id: 'pomeriggio', nome: 'Mezza giornata, pomeriggio', orario: '14:30 – 18:00', orariImbarco: { palau: '15:00 – 17:30', cannigione: '14:00 – 18:00' }, blocchi: ['pomeriggio', 'sera'], prezzi: mezzaPersona },
+      { id: 'mattina', nome: 'Mattina', orario: '10:30 – 14:00', orariImbarco: { palau: '11:00 – 13:30', cannigione: '9:30 – 13:30' }, blocchi: ['mattina'], prezzi: mezzaPersona },
+      { id: 'pomeriggio', nome: 'Pomeriggio', orario: '14:30 – 18:00', orariImbarco: { palau: '15:00 – 17:30', cannigione: '14:00 – 18:00' }, blocchi: ['pomeriggio', 'sera'], prezzi: mezzaPersona },
     ],
   },
   tramonto: {
@@ -185,7 +186,7 @@ export const offerte = {
     postiMax: 10,
     imbarchi: ['maddalena', 'palau', 'cannigione'],
     turni: [
-      { id: 'tramonto', nome: 'Sunset, aperitivo al tramonto', orario: '18:30 – 21:00', indicativo: true, blocchi: ['sera'], prezzi: tramontoPersona },
+      { id: 'tramonto', nome: 'Al tramonto', orario: '18:30 – 21:00', indicativo: true, blocchi: ['sera'], prezzi: tramontoPersona },
     ],
   },
   'tour-privato': {
