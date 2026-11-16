@@ -169,4 +169,6 @@ s, st = adm('GET', '/api/gestione/statistiche?dal=2027-01-01&al=2027-12-31'); t 
 ok(s == 200 and t['prenotazioni'] > 5 and t['rimborsato'] >= 430 and st['maltempo']['rinviate'] == 1 and st['maltempo']['rimborsate'] == 1, f'statistiche: {t["prenotazioni"]} prenotazioni, {t["lordo"]} € lordi, {t["rimborsato"]} € rimborsati, maltempo {st["maltempo"]}')
 ok(any(c['nome'] == 'Sito (da volantino)' for c in st['perCanale']) and st['perMese'] and st['prenotazioni'], 'statistiche per canale (anche volantini), per mese, elenco per il commercialista')
 srv.shutdown()
+# Con EMAIL_SALVA=percorso.json si salvano tutte le email mandate, per rileggerne i testi.
+if os.environ.get('EMAIL_SALVA'): open(os.environ['EMAIL_SALVA'], 'w').write(json.dumps(EMAIL, ensure_ascii=False, indent=1))
 print('TUTTO OK (funzioni nuove)')

@@ -9,7 +9,7 @@ export default {
   },
   // Aprendo l'indirizzo del Worker nel browser si vede solo questo: niente dati.
   async fetch() {
-    return new Response('Programma automatico di Escursioni Maddalena: parte da solo ogni ora.', { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+    return new Response('Programma automatico di Escursioni La Maddalena: parte da solo ogni ora.', { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
   },
 };
 

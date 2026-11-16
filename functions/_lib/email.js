@@ -2,7 +2,7 @@
 // promemoria del giorno prima, grazie dopo l'uscita, lista d'attesa, buono regalo.
 // Partono solo se le email sono attive (RESEND_API_KEY ed EMAIL_MITTENTE). Testo semplice, senza immagini né tracciamenti.
 
-import { testoRitrovo } from '../../src/data/prenotazioni.js';
+import { testoRitrovo, offerte } from '../../src/data/prenotazioni.js';
 import { sito } from '../../src/data/sito.js';
 import { inviaEmail, vistaCliente, linkPrenotazione, daPagare } from './prenotazioni.js';
 import { dataLeggibile, euroDaCent } from './util.js';
@@ -23,13 +23,15 @@ const testa = (v) => [`Codice: ${v.codice}`, `${v.escursione} · ${v.turno}`, `D
 // Uscita annullata da noi (maltempo o altro motivo): il cliente sceglie rinvio o rimborso dal link.
 export async function inviaEmailRecupero(env, p, origine, motivo) {
   const v = vistaCliente(p);
+  // La gestione salva "Uscita annullata: motivo": al cliente basta il motivo.
+  motivo = String(motivo || '').replace(/^Uscita annullata:?\s*/i, '');
   const testo = [
     `Ciao ${p.nome},`,
-    `purtroppo dobbiamo annullare l'uscita del ${v.dataLeggibile}${motivo ? `: ${motivo}` : ' per le condizioni del mare'}.`,
+    `purtroppo dobbiamo annullare l'uscita di ${v.dataLeggibile}${motivo ? `: ${motivo}` : ' per le condizioni del mare'}.`,
     '',
     ...testa(v),
     '',
-    "Scegli tu cosa preferire, da qui (bastano due clic):",
+    "Scegli tu cosa preferisci, da qui (bastano due clic):",
     linkPrenotazione(origine, p),
     '',
     `- Un'altra data: scegli giorno e orario tra quelli con posti liberi. Il prezzo resta quello che hai pagato.`,
@@ -90,10 +92,11 @@ export async function inviaEmailPromemoria(env, p, origine) {
     v.orario ? `Orario: ${v.orario}${v.orarioIndicativo ? ' (indicativo: segue la luce del tramonto)' : ''}` : null,
     testoRitrovo(v.orario, p.imbarco) || null,
     imbarco?.molo ? `Dove: ${imbarco.molo}${imbarco.mappa ? ` (mappa: ${imbarco.mappa})` : ''}` : null,
-    p.imbarco === 'palau' ? "Si parte da La Maddalena: a Palau il gommone passa a prenderti." : null,
+    p.imbarco === 'palau' && offerte[p.escursione]?.tipo === 'gruppo' ? "Il gommone parte da La Maddalena e passa a prenderti a Palau." : null,
     '',
     v.documento ? "Si va in Corsica: porta un documento valido per l'espatrio per ogni persona, anche per i bambini." : null,
-    'Porta costume, telo, crema solare, cappello e acqua. Cibo e bevande sono a carico tuo (nelle esclusive le bevande sono incluse).',
+    // Stessa lista "Cosa portare" del sito (sito.cosaPortare): da bere lo diamo noi (Remo, 13 novembre 2026).
+    `Cosa portare: ${sito.cosaPortare.map((x) => x.charAt(0).toLowerCase() + x.slice(1)).join('; ')}.`,
     `Il tuo biglietto con il codice QR da mostrare all'imbarco: ${linkPrenotazione(origine, p)}`,
     daPagare(p) > 0 ? `Da pagare all'imbarco: ${euroDaCent(daPagare(p))} €.` : null,
     '',
@@ -108,7 +111,7 @@ export async function inviaEmailGrazie(env, p) {
   const v = vistaCliente(p);
   const testo = [
     `Ciao ${p.nome},`,
-    `grazie per essere uscito in mare con noi a ${v.escursione}. Speriamo che ti sia piaciuto!`,
+    `grazie per la tua uscita in mare con noi (${v.escursione}): speriamo che ti sia piaciuta!`,
     '',
     sito.recensioniGoogle ? 'Se hai un minuto, una recensione su Google ci aiuta tantissimo: altri viaggiatori ci trovano grazie a te.' : null,
     sito.recensioniGoogle ? sito.recensioniGoogle : null,
@@ -126,7 +129,7 @@ export async function inviaEmailAttesa(env, a, origine, titolo, nomeTurno) {
   const link = `${origine}/prenota/?escursione=${encodeURIComponent(a.escursione)}&imbarco=${encodeURIComponent(a.imbarco)}&data=${encodeURIComponent(a.data)}`;
   const testo = [
     `Ciao ${a.nome},`,
-    `si è liberato un posto per ${titolo} · ${nomeTurno} del ${dataLeggibile(a.data)}, per ${a.posti} ${a.posti === 1 ? 'persona' : 'persone'}.`,
+    `si è liberato un posto per ${titolo} · ${nomeTurno} di ${dataLeggibile(a.data)}, per ${a.posti} ${a.posti === 1 ? 'persona' : 'persone'}.`,
     '',
     `Prenota da qui prima che lo prenda qualcun altro: ${link}`,
     '',
@@ -146,7 +149,7 @@ export async function inviaEmailBuono(env, b, origine) {
     `Valore: ${euroDaCent(b.valore)} €`,
     b.destinatario ? `Per: ${b.destinatario}` : null,
     b.messaggio ? `Messaggio: ${b.messaggio}` : null,
-    b.al ? `Valido fino al ${dataLeggibile(b.al)}` : null,
+    b.al ? `Valido fino a ${dataLeggibile(b.al)}` : null,
     '',
     `Il buono da stampare o da inoltrare: ${origine}/buono-regalo/esito/?codice=${encodeURIComponent(b.codice)}&t=${encodeURIComponent(b.token)}`,
     `Per usarlo: si prenota su ${origine}/prenota/ e si scrive il codice nel riepilogo, prima di pagare. Se il buono non copre tutto, la differenza si paga con carta o PayPal; se avanza qualcosa, resta sul buono.`,
@@ -154,7 +157,7 @@ export async function inviaEmailBuono(env, b, origine) {
   ].filter((r) => r !== null);
   await inviaEmail(env, { a: b.email, oggetto: `Il tuo buono regalo ${sito.nome}`, testo: testo.join('\n') });
   if (sito.contatti.email) {
-    await inviaEmail(env, { a: sito.contatti.email, oggetto: `Buono regalo venduto ${b.codice} · ${euroDaCent(b.valore)} €`, testo: `${b.acquirente} · ${b.email} · ${b.telefono || ''}\nValore: ${euroDaCent(b.valore)} € (${b.metodo})` });
+    await inviaEmail(env, { a: sito.contatti.email, oggetto: `Buono regalo venduto ${b.codice} · ${euroDaCent(b.valore)} €`, testo: `${[b.acquirente, b.email, b.telefono].filter(Boolean).join(' · ')}\nValore: ${euroDaCent(b.valore)} € (${b.metodo})` });
   }
 }
 

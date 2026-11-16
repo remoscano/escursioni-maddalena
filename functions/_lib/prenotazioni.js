@@ -211,7 +211,7 @@ export async function inviaEmailConferma(env, p, origine) {
     p.stato === 'confermata' ? 'la tua prenotazione è confermata.' : 'abbiamo ricevuto il tuo pagamento: ti contattiamo a breve per confermare il posto.',
     '',
     `Codice: ${p.codice}`,
-    `${v.escursione} · ${v.turno}${v.privato ? ' · gommone in esclusiva' : ''}`,
+    `${v.escursione} · ${v.turno}${v.privato && !/esclusiva/i.test(v.escursione) ? ' · gommone in esclusiva' : ''}`,
     `Data: ${v.dataLeggibile}`,
     `Imbarco: ${v.imbarco}`,
     v.orario ? `Orario: ${v.orario}${v.orarioIndicativo ? ' (indicativo: segue la luce del tramonto)' : ''}` : 'Orario: te lo confermiamo noi',
@@ -240,7 +240,7 @@ export async function inviaEmailConferma(env, p, origine) {
     await inviaEmail(env, {
       a: sito.contatti.email,
       oggetto: `Nuova prenotazione ${p.codice} · ${v.escursione} · ${v.dataLeggibile}`,
-      testo: [`${p.nome} · ${p.telefono || ''} · ${p.email || ''}`, `${v.escursione} · ${v.turno} · ${v.dataLeggibile}`, `Imbarco: ${v.imbarco}`, `Persone: ${persone}`, `Totale: ${euroDaCent(p.totale)} € · pagato ${euroDaCent(p.pagato)} € (${p.metodo})${p.buono ? ` · buono ${euroDaCent(p.buono)} €` : ''}${p.sconto_nota ? ` · ${p.sconto_nota}` : ''}`, p.campagna ? `Volantino: ${p.campagna}` : '', `Gommone: ${nomeGommone(p.barca)}`, `Canale: ${p.canale}`, p.note ? `Note: ${p.note}` : ''].filter(Boolean).join('\n'),
+      testo: [[p.nome, p.telefono, p.email].filter(Boolean).join(' · '), `${v.escursione} · ${v.turno} · ${v.dataLeggibile}`, `Imbarco: ${v.imbarco}`, `Persone: ${persone}`, `Totale: ${euroDaCent(p.totale)} € · pagato ${euroDaCent(p.pagato)} € (${p.metodo})${p.buono ? ` · buono ${euroDaCent(p.buono)} €` : ''}${p.sconto_nota ? ` · ${p.sconto_nota}` : ''}`, p.campagna ? `Volantino: ${p.campagna}` : '', `Gommone: ${nomeGommone(p.barca)}`, `Canale: ${p.canale}`, p.note ? `Note: ${p.note}` : ''].filter(Boolean).join('\n'),
     });
   }
 }
