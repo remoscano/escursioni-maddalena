@@ -1,3 +1,6 @@
 # Vecchio indirizzo: mezza giornata e tramonto erano una pagina sola (fino all'11 novembre 2026).
 /escursioni/tramonto-mezza-giornata/ /escursioni/mezza-giornata/ 301
 /escursioni/tramonto-mezza-giornata /escursioni/mezza-giornata/ 301
+# La Corsica non passa più da Bonifacio: nuovo indirizzo dal 16 novembre 2026.
+/escursioni/corsica-lavezzi-bonifacio/ /escursioni/corsica/ 301
+/escursioni/corsica-lavezzi-bonifacio /escursioni/corsica/ 301

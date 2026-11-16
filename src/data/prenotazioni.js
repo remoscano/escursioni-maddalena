@@ -15,8 +15,10 @@
 // Tutti e tre i gommoni si possono prenotare in esclusiva (quello da 6 posti fa solo esclusive).
 
 export const regole = {
-  // false = i bottoni "Prenota" tornano alla richiesta su WhatsApp (utile finché i conti di pagamento non sono attivi)
-  attive: true,
+  // false = i bottoni "Prenota" tornano alla richiesta su WhatsApp (utile finché i conti di pagamento non sono attivi).
+  // Per ora (Remo, 16 novembre 2026): spenta sul sito pubblicato (ramo main), accesa nelle anteprime e in locale.
+  // Quando SumUp, PayPal e le email sono attivi: scrivere semplicemente `attive: true,`.
+  attive: (globalThis.process?.env?.CF_PAGES_BRANCH ?? 'locale') !== 'main',
   stagione: { dal: '2027-05-01', al: '2027-10-31' },
   // Online si prenota fino alle 20 del giorno prima; per l'ultimo minuto si scrive su WhatsApp.
   chiusuraOnline: { giorniPrima: 1, ora: '20:00' },
@@ -153,7 +155,7 @@ export const offerte = {
     ],
   },
   // Corsica: solo in esclusiva, giornata intera con gli orari e i prezzi delle altre giornate in esclusiva.
-  'corsica-lavezzi-bonifacio': {
+  'corsica': {
     tipo: 'esclusiva',
     carburanteEscluso: true,
     documento: true,

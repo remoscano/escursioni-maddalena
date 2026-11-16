@@ -24,7 +24,7 @@ const toni = ['acqua', 'rosa', 'acqua', 'sabbia', 'acqua'] as const;
 
 const faqPerEscursione: Record<string, string[]> = {
   'tour-7-isole': ['maestrale', 'cancellare', 'minimo', 'pranzo', 'spiaggia-rosa', 'bambini', 'pagare', 'animali'],
-  'corsica-lavezzi-bonifacio': ['pagare', 'maestrale', 'cancellare', 'bambini', 'animali'],
+  'corsica': ['pagare', 'maestrale', 'cancellare', 'bambini', 'animali'],
   'mezza-giornata': ['maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
   tramonto: ['maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
   'tour-privato': ['pagare', 'maestrale', 'cancellare', 'bambini', 'animali'],
@@ -205,7 +205,7 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
         <div class="box">
           <h3>Cosa portare</h3>
           <ul>
-            {e.slug === 'corsica-lavezzi-bonifacio' && <li>Carta d'identità valida per l'espatrio o passaporto</li>}
+            {e.slug === 'corsica' && <li>Carta d'identità valida per l'espatrio o passaporto</li>}
             {sito.cosaPortare.map((x: string) => <li>{x}</li>)}
           </ul>
         </div>

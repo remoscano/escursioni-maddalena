@@ -15,7 +15,7 @@ const breveOrario = (o) => String(o).replace(' – ', '–');
 const turno7 = offerte['tour-7-isole'].turni[0];
 const [mattina, pomeriggio] = offerte['mezza-giornata'].turni;
 // Partenza e rientro della Corsica, dall'orario del listino (es. '9:30 – 17:30').
-const [partenzaCorsica, rientroCorsica] = offerte['corsica-lavezzi-bonifacio'].turni[0].orario.split('–').map((x) => x.trim());
+const [partenzaCorsica, rientroCorsica] = offerte['corsica'].turni[0].orario.split('–').map((x) => x.trim());
 
 export const escursioni = [
   {
@@ -230,7 +230,7 @@ export const escursioni = [
     note: [],
   },
   {
-    slug: 'corsica-lavezzi-bonifacio',
+    slug: 'corsica',
     titolo: 'Corsica',
     titoloPagina: 'Corsica in maxi gommone: isola Piana, Lavezzi e Cavallo',
     etichette: ['Esclusiva', 'Giornata intera'],
@@ -238,13 +238,13 @@ export const escursioni = [
     intro:
       "Una giornata intera con il gommone solo per il vostro gruppo: si attraversa il mare verso la Corsica per scoprire l'isola Piana, le acque trasparenti delle isole Lavezzi e l'isola di Cavallo.",
     durata: 'Giornata intera',
-    orari: offerte['corsica-lavezzi-bonifacio'].turni[0].orario,
+    orari: offerte['corsica'].turni[0].orario,
     ore: '8',
-    prezzoAdulti: String(da('corsica-lavezzi-bonifacio').barca),
+    prezzoAdulti: String(da('corsica').barca),
     prezzoBambini: null,
     prezzoGommone: true,
-    postiMax: posti('corsica-lavezzi-bonifacio'),
-    fatti: ['Gommone in esclusiva', `Imbarco a ${daDove('corsica-lavezzi-bonifacio')}`, "Serve un documento valido per l'espatrio"],
+    postiMax: posti('corsica'),
+    fatti: ['Gommone in esclusiva', `Imbarco a ${daDove('corsica')}`, "Serve un documento valido per l'espatrio"],
     foto: {
       copertina: 'Le isole Lavezzi viste dal mare, con il gommone all\'ancora',
       galleria: [

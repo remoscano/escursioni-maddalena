@@ -2,7 +2,10 @@
 // sul sito compare un segnaposto rosa al posto del dato ancora da inserire.
 // "regola" collega la risposta a un campo di sito.regole: quando lo compili, il segnaposto sparisce.
 
-import { testoChiusuraOnline, testoDopoChiusura } from './prenotazioni.js';
+import { regole as regoleP, testoChiusuraOnline, testoDopoChiusura } from './prenotazioni.js';
+
+// Prenotazione online accesa o spenta (regole.attive): alcune risposte cambiano, buono regalo e lista d'attesa spariscono.
+const online = regoleP.attive;
 
 export const faq = [
   {
@@ -11,21 +14,25 @@ export const faq = [
       {
         id: 'prenotare',
         domanda: 'Come si prenota?',
-        risposta:
-          `Online, dalla pagina Prenota: scegli escursione, giorno e orario, vedi subito i posti liberi e paghi con carta o PayPal. Ricevi il codice di prenotazione da mostrare all'imbarco. ${testoChiusuraOnline} ${testoDopoChiusura}`,
+        risposta: online
+          ? `Online, dalla pagina Prenota: scegli escursione, giorno e orario, vedi subito i posti liberi e paghi con carta o PayPal. Ricevi il codice di prenotazione da mostrare all'imbarco. ${testoChiusuraOnline} ${testoDopoChiusura}`
+          : "Con un messaggio WhatsApp: dalla pagina Richiesta scegli escursione, giorno, persone e punto d'imbarco, e il messaggio è già pronto da inviare. Ti rispondiamo con la disponibilità e l'orario di ritrovo.",
       },
       {
         id: 'pagare',
         domanda: 'Come si paga?',
-        risposta: '',
-        regola: 'pagamento',
-        mancante: 'Pagamento: a bordo, in contanti o con carta? Serve un acconto?',
+        // Senza prenotazione online: niente modo di pagare inventato, si spiega su WhatsApp (Remo, 16 novembre 2026).
+        risposta: online ? '' : 'Te lo spieghiamo su WhatsApp quando confermiamo la prenotazione. Nei tour in esclusiva il carburante è a parte.',
+        regola: online ? 'pagamento' : undefined,
+        mancante: online ? 'Pagamento: a bordo, in contanti o con carta? Serve un acconto?' : undefined,
       },
       {
         id: 'cancellare',
         domanda: 'Posso annullare la prenotazione?',
         risposta:
-          "Sì: se annulli almeno 48 ore prima ti rimborsiamo per intero. Puoi farlo da solo dalla pagina della prenotazione (il link è nell'email di conferma): il rimborso parte subito. Oppure scrivici su WhatsApp con il codice di prenotazione. Dopo, il rimborso non è previsto.",
+          online
+            ? "Sì: se annulli almeno 48 ore prima ti rimborsiamo per intero. Puoi farlo da solo dalla pagina della prenotazione (il link è nell'email di conferma): il rimborso parte subito. Oppure scrivici su WhatsApp con il codice di prenotazione. Dopo, il rimborso non è previsto."
+            : "Sì: se annulli almeno 48 ore prima ti rimborsiamo per intero. Scrivici su WhatsApp. Dopo, il rimborso non è previsto.",
       },
       {
         id: 'minimo',
@@ -33,12 +40,12 @@ export const faq = [
         risposta:
           "Le uscite di gruppo partono con almeno 6 persone. Se la sera prima non si raggiungono, ti proponiamo un'altra data o un altro tour, oppure ti rimborsiamo per intero.",
       },
-      {
+      online && {
         id: 'buono',
         domanda: 'Si può regalare un\'escursione?',
         risposta: "Sì, con il buono regalo: lo compri online dalla pagina Buono regalo, scegli l'importo e lo ricevi subito per email, da stampare o inoltrare. Chi lo riceve sceglie escursione, giorno e orario e scrive il codice quando prenota.",
       },
-      {
+      online && {
         id: 'attesa',
         domanda: 'Il giorno che voglio è pieno: cosa posso fare?',
         risposta: "Mettiti in lista d'attesa dalla pagina Prenota: se si libera un posto ti scriviamo per email e prenoti tu, se vuoi.",
@@ -112,6 +119,8 @@ export const faq = [
     ],
   },
 ];
+
+for (const g of faq) g.domande = g.domande.filter(Boolean);
 
 export const tutteLeDomande = faq.flatMap((g) => g.domande);
 export const domande = (ids) => ids.map((id) => tutteLeDomande.find((d) => d.id === id)).filter(Boolean);

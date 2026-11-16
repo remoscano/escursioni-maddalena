@@ -89,7 +89,7 @@ async def privato(b):
 
 async def corsica(b):
     ctx = await b.new_context(viewport={'width': 390, 'height': 900}); pg = await ctx.new_page()
-    await pg.goto(f'{B}/prenota/?escursione=corsica-lavezzi-bonifacio', wait_until='networkidle')
+    await pg.goto(f'{B}/prenota/?escursione=corsica', wait_until='networkidle')
     await pg.wait_for_selector('.cal__giorno:not([disabled])')
     await pg.click('[data-mese="1"]'); await pg.wait_for_selector('[data-data="2027-06-15"]')
     await pg.click('[data-data="2027-06-15"]')
@@ -172,7 +172,7 @@ async def strutture_e_gestione(b):
 async def pagine(b):
     for w in (1440, 390):
         ctx = await b.new_context(viewport={'width': w, 'height': 900}); pg = await ctx.new_page()
-        for path in ['/', '/escursioni/tour-7-isole/', '/escursioni/tour-privato/', '/escursioni/corsica-lavezzi-bonifacio/', '/escursioni/mezza-giornata/', '/escursioni/tramonto/', '/gommone/', '/info-utili/', '/escursioni/', '/prenota/', '/condizioni/', '/privacy/', '/cookie/', '/domande-frequenti/']:
+        for path in ['/', '/escursioni/tour-7-isole/', '/escursioni/tour-privato/', '/escursioni/corsica/', '/escursioni/mezza-giornata/', '/escursioni/tramonto/', '/gommone/', '/info-utili/', '/escursioni/', '/prenota/', '/condizioni/', '/privacy/', '/cookie/', '/domande-frequenti/']:
             await pg.goto(B + path, wait_until='networkidle')
             await larghezza(pg, w, path)
             nome = path.strip('/').replace('/', '_') or 'home'

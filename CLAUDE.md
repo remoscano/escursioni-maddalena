@@ -19,9 +19,10 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 - Prima di ogni push: `npm run build` deve andare a buon fine. Per modifiche visibili, controlla le pagine toccate a 1440 px e a 390 px di larghezza (non deve esserci scorrimento orizzontale).
 - Commit con messaggi in italiano, brevi, che dicano cosa cambia per il visitatore.
 - Push diretto su `main` va bene per modifiche richieste da Remo; per cambi grossi o rischiosi (struttura, lingue, dipendenze) chiedi prima o usa un ramo e fai vedere l'anteprima.
-- Il sistema di prenotazione vive sul ramo `prenotazioni` finché Remo non dà l'ok: anteprima https://prenotazioni.escursioni-maddalena.pages.dev/ (pagamento simulato, database di prova).
+- Dal 16 novembre 2026 `main` e `prenotazioni` hanno lo stesso codice. Sul sito pubblicato (`main`) la prenotazione online è spenta in automatico (`regole.attive` guarda il ramo: `CF_PAGES_BRANCH`), quindi si prenota su WhatsApp; nell'anteprima https://prenotazioni.escursioni-maddalena.pages.dev/ è accesa, con pagamento simulato e database di prova. Si lavora su `main` e, per provare le prenotazioni in anteprima, si porta lo stesso lavoro anche su `prenotazioni` (`git push origin main:prenotazioni`). Per accendere la prenotazione sul sito vero: `attive: true,` in `src/data/prenotazioni.js`.
+- Con le prenotazioni spente, piè di pagina e domande frequenti (`online` in `src/data/faq.js`) non parlano di pagamento online, buono regalo né lista d'attesa.
 - `wrangler.toml` decide i collegamenti di Cloudflare: database D1 `escursioni-prenotazioni` (sito pubblicato) ed `escursioni-prenotazioni-prova` (anteprime). Le chiavi di pagamento e email stanno solo nelle variabili segrete di Cloudflare Pages, mai nel codice.
-- Modifiche alla struttura del database: nuovo file in `migrations/` (0002_…sql), da applicare a entrambi i database.
+- Modifiche alla struttura del database: nuovo file in `migrations/` (0007_…sql), da applicare a entrambi i database PRIMA di pubblicare il codice che le usa (si può fare dalla Console D1 o con lo strumento D1 di Cloudflare: testo del file più `INSERT OR IGNORE INTO d1_migrations (name) VALUES ('…');`). Al 16 novembre 2026 entrambi i database sono a `0006_corsica.sql`.
 
 ## Tecnica
 
@@ -51,7 +52,7 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
   - Dati per Google: `src/components/DatiStrutturati.astro` (LocalBusiness in home, TouristTrip + briciole + domande nelle pagine escursione, FAQPage) e `src/pages/sitemap.xml.js`. Scrivono solo dati veri: i campi vuoti di `sito.js` non compaiono.
   - Prove automatiche in `prove/` (vedi `prove/LEGGIMI.md`): prima di ogni push che tocca le prenotazioni devono passare tutte.
 - I contenuti stanno in `src/data/` (`sito.js`, `escursioni.js`, `faq.js`, `menu.js`). Prima di scrivere testo dentro una pagina, chiediti se va in un file dati.
-- Le 5 pagine escursione (7 isole, Corsica, mezza giornata, tramonto, tour privato) nascono tutte da `src/pages/escursioni/[slug].astro`: una nuova escursione si aggiunge in `escursioni.js`, non con un file nuovo.
+- Le 5 pagine escursione (7 isole, Corsica, mezza giornata, tramonto, tour privato; slug `tour-7-isole`, `corsica`, `mezza-giornata`, `tramonto`, `tour-privato`) nascono tutte da `src/pages/escursioni/[slug].astro`: una nuova escursione si aggiunge in `escursioni.js`, non con un file nuovo.
 - Componenti riutilizzabili in `src/components/`. In particolare:
   - `Dato.astro`: mostra il valore o, se vuoto, un segnaposto rosa `[etichetta]`. Usalo per ogni dato non ancora fornito dal cliente.
   - `Foto.astro`: foto vera (con `src` importato da `src/assets/foto/`, ottimizzata da Astro) o segnaposto che dice quale scatto serve.
@@ -73,7 +74,7 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 
 - **Mai inventare dati:** prezzi, orari, numeri, nomi, capienza, regole. Se mancano, usa `Dato` con un segnaposto chiaro.
 - **Mai recensioni inventate.** Solo recensioni vere copiate da Google o TripAdvisor, con nome e data come pubblicati.
-- Mezza giornata e tramonto sono due attività diverse, con due pagine e due offerte (`mezza-giornata`, `tramonto`); il vecchio indirizzo `/escursioni/tramonto-mezza-giornata/` rimanda alla mezza giornata (`public/_redirects`). Migrazione `0003_mezza_giornata_tramonto.sql` per le prenotazioni già registrate.
+- Mezza giornata e tramonto sono due attività diverse, con due pagine e due offerte (`mezza-giornata`, `tramonto`); il vecchio indirizzo `/escursioni/tramonto-mezza-giornata/` rimanda alla mezza giornata (`public/_redirects`). La Corsica dal 16 novembre 2026 è `/escursioni/corsica/` (slug `corsica`, migrazione `0006_corsica.sql`); il vecchio `/escursioni/corsica-lavezzi-bonifacio/` rimanda lì. Migrazione `0003_mezza_giornata_tramonto.sql` per le prenotazioni già registrate.
 - Porti: La Maddalena è il porto di partenza dei tre gommoni di gruppo ed esclusiva (Il Porticciolo, Via Padule); Palau è un punto di raccolta (il gommone passa a prendere i clienti); l'Honda 9.50 parte da Cannigione. Sulle mappe: ancora azzurra = partenza da La Maddalena, puntini = passaggio a Palau.
 - Prezzi delle uscite di gruppo: intero da 11 anni, ridotto da 0 a 10 anni; nessuno viaggia gratis (Remo, 11 novembre 2026). Nel database i vecchi `neonati` contano come bambini.
 - Fatti da rispettare: alla Spiaggia Rosa di Budelli niente sbarco né bagno (si vede dal mare); il pranzo del Tour delle 7 isole è libero a La Maddalena e non incluso; la Corsica si fa solo in esclusiva (giornata intera, prezzi delle giornate in esclusiva), serve un documento valido per l'espatrio e il pranzo lo sceglie il cliente, al sacco o al ristorante (bevande, prosecco e tagliere come in tutte le esclusive); nelle esclusive il carburante è a parte. Sunset, aperitivo al tramonto (slug `tramonto`; Remo, 11 e 13 novembre 2026): frigo di bordo con prosecco (una bottiglia ogni 6 persone, quelle in più a parte), birra, Coca-Cola e acqua; tagliere con salsiccia e formaggio, oppure spiedini di frutta o taralli e ciliege. Partenza sempre tra le 18:30 e le 19:00 (niente orari per mese). Sosta di gruppo scelta dal comandante col vento: di solito Il Pesce, a Santo Stefano di fronte al pontile dei gommoni (3 minuti, acqua bassa, spiaggia), in alternativa Cala Villamarina. Di gruppo minimo 6 e massimo 10 persone (`postiMax`), da 100 € a persona; in esclusiva 700/750/800 € per periodo, con la possibilità di allungare fino a Spargi o Budelli o di fare il tramonto a Porto della Madonna o Caprera (meteo permettendo, carburante a parte). Orario indicativo; partenza consigliata da La Maddalena (rientro al buio più corto). Periodi e ridotti confermati da Remo il 13 novembre 2026.
@@ -113,20 +114,23 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Funzioni nuove sul ramo `prenotazioni` (13 novembre 2026, dopo il confronto con Yorango): rinvio o rimborso scelto dal cliente dopo il maltempo, spostamento dalla gestione, rimborsi automatici (anche parziali), annullamento online del cliente fino a 48 ore prima, link di pagamento, email automatiche (promemoria, grazie, maltempo, lista d'attesa), biglietto con QR e check-in con accesso skipper, statistiche ed Excel per il commercialista, promozioni (anticipo, ultimo minuto, gruppo), aumento nel weekend, codici sconto, buoni regalo comprati online, extra a pagamento con massimo al giorno, lista d'attesa, volantini con QR, gestione e imbarco installabili sul telefono, dati strutturati e sitemap. Prove: `prove/prova_nuove.py` e `prove/prova_ui_nuove.py`
 - [x] Confermati da Remo (8 novembre 2026): Corsica 9:30 – 17:30 con Lavezzi, isola di Cavallo e Bonifacio (dall'11 novembre 2026: isola Piana, Lavezzi e Cavallo, senza Bonifacio); le due regole aggiunte alle condizioni (guasto = regola del maltempo; altre piattaforme = loro condizioni); nessuna autorizzazione da indicare; ritrovo 15 minuti prima della partenza da ogni molo (dal 13 novembre 2026 gli orari cambiano per imbarco: vedi "Regole sui contenuti")
 
-### Revisione del 16 novembre 2026 (Claude)
-- [x] Prove automatiche: tutte passano (314 controlli, nessun errore JavaScript). Tutte le pagine a 1440 e 390 px senza scorrimento orizzontale, nessun link interno rotto
-- [x] Corretto il vecchio nome "Escursioni Maddalena" rimasto in buono regalo, link di pagamento, app di gestione e imbarco, messaggio per gli skipper; README aggiornato
-- [ ] **Il sito online (`main`) è ancora la prima versione dell'8 novembre**: colori vecchi, imbarco "Palau e La Maddalena", Corsica con Bonifacio, niente Cannigione né Sunset. Tutto il lavoro successivo è solo sul ramo `prenotazioni`. Proposta: unire `prenotazioni` in `main` subito con `regole.attive: false` (sito aggiornato, prenotazione online ancora spenta, si prenota su WhatsApp), senza aspettare i pagamenti. Serve l'ok di Remo
-- [ ] Ramo `tre-gommoni` superato da `prenotazioni` (le sue modifiche sono state rifatte lì): si può cancellare, con l'ok di Remo
-- [ ] Indirizzo della Corsica: è ancora `/escursioni/corsica-lavezzi-bonifacio/`, ma Bonifacio non si fa più. Da decidere se cambiarlo in `/escursioni/corsica/` prima del lancio (rimando dal vecchio indirizzo; tocca anche lo slug in `prenotazioni.js` e le prenotazioni di prova)
+### 16 novembre 2026: revisione e sito online aggiornato
+- [x] Revisione completa: prove automatiche tutte ok (314 controlli, nessun errore JavaScript), pagine a 1440 e 390 px senza scorrimento orizzontale, nessun link interno rotto; corretto il vecchio nome "Escursioni Maddalena" rimasto in buono regalo, link di pagamento, app di gestione e imbarco, messaggio per gli skipper; README aggiornato
+- [x] Corsica: indirizzo `/escursioni/corsica/` (slug `corsica`), il vecchio rimanda al nuovo; migrazione `0006_corsica.sql` su entrambi i database
+- [x] Database vero aggiornato a `0004`, `0005` e `0006` (era vuoto, l'accesso di gestione è rimasto)
+- [x] Sito online aggiornato (Remo, 16 novembre 2026): `prenotazioni` unito in `main` con la prenotazione online spenta in automatico; si prenota su WhatsApp
+- [x] Cancellato il ramo `tre-gommoni` (superato da `prenotazioni`)
 
-### Da decidere o da avere dal cliente (Remo)
-- [ ] Pagina gommoni, riquadri "Su tutti i gommoni" ancora in rosa: sedute e prendisole, scaletta e doccetta, gavone stagno per telefoni e documenti
-- [ ] **Punto d'imbarco di Palau (in sospeso, Remo 13 novembre 2026):** molo, link Google Maps e parcheggio. Quando arrivano: `molo`, `mappa` e `parcheggio` in `sito.imbarchi.palau`; i segnaposto rosa spariscono da soli
-- [ ] Dati dell'azienda: ragione sociale, indirizzo, P. IVA, REA (Remo li manda insieme alle foto)
-- [ ] Testi delle soste della Corsica (isola Piana, Lavezzi, Cavallo) scritti da Claude il 13 novembre 2026: da far controllare a Remo
-- [ ] Foto (le note sui segnaposto indicano gli scatti, comprese quelle dei piatti dei ristoranti convenzionati) e logo da rivedere
-- [ ] Proposte di Claude da confermare (13 novembre 2026, in `regole` di `src/data/prenotazioni.js`): buoni regalo da 50/100/150/200/300 € (minimo 30, massimo 2000) validi 12 mesi; durata dei link di pagamento 2/12/24/48 ore; promemoria dalle 18 del giorno prima; grazie 2 ore dopo il rientro; spese di bordo: promemoria agli skipper alle 20:00 e alle 8:00 del giorno dopo, modificabili per 30 giorni. Nelle condizioni: buono rimborsabile se il cliente cambia idea entro 14 giorni (art. 52 Codice del consumo: da far confermare, non è un parere legale)
+### In attesa: informazioni dal cliente (Remo le sta aspettando)
+- [ ] **Punto d'imbarco di Palau:** molo, link Google Maps e parcheggio. Quando arrivano: `molo`, `mappa` e `parcheggio` in `sito.imbarchi.palau`; i segnaposto rosa spariscono da soli
+- [ ] **Dati dell'azienda:** ragione sociale, indirizzo, P. IVA, REA (in `sito.azienda`; servono a piè di pagina, condizioni e privacy)
+- [ ] **Foto e logo:** le note sui segnaposto indicano gli scatti, comprese quelle dei piatti dei ristoranti convenzionati; il marchio attuale è una proposta da rivedere
+- [ ] **Testi delle soste della Corsica** (isola Piana, Lavezzi, Cavallo), scritti da Claude il 13 novembre 2026: da far controllare
+- [ ] **Proposte di Claude su buoni regalo e promemoria** (13 novembre 2026, in `regole` di `src/data/prenotazioni.js`): buoni regalo da 50/100/150/200/300 € (minimo 30, massimo 2000) validi 12 mesi; durata dei link di pagamento 2/12/24/48 ore; promemoria dalle 18 del giorno prima; grazie 2 ore dopo il rientro; spese di bordo: promemoria agli skipper alle 20:00 e alle 8:00 del giorno dopo, modificabili per 30 giorni. Nelle condizioni: buono rimborsabile se il cliente cambia idea entro 14 giorni (art. 52 Codice del consumo: da far confermare, non è un parere legale)
+- [ ] **Novità — pagina dei gommoni**, tre riquadri "Su tutti i gommoni" ancora in rosa: sedute e prendisole, scaletta e doccetta, gavone stagno per telefoni e documenti (`src/pages/gommone.astro`)
+- [ ] **Come si paga finché la prenotazione online è spenta:** oggi le domande frequenti dicono "Te lo spieghiamo su WhatsApp quando confermiamo la prenotazione" (`src/data/faq.js`); se il cliente vuole scrivere il metodo (acconto, contanti, carta a bordo), va messo lì
+
+### Da decidere o da avere dal cliente, quando serve
 - [ ] Da decidere nella gestione (scheda Offerte): promozioni, eventuale aumento nel weekend, codici sconto, extra a pagamento (foto, kit...): ora non ce n'è nessuno
 - [ ] Link alla scheda Google per le recensioni (`recensioniGoogle` in `src/data/sito.js`): serve all'email di ringraziamento
 - [ ] Risposte automatiche di WhatsApp Business (benvenuto, assenza fuori orario, risposte rapide): testi proposti da Claude, li imposta il cliente nell'app
@@ -135,12 +139,11 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [ ] Dominio: da GoDaddy a Cloudflare (DNS), collegarlo in Pages → Custom domains; poi `site` in `astro.config.mjs`, `url` in `src/data/sito.js`, `www` che rimanda alla versione senza `www`
 - [ ] Email di conferma, obbligatorie (art. 51, comma 7, Codice del consumo): account Resend, dominio verificato, `RESEND_API_KEY` ed `EMAIL_MITTENTE` in Cloudflare Pages
 - [ ] Conti SumUp e PayPal → chiavi in Cloudflare Pages (Production): `SUMUP_API_KEY`, `SUMUP_MERCHANT_CODE`, `PAYPAL_CLIENT_ID`, `PAYPAL_SECRET`
-- [ ] Migrazione `0004_funzioni_nuove.sql` sul database vero (`npx wrangler d1 migrations apply escursioni-prenotazioni --remote`, oppure il testo di `0004` più `INSERT OR IGNORE INTO d1_migrations (name) VALUES ('0004_funzioni_nuove.sql');` nella Console D1): chiude le sessioni aperte, basta rientrare. Sul database di prova è già fatta (Claude, 13 novembre 2026). Stessa cosa, dopo, per `0005_spese_skipper.sql` (spese di bordo)
 - [ ] Email automatiche: segreto `AUTOMATICO_CHIAVE` (e `SITO_URL` col dominio) in Cloudflare Pages, poi pubblicare il Worker in `automatico/` (istruzioni nel suo LEGGIMI)
 - [ ] Rimborsi automatici: controllare che la chiave SumUp possa fare rimborsi (permesso "payments") e fare una prova con PayPal sandbox
 - [ ] Accessi skipper dalla gestione (Account) e prova dell'imbarco col telefono il primo giorno
 - [ ] Accesso di gestione: Remo cambia la password provvisoria al primo accesso; creare le strutture partner vere dalla gestione
-- [ ] Unire `prenotazioni` in `main` quando Remo dà l'ok (se i pagamenti non sono ancora attivi: `regole.attive: false`)
+- [ ] Accendere la prenotazione sul sito vero: `attive: true,` in `src/data/prenotazioni.js` (solo dopo pagamenti ed email)
 
 ### Da provare con soldi veri o servizi veri (non si può fare in anteprima)
 - [ ] PayPal in sandbox nell'anteprima (`PAYPAL_AMBIENTE=sandbox` + chiavi sandbox), poi un pagamento vero da pochi euro e il suo rimborso

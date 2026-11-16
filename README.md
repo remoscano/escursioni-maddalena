@@ -20,7 +20,7 @@ Appena si compila il campo, il segnaposto sparisce in tutte le pagine.
 
 - `/` home
 - `/escursioni/` catalogo
-- `/escursioni/tour-7-isole/`, `/escursioni/corsica-lavezzi-bonifacio/`, `/escursioni/mezza-giornata/`, `/escursioni/tramonto/`, `/escursioni/tour-privato/` — tutte generate dallo stesso modello (`src/pages/escursioni/[slug].astro`)
+- `/escursioni/tour-7-isole/`, `/escursioni/corsica/`, `/escursioni/mezza-giornata/`, `/escursioni/tramonto/`, `/escursioni/tour-privato/` — tutte generate dallo stesso modello (`src/pages/escursioni/[slug].astro`)
 - `/richiesta/` modulo WhatsApp (accetta `?escursione=<slug>` per preselezionare l'escursione)
 - `/gommone/` (i quattro gommoni), `/info-utili/`, `/domande-frequenti/`, `/contatti/`, `/condizioni/`, `/privacy/`, `/cookie/`
 - Prenotazioni: `/prenota/`, `/buono-regalo/`, `/partner/` (strutture), `/gestione/` (ufficio), `/imbarco/` (skipper)
@@ -36,6 +36,8 @@ Appena si compila il campo, il segnaposto sparisce in tutte le pagine.
 | App degli skipper: check-in col QR del biglietto e spese di bordo | `/imbarco/` |
 | Email automatiche (promemoria, grazie, maltempo, lista d'attesa) | Worker in `automatico/` (vedi il suo LEGGIMI) |
 | Condizioni di prenotazione (lo stesso testo parte nell'email di conferma) | `/condizioni/`, testo in `src/data/condizioni.js` |
+
+**Accesa o spenta.** Sul sito pubblicato (ramo `main`) la prenotazione online è spenta e i bottoni portano a WhatsApp; nell'anteprima del ramo `prenotazioni` è accesa con pagamento simulato. Per accenderla anche sul sito vero: `attive: true,` in `src/data/prenotazioni.js`.
 
 Le prenotazioni girano su Cloudflare: funzioni in `functions/`, database D1 (struttura in `migrations/`), collegamenti in `wrangler.toml`.
 
