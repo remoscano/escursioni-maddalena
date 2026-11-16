@@ -45,12 +45,16 @@ body {
   font-family: var(--font-testo);
   font-size: 18px;
   line-height: 1.6;
+  /* Parole lunghe (email, indirizzi) vanno a capo invece di uscire dallo schermo (WCAG 1.4.10 e 1.4.12). */
+  overflow-wrap: break-word;
 }
 
 img, svg { display: block; max-width: 100%; }
 a { color: var(--turchese); }
 a:hover { color: var(--mare); }
 :focus-visible { outline: 3px solid var(--laguna); outline-offset: 3px; }
+/* Campi dei moduli: contorno visibile anche quando il browser non segna :focus-visible (es. il campo data). */
+input:focus, select:focus, textarea:focus { outline: 3px solid var(--laguna); outline-offset: 2px; }
 
 h1, h2, h3, h4 { margin: 0; font-family: var(--font-titoli); color: inherit; }
 p, ul, ol, dl, figure, blockquote { margin: 0; }
@@ -111,6 +115,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   min-height: 52px; padding: 0 24px; border-radius: 999px; border: 0;
   font: inherit; font-size: 16px; font-weight: 700; line-height: 1.2; text-decoration: none;
   cursor: pointer; transition: transform .15s ease, background-color .15s ease;
+  max-width: 100%; text-align: center;
 }
 .btn:active { transform: translateY(1px); }
 .btn--wa { background: var(--laguna); color: var(--mare); }
@@ -197,6 +202,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 .hero__occhiello {
   font-size: 14px; line-height: 1.3; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--turchese);
 }
+.hero__titolo, .hero__occhiello { overflow-wrap: anywhere; }
 .hero__titolo {
   max-width: 13ch; font-weight: 800; font-size: clamp(44px, 5.6vw, 84px); line-height: 0.98;
   letter-spacing: -0.03em; text-wrap: balance;
@@ -537,9 +543,13 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 .piede { background: var(--mare-notte); color: #E9ECEF; padding: 72px 0 40px; }
 .piede a { color: var(--bianco); }
 .piede__griglia { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 40px; }
-.piede__col { display: flex; flex-direction: column; gap: 10px; font-size: 15px; line-height: 1.5; }
+.piede__col { display: flex; flex-direction: column; gap: 0; font-size: 15px; line-height: 1.5; }
+.piede__col > * + * { margin-top: 10px; }
+/* Link del piè di pagina alti 44 px: facili da toccare (regola del progetto, WCAG 2.5.8). */
+.piede__col > a { display: flex; align-items: center; min-height: 44px; margin-top: 0; }
 .piede__col h2 { margin-bottom: 4px; font-family: var(--font-testo); font-size: 13px; line-height: 1.2; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--azzurro-chiaro); }
 .piede__col a { text-decoration: none; }
+.piede__fondo a { display: inline-flex; align-items: center; min-height: 44px; }
 .piede__col a:hover { text-decoration: underline; color: var(--bianco); }
 .piede__fondo {
   margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.14);

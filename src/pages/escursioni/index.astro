@@ -21,6 +21,7 @@ const [evidenza, ...altre] = [...escursioni].sort((a, b) => Number(!!b.inEvidenz
   </section>
   <section class="sezione" style="padding-top:48px">
     <div class="contenitore pila">
+      <h2 class="sr-only">Le escursioni</h2>
       <SchedaEscursione e={evidenza} grande />
       <div class="griglia-schede">
         {altre.map((e) => <SchedaEscursione e={e} />)}

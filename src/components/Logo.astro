@@ -1,9 +1,10 @@
 ---
 // Marchio: un sole e due onde che disegnano la M di Maddalena.
 interface Props { size?: number; href?: string; etichetta?: string }
-const { size = 46, href = '/', etichetta = 'Escursioni La Maddalena, torna alla home' } = Astro.props;
+// Il nome letto dal lettore di schermo comincia con la scritta visibile (WCAG 2.5.3): niente aria-label.
+const { size = 46, href = '/' } = Astro.props;
 ---
-<a href={href} class="logo" aria-label={etichetta}>
+<a href={href} class="logo">
   <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
     <circle cx="24" cy="24" r="24" fill="#2BA6DE" />
     <circle cx="33.5" cy="14.5" r="5" fill="#FFFFFF" />
@@ -12,5 +13,6 @@ const { size = 46, href = '/', etichetta = 'Escursioni La Maddalena, torna alla 
   <span class="logo__testo">
     <span class="logo__sopra">Escursioni</span>
     <span class="logo__nome">La Maddalena</span>
+    <span class="sr-only">, torna alla home</span>
   </span>
 </a>

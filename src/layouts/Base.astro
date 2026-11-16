@@ -48,16 +48,16 @@ const telefono = sito.contatti.whatsapp ? `tel:+${sito.contatti.whatsapp}` : '/c
   </main>
   <Piede />
   {!senzaBarra && (regole.attive ? (
-    <div class="barra-wa">
+    <nav class="barra-wa" aria-label="Azioni rapide">
       <a href="/prenota/" class="btn btn--wa">Prenota online</a>
       <a href="/richiesta/" class="btn btn--bordo" aria-label="Scrivici su WhatsApp"><Icona nome="whatsapp" /></a>
       <a href={telefono} class="btn btn--bordo" aria-label="Chiama"><Icona nome="telefono" /></a>
-    </div>
+    </nav>
   ) : (
-    <div class="barra-wa">
+    <nav class="barra-wa" aria-label="Azioni rapide">
       <a href="/richiesta/" class="btn btn--wa"><Icona nome="whatsapp" />Chiedi disponibilità</a>
       <a href={telefono} class="btn btn--bordo" aria-label="Chiama"><Icona nome="telefono" /></a>
-    </div>
+    </nav>
   ))}
 </body>
 </html>
