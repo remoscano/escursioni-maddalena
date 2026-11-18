@@ -1,0 +1,31 @@
+---
+// Domande frequenti, in tutte le lingue (src/pages/domande-frequenti.astro e src/pages/en/faq.astro).
+import Base from '../layouts/Base.astro';
+import Faq from '../components/Faq.astro';
+import SezioneRichiesta from '../components/SezioneRichiesta.astro';
+import DatiStrutturati from '../components/DatiStrutturati.astro';
+import { datiLingua } from '../data/lingua.js';
+const L = datiLingua(Astro.url);
+const T = L.testi.domande;
+---
+<Base titolo={T.titolo} descrizione={T.descrizione}>
+  <DatiStrutturati slot="head" tipo="faq" domande={L.tutteLeDomande} />
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">{T.occhiello}</p>
+      <h1>{T.h1}</h1>
+      <p class="intro">{T.intro}</p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:48px">
+    <div class="contenitore" style="max-width:920px;display:flex;flex-direction:column;gap:56px">
+      {L.faq.map((g: any) => (
+        <div class="faq-gruppo">
+          <h2>{g.gruppo}</h2>
+          <Faq domande={g.domande} primaAperta={false} />
+        </div>
+      ))}
+    </div>
+  </section>
+  <SezioneRichiesta titolo={T.richiesta} />
+</Base>

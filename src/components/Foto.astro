@@ -13,6 +13,8 @@ interface Props {
   sizes?: string;
   priorita?: boolean;     // true solo per la foto in cima alla pagina
 }
+import { datiLingua } from '../data/lingua.js';
+const T = datiLingua(Astro.url).testi.foto;
 const { nota, src, tono = 'acqua', class: classe = '', sizes = '(max-width: 760px) 100vw, 50vw', priorita = false } = Astro.props;
 ---
 {src ? (
@@ -27,7 +29,7 @@ const { nota, src, tono = 'acqua', class: classe = '', sizes = '(max-width: 760p
     />
   </div>
 ) : (
-  <div class={`foto foto--vuota ${tono !== 'acqua' ? `foto--${tono}` : ''} ${classe}`} role="img" aria-label={`Foto in arrivo: ${nota}`}>
-    <span class="foto__nota" aria-hidden="true"><Icona nome="foto" size={18} tratto={1.8} />Foto: {nota}</span>
+  <div class={`foto foto--vuota ${tono !== 'acqua' ? `foto--${tono}` : ''} ${classe}`} role="img" aria-label={`${T.inArrivo}: ${nota}`}>
+    <span class="foto__nota" aria-hidden="true"><Icona nome="foto" size={18} tratto={1.8} />{T.foto}: {nota}</span>
   </div>
 )}

@@ -1,0 +1,21 @@
+---
+// Pagina 404, in tutte le lingue (src/pages/404.astro e src/pages/en/404.astro).
+import Base from '../layouts/Base.astro';
+import Icona from '../components/Icona.astro';
+import { datiLingua } from '../data/lingua.js';
+const L = datiLingua(Astro.url);
+const T = L.testi.nonTrovata;
+---
+<Base titolo={T.titolo} descrizione={T.descrizione}>
+  <section class="testa-pagina" style="padding-bottom:112px">
+    <div class="contenitore">
+      <p class="occhiello">{T.occhiello}</p>
+      <h1>{T.h1}</h1>
+      <p class="intro">{T.intro}</p>
+      <div class="azioni" style="margin-top:32px">
+        <a href={L.link('/')} class="btn btn--bordo">{T.home}</a>
+        <a href={L.link('/escursioni/')} class="btn btn--wa">{T.escursioni}<Icona nome="destra" /></a>
+      </div>
+    </div>
+  </section>
+</Base>

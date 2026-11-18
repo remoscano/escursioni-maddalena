@@ -1,0 +1,259 @@
+// English version of src/data/escursioni.js: the five tours.
+// Only texts and English web addresses are here: prices, seats, times, maps and photos-to-take
+// come from the Italian file and from src/data/prenotazioni.js (single price list).
+// If a tour changes in Italian (a stop, a text, what's included), change it here too.
+
+import { escursioni as it } from '../escursioni.js';
+import { prezzoDa, offerte, imbarchiPer } from '../prenotazioni.js';
+import { sito } from './sito.js';
+
+const pranzo7 = sito.pranzo7;
+const da = (slug) => prezzoDa(slug) ?? {};
+const daDove = (slug) => {
+  const id = imbarchiPer(slug).map((i) => i.id);
+  const porti = [id.includes('maddalena') && `La Maddalena${id.includes('palau') ? ' (pick-up in Palau)' : ''}`, id.includes('cannigione') && 'Cannigione'].filter(Boolean);
+  return porti.join(' or ');
+};
+const posti = (slug) => it.find((e) => e.slug === slug).postiMax;
+const ore = (o) => String(o).split('–').map((x) => x.trim());
+const breve = (o) => String(o).replace(' – ', '–');
+const turno7 = offerte['tour-7-isole'].turni[0];
+const [mattina, pomeriggio] = offerte['mezza-giornata'].turni;
+const privatoGiornata = offerte['tour-privato'].turni.find((t) => t.id === 'giornata');
+const corsica = offerte['corsica'].turni[0];
+const [partenzaCorsica, rientroCorsica] = ore(corsica.orario);
+const snorkel = 'Masks and snorkels: for hygiene reasons please bring your own (we keep a few on board)';
+const carburante = `Fuel: ${sito.carburante}`;
+
+const testi = {
+  'tour-7-isole': {
+    indirizzo: 'la-maddalena-archipelago-boat-tour',
+    nomeLink: 'La Maddalena Archipelago boat tour (7 Islands Tour)',
+    titolo: '7 Islands Tour',
+    titoloSeo: 'La Maddalena Archipelago Boat Tour: the 7 Islands',
+    titoloPagina: 'La Maddalena Archipelago boat tour: the 7 Islands Tour',
+    descrizioneSeo: `Full-day boat tour from La Maddalena, with pick-up in Palau: the 7 islands of the archipelago and the Pink Beach seen from the sea. From €${da('tour-7-isole').adulto} per person.`,
+    etichette: ['Full day', '7 islands', pranzo7.breve],
+    breve: 'La Maddalena, Santo Stefano, Caprera, Spargi, Budelli, Razzoli and Santa Maria in one day, with the Pink Beach seen from the sea.',
+    intro: 'A full day among La Maddalena, Santo Stefano, Caprera, Spargi, Budelli, Razzoli and Santa Maria, with the Pink Beach seen from the sea.',
+    durata: 'Full day',
+    orari: `${breve(turno7.orario)} (from Palau ${breve(turno7.orariImbarco.palau)})`,
+    durataTesto: '7 hours',
+    partenze: `${ore(turno7.orario)[0]}, pick-up in Palau at ${ore(turno7.orariImbarco.palau)[0]}`,
+    oraRientro: `at ${ore(turno7.orario)[1]} in La Maddalena (at ${ore(turno7.orariImbarco.palau)[1]} in Palau)`,
+    fatti: [`Board in ${daDove('tour-7-isole')}`, pranzo7.breve, 'Pink Beach from the sea'],
+    foto: {
+      copertina: 'Spargi from above, with the RIB at anchor',
+      galleria: [
+        'Porto della Madonna from above, the RIB among the three islands',
+        'The Pink Beach from the RIB',
+        'Guests swimming at Caprera',
+        'The centre of La Maddalena at lunchtime',
+        'Spargi, sand and granite',
+      ],
+    },
+    numeri: [
+      { etichetta: 'Islands', valore: '7' },
+      { etichetta: 'Stops', valore: '7' },
+      { etichetta: 'Hours', valore: '7' },
+    ],
+    programma: [
+      { tipo: 'imbarco', ora: ore(turno7.orario)[0], titolo: 'Departure from La Maddalena', testo: `We leave at ${ore(turno7.orario)[0]} from the port of La Maddalena.`, moloDi: 'maddalena' },
+      { tipo: 'imbarco', ora: ore(turno7.orariImbarco.palau)[0], titolo: 'Pick-up in Palau', luogo: 'For guests boarding in Palau', testo: `At ${ore(turno7.orariImbarco.palau)[0]} the RIB picks up guests boarding in Palau, then heads for Santo Stefano. At the first stop the drinks come out.`, moloDi: 'palau' },
+      { tipo: 'percorso', titolo: 'Seven islands, seven stops', testo: 'The tour visits seven islands. Where to stop and where to swim is up to the skipper, depending on the wind and sea of the day.' },
+      { tipo: 'sosta', n: '1', titolo: 'Santo Stefano', luogo: 'Morning', testo: 'A few minutes from La Maddalena: the first swim of the day, in the most sheltered cove of the moment.' },
+      { tipo: 'sosta', n: '2', titolo: 'Caprera', luogo: 'Morning', testo: "Garibaldi's island: pale granite, Mediterranean scrub and crystal-clear water." },
+      { tipo: 'sosta', n: '3', ora: pranzo7.arrivo, titolo: 'La Maddalena', luogo: 'Free time for lunch', testo: pranzo7.testo },
+      { tipo: 'sosta', n: '4', ora: pranzo7.ripartenza, titolo: 'Spargi', luogo: 'Swim', testo: 'White sand and turquoise water, reachable only by sea, among granite rocks shaped by the wind like sculptures: the bulldog, the witch\'s head, Italy in miniature and the lion\'s head.' },
+      { tipo: 'sosta', n: '5', rosa: true, titolo: 'Budelli and the Pink Beach', luogo: 'Panoramic stop from the RIB', testo: 'We stop in front of the beach to admire its colours and the blue of the seabed, found only here. The Pink Beach has been closed for years to protect it: the Park forbids landing and swimming, so we enjoy it from the sea.' },
+      { tipo: 'sosta', n: '6', titolo: 'Razzoli', luogo: 'Porto della Madonna · swim', testo: 'The stretch of water between Razzoli, Budelli and Santa Maria, sheltered from the currents: a natural swimming pool.' },
+      { tipo: 'sosta', n: '7', titolo: 'Santa Maria and the Lagunetta', luogo: 'Swim · mirto and sweets', testo: 'One of the few places a RIB this size can reach: a shallow, clear turquoise lagoon where you can walk in the water. Here our skipper serves mirto, the Sardinian myrtle liqueur, with local sweets.' },
+      { tipo: 'rientro', titolo: 'End of the tour', testo: `Back where you boarded: at ${ore(turno7.orario)[1]} in La Maddalena, half an hour earlier (at ${ore(turno7.orariImbarco.palau)[1]}) in Palau.` },
+    ],
+    incluso: [
+      'Skipper for the whole day',
+      'Fuel',
+      'National Park fee',
+      'Two canned drinks each: still or sparkling water, Coca-Cola, orange soda, lemon or peach iced tea, beer',
+      'Water in half-litre bottles',
+      'Mirto and local sweets at the Lagunetta of Santa Maria',
+    ],
+    nonIncluso: [pranzo7.nonIncluso, 'Other food on board', snorkel],
+    pranzo: {
+      titolo: 'Lunch in La Maddalena',
+      testo: pranzo7.testo,
+      foto: [
+        'A fish dish at a partner restaurant',
+        'A Sardinian pasta dish',
+        'A Sardinian starter',
+        'The table set in the centre of La Maddalena',
+      ],
+    },
+  },
+  'mezza-giornata': {
+    indirizzo: 'half-day-boat-tour-la-maddalena',
+    nomeLink: 'Half-day boat tour',
+    titolo: 'Half-day tour',
+    titoloSeo: 'Half-Day Boat Tour La Maddalena: Caprera or the North',
+    titoloPagina: 'Half-day boat tour in La Maddalena',
+    descrizioneSeo: `Half-day boat tour, morning or afternoon, ${sito.partenze.seo}: Caprera or the northern islands. From €${da('mezza-giornata').adulto} per person.`,
+    etichette: ['Morning or afternoon', 'Caprera or northern islands'],
+    breve: 'Three and a half hours on one of two routes: Caprera, or Spargi, the Pink Beach and Porto della Madonna. The skipper chooses depending on the wind.',
+    intro: "For those short on time who don't want to miss the archipelago's sea: three and a half hours, morning or afternoon, on one of two routes. Caprera, or the northern islands.",
+    durata: 'Half day',
+    orari: `${breve(mattina.orario)} · ${breve(pomeriggio.orario)}`,
+    durataTesto: '3½ hours',
+    fatti: [`Board in ${daDove('mezza-giornata')}`, 'Morning or afternoon'],
+    foto: {
+      copertina: 'Cala Coticcio, the RIB at anchor in clear water',
+      galleria: [
+        'The RIB along the coast of Caprera',
+        'A swim at Cala Garibaldi',
+        'Spargi from the sea',
+        'The Pink Beach from the RIB',
+        'Porto della Madonna, turquoise water',
+      ],
+    },
+    programma: [
+      { tipo: 'imbarco', titolo: `Departure from ${daDove('mezza-giornata')}`, testo: `From La Maddalena: morning ${breve(mattina.orario)} or afternoon ${breve(pomeriggio.orario)}. In Palau the RIB picks you up half an hour later and drops you back half an hour earlier: ${breve(mattina.orariImbarco.palau)} or ${breve(pomeriggio.orariImbarco.palau)}. From Cannigione the Honda 9.50 departs: ${breve(mattina.orariImbarco.cannigione)} or ${breve(pomeriggio.orariImbarco.cannigione)}.` },
+      { tipo: 'percorso', titolo: 'One of two routes, chosen by the wind', testo: "In three and a half hours you can't do Caprera and the northern islands together: you would spend the whole time cruising. The skipper picks one of the two routes that same morning, depending on wind and sea." },
+      { tipo: 'percorso', titolo: 'Route 1 · Caprera', testo: "The whole half day around Caprera, Garibaldi's island." },
+      { tipo: 'sosta', n: '1', titolo: 'Cala Garibaldi / Cala Serena', luogo: 'Caprera · swim', testo: "We usually stop at Cala Garibaldi; if the wind isn't right, at Cala Serena." },
+      { tipo: 'sosta', n: '2', titolo: 'Cala Coticcio', luogo: 'Caprera · swim', testo: 'Known as "Tahiti": clear water among granite rocks.' },
+      { tipo: 'percorso', titolo: 'Route 2 · Northern islands', testo: 'Spargi, Budelli and Porto della Madonna, then straight back: to keep to time, no stop at Santo Stefano.' },
+      { tipo: 'sosta', n: '1', titolo: 'Spargi', luogo: 'Swim', testo: 'White sand and turquoise water, reachable only by sea.' },
+      { tipo: 'vista', titolo: 'Budelli and the Pink Beach', luogo: 'No stop', testo: 'We cruise slowly past the beach. To protect it the Park forbids landing and swimming: you admire it from the sea.' },
+      { tipo: 'sosta', n: '2', titolo: 'Porto della Madonna', luogo: 'Razzoli and Santa Maria · swim', testo: 'The stretch of water between Budelli, Razzoli and Santa Maria, sheltered from the currents: a natural swimming pool.' },
+      { tipo: 'rientro', titolo: 'Straight back', testo: 'You get off where you boarded.' },
+    ],
+    incluso: ['Skipper', 'Fuel', 'National Park fee', 'Water and canned drinks'],
+    nonIncluso: ['Food', snorkel],
+  },
+  tramonto: {
+    titolo: 'Sunset aperitivo',
+    nomeBreve: 'Sunset',
+    indirizzo: 'sunset-boat-tour-la-maddalena',
+    nomeLink: 'Sunset aperitivo boat trip',
+    titoloSeo: 'Sunset Boat Tour La Maddalena with Aperitivo',
+    titoloPagina: 'Sunset boat tour with aperitivo in La Maddalena',
+    descrizioneSeo: `Sunset aperitivo on a boat in La Maddalena: prosecco, a sharing board and a swim stop at Santo Stefano. Departure between 6:30 and 7 pm. From €${da('tramonto').adulto} per person.`,
+    etichette: ['Aperitivo on board', `Max ${posti('tramonto')} people`],
+    breve: 'Aperitivo on a RIB at sunset: prosecco, a sharing board and a stop in calm water at Santo Stefano.',
+    intro: 'Our Sunset is an aperitivo on a RIB: a prosecco toast, something to nibble and a stop in shallow, sheltered water while the sun sets over the islands.',
+    durata: 'Two and a half hours',
+    orari: 'departure between 6:30 and 7 pm',
+    durataTesto: '2½ hours',
+    fatti: [`Board in ${daDove('tramonto')}`, 'Aperitivo on board'],
+    foto: {
+      copertina: 'The RIB against the light at sunset',
+      galleria: [
+        'A prosecco toast on board',
+        'The board with sausage and cheese and the fruit skewers',
+        'The orange sky over the sea',
+        'The RIB at rest in a bay, in the evening light',
+        'Back in port as the lights come on',
+      ],
+    },
+    numeri: [{ etichetta: 'Departure', valore: '18:30–19:00' }],
+    programma: [
+      { tipo: 'imbarco', titolo: `Departure from ${daDove('tramonto')}`, testo: 'We recommend La Maddalena: it is already dark on the way back, and the shorter route makes the return quicker and safer. In Palau the RIB picks up guests boarding there; from Cannigione the Honda 9.50 departs.' },
+      { tipo: 'percorso', titolo: 'The stop, chosen by the wind', testo: 'On group tours the captain chooses the stop, almost always depending on the wind: no long transfers, no choppy sea or spray.' },
+      { tipo: 'sosta', n: '1', titolo: 'Il Pesce / Cala Villamarina', luogo: 'Santo Stefano · aperitivo', testo: 'We usually stop at Il Pesce, on Santo Stefano, right opposite the RIB pier: three minutes away, with a beach, shallow water and shelter from the wind. Otherwise, Cala Villamarina.' },
+      { tipo: 'rientro', titolo: 'Back with the evening lights', testo: 'You get off where you boarded.' },
+    ],
+    incluso: [
+      'Skipper',
+      'Fuel',
+      'National Park fee',
+      'Drinks from the onboard fridge: prosecco for the toast (one bottle per 6 people), beer, Coca-Cola and water',
+      `Food: ${sito.tagliere.charAt(0).toLowerCase()}${sito.tagliere.slice(1)}`,
+    ],
+    nonIncluso: ['Dinner', 'Extra bottles of prosecco, if you ask for them: charged separately', snorkel],
+    note: [
+      'We leave between 6:30 and 7 pm, once the RIB is ready: we confirm the exact time by message.',
+      `On the group Sunset there are no more than ${posti('tramonto')} of you. With the private tour the RIB is all yours: you can go further to Spargi or Budelli, or ask for the sunset at Porto della Madonna or Caprera, weather permitting (fuel extra).`,
+    ],
+  },
+  'tour-privato': {
+    indirizzo: 'private-boat-tour-la-maddalena',
+    nomeLink: 'Private RIB tour with skipper',
+    titolo: 'Private boat tour',
+    titoloSeo: 'Private Boat Tour La Maddalena: RIB with Skipper',
+    titoloPagina: 'Private boat tour in La Maddalena: RIB with skipper',
+    descrizioneSeo: `Private RIB with skipper in La Maddalena: just your group, up to ${posti('tour-privato')} people, also at sunset, from La Maddalena, Palau or Cannigione. From €${da('tour-privato').barca}.`,
+    etichette: ['Private', 'Tailor-made'],
+    breve: 'A private RIB for families, friends or companies, with a tailor-made route.',
+    intro: 'A private RIB with skipper just for your group: families, friends, companies or a special occasion. Route and stops are decided together with the skipper.',
+    durata: 'Half day, full day or Sunset',
+    orari: 'to be agreed',
+    durataTesto: 'From 2½ to 7 hours',
+    fatti: [`Board in ${daDove('tour-privato')}`, 'Tailor-made route'],
+    foto: {
+      copertina: 'A family on board, diving from the bow',
+      galleria: [
+        'A group of friends on board',
+        'Diving from the bow',
+        'The private RIB in a quiet cove',
+        'Aperitivo on board',
+        'Children with mask and snorkel',
+      ],
+    },
+    programma: [
+      { tipo: 'imbarco', titolo: `Departure from ${daDove('tour-privato')}`, luogo: 'You choose where to board', testo: `Full day ${breve(privatoGiornata.orario)} from La Maddalena, ${breve(privatoGiornata.orariImbarco.palau)} from Palau. Half day ${breve(mattina.orario)} or ${breve(pomeriggio.orario)} from La Maddalena, ${breve(mattina.orariImbarco.palau)} or ${breve(pomeriggio.orariImbarco.palau)} from Palau. Sunset between 6:30 and 7 pm. From Cannigione the Honda 9.50 departs on its own times.` },
+      { tipo: 'sosta', n: '1', titolo: 'The stops you choose', luogo: 'Tailor-made', testo: "The 7 islands route or just the quietest coves: the skipper suggests the route based on the day's wind. For Corsica there is a dedicated tour, also private." },
+      { tipo: 'rientro', titolo: 'Return', testo: 'Whenever you like, within the agreed duration.' },
+    ],
+    incluso: ['The private RIB, with skipper', 'Drinks on board', 'Prosecco for a toast: one bottle per 6 people', sito.tagliere, 'National Park fee'],
+    nonIncluso: [carburante, 'Lunch, on the full day: packed lunch or restaurant, your choice', 'Extra bottles of prosecco, if you ask for them: charged separately', snorkel],
+    note: [sito.notaOrariEsclusiva],
+  },
+  corsica: {
+    titolo: 'Corsica',
+    indirizzo: 'corsica-boat-trip-from-la-maddalena',
+    nomeLink: 'Boat trip to Corsica',
+    titoloSeo: 'Corsica Boat Trip from La Maddalena: Lavezzi and Cavallo',
+    titoloPagina: 'Corsica boat trip from La Maddalena: Lavezzi and Cavallo',
+    descrizioneSeo: `Boat trip from Sardinia to Corsica, from La Maddalena or Palau: Piana island, the Lavezzi islands and Cavallo on a private RIB. From €${da('corsica').barca}.`,
+    etichette: ['Private', 'Full day'],
+    breve: 'A private RIB for a full day, visiting Piana island, the Lavezzi islands and Cavallo.',
+    intro: 'A full day with a private RIB: we cross the sea to Corsica to discover Piana island, the clear waters of the Lavezzi islands and the island of Cavallo.',
+    durata: 'Full day',
+    orari: `${breve(corsica.orario)} (from Palau ${breve(corsica.orariImbarco.palau)})`,
+    durataTesto: '7 hours',
+    fatti: ['Private RIB', `Board in ${daDove('corsica')}`, 'A valid ID card or passport for travel abroad is required'],
+    foto: {
+      copertina: 'The Lavezzi islands seen from the sea, with the RIB at anchor',
+      galleria: [
+        'Piana island from the RIB',
+        'The Lavezzi islands, water and granite',
+        'Guests swimming at the Lavezzi',
+        'The island of Cavallo from the sea',
+        'Crossing to Corsica',
+      ],
+    },
+    programma: [
+      { tipo: 'imbarco', ora: partenzaCorsica, titolo: `Departure from ${daDove('corsica')}`, luogo: 'You choose where to board', testo: `At ${partenzaCorsica} from La Maddalena; if it suits you better, the RIB picks you up in Palau at ${ore(corsica.orariImbarco.palau)[0]}.` },
+      { tipo: 'sosta', n: '1', titolo: 'Piana island', luogo: 'Strait of Bonifacio · swim', testo: 'The first taste of Corsica, just across the Strait: a low islet with shallow, clear water, perfect for the first swim.' },
+      { tipo: 'sosta', n: '2', titolo: 'Lavezzi islands', luogo: 'Nature reserve · swim', testo: 'The heart of the Bonifacio Strait nature reserve: wind-smoothed granite, little coves and turquoise water. The skipper picks the most sheltered cove of the day.' },
+      { tipo: 'sosta', n: '3', titolo: 'Island of Cavallo', luogo: 'From the sea · swim', testo: 'Next to the Lavezzi, with villas hidden in the scrub and small landings: we sail along it and stop for a last swim before crossing back.' },
+      { tipo: 'rientro', titolo: 'Return', testo: `You get off where you boarded: at ${rientroCorsica} in La Maddalena, at ${ore(corsica.orariImbarco.palau)[1]} in Palau.` },
+    ],
+    incluso: ['The private RIB, with skipper', 'Drinks on board', 'Prosecco for a toast: one bottle per 6 people', sito.tagliere, 'National Park fee', 'Any landing fees'],
+    nonIncluso: [carburante, 'Lunch: packed lunch or restaurant, your choice', 'Extra bottles of prosecco, if you ask for them: charged separately', snorkel],
+    note: [
+      'You enter France: everyone must carry a valid ID card for travel abroad or a passport, children included.',
+      sito.notaOrariEsclusiva,
+      'The crossing depends on the sea: with strong wind the trip may be moved.',
+    ],
+  },
+};
+
+// Each tour: Italian data (prices, seats, map, photos) + English texts.
+export const escursioni = it.map((e) => ({
+  ...e,
+  ...testi[e.slug],
+  daDove: daDove(e.slug),
+}));
+
+export const trovaEscursione = (slug) => escursioni.find((e) => e.slug === slug);
+export const urlEscursione = (slug) => `/en/boat-tours/${trovaEscursione(slug)?.indirizzo ?? slug}/`;

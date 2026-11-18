@@ -1,0 +1,38 @@
+---
+// English translation of the cookie page (src/pages/cookie.astro). When the Italian one changes, change this one too.
+// If analytics (e.g. Cloudflare Web Analytics, cookie-free) or another external service is added,
+// it must be written here, in /cookie/ and in both privacy pages.
+import Base from '../../layouts/Base.astro';
+---
+<Base titolo="Cookies" descrizione="This website does not use profiling cookies or third-party cookies for advertising or analytics.">
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Cookies</p>
+      <h1>Cookies</h1>
+      <p class="intro">No advertising, no tracking: we only use what the website needs to work.</p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:40px">
+    <div class="contenitore testo-lungo">
+      <p>This website does not use profiling cookies, nor third-party cookies or tools for advertising or analytics. That is why we don't ask for your consent with a banner: for purely technical tools it is enough to inform you, as set out in the Italian Data Protection Authority's cookie guidelines (10 June 2021). This is a translation of our <a href="/cookie/" lang="it" hreflang="it">Italian cookie page</a>.</p>
+
+      <h2>What we use</h2>
+      <ul>
+        <li><strong>Technical login cookie</strong> (<code>em_sessione</code>): only for people who log in to the partner accommodation area, the management area or the skippers' boarding area. It keeps you logged in, lasts 12 hours at most and is deleted when you log out.</li>
+        <li><strong>Partner accommodation code</strong> (browser session storage, <code>em_partner</code>): if you arrive from the link of a hotel or partner accommodation, the browser remembers their code until you close the tab, to credit the booking to them. It contains no data about you and has no other use.</li>
+        <li><strong>Flyer code</strong> (browser session storage, <code>em_campagna</code>): if you arrive from the QR code on one of our flyers or posters, the browser remembers its code until you close the tab, to count how many bookings it brings. It contains no data about you.</li>
+        <li><strong>Installable management and boarding areas</strong> (service worker in <code>/gestione/</code> and <code>/imbarco/</code>): only for people who work with us, it lets them add these areas to the phone's home screen. It stores no data and is not on the public pages.</li>
+        <li><strong>Cloudflare security cookies</strong>: Cloudflare, which hosts and protects the website, may set technical cookies (for example <code>__cf_bm</code> or <code>cf_clearance</code>) to tell people apart from automated programs. They are not used to profile you.</li>
+      </ul>
+
+      <h2>Payments and external links</h2>
+      <p>When you pay you move to the SumUp or PayPal pages, which use their own cookies under their own notices.</p>
+      <p>Fonts and images are hosted on our own website: opening the pages does not contact third-party services such as Google Fonts, YouTube or Google Maps. Links to Google Maps and WhatsApp open only if you tap them.</p>
+
+      <h2>How to delete them</h2>
+      <p>You can delete cookies and site data from your browser settings whenever you like. Without the login cookie the restricted areas don't work; the rest of the website does.</p>
+
+      <p class="testo-2">Last updated: 18 November 2026</p>
+    </div>
+  </section>
+</Base>

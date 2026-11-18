@@ -12,6 +12,8 @@ Viene pubblicato su Cloudflare Pages a ogni modifica salvata su GitHub.
 | Domande frequenti | `src/data/faq.js` |
 | Voci del menu | `src/data/menu.js` |
 | Colori, caratteri, spaziature | `src/styles/global.css` |
+| Testi fissi delle pagine (titoli delle sezioni, bottoni, etichette) | `src/data/testi.js` |
+| Versione inglese: gli stessi file con i testi tradotti (prezzi, orari, numeri e moli arrivano da quelli italiani) | `src/data/en/` |
 
 I campi lasciati vuoti (`''`) compaiono sul sito come **segnaposto rosa** tra parentesi quadre, ad esempio `[PREZZO]`.
 Appena si compila il campo, il segnaposto sparisce in tutte le pagine.
@@ -25,6 +27,15 @@ Appena si compila il campo, il segnaposto sparisce in tutte le pagine.
 - `/richiesta/` modulo WhatsApp (accetta `?escursione=<slug>` per preselezionare l'escursione)
 - `/gommone/` (i quattro gommoni), `/info-utili/`, `/domande-frequenti/`, `/contatti/`, `/condizioni/` (anche in testo, `/condizioni.txt`, da mandare su WhatsApp), `/recesso/` (recesso online dai buoni regalo), `/privacy/`, `/cookie/`
 - Prenotazioni: `/prenota/`, `/buono-regalo/`, `/partner/` (strutture), `/gestione/` (ufficio), `/imbarco/` (skipper)
+
+## Lingue
+
+Il sito è in italiano e in inglese (`/en/`). Ogni pagina tradotta usa lo stesso modello per tutte e due le lingue (`src/viste/`): le pagine in `src/pages/` e `src/pages/en/` sono solo "porte" verso quel modello. La lingua si capisce dall'indirizzo e i testi arrivano da `src/data/lingua.js`, che sceglie tra i file italiani e quelli di `src/data/en/`.
+
+- Pagine inglesi: `/en/`, `/en/boat-tours/` e le cinque escursioni (`/en/boat-tours/la-maddalena-archipelago-boat-tour/`, `half-day-boat-tour-la-maddalena/`, `sunset-boat-tour-la-maddalena/`, `private-boat-tour-la-maddalena/`, `corsica-boat-trip-from-la-maddalena/`), `/en/la-maddalena-boat-tours-from-palau/`, `/en/la-maddalena-boat-tours-from-cannigione/`, `/en/boats/`, `/en/useful-info/`, `/en/faq/`, `/en/contact/`, `/en/enquiry/`, `/en/privacy/`, `/en/cookies/`.
+- Solo in italiano, per ora: prenotazione online, buono regalo, recesso, condizioni, aree riservate. Dalle pagine inglesi i bottoni portano sempre alla richiesta su WhatsApp (il messaggio arriva in inglese).
+- Se cambi un testo in italiano, cambialo anche nel file inglese corrispondente (stesso nome, in `src/data/en/`). Privacy e cookie inglesi sono in `src/pages/en/privacy.astro` e `cookies.astro`.
+- Ogni pagina tradotta dice a Google qual è la sua versione nell'altra lingua (hreflang), anche nella mappa del sito, e ha il link "English" / "Italiano" in testata e nel piè di pagina.
 
 ## Prenotazioni online
 

@@ -1,0 +1,275 @@
+---
+// Modello unico per tutte le pagine escursione, in tutte le lingue (stesso schema del Tour delle 7 isole).
+// Pagine: src/pages/escursioni/[slug].astro (italiano) e src/pages/en/boat-tours/[slug].astro (inglese).
+import Base from '../layouts/Base.astro';
+import Foto from '../components/Foto.astro';
+import Icona from '../components/Icona.astro';
+import Dato from '../components/Dato.astro';
+import Mappa from '../components/Mappa.astro';
+import Faq from '../components/Faq.astro';
+import SezioneRichiesta from '../components/SezioneRichiesta.astro';
+import DatiStrutturati from '../components/DatiStrutturati.astro';
+import { datiLingua } from '../data/lingua.js';
+import { regole, offerte, testoChiusuraOnline, testoDopoChiusura } from '../data/prenotazioni.js';
+
+interface Props { e: any }
+const { e } = Astro.props;
+const L = datiLingua(Astro.url);
+const { sito, escursioni, pagineImbarco } = L;
+const T = L.testi.escursione;
+const { imbarchi, contatti } = sito;
+const altre = escursioni.filter((x: any) => x.slug !== e.slug);
+const toni = ['acqua', 'rosa', 'acqua', 'sabbia', 'acqua'] as const;
+
+const faqPerEscursione: Record<string, string[]> = {
+  'tour-7-isole': ['prezzi', 'palau', 'maestrale', 'cancellare', 'minimo', 'pranzo', 'spiaggia-rosa', 'bambini', 'pagare', 'animali'],
+  'corsica': ['pagare', 'maestrale', 'cancellare', 'bambini', 'animali'],
+  'mezza-giornata': ['prezzi', 'palau', 'maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
+  tramonto: ['maestrale', 'cancellare', 'minimo', 'bambini', 'pagare', 'animali'],
+  'tour-privato': ['pagare', 'maestrale', 'cancellare', 'bambini', 'animali'],
+};
+const suRichiesta = e.prezzoAdulti === 'su richiesta';
+const prenotabile = L.prenotaOnline && Boolean(offerte[e.slug]);
+const carburanteEscluso = Boolean(offerte[e.slug]?.carburanteEscluso);
+// Uscite serali (Sunset): l'orario è indicativo, quindi niente "alle 8:45 per le uscite del mattino".
+const serale = Boolean(offerte[e.slug]?.turni.every((t: any) => t.indicativo));
+// L'ora di ritrovo d'esempio vale per le uscite di gruppo del mattino (non per Sunset ed esclusive).
+const orarioRitrovo = !serale && offerte[e.slug]?.tipo === 'gruppo';
+const durata = e.durataTesto ?? (e.ore ? T.ore(e.ore) : '');
+const esclusiva = offerte[e.slug]?.tipo === 'esclusiva';
+// Ora del passaggio a Palau al mattino, dal listino (per la frase "non devi alzarti presto").
+const palauMattina = offerte['tour-7-isole'].turni[0].orariImbarco.palau.split('–')[0].trim();
+const paginaPalau = pagineImbarco.find((p: any) => p.id === 'palau');
+const paginaCannigione = pagineImbarco.find((p: any) => p.id === 'cannigione');
+---
+<Base
+  titolo={e.titoloSeo}
+  descrizione={e.descrizioneSeo}
+>
+  <DatiStrutturati slot="head" tipo="escursione" slug={e.slug} domande={L.domande(faqPerEscursione[e.slug] ?? [])} />
+  <section class="testa-tour" aria-labelledby="tour-titolo">
+    <div class="contenitore">
+      <nav class="briciole" aria-label={T.seiQui}>
+        <ol>
+          <li><a href={L.link('/')}>Home</a></li>
+          <li aria-hidden="true">›</li>
+          <li><a href={L.link('/escursioni/')}>{T.escursioni}</a></li>
+          <li aria-hidden="true">›</li>
+          <li aria-current="page">{e.titolo}</li>
+        </ol>
+      </nav>
+      <div class="testa-tour__griglia">
+        <div>
+          <h1 id="tour-titolo">{e.titoloPagina}</h1>
+          <p class="testa-tour__intro">{e.intro}</p>
+          <ul class="fatti">
+            <li><Icona nome="orologio" size={18} /><Dato v={e.durata} e="durata" />{e.orari !== T.daConcordare && <Fragment>, <Dato v={e.orari} e="orari" /></Fragment>}</li>
+            <li><Icona nome="persone" size={18} />{T.massimo} <Dato v={e.postiMax} e="N" /> {T.persone}</li>
+            {e.fatti.map((f: string) => <li><Icona nome="spunta" size={18} />{f}</li>)}
+          </ul>
+        </div>
+        <aside class="box-prezzo" aria-label={T.prezzoPrenotazione}>
+          <p class="box-prezzo__etichetta">{e.prezzoGommone ? T.gommoneEsclusiva : T.prezzoPersona}</p>
+          {suRichiesta ? (
+            <p class="box-prezzo__cifra">{T.suRichiesta}</p>
+          ) : (
+            <p>
+              <span class="box-prezzo__cifra" style="display:block">{T.da} <Dato v={L.testi.scheda.euro(e.prezzoAdulti)} e="PREZZO" /></span>
+              {e.prezzoBambini !== null && <span class="box-prezzo__bambini">{T.ridotto} <Dato v={L.testi.scheda.euro(e.prezzoBambini)} e="PREZZO" /></span>}
+              {e.prezzoGommone && <span class="box-prezzo__bambini">{T.finoA(e.postiMax)}{carburanteEscluso ? T.carburanteEscluso : ''}</span>}
+            </p>
+          )}
+          {prenotabile ? (
+            <Fragment>
+              <a href={`/prenota/?escursione=${e.slug}`} class="btn btn--wa btn--grande btn--pieno">{T.vediPosti}</a>
+              <a href="#richiesta" class="btn btn--bordo-chiaro btn--pieno"><Icona nome="whatsapp" />{T.domandeScrivici}</a>
+              <p class="box-prezzo__nota">{T.notaOnline(regole.cancellazioneGratisOre)}</p>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <a href="#richiesta" class="btn btn--wa btn--grande btn--pieno"><Icona nome="whatsapp" />{T.chiediWa}</a>
+              <p class="box-prezzo__nota">{sito.pagamentoLink.breve}. {T.oppureChiama} {contatti.telefonoVisibile
+                ? <a href={`tel:+${contatti.whatsapp}`}>{contatti.telefonoVisibile}</a>
+                : <Dato e="+39 numero" />}</p>
+            </Fragment>
+          )}
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label={T.galleria} style="padding-bottom:96px">
+    <div class="contenitore galleria">
+      <Foto nota={e.foto.galleria[0]} class="galleria__grande" priorita sizes="(max-width: 760px) 100vw, 60vw" />
+      <div class="galleria__piccole">
+        {e.foto.galleria.slice(1, 5).map((n: string, i: number) => (
+          <Foto nota={n} tono={toni[i + 1]} sizes="(max-width: 760px) 50vw, 20vw" />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="programma" class="sezione sezione--calda" aria-labelledby="programma-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione">
+        <div class="intestazione__testo">
+          <p class="occhiello">{T.programma.occhiello}</p>
+          <h2 id="programma-titolo" class="titolo-sezione">{T.programma.titolo}</h2>
+        </div>
+        <p class="intestazione__lato">{T.programma.lato}</p>
+      </div>
+      <div class={e.mappa ? 'percorso' : 'due-colonne due-colonne--alto'}>
+        <ol class="programma">
+          {e.programma.map((t: any) => t.tipo === 'percorso' ? (
+            <li class="tappa tappa--percorso">
+              <span class="tappa__linea" aria-hidden="true"></span>
+              <div class="tappa__corpo">
+                <p class="occhiello">{T.programma.percorso}</p>
+                <h3>{t.titolo}</h3>
+                <p>{t.testo}</p>
+              </div>
+            </li>
+          ) : (
+            <li class="tappa">
+              <span class="tappa__linea" aria-hidden="true">
+                {t.tipo === 'sosta' && <span class={`tappa__punto ${t.rosa ? 'tappa__punto--rosa' : ''}`}>{t.n}</span>}
+                {t.tipo === 'vista' && <span class="tappa__punto tappa__punto--rosa"><Icona nome="occhio" size={18} /></span>}
+                {(t.tipo === 'imbarco' || t.tipo === 'rientro') && <span class="tappa__punto tappa__punto--imbarco"><Icona nome="ancora" size={18} /></span>}
+              </span>
+              <div class="tappa__corpo">
+                <div class="sosta__riga">
+                  <h3>{t.titolo}</h3>
+                  {t.luogo && <span class={`sosta__luogo ${t.tipo === 'vista' ? 'sosta__luogo--rosa' : ''}`}>{t.luogo}</span>}
+                </div>
+                <p>
+                  {t.testo}
+                  {t.moloDi && <Fragment>{` ${T.molo}: `}<Dato v={imbarchi[t.moloDi as 'palau'].molo} e={T.moloSegnaposto} />.</Fragment>}
+                  {!t.testo && t.mancante && <Dato e={t.mancante} />}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <div style="display:flex;flex-direction:column;gap:20px">
+          {e.mappa === 'mezza' && <Mappa variante="mezza" didascalia={T.didascaliaMezza} />}
+          {e.mappa === true && <Mappa didascalia={T.didascalia7} />}
+          <dl class="numeri">
+            {e.numeri.map((n: any) => <div><dt>{n.etichetta}</dt><dd>{n.valore}</dd></div>)}
+            {!e.soloNumeri && <div><dt>{T.durata}</dt><dd><Dato v={durata} e="ore" /></dd></div>}
+            {!e.soloNumeri && <div><dt>{T.imbarco}</dt><dd>{e.daDove}</dd></div>}
+          </dl>
+          {e.note.length > 0 && (
+            <ul class="note">
+              {e.note.map((n: string) => <li><Icona nome="info" />{n}</li>)}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {e.pranzo && (
+    <section id="pranzo" class="sezione" aria-labelledby="pranzo-titolo">
+      <div class="contenitore pila">
+        <div class="intestazione">
+          <div class="intestazione__testo">
+            <p class="occhiello">{T.ristoranti}</p>
+            <h2 id="pranzo-titolo" class="titolo-sezione">{e.pranzo.titolo}</h2>
+          </div>
+          <p class="intestazione__lato">{e.pranzo.testo}</p>
+        </div>
+        <div class="piatti">
+          {e.pranzo.foto.map((n: string, i: number) => <Foto nota={n} tono={i % 2 ? 'sabbia' : 'acqua'} sizes="(max-width: 760px) 50vw, 25vw" />)}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section id="pratiche" class="sezione" aria-labelledby="pratiche-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione__testo">
+        <p class="occhiello">{T.pratiche.occhiello}</p>
+        <h2 id="pratiche-titolo" class="titolo-sezione">{T.pratiche.titolo}</h2>
+      </div>
+      <div class="griglia-info">
+        <div class="box box--acqua">
+          <h3>{T.pratiche.incluso}</h3>
+          <ul>
+            {e.incluso.map((x: string) => <li>{x}</li>)}
+            {e.inclusoMancante && <li><Dato e={e.inclusoMancante} /></li>}
+          </ul>
+        </div>
+        <div class="box">
+          <h3>{T.pratiche.nonIncluso}</h3>
+          <ul>
+            {e.nonIncluso.map((x: string) => <li>{x}</li>)}
+            {e.nonInclusoMancante && <li><Dato e={e.nonInclusoMancante} /></li>}
+          </ul>
+        </div>
+        <div class="box">
+          <h3>{T.pratiche.cosaPortare}</h3>
+          <ul>
+            {e.slug === 'corsica' && <li>{T.pratiche.documento}</li>}
+            {sito.cosaPortare.map((x: string) => <li>{x}</li>)}
+          </ul>
+        </div>
+        <div class="box">
+          <h3>{T.pratiche.partenzaMaddalena}</h3>
+          <p><Dato v={imbarchi.maddalena.molo} e={T.pratiche.moloIndirizzo} />, {T.pratiche.ritrovo(regole.anticipoRitrovo.maddalena)}{orarioRitrovo && <Fragment>{` (${T.pratiche.alle} `}<Dato v={imbarchi.maddalena.ritrovo} e="ora" />{` ${T.pratiche.usciteMattino})`}</Fragment>}.</p>
+          <p>{T.pratiche.portoPrincipale}</p>
+        </div>
+        <div class="box">
+          <h3>{T.pratiche.passaggioPalau}</h3>
+          <p>{esclusiva ? T.pratiche.palauEsclusiva : T.pratiche.palauGruppo}</p>
+          <p><Dato v={imbarchi.palau.molo} e={T.pratiche.moloIndirizzo} />, {T.pratiche.ritrovo(regole.anticipoRitrovo.palau)}{orarioRitrovo && <Fragment>{` (${T.pratiche.alle} `}<Dato v={imbarchi.palau.ritrovo} e="ora" />{` ${T.pratiche.usciteMattino})`}</Fragment>}.</p>
+          <p>{T.pratiche.comodoPalau}{!serale && T.pratiche.daFuori(palauMattina)}. {T.pratiche.parcheggio}: <Dato v={imbarchi.palau.parcheggio} e={T.pratiche.parcheggioSegnaposto} />.</p>
+          <p><a href={paginaPalau.href} class="link-freccia">{paginaPalau.titoloPagina}<Icona nome="destra" size={18} /></a></p>
+        </div>
+        {offerte[e.slug]?.imbarchi.includes('cannigione') && (
+          <div class="box">
+            <h3>{T.pratiche.imbarcoCannigione}</h3>
+            <p><Dato v={imbarchi.cannigione.molo} e={T.pratiche.moloIndirizzo} />, {T.pratiche.ritrovo(regole.anticipoRitrovo.cannigione)}{orarioRitrovo && <Fragment>{` (${T.pratiche.alle} `}<Dato v={imbarchi.cannigione.ritrovo} e="ora" />{` ${T.pratiche.usciteMattino})`}</Fragment>}.</p>
+            <p>{T.pratiche.comodoCannigione}</p>
+            <p><a href={paginaCannigione.href} class="link-freccia">{paginaCannigione.titoloPagina}<Icona nome="destra" size={18} /></a></p>
+          </div>
+        )}
+        <div class="box">
+          <h3>{T.pratiche.regoleParco}</h3>
+          <p>{T.pratiche.testoParco}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="sezione sezione--calda" aria-labelledby="faq-titolo">
+    <div class="contenitore due-colonne due-colonne--alto">
+      <div class="intestazione__testo">
+        <p class="occhiello">{T.faq.occhiello}</p>
+        <h2 id="faq-titolo" class="titolo-sezione">{T.faq.titolo}</h2>
+        <a href={L.link('/domande-frequenti/')} class="link-freccia">{T.faq.tutte}<Icona nome="destra" size={18} /></a>
+      </div>
+      <Faq domande={L.domande(faqPerEscursione[e.slug] ?? [])} />
+    </div>
+  </section>
+
+  <SezioneRichiesta
+    escursione={e.slug}
+    titolo={prenotabile ? T.richiesta.titoloOnline : T.richiesta.titolo(e.titolo)}
+    titoloModulo={e.titolo}
+    testo={prenotabile ? `${testoChiusuraOnline} ${testoDopoChiusura} ${T.richiesta.testoOnline}` : T.richiesta.testo}
+  />
+
+  <section class="sezione" aria-labelledby="altre-titolo" style="padding:96px 0">
+    <div class="contenitore pila" style="gap:32px">
+      <h2 id="altre-titolo" class="titolo-medio">{T.altre}</h2>
+      <div class="altre">
+        {altre.map((x: any) => (
+          <a href={L.urlEscursione(x.slug)} class="altra">
+            <span class="altra__foto" aria-hidden="true"></span>
+            <span><strong>{x.titolo}</strong><span>{x.breve}</span></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

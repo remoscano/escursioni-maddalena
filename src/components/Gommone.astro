@@ -2,25 +2,27 @@
 import Foto from './Foto.astro';
 import Dato from './Dato.astro';
 import Icona from './Icona.astro';
-import { sito } from '../data/sito.js';
+import { datiLingua } from '../data/lingua.js';
 import { gommoni } from '../data/prenotazioni.js';
 interface Props { titoloLivello?: 'h1' | 'h2'; link?: boolean }
 const { titoloLivello = 'h2', link = true } = Astro.props;
-const { gommone, flotta } = sito;
+const L = datiLingua(Astro.url);
+const T = L.testi.gommone;
+const { gommone, flotta } = L.sito;
 const posti = (id: string) => gommoni.find((g) => g.id === id)?.posti;
 const uso = (id: string) => {
   const g = gommoni.find((x) => x.id === id);
-  if (g?.imbarchi.includes('cannigione')) return 'Da Cannigione';
-  return g?.tipo === 'esclusiva' ? 'Solo esclusive' : 'Gruppo ed esclusive';
+  if (g?.imbarchi.includes('cannigione')) return T.usoCannigione;
+  return g?.tipo === 'esclusiva' ? T.usoEsclusive : T.usoGruppo;
 };
 const Titolo = titoloLivello;
 ---
 <div class="due-colonne">
-  <Foto nota="I gommoni di profilo, all'ancora in acqua turchese" class="gommone__foto" />
+  <Foto nota={T.foto} class="gommone__foto" />
   <div style="display:flex;flex-direction:column;gap:28px">
     <div style="display:flex;flex-direction:column;gap:16px">
-      <p class="occhiello">I gommoni</p>
-      <Titolo id="gommone-titolo" class="titolo-sezione">I nostri maxi gommoni</Titolo>
+      <p class="occhiello">{T.occhiello}</p>
+      <Titolo id="gommone-titolo" class="titolo-sezione">{T.titolo}</Titolo>
       <p class="testo-2"><Dato v={gommone.descrizione} e="Presenta i gommoni in due righe: comodità, perché sono adatti a famiglie e gruppi" /></p>
     </div>
     <dl class="dati-barca">
@@ -28,11 +30,11 @@ const Titolo = titoloLivello;
         <div>
           <dt>{uso(g.id)}</dt>
           <dd>{g.modello}</dd>
-          <dd class="testo">{[`Fino a ${posti(g.id)} persone`, g.motori, g.dotazioni].filter(Boolean).join(' · ')}</dd>
+          <dd class="testo">{[T.finoA(posti(g.id)), g.motori, g.dotazioni].filter(Boolean).join(' · ')}</dd>
         </div>
       ))}
     </dl>
-    {link && <a href="/gommone/" class="link-freccia">Scopri i gommoni<Icona nome="destra" size={18} /></a>}
+    {link && <a href={L.link('/gommone/')} class="link-freccia">{T.scopri}<Icona nome="destra" size={18} /></a>}
   </div>
 </div>
 

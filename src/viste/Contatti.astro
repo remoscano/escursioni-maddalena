@@ -1,0 +1,55 @@
+---
+// Contatti, in tutte le lingue (src/pages/contatti.astro e src/pages/en/contact.astro).
+import Base from '../layouts/Base.astro';
+import Icona from '../components/Icona.astro';
+import Dato from '../components/Dato.astro';
+import ModuloRichiesta from '../components/ModuloRichiesta.astro';
+import { datiLingua } from '../data/lingua.js';
+const L = datiLingua(Astro.url);
+const { sito } = L;
+const T = L.testi.contatti;
+const { contatti, imbarchi } = sito;
+---
+<Base titolo={T.titolo} descrizione={T.descrizione}>
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">{T.occhiello}</p>
+      <h1>{T.h1}</h1>
+      <p class="intro">{T.intro} <Dato v={contatti.orariRisposta} e="giorni e orari" />.</p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:48px">
+    <div class="contenitore due-colonne due-colonne--alto">
+      <div class="griglia-info" style="grid-template-columns:1fr">
+        <div class="box">
+          <span class="box__icona"><Icona nome="whatsapp" size={24} tratto={1.8} /></span>
+          <h2 style="font-size:22px;line-height:1.2;font-weight:700">WhatsApp</h2>
+          {contatti.whatsapp
+            ? <a href={`https://wa.me/${contatti.whatsapp}`} class="btn btn--wa" rel="noopener" style="align-self:flex-start"><Icona nome="whatsapp" />{contatti.telefonoVisibile || T.apriWa}</a>
+            : <p><Dato e="+39 numero WhatsApp" /></p>}
+        </div>
+        <div class="box">
+          <span class="box__icona"><Icona nome="telefono" size={24} tratto={1.8} /></span>
+          <h2 style="font-size:22px;line-height:1.2;font-weight:700">{T.telefono}</h2>
+          <p>{contatti.telefonoVisibile
+            ? <a href={`tel:+${contatti.whatsapp}`} style="font-weight:700">{contatti.telefonoVisibile}</a>
+            : <Dato e="+39 numero" />}</p>
+        </div>
+        <div class="box">
+          <span class="box__icona"><Icona nome="email" size={24} tratto={1.8} /></span>
+          <h2 style="font-size:22px;line-height:1.2;font-weight:700">Email</h2>
+          <p>{contatti.email ? <a href={`mailto:${contatti.email}`} style="font-weight:700">{contatti.email}</a> : <Dato e="indirizzo email" />}</p>
+        </div>
+        <div class="box">
+          <span class="box__icona"><Icona nome="luogo" size={24} tratto={1.8} /></span>
+          <h2 style="font-size:22px;line-height:1.2;font-weight:700">{T.imbarchi}</h2>
+          <p><strong>La Maddalena</strong> {T.notaMaddalena} · <Dato v={imbarchi.maddalena.molo} e={T.moloIndirizzo} /></p>
+          <p><strong>Palau</strong> {T.notaPalau} · <Dato v={imbarchi.palau.molo} e={T.moloIndirizzo} /></p>
+          <p><strong>Cannigione</strong> · <Dato v={imbarchi.cannigione.molo} e={T.moloIndirizzo} /></p>
+          <a href={L.link('/info-utili/')} class="link-freccia">{T.comeArrivare}<Icona nome="destra" size={18} /></a>
+        </div>
+      </div>
+      <ModuloRichiesta chiaro />
+    </div>
+  </section>
+</Base>

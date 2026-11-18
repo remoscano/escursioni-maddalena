@@ -7,8 +7,10 @@ import os
 # axe-core non è tra le dipendenze del sito: si scarica solo per la prova con  npm i --no-save axe-core@4
 AXE = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'node_modules', 'axe-core', 'axe.min.js')).read()
 pub = ['/','/escursioni/','/escursioni/giro-delle-isole-la-maddalena/','/escursioni/escursione-mezza-giornata-la-maddalena/','/escursioni/aperitivo-al-tramonto-la-maddalena/','/escursioni/gommone-con-skipper-la-maddalena/','/escursioni/escursione-corsica-da-la-maddalena/','/escursioni-la-maddalena-da-palau/','/escursioni-la-maddalena-da-cannigione/','/gommone/','/info-utili/','/domande-frequenti/','/contatti/','/richiesta/','/condizioni/','/recesso/','/privacy/','/cookie/','/404.html']
+# Pagine in inglese (dal 18 novembre 2026).
+en = ['/en/','/en/boat-tours/','/en/boat-tours/la-maddalena-archipelago-boat-tour/','/en/boat-tours/half-day-boat-tour-la-maddalena/','/en/boat-tours/sunset-boat-tour-la-maddalena/','/en/boat-tours/private-boat-tour-la-maddalena/','/en/boat-tours/corsica-boat-trip-from-la-maddalena/','/en/la-maddalena-boat-tours-from-palau/','/en/la-maddalena-boat-tours-from-cannigione/','/en/boats/','/en/useful-info/','/en/faq/','/en/contact/','/en/enquiry/','/en/privacy/','/en/cookies/','/en/404.html']
 pren = ['/prenota/','/prenota/?escursione=tour-7-isole','/buono-regalo/','/partner/','/gestione/','/imbarco/','/prenota/paga/?codice=X&t=Y','/prenota/esito/?codice=X&t=Y']
-siti = [('sito','http://127.0.0.1:8788',pub+pren)]
+siti = [('sito','http://127.0.0.1:8788',pub+en+pren)]
 async def main():
     risultati = {}
     async with async_playwright() as p:

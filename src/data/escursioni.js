@@ -313,6 +313,9 @@ export const escursioni = [
   },
 ];
 
+// Da dove parte ("La Maddalena (passaggio a Palau) o Cannigione"), per il riquadro "Imbarco" della pagina.
+for (const e of escursioni) e.daDove = daDove(e.slug);
+
 export const trovaEscursione = (slug) => escursioni.find((e) => e.slug === slug);
 // Indirizzo pubblico della pagina (parole delle ricerche). Lo slug resta il nome interno, usato da prenotazioni e database.
 export const urlEscursione = (slug) => `/escursioni/${trovaEscursione(slug)?.indirizzo ?? slug}/`;

@@ -4,8 +4,7 @@ import '../styles/global.css';
 import Testata from '../components/Testata.astro';
 import Piede from '../components/Piede.astro';
 import Icona from '../components/Icona.astro';
-import { sito } from '../data/sito.js';
-import { regole } from '../data/prenotazioni.js';
+import { datiLingua, versioni } from '../data/lingua.js';
 
 interface Props {
   titolo: string;          // titolo della pagina (senza il nome del sito)
@@ -16,15 +15,21 @@ interface Props {
   senzaBarra?: boolean;    // true = niente barra in basso su telefono
 }
 const { titolo, descrizione, testataScura = false, senzaTestata = false, nascosta = false, senzaBarra = false } = Astro.props;
+const L = datiLingua(Astro.url);
+const { sito } = L;
+const T = L.testi.base;
 // Il nome del sito si aggiunge solo se il titolo resta entro 65 caratteri (oltre, Google lo taglia o lo riscrive)
 // e se non c'è già: i titoli con le parole delle ricerche contengono quasi tutti "La Maddalena" (SEO, 16 novembre 2026).
 const conNome = `${titolo} · ${sito.nome}`;
-const titoloCompleto = Astro.url.pathname === '/' || titolo.includes(sito.nome) || conNome.length > 65 ? titolo : conNome;
+const titoloCompleto = Astro.url.pathname === L.link('/') || titolo.includes(sito.nome) || conNome.length > 65 ? titolo : conNome;
 const canonico = new URL(Astro.url.pathname, sito.url).href;
-const telefono = sito.contatti.whatsapp ? `tel:+${sito.contatti.whatsapp}` : '/contatti/';
+const telefono = sito.contatti.whatsapp ? `tel:+${sito.contatti.whatsapp}` : L.link('/contatti/');
+// Stessa pagina nelle altre lingue (hreflang): solo per le pagine tradotte.
+const altre = versioni(Astro.url.pathname);
+const assoluto = (p: string) => new URL(p, sito.url).href;
 ---
 <!doctype html>
-<html lang="it">
+<html lang={L.lingua}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -35,7 +40,10 @@ const telefono = sito.contatti.whatsapp ? `tel:+${sito.contatti.whatsapp}` : '/c
   <meta name="theme-color" content="#FFFFFF" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <meta property="og:type" content="website" />
-  <meta property="og:locale" content="it_IT" />
+  {altre && <link rel="alternate" hreflang="it" href={assoluto(altre.it)} />}
+  {altre && <link rel="alternate" hreflang="en" href={assoluto(altre.en)} />}
+  {altre && <link rel="alternate" hreflang="x-default" href={assoluto(altre.it)} />}
+  <meta property="og:locale" content={T.ogLocale} />
   <meta property="og:site_name" content={sito.nome} />
   <meta property="og:title" content={titoloCompleto} />
   <meta property="og:description" content={descrizione} />
@@ -43,23 +51,23 @@ const telefono = sito.contatti.whatsapp ? `tel:+${sito.contatti.whatsapp}` : '/c
   <slot name="head" />
 </head>
 <body>
-  <a class="salta" href="#contenuto">Vai al contenuto</a>
+  <a class="salta" href="#contenuto">{T.salta}</a>
   {!senzaTestata && !testataScura && <Testata />}
   <slot name="hero" />
   <main id="contenuto">
     <slot />
   </main>
   <Piede />
-  {!senzaBarra && (regole.attive ? (
-    <nav class="barra-wa" aria-label="Azioni rapide">
-      <a href="/prenota/" class="btn btn--wa">Prenota online</a>
-      <a href="/richiesta/" class="btn btn--bordo" aria-label="Scrivici su WhatsApp"><Icona nome="whatsapp" /></a>
-      <a href={telefono} class="btn btn--bordo" aria-label="Chiama"><Icona nome="telefono" /></a>
+  {!senzaBarra && (L.prenotaOnline ? (
+    <nav class="barra-wa" aria-label={T.azioniRapide}>
+      <a href="/prenota/" class="btn btn--wa">{T.prenotaOnline}</a>
+      <a href={L.link('/richiesta/')} class="btn btn--bordo" aria-label={T.scriviciWa}><Icona nome="whatsapp" /></a>
+      <a href={telefono} class="btn btn--bordo" aria-label={T.chiama}><Icona nome="telefono" /></a>
     </nav>
   ) : (
-    <nav class="barra-wa" aria-label="Azioni rapide">
-      <a href="/richiesta/" class="btn btn--wa"><Icona nome="whatsapp" />Chiedi disponibilità</a>
-      <a href={telefono} class="btn btn--bordo" aria-label="Chiama"><Icona nome="telefono" /></a>
+    <nav class="barra-wa" aria-label={T.azioniRapide}>
+      <a href={L.link('/richiesta/')} class="btn btn--wa"><Icona nome="whatsapp" />{T.chiediDisponibilita}</a>
+      <a href={telefono} class="btn btn--bordo" aria-label={T.chiama}><Icona nome="telefono" /></a>
     </nav>
   ))}
 </body>

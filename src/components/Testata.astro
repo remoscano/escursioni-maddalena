@@ -1,41 +1,50 @@
 ---
-import { regole } from '../data/prenotazioni.js';
 import Logo from './Logo.astro';
 import Icona from './Icona.astro';
-import { menu } from '../data/menu.js';
+import { datiLingua, versioni } from '../data/lingua.js';
 
 interface Props { scura?: boolean }
 const { scura = false } = Astro.props;
+const L = datiLingua(Astro.url);
+const T = L.testi.testata;
+const { menu } = L;
 const percorso = Astro.url.pathname;
+const catalogo = L.link('/escursioni/');
 const attivo = (href: string) =>
-  href === '/escursioni/' ? percorso === href : percorso.startsWith(href);
+  href === catalogo ? percorso === href : percorso.startsWith(href);
+// Link all'altra lingua: stessa pagina se è tradotta, altrimenti la sua home.
+const altra = T.altraLingua;
+const versione = versioni(percorso);
+const hrefAltra = versione ? versione[altra.codice as 'it' | 'en'] : altra.home;
 ---
 <header class={`testata ${scura ? 'testata--scura su-scuro' : 'testata--chiara'}`}>
   <div class="testata__barra">
     <Logo />
-    <nav class="testata__menu" aria-label="Menu principale">
-      {menu.map((v) => (
+    <nav class="testata__menu" aria-label={T.menuPrincipale}>
+      {menu.map((v: any) => (
         <a href={v.href} aria-current={attivo(v.href) ? 'page' : undefined}>{v.testo}</a>
       ))}
     </nav>
     <div class="testata__azioni">
-      {regole.attive
-        ? <a href="/prenota/" class="btn btn--wa">Prenota online</a>
-        : <a href="/richiesta/" class="btn btn--wa"><Icona nome="whatsapp" />Scrivici su WhatsApp</a>}
-      <button type="button" class="testata__apri" aria-expanded="false" aria-controls="menu-telefono" data-apri-menu>
-        <span class="sr-only">Apri il menu</span>
+      <a href={hrefAltra} class="testata__lingua" lang={altra.codice} hreflang={altra.codice}>{altra.nome}</a>
+      {L.prenotaOnline
+        ? <a href="/prenota/" class="btn btn--wa">{T.prenotaOnline}</a>
+        : <a href={L.link('/richiesta/')} class="btn btn--wa"><Icona nome="whatsapp" />{T.scriviciWa}</a>}
+      <button type="button" class="testata__apri" aria-expanded="false" aria-controls="menu-telefono" data-apri-menu data-apri={T.apriMenu} data-chiudi={T.chiudiMenu}>
+        <span class="sr-only">{T.apriMenu}</span>
         <Icona nome="menu" size={22} />
       </button>
     </div>
   </div>
   <div class="testata__pannello" id="menu-telefono" hidden>
-    <nav aria-label="Menu">
-      <a href="/">Home</a>
-      {menu.map((v) => (
+    <nav aria-label={T.menu}>
+      <a href={L.link('/')}>Home</a>
+      {menu.map((v: any) => (
         <a href={v.href} aria-current={attivo(v.href) ? 'page' : undefined}>{v.testo}</a>
       ))}
-      {regole.attive && <a href="/prenota/" class="btn btn--wa btn--grande">Prenota online</a>}
-      <a href="/richiesta/" class={`btn btn--grande ${regole.attive ? 'btn--bordo' : 'btn--wa'}`}><Icona nome="whatsapp" />{regole.attive ? 'Scrivici su WhatsApp' : 'Chiedi disponibilità'}</a>
+      <a href={hrefAltra} lang={altra.codice} hreflang={altra.codice}>{altra.nome}</a>
+      {L.prenotaOnline && <a href="/prenota/" class="btn btn--wa btn--grande">{T.prenotaOnline}</a>}
+      <a href={L.link('/richiesta/')} class={`btn btn--grande ${L.prenotaOnline ? 'btn--bordo' : 'btn--wa'}`}><Icona nome="whatsapp" />{L.prenotaOnline ? T.scriviciWa : T.chiediDisponibilita}</a>
     </nav>
   </div>
 </header>
@@ -48,7 +57,7 @@ const attivo = (href: string) =>
     const imposta = (aperto: boolean) => {
       pannello.hidden = !aperto;
       bottone.setAttribute('aria-expanded', String(aperto));
-      if (etichetta) etichetta.textContent = aperto ? 'Chiudi il menu' : 'Apri il menu';
+      if (etichetta) etichetta.textContent = (aperto ? bottone.dataset.chiudi : bottone.dataset.apri) ?? '';
     };
     bottone.addEventListener('click', () => imposta(pannello.hidden));
     document.addEventListener('keydown', (e) => {

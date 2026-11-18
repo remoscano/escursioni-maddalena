@@ -168,14 +168,19 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 .testata__menu a:hover { border-bottom-color: var(--laguna); color: inherit; }
 .testata__menu a[aria-current='page'] { border-bottom-color: currentColor; }
 .testata__azioni { display: flex; align-items: center; gap: 12px; }
+/* Link all'altra lingua ("English" / "Italiano"): in testata sul computer, nel menu sul telefono. */
+.testata__lingua {
+  color: inherit; font-size: 15px; font-weight: 600; min-height: 44px; display: inline-flex; align-items: center;
+  padding: 0 8px; text-underline-offset: 4px;
+}
 .testata__apri {
   display: none; align-items: center; justify-content: center; width: 48px; height: 48px;
   border-radius: 999px; border: 1.5px solid currentColor; background: transparent; color: inherit; cursor: pointer;
 }
 .testata__pannello { display: none; }
 
-@media (max-width: 1080px) {
-  .testata__menu, .testata__azioni .btn { display: none; }
+@media (max-width: 1240px) {
+  .testata__menu, .testata__azioni .btn, .testata__lingua { display: none; }
   .testata__apri { display: inline-flex; }
   .testata__pannello:not([hidden]) {
     display: block; position: absolute; left: 0; right: 0; top: 100%;

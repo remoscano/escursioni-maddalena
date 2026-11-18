@@ -3,7 +3,9 @@
 // La M prende il colore del testo (grafite in testata, bianca nel piè di pagina scuro).
 interface Props { size?: number; href?: string; etichetta?: string }
 // Il nome letto dal lettore di schermo comincia con la scritta visibile (WCAG 2.5.3): niente aria-label.
-const { size = 46, href = '/' } = Astro.props;
+import { datiLingua } from '../data/lingua.js';
+const L = datiLingua(Astro.url);
+const { size = 46, href = L.link('/') } = Astro.props;
 ---
 <a href={href} class="logo">
   <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
@@ -14,6 +16,6 @@ const { size = 46, href = '/' } = Astro.props;
   <span class="logo__testo">
     <span class="logo__sopra">Escursioni</span>
     <span class="logo__nome">La Maddalena</span>
-    <span class="sr-only">, torna alla home</span>
+    <span class="sr-only">{L.testi.logo.home}</span>
   </span>
 </a>

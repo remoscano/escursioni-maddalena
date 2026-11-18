@@ -3,8 +3,10 @@
 // o i due percorsi della mezza giornata (variante 'mezza', dalla mappa del cliente, 11 novembre 2026).
 // Le posizioni sono in percentuale sull'immagine (1000 × 1076).
 import Icona from './Icona.astro';
+import { datiLingua } from '../data/lingua.js';
+const T = datiLingua(Astro.url).testi.mappa;
 interface Props { didascalia?: string; variante?: '7isole' | 'mezza' }
-const { didascalia = 'Percorso indicativo: lo skipper lo adatta a vento e mare.', variante = '7isole' } = Astro.props;
+const { didascalia = T.didascalia, variante = '7isole' } = Astro.props;
 const mezza = variante === 'mezza';
 
 const isole = [
@@ -16,7 +18,7 @@ const isole = [
   { nome: 'Razzoli', x: 16.61, y: 11.1 },
   { nome: 'Santa<br>Maria', x: 35.26, y: 12.19 },
   { nome: 'Palau', x: 37, y: 88 },
-  { nome: 'Sardegna', x: 15.15, y: 94.23 },
+  { nome: T.sardegna, x: 15.15, y: 94.23 },
 ];
 // La Maddalena è il porto di partenza; a Palau il gommone passa a prendere i clienti (Remo, 11 novembre 2026).
 const partenza = { x: 58.5, y: 67.75 };
@@ -40,9 +42,7 @@ const sosteMezza = [
 ];
 const soste = mezza ? sosteMezza : soste7;
 const immagine = mezza ? '/img/mappa-mezza-giornata.svg' : '/img/mappa-arcipelago.svg';
-const alt = mezza
-  ? "Mappa dei due giri della mezza giornata, con partenza dal porto di La Maddalena e passaggio a Palau per chi si imbarca lì. Giro di Caprera: Cala Garibaldi o Cala Serena, poi Cala Coticcio sulla costa est. Giro delle isole del nord: Spargi, la Spiaggia Rosa di Budelli vista dal mare, Porto della Madonna tra Budelli, Razzoli e Santa Maria, e rientro diretto. Cannigione è più a sud-est, fuori dalla mappa."
-  : "Mappa dell'Arcipelago di La Maddalena con le sette tappe del tour: partenza dal porto di La Maddalena e passaggio a Palau per chi si imbarca lì; 1 Santo Stefano, 2 Caprera, 3 La Maddalena per il pranzo, 4 Spargi, 5 Budelli con la Spiaggia Rosa vista dal gommone, 6 Razzoli a Porto della Madonna, 7 la Lagunetta di Santa Maria; rientro a La Maddalena, con passaggio a Palau.";
+const alt = mezza ? T.altMezza : T.alt7;
 ---
 <figure class="mappa">
   <div class="mappa__area">
@@ -54,7 +54,7 @@ const alt = mezza
       alt={alt}
     />
     <div class="mappa__segni" aria-hidden="true">
-      <span class="mappa__corsica"><Icona nome="su" size={14} tratto={2.4} />Corsica</span>
+      <span class="mappa__corsica"><Icona nome="su" size={14} tratto={2.4} />{T.corsica}</span>
       <span class="mappa__nord">
         <span style="display:inline-flex;align-items:center;gap:4px"><Icona nome="su" size={14} tratto={2.4} />N</span>
         <span style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="display:block;width:56px;height:6px;border:2px solid #282828;border-top:0"></span>2 km</span>
@@ -74,19 +74,19 @@ const alt = mezza
   <figcaption class="mappa__legenda">
     {mezza ? (
       <Fragment>
-        <span><span class="pallino" aria-hidden="true"></span>Giro 1: Caprera</span>
-        <span><span class="pallino pallino--turchese" aria-hidden="true"></span>Giro 2: isole del nord</span>
-        <span><span class="pallino pallino--rosa" aria-hidden="true"></span>Spiaggia Rosa, solo dal mare</span>
-        <span><span class="pallino pallino--partenza" aria-hidden="true"></span>Partenza da La Maddalena</span>
-        <span><span class="pallino pallino--imbarco pallino--piccolo" aria-hidden="true"></span>Passaggio a Palau (puntini)</span>
-        <span style="flex-basis:100%">Da Cannigione parte il gommone dedicato.</span>
+        <span><span class="pallino" aria-hidden="true"></span>{T.giro1}</span>
+        <span><span class="pallino pallino--turchese" aria-hidden="true"></span>{T.giro2}</span>
+        <span><span class="pallino pallino--rosa" aria-hidden="true"></span>{T.rosaMezza}</span>
+        <span><span class="pallino pallino--partenza" aria-hidden="true"></span>{T.partenza}</span>
+        <span><span class="pallino pallino--imbarco pallino--piccolo" aria-hidden="true"></span>{T.passaggioPalau}</span>
+        <span style="flex-basis:100%">{T.cannigione}</span>
       </Fragment>
     ) : (
       <Fragment>
-        <span><span class="pallino" aria-hidden="true"></span>Le tappe, da 1 a 7</span>
-        <span><span class="pallino pallino--rosa" aria-hidden="true"></span>5 · Spiaggia Rosa, solo dal gommone</span>
-        <span><span class="pallino pallino--partenza" aria-hidden="true"></span>Partenza da La Maddalena</span>
-        <span><span class="pallino pallino--imbarco pallino--piccolo" aria-hidden="true"></span>Passaggio a Palau (puntini)</span>
+        <span><span class="pallino" aria-hidden="true"></span>{T.tappe}</span>
+        <span><span class="pallino pallino--rosa" aria-hidden="true"></span>{T.rosa7}</span>
+        <span><span class="pallino pallino--partenza" aria-hidden="true"></span>{T.partenza}</span>
+        <span><span class="pallino pallino--imbarco pallino--piccolo" aria-hidden="true"></span>{T.passaggioPalau}</span>
       </Fragment>
     )}
     <span style="flex-basis:100%">{didascalia}</span>

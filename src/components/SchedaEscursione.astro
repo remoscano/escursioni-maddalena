@@ -2,12 +2,14 @@
 import Foto from './Foto.astro';
 import Dato from './Dato.astro';
 import Icona from './Icona.astro';
-import { regole } from '../data/prenotazioni.js';
+import { datiLingua } from '../data/lingua.js';
 
 interface Props { e: any; grande?: boolean }
 const { e, grande = false } = Astro.props;
-const href = `/escursioni/${e.indirizzo}/`;
-const richiesta = regole.attive ? `/prenota/?escursione=${e.slug}` : `/richiesta/?escursione=${e.slug}`;
+const L = datiLingua(Astro.url);
+const T = L.testi.scheda;
+const href = L.urlEscursione(e.slug);
+const richiesta = L.prenotaOnline ? `/prenota/?escursione=${e.slug}` : L.link(`/richiesta/?escursione=${e.slug}`);
 const tono = 'acqua';
 ---
 {grande ? (
@@ -18,14 +20,14 @@ const tono = 'acqua';
       <h3><a href={href}>{e.titolo}</a></h3>
       <p class="testo-2" style="font-size:18px">{e.breve}</p>
       <p class="prezzo">
-        Da <Dato v={e.prezzoAdulti} e="PREZZO" /> € {e.prezzoGommone ? 'a gommone' : 'a persona'}
-        {e.prezzoBambini !== null && <small>· ridotto fino a 10 anni <Dato v={e.prezzoBambini} e="PREZZO" /> €</small>}
+        {T.da} <Dato v={T.euro(e.prezzoAdulti)} e="PREZZO" /> {e.prezzoGommone ? T.aGommone : T.aPersona}
+        {e.prezzoBambini !== null && <small>· {T.ridotto} <Dato v={T.euro(e.prezzoBambini)} e="PREZZO" /></small>}
       </p>
       <div class="azioni">
-        {regole.attive
-          ? <a href={richiesta} class="btn btn--wa">Prenota online</a>
-          : <a href={richiesta} class="btn btn--wa"><Icona nome="whatsapp" />Chiedi su WhatsApp</a>}
-        <a href={href} class="btn btn--bordo">Scopri il tour<Icona nome="destra" /></a>
+        {L.prenotaOnline
+          ? <a href={richiesta} class="btn btn--wa">{T.prenotaOnline}</a>
+          : <a href={richiesta} class="btn btn--wa"><Icona nome="whatsapp" />{T.chiediWa}</a>}
+        <a href={href} class="btn btn--bordo">{T.scopriTour}<Icona nome="destra" /></a>
       </div>
     </div>
   </article>
@@ -38,10 +40,10 @@ const tono = 'acqua';
       <p>{e.breve}</p>
       <p class="scheda__info">
         {e.prezzoGommone
-          ? <Fragment>Fino a <Dato v={e.postiMax} e="N" /> persone · da <Dato v={e.prezzoAdulti} e="PREZZO" /> € a gommone</Fragment>
-          : <Fragment><Dato v={e.orari} e="orari" /> · da <Dato v={e.prezzoAdulti} e="PREZZO" /> €</Fragment>}
+          ? <Fragment>{T.finoA}{' '}<Dato v={e.postiMax} e="N" />{` ${T.persone} · ${T.daMinuscolo} `}<Dato v={T.euro(e.prezzoAdulti)} e="PREZZO" />{` ${T.aGommone}`}</Fragment>
+          : <Fragment><Dato v={e.orari} e="orari" />{` · ${T.daMinuscolo} `}<Dato v={T.euro(e.prezzoAdulti)} e="PREZZO" /></Fragment>}
       </p>
-      <span class="link-freccia" aria-hidden="true">Scopri l'escursione<Icona nome="destra" size={18} /></span>
+      <span class="link-freccia" aria-hidden="true">{T.scopriEscursione}<Icona nome="destra" size={18} /></span>
     </div>
   </article>
 )}

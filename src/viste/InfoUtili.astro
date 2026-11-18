@@ -1,0 +1,77 @@
+---
+// Info utili, in tutte le lingue (src/pages/info-utili.astro e src/pages/en/useful-info.astro).
+import Base from '../layouts/Base.astro';
+import BoxInfo from '../components/BoxInfo.astro';
+import Icona from '../components/Icona.astro';
+import Dato from '../components/Dato.astro';
+import SezioneRichiesta from '../components/SezioneRichiesta.astro';
+import { datiLingua } from '../data/lingua.js';
+import { regole, offerte } from '../data/prenotazioni.js';
+const L = datiLingua(Astro.url);
+const { sito } = L;
+const T = L.testi.infoUtili;
+const { imbarchi } = sito;
+// Ora del passaggio a Palau al mattino, dal listino.
+const palauMattina = offerte['tour-7-isole'].turni[0].orariImbarco.palau.split('–')[0].trim();
+const porti = [
+  { id: 'maddalena', titolo: T.maddalena.titolo, prima: '', dopo: T.maddalena.testo },
+  { id: 'palau', titolo: T.palau.titolo, prima: T.palau.prima, dopo: T.palau.testo(palauMattina) },
+  { id: 'cannigione', titolo: 'Cannigione', prima: '', dopo: T.cannigione.testo },
+] as const;
+---
+<Base titolo={T.titolo} descrizione={T.descrizione}>
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">{T.occhiello}</p>
+      <h1>{T.h1}</h1>
+      <p class="intro">{T.intro}</p>
+    </div>
+  </section>
+
+  <section class="sezione" style="padding-top:48px">
+    <div class="contenitore"><h2 class="sr-only">{T.inBreve}</h2><BoxInfo /></div>
+  </section>
+
+  <section class="sezione sezione--calda" aria-labelledby="imbarchi-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione__testo">
+        <p class="occhiello">{T.imbarchi.occhiello}</p>
+        <h2 id="imbarchi-titolo" class="titolo-sezione">{T.imbarchi.titolo}</h2>
+      </div>
+      <div class="due-colonne due-colonne--alto">
+        {porti.map((p) => (
+          <div class="box">
+            <span class="box__icona"><Icona nome="ancora" size={24} tratto={1.8} /></span>
+            <h3>{p.titolo}</h3>
+            {p.prima && <p>{p.prima}</p>}
+            <p><strong>{T.molo}:</strong> <Dato v={imbarchi[p.id].molo} e={T.moloIndirizzo} /></p>
+            <p><strong>{T.ritrovo}:</strong> {T.ritrovoTesto(regole.anticipoRitrovo[p.id])} ({T.alle} <Dato v={imbarchi[p.id].ritrovo} e="ora" /> {T.usciteMattino}).</p>
+            {p.id === 'palau' && <p><strong>{T.parcheggio}:</strong> <Dato v={imbarchi.palau.parcheggio} e={T.parcheggioSegnaposto} /></p>}
+            <p>{p.dopo}</p>
+            {imbarchi[p.id].mappa
+              ? <a href={imbarchi[p.id].mappa} class="link-freccia" rel="noopener">{T.apriMaps}<Icona nome="destra" size={18} /></a>
+              : <p><Dato e="Link Google Maps del punto di ritrovo" /></p>}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="sezione" aria-labelledby="parco-titolo">
+    <div class="contenitore due-colonne due-colonne--alto">
+      <div class="intestazione__testo">
+        <p class="occhiello">{T.parco.occhiello}</p>
+        <h2 id="parco-titolo" class="titolo-sezione">{T.parco.titolo}</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;font-size:18px;line-height:1.6" class="testo-2">
+        <p>{T.parco.testo}</p>
+        <ul style="padding-left:22px;display:flex;flex-direction:column;gap:8px">
+          {T.parco.regole.map((r: string) => <li>{r}</li>)}
+        </ul>
+        <p>{T.parco.ticket}: <Dato v={sito.regole.ticketParco} e="incluso o da pagare" /></p>
+      </div>
+    </div>
+  </section>
+
+  <SezioneRichiesta />
+</Base>

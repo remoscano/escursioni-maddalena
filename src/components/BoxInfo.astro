@@ -3,34 +3,42 @@ import { regole as regoleP } from '../data/prenotazioni.js';
 // I quattro riquadri "Prima di salire a bordo": imbarchi, cosa portare, vento e mare, Parco.
 import Icona from './Icona.astro';
 import Dato from './Dato.astro';
-import { sito } from '../data/sito.js';
+import { datiLingua } from '../data/lingua.js';
+const L = datiLingua(Astro.url);
+const { sito } = L;
+const T = L.testi.boxInfo;
 const { imbarchi, regole } = sito;
+const porti = [
+  { id: 'maddalena', nota: '' },
+  { id: 'palau', nota: T.notaPalau },
+  { id: 'cannigione', nota: T.notaCannigione },
+] as const;
 ---
 <div class="griglia-info">
   <div class="box">
     <span class="box__icona"><Icona nome="luogo" size={24} tratto={1.8} /></span>
-    <h3>Tre punti d'imbarco</h3>
-    <p><strong>La Maddalena</strong> · <Dato v={imbarchi.maddalena.molo} e="molo e indirizzo" />, ritrovo {regoleP.anticipoRitrovo.maddalena} minuti prima della partenza (alle <Dato v={imbarchi.maddalena.ritrovo} e="ora" /> per le uscite di gruppo del mattino)</p>
-    <p><strong>Palau</strong> (ti passiamo a prendere) · <Dato v={imbarchi.palau.molo} e="molo e indirizzo" />, ritrovo {regoleP.anticipoRitrovo.palau} minuti prima della partenza (alle <Dato v={imbarchi.palau.ritrovo} e="ora" /> per le uscite di gruppo del mattino)</p>
-    <p><strong>Cannigione</strong> (gommone dedicato) · <Dato v={imbarchi.cannigione.molo} e="molo e indirizzo" />, ritrovo {regoleP.anticipoRitrovo.cannigione} minuti prima della partenza (alle <Dato v={imbarchi.cannigione.ritrovo} e="ora" /> per le uscite di gruppo del mattino)</p>
+    <h3>{T.treImbarchi}</h3>
+    {porti.map((p) => (
+      <p><strong>{imbarchi[p.id].nome}</strong>{p.nota && ` ${p.nota}`} · <Dato v={imbarchi[p.id].molo} e={T.moloIndirizzo} />, {T.ritrovo(regoleP.anticipoRitrovo[p.id])} ({T.allePrefisso} <Dato v={imbarchi[p.id].ritrovo} e={T.ora} /> {T.usciteMattino})</p>
+    ))}
   </div>
   <div class="box">
     <span class="box__icona"><Icona nome="borsa" size={24} tratto={1.8} /></span>
-    <h3>Cosa portare</h3>
+    <h3>{T.cosaPortare}</h3>
     <ul>
-      {sito.cosaPortare.map((x) => <li>{x}</li>)}
+      {sito.cosaPortare.map((x: string) => <li>{x}</li>)}
     </ul>
   </div>
   <div class="box">
     <span class="box__icona"><Icona nome="vento" size={24} tratto={1.8} /></span>
-    <h3>Vento e mare</h3>
-    <p>Con il maestrale forte l'itinerario cambia o l'uscita si sposta: ti avvisiamo su WhatsApp.</p>
+    <h3>{T.ventoMare}</h3>
+    <p>{T.maestrale}</p>
     <p><Dato v={regole.maltempo} e="La vostra regola: rimborso o cambio data" /></p>
   </div>
   <div class="box">
     <span class="box__icona"><Icona nome="foglia" size={24} tratto={1.8} /></span>
-    <h3>Nel Parco Nazionale</h3>
-    <p>Alla Spiaggia Rosa niente sbarco né bagno. Sabbia, sassi e conchiglie restano dove sono.</p>
-    <p>Ticket del Parco: <Dato v={regole.ticketParco} e="incluso o da pagare" /></p>
+    <h3>{T.parco}</h3>
+    <p>{T.regoleParco}</p>
+    <p>{T.ticket}: <Dato v={regole.ticketParco} e="incluso o da pagare" /></p>
   </div>
 </div>

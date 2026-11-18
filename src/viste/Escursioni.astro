@@ -1,0 +1,39 @@
+---
+// Catalogo delle escursioni, in tutte le lingue (src/pages/escursioni/index.astro e src/pages/en/boat-tours/index.astro).
+import Base from '../layouts/Base.astro';
+import SchedaEscursione from '../components/SchedaEscursione.astro';
+import SezioneRichiesta from '../components/SezioneRichiesta.astro';
+import Icona from '../components/Icona.astro';
+import { datiLingua } from '../data/lingua.js';
+const L = datiLingua(Astro.url);
+const { escursioni, pagineImbarco } = L;
+const T = L.testi.catalogo;
+const prezzoMinimo = Math.min(...escursioni.filter((e: any) => !e.prezzoGommone).map((e: any) => Number(e.prezzoAdulti)));
+const [evidenza, ...altre] = [...escursioni].sort((a: any, b: any) => Number(!!b.inEvidenza) - Number(!!a.inEvidenza));
+---
+<Base
+  titolo={T.titolo}
+  descrizione={T.descrizione(prezzoMinimo)}
+>
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">{T.occhiello}</p>
+      <h1>{T.h1}</h1>
+      <p class="intro">{L.prenotaOnline ? T.introOnline : T.intro}</p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:48px">
+    <div class="contenitore pila">
+      <h2 class="sr-only">{T.elenco}</h2>
+      <SchedaEscursione e={evidenza} grande />
+      <div class="griglia-schede">
+        {altre.map((e: any) => <SchedaEscursione e={e} />)}
+      </div>
+      <div class="pila" style="gap:12px">
+        <h2 class="titolo-medio">{T.daDove}</h2>
+        {pagineImbarco.map((p: any) => <a href={p.href} class="link-freccia">{p.titoloPagina}<Icona nome="destra" size={18} /></a>)}
+      </div>
+    </div>
+  </section>
+  <SezioneRichiesta />
+</Base>

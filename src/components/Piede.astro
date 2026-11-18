@@ -1,53 +1,57 @@
 ---
 import Logo from './Logo.astro';
 import Dato from './Dato.astro';
-import { sito } from '../data/sito.js';
-import { escursioni } from '../data/escursioni.js';
-import { regole } from '../data/prenotazioni.js';
-import { pagineImbarco } from '../data/imbarchi.js';
+import { datiLingua, versioni } from '../data/lingua.js';
+const L = datiLingua(Astro.url);
+const { sito, escursioni, pagineImbarco } = L;
+const T = L.testi.piede;
 const { contatti, azienda } = sito;
 const anno = new Date().getFullYear();
+const altra = L.testi.testata.altraLingua;
+const versione = versioni(Astro.url.pathname);
+const hrefAltra = versione ? versione[altra.codice as 'it' | 'en'] : altra.home;
 ---
 <footer class="piede">
   <div class="contenitore">
     <div class="piede__griglia">
       <div class="piede__col su-scuro">
         <Logo size={42} />
-        <p style="max-width: 30ch">Escursioni in barca nell'Arcipelago di La Maddalena, in gommone con skipper: {sito.partenze.frase}.</p>
+        <p style="max-width: 30ch">{T.descrizione}</p>
       </div>
       <nav class="piede__col" aria-labelledby="piede-escursioni">
-        <h2 id="piede-escursioni">Escursioni</h2>
-        {escursioni.map((e) => <a href={`/escursioni/${e.indirizzo}/`}>{e.nomeLink}</a>)}
-        {pagineImbarco.map((p) => <a href={p.href}>{p.titoloPagina}</a>)}
+        <h2 id="piede-escursioni">{T.escursioni}</h2>
+        {escursioni.map((e: any) => <a href={L.urlEscursione(e.slug)}>{e.nomeLink}</a>)}
+        {pagineImbarco.map((p: any) => <a href={p.href}>{p.titoloPagina}</a>)}
       </nav>
       <nav class="piede__col" aria-labelledby="piede-info">
-        <h2 id="piede-info">Informazioni</h2>
-        <a href="/gommone/">I gommoni</a>
-        <a href="/info-utili/">Info utili</a>
-        <a href="/domande-frequenti/">Domande frequenti</a>
-        {regole.attive && <a href="/prenota/">Prenota online</a>}
-        {regole.attive && <a href="/buono-regalo/">Buono regalo</a>}
-        {regole.attive && <a href="/recesso/">Recedi dal contratto qui</a>}
-        <a href="/richiesta/">Scrivici su WhatsApp</a>
-        <a href="/condizioni/">Condizioni di prenotazione</a>
-        <a href="/partner/">Area strutture partner</a>
+        <h2 id="piede-info">{T.informazioni}</h2>
+        <a href={L.link('/gommone/')}>{T.gommoni}</a>
+        <a href={L.link('/info-utili/')}>{T.infoUtili}</a>
+        <a href={L.link('/domande-frequenti/')}>{T.domande}</a>
+        {L.prenotaOnline && <a href="/prenota/">{T.prenotaOnline}</a>}
+        {L.prenotaOnline && <a href="/buono-regalo/">{T.buonoRegalo}</a>}
+        {L.prenotaOnline && <a href="/recesso/">{T.recesso}</a>}
+        <a href={L.link('/richiesta/')}>{T.scriviciWa}</a>
+        <a href="/condizioni/">{T.condizioni}</a>
+        <a href="/partner/">{T.partner}</a>
+        <a href={hrefAltra} lang={altra.codice} hreflang={altra.codice}>{altra.nome}</a>
       </nav>
       <div class="piede__col">
-        <h2>Contatti</h2>
-        <p>WhatsApp e telefono {contatti.telefonoVisibile
+        <h2>{T.contatti}</h2>
+        <p>{T.whatsappTelefono} {contatti.telefonoVisibile
           ? <a href={`tel:+${contatti.whatsapp}`} style="font-weight:700">{contatti.telefonoVisibile}</a>
           : <Dato e="+39 numero" />}</p>
         <p>Email {contatti.email
           ? <a href={`mailto:${contatti.email}`} style="font-weight:700">{contatti.email}</a>
           : <Dato e="indirizzo email" />}</p>
-        <p>Imbarchi: {sito.partenze.breve}</p>
+        <p>{T.imbarchi}: {sito.partenze.breve}</p>
       </div>
     </div>
     <div class="piede__fondo">
-      <p>© {anno} {azienda.ragioneSociale || sito.nome} · P. IVA <Dato v={azienda.partitaIva} e="numero" /></p>
+      <p>© {anno} {azienda.ragioneSociale || sito.nome} · {T.partitaIva} <Dato v={azienda.partitaIva} e={T.numero} /></p>
       <div class="piede__link">
-        <a href="/privacy/">Privacy</a>
-        <a href="/cookie/">Cookie</a>
+        <a href={L.link('/privacy/')}>Privacy</a>
+        <a href={L.link('/cookie/')}>{T.cookie}</a>
       </div>
     </div>
   </div>

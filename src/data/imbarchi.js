@@ -2,7 +2,7 @@
 // Nate dalle ricerche su Google: "escursioni la maddalena da palau" e simili valgono più di 2.000 ricerche al mese.
 // Orari, prezzi e moli arrivano da prenotazioni.js e sito.js: qui non si scrivono a mano.
 
-import { offerte, gommoni } from './prenotazioni.js';
+import { offerte, gommoni, regole } from './prenotazioni.js';
 import { escursioni } from './escursioni.js';
 import { sito } from './sito.js';
 
@@ -27,6 +27,8 @@ const daPalau = escursioniDa('palau');
 const daCannigione = escursioniDa('cannigione');
 const honda = gommoni.find((g) => g.imbarchi.includes('cannigione') && g.imbarchi.length === 1);
 const hondaFlotta = sito.flotta.find((f) => f.id === honda?.id);
+// Passaggio a Palau al mattino, dal listino (non scriverlo a mano).
+const palauMattina = offerte['tour-7-isole'].turni[0].orariImbarco.palau.split('–')[0].trim();
 
 export const pagineImbarco = [
   {
@@ -41,15 +43,15 @@ export const pagineImbarco = [
     titoloRichiesta: 'Sali a bordo a Palau: scegli la data',
     briciola: 'Passaggio a Palau',
     descrizioneSeo: `Escursioni La Maddalena da Palau: il gommone parte da La Maddalena e passa a prenderti a Palau. Giro delle isole, mezza giornata, tramonto, Corsica. Da ${prezzoMinimo(daPalau)} €.`,
-    breve: "Il gommone parte da La Maddalena e alle 11:00 passa a prenderti a Palau: comodo se arrivi da Olbia o dormi in Gallura.",
-    intro: "Le escursioni in gommone con skipper partono dal porto di La Maddalena. Per chi non vuole o non può arrivare fin lì, il gommone passa a prendere i clienti a Palau: al mattino alle 11:00, e al ritorno ti riaccompagna a Palau prima di rientrare a La Maddalena.",
+    breve: `Il gommone parte da La Maddalena e alle ${palauMattina} passa a prenderti a Palau: comodo se arrivi da Olbia o dormi in Gallura.`,
+    intro: `Le escursioni in gommone con skipper partono dal porto di La Maddalena. Per chi non vuole o non può arrivare fin lì, il gommone passa a prendere i clienti a Palau: al mattino alle ${palauMattina}, e al ritorno ti riaccompagna a Palau prima di rientrare a La Maddalena.`,
     perche: {
       titolo: 'Perché salire a bordo a Palau',
       punti: [
-        "Arrivi da fuori, per esempio da Olbia? Con la partenza alle 11:00 non devi alzarti presto e hai il tempo di parcheggiare.",
+        `Arrivi da fuori, per esempio da Olbia? Con la partenza alle ${palauMattina} non devi alzarti presto e hai il tempo di parcheggiare.`,
         'Niente traghetto per La Maddalena: sali a bordo direttamente a Palau.',
         'Stesse escursioni e stessi prezzi di chi sale a bordo a La Maddalena.',
-        `Ritrovo 15 minuti prima: alle ${sito.imbarchi.palau.ritrovo} per le uscite del mattino. L'orario esatto te lo confermiamo con un messaggio.`,
+        `Ritrovo ${regole.anticipoRitrovo.palau} minuti prima: alle ${sito.imbarchi.palau.ritrovo} per le uscite del mattino. L'orario esatto te lo confermiamo con un messaggio.`,
       ],
     },
     molo: sito.imbarchi.palau,
@@ -76,7 +78,7 @@ export const pagineImbarco = [
         `Mezza giornata la mattina (${breve(offerte['mezza-giornata'].turni[0].orariImbarco.cannigione)}) o il pomeriggio (${breve(offerte['mezza-giornata'].turni[1].orariImbarco.cannigione)}).`,
         'Stessi prezzi delle partenze da La Maddalena.',
         "Da Cannigione non partono il Tour delle 7 isole (il giro delle isole) né l'escursione in Corsica: per queste si parte da La Maddalena, con passaggio a Palau.",
-        `Ritrovo 15 minuti prima: alle ${sito.imbarchi.cannigione.ritrovo} per le uscite del mattino. L'orario esatto te lo confermiamo con un messaggio.`,
+        `Ritrovo ${regole.anticipoRitrovo.cannigione} minuti prima: alle ${sito.imbarchi.cannigione.ritrovo} per le uscite del mattino. L'orario esatto te lo confermiamo con un messaggio.`,
       ],
     },
     molo: sito.imbarchi.cannigione,

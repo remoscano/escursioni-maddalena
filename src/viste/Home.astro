@@ -1,0 +1,170 @@
+---
+// Home, in tutte le lingue: src/pages/index.astro (italiano) e src/pages/en/index.astro (inglese).
+// I testi stanno in src/data/testi.js (home) e nelle versioni tradotte (src/data/en/testi.js).
+import { postiMassimi } from '../data/prenotazioni.js';
+import Base from '../layouts/Base.astro';
+import Foto from '../components/Foto.astro';
+import Icona from '../components/Icona.astro';
+import Dato from '../components/Dato.astro';
+import Mappa from '../components/Mappa.astro';
+import ElencoSoste from '../components/ElencoSoste.astro';
+import SchedaEscursione from '../components/SchedaEscursione.astro';
+import Gommone from '../components/Gommone.astro';
+import BoxInfo from '../components/BoxInfo.astro';
+import SezioneRichiesta from '../components/SezioneRichiesta.astro';
+import DatiStrutturati from '../components/DatiStrutturati.astro';
+import { datiLingua } from '../data/lingua.js';
+
+const L = datiLingua(Astro.url);
+const { sito, escursioni, pagineImbarco } = L;
+const T = L.testi.home;
+const tour = L.trovaEscursione('tour-7-isole');
+// I due percorsi della mezza giornata, dal programma dell'escursione (voci "percorso" seguite dalle loro soste).
+const percorsiMezza: { titolo: string; testo: string; soste: any[] }[] = [];
+for (const t of L.trovaEscursione('mezza-giornata').programma) {
+  if (t.tipo === 'percorso') percorsiMezza.push({ titolo: t.titolo, testo: t.testo, soste: [] });
+  else if ((t.tipo === 'sosta' || t.tipo === 'vista') && percorsiMezza.length) percorsiMezza.at(-1)!.soste.push(t);
+}
+// Solo i due giri (la riga introduttiva non ha soste).
+percorsiMezza.splice(0, percorsiMezza.length, ...percorsiMezza.filter((p) => p.soste.length));
+// Prezzo più basso a persona tra le uscite di gruppo, per l'apertura.
+const prezzoMinimo = Math.min(...escursioni.filter((e: any) => !e.prezzoGommone).map((e: any) => Number(e.prezzoAdulti)));
+const altre = escursioni.filter((e: any) => !e.inEvidenza);
+const partenze = pagineImbarco.map((p: any) => ({ href: p.href, titolo: p.titoloPagina, testo: p.breve }));
+---
+<Base
+  titolo={T.titolo}
+  descrizione={T.descrizione(prezzoMinimo)}
+>
+  <DatiStrutturati slot="head" tipo="attivita" />
+  <section slot="hero" class="hero" aria-label={T.apertura}>
+    <div class="hero__griglia">
+      <div class="hero__contenuto">
+        <p class="hero__occhiello">{T.occhiello}</p>
+        <h1 class="hero__titolo">{T.titolo}</h1>
+        <p class="hero__testo">{T.testo}</p>
+        <div class="hero__azioni">
+          {L.prenotaOnline
+            ? <a href="/prenota/" class="btn btn--wa btn--grande">{T.prenotaOnline}</a>
+            : <a href={L.link('/richiesta/')} class="btn btn--wa btn--grande"><Icona nome="whatsapp" />{T.chiediWa}</a>}
+          <a href="#escursioni" class="btn btn--bordo btn--grande">{T.scegli}<Icona nome="giu" /></a>
+        </div>
+      </div>
+      <Foto
+        class="hero__foto"
+        nota={T.fotoApertura}
+        priorita
+        sizes="(max-width: 960px) 100vw, 50vw"
+      />
+    </div>
+    <div class="hero__fatti">
+      <dl>
+        <div><dt><Icona nome="orologio" size={18} />{T.fatti.uscite}</dt><dd>{T.fatti.usciteValore}</dd></div>
+        <div><dt><Icona nome="ancora" size={18} />{T.fatti.imbarco}</dt><dd>{sito.partenze.breve}</dd></div>
+        <div><dt><Icona nome="persone" size={18} />{T.fatti.aBordo}</dt><dd>{T.fatti.massimo(postiMassimi)}</dd></div>
+        <div><dt><Icona nome="euro" size={18} />{T.fatti.prezzo}</dt><dd>{T.fatti.da(prezzoMinimo)}</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="escursioni" class="sezione sezione--calda" aria-labelledby="escursioni-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione">
+        <div class="intestazione__testo">
+          <p class="occhiello">{T.escursioni.occhiello}</p>
+          <h2 id="escursioni-titolo" class="titolo-sezione">{T.escursioni.titolo}</h2>
+        </div>
+        <p class="intestazione__lato">{L.prenotaOnline ? T.escursioni.latoOnline : T.escursioni.lato}</p>
+      </div>
+      <SchedaEscursione e={tour} grande />
+      <div class="griglia-schede">
+        {altre.map((e: any) => <SchedaEscursione e={e} />)}
+      </div>
+    </div>
+  </section>
+
+  <section id="percorso" class="sezione" aria-labelledby="percorso-titolo">
+    <div class="contenitore pila" style="gap:56px">
+      <div class="intestazione">
+        <div class="intestazione__testo">
+          <p class="occhiello">{T.percorso.occhiello}</p>
+          <h2 id="percorso-titolo" class="titolo-sezione">{T.percorso.titolo}</h2>
+        </div>
+        <p class="intestazione__lato">{T.percorso.partenza} {tour.partenze}{T.percorso.rientro} <Dato v={tour.oraRientro} e="ora" />{T.percorso.ordine}</p>
+      </div>
+      <div class="percorso">
+        <Mappa />
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <ElencoSoste programma={tour.programma} rientro={tour.oraRientro} />
+          <a href={L.urlEscursione('tour-7-isole')} class="link-freccia">{T.percorso.link}<Icona nome="destra" size={18} /></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="mezza-giornata" class="sezione" aria-labelledby="mezza-titolo">
+    <div class="contenitore pila" style="gap:56px">
+      <div class="intestazione">
+        <div class="intestazione__testo">
+          <p class="occhiello">{T.mezza.occhiello}</p>
+          <h2 id="mezza-titolo" class="titolo-sezione">{T.mezza.titolo}</h2>
+        </div>
+        <p class="intestazione__lato">{T.mezza.lato}</p>
+      </div>
+      <div class="percorso">
+        <Mappa variante="mezza" didascalia={T.mezza.didascalia} />
+        <div style="display:flex;flex-direction:column;gap:24px">
+          {percorsiMezza.map((p, i) => (
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <h3 class="titolo-medio" style="font-size:24px">{p.titolo}</h3>
+              <p class="testo-2" style="font-size:16px">{p.testo}</p>
+              <ElencoSoste programma={p.soste} turchese={i === 1} />
+            </div>
+          ))}
+          <a href={L.urlEscursione('mezza-giornata')} class="link-freccia">{T.mezza.link}<Icona nome="destra" size={18} /></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="partenze" class="sezione" aria-labelledby="partenze-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione">
+        <div class="intestazione__testo">
+          <p class="occhiello">{T.partenze.occhiello}</p>
+          <h2 id="partenze-titolo" class="titolo-sezione">{T.partenze.titolo}</h2>
+        </div>
+        <p class="intestazione__lato">{T.partenze.lato}</p>
+      </div>
+      <div class="griglia-schede">
+        {partenze.map((p: any) => (
+          <a href={p.href} class="altra">
+            <span><strong>{p.titolo}</strong><span>{p.testo}</span></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="gommone" class="sezione" aria-labelledby="gommone-titolo">
+    <div class="contenitore">
+      <Gommone />
+    </div>
+  </section>
+
+
+  <section id="info" class="sezione" aria-labelledby="info-titolo">
+    <div class="contenitore pila">
+      <div class="intestazione" style="gap:16px 48px">
+        <div class="intestazione__testo">
+          <p class="occhiello">{T.info.occhiello}</p>
+          <h2 id="info-titolo" class="titolo-sezione">{T.info.titolo}</h2>
+        </div>
+        <a href={L.link('/domande-frequenti/')} class="link-freccia">{T.info.link}<Icona nome="destra" size={18} /></a>
+      </div>
+      <BoxInfo />
+    </div>
+  </section>
+
+  <SezioneRichiesta />
+</Base>

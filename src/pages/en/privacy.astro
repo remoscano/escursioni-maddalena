@@ -1,0 +1,78 @@
+---
+// English translation of the privacy notice (src/pages/privacy.astro, art. 13 GDPR).
+// The two must say the same thing: when the Italian one changes, change this one too.
+// The Italian version is the reference text.
+import Base from '../../layouts/Base.astro';
+import Dato from '../../components/Dato.astro';
+import { sito } from '../../data/en/sito.js';
+import { regole } from '../../data/prenotazioni.js';
+const { azienda, contatti } = sito;
+const online = regole.attive; // online booking switched on: waiting list, gift vouchers and online withdrawal
+---
+<Base titolo="Privacy notice" descrizione="How Escursioni La Maddalena handles the data of people who visit the website, message us on WhatsApp or book.">
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Privacy</p>
+      <h1>Privacy notice</h1>
+      <p class="intro"><span class="dato">[DRAFT: to be completed with the data in pink before publication]</span></p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:40px">
+    <div class="contenitore testo-lungo">
+      <p>This is a translation of our <a href="/privacy/" lang="it" hreflang="it">Italian privacy notice</a> (Informativa privacy), which is the reference text.</p>
+
+      <h2>Who handles your data</h2>
+      <p>The data controller is <Dato v={azienda.ragioneSociale} e="Company name" />, registered office at <Dato v={azienda.indirizzo} e="address" />, VAT no. <Dato v={azienda.partitaIva} e="number" />. For any question about your data, write to <Dato v={contatti.email} e="email address" /> or on WhatsApp <Dato v={contatti.telefonoVisibile} e="number" />.</p>
+
+      <h2>What data we process and why</h2>
+      <p><strong>When you visit the website.</strong> Cloudflare, which hosts the website, records technical data such as IP address, browser and pages requested, to run the site and protect it from abuse. Legal basis: our legitimate interest in the security of the website. We do not use profiling cookies or advertising or analytics tools that track you.</p>
+      <p><strong>When you message us on WhatsApp or by email.</strong> The request form does not send any data to the website: it writes the message in your browser and opens it in WhatsApp, and it reaches us only if you decide to send it, together with your number. We use what you write (name, date, number of people, boarding point, questions) to reply and organise the tour. Legal basis: replying to your request before a contract. If you decide to book, we record the booking in our system with name, phone, email and the tour details, and send you the payment link and the confirmation: from then on the rules in the next paragraph apply.</p>
+      <p><strong>When you book{online ? ' online or on WhatsApp' : ''}.</strong> You give us your first and last name, email, phone, any notes and the tour details (date, time, number of adults and children, boarding point). We use them to manage the booking, send you the confirmation and the reminder the day before, tell you about changes due to the weather and, if you cancel or choose a refund, refund you. At boarding the skipper records that you came on board (date and time of check-in). Legal basis: the contract; for payment and accounting data, legal obligations. If you used a discount code or a gift voucher, or arrived from the QR code on one of our flyers, we record it with the booking. If you tell us about a health need (for example an allergy for the aperitivo), we use it only to organise the tour: the legal basis is your explicit consent, which you give by telling us.</p>
+      <p><strong>Email after the tour.</strong> A few hours after you get back we send you a single thank-you email, with the link to leave a Google review if you wish. The review is free: we offer no discounts or other benefits in return. Legal basis: our legitimate interest in knowing how it went, towards people who have just been on a tour with us. You can say no at any time by replying to the email.</p>
+      {online && <p><strong>Waiting list.</strong> If you ask to be told when a place becomes free, you give us your name, email, phone (optional), date, tour and number of people. We use them only to send you that notice. Legal basis: your request. We delete them automatically once the date has passed.</p>}
+      {online && <p><strong>Gift vouchers.</strong> If you buy a voucher you give us your name, email, phone (optional) and, if you wish, the recipient's name and a message, which we print on the voucher. They are needed to send you the voucher, let it be used and for accounting obligations. Legal basis: the contract and legal obligations. If you withdraw from the voucher on the "Withdraw from the contract here" page, we record your name, voucher code, email, date and time of the statement and send you a receipt: this is required by law (art. 54-bis of the Italian Consumer Code).</p>}
+      <p><strong>Flyers with a QR code.</strong> When someone opens the QR code on one of our flyers we only count the number of visits for that flyer: no data about you and no cookies.</p>
+      <p><strong>Payments.</strong> You pay on the SumUp (card) or PayPal pages: you enter your card details there and they do not pass through our website. We only receive the outcome, the amount and a reference code. SumUp and PayPal process payment data as independent controllers, under their own privacy notices.</p>
+      <p><strong>Partner accommodation.</strong> If you book through a hotel or partner accommodation, or from their link, the accommodation sees in its area the date, tour, number of people and amount, to calculate its commission. It sees your name only if it made the booking for you: in that case it passed your data to us.</p>
+      <p><strong>Booking security.</strong> To stop anyone blocking places with many unpaid bookings, while you pay we keep a fingerprint of your internet address (not the address itself). We delete it automatically when the booking is paid or the time to pay has expired. Legal basis: legitimate interest in security.</p>
+      <p><strong>Restricted areas.</strong> For partner accommodation and people who work with us: name, email, password (stored only as a non-reversible fingerprint), date of logins and actions taken; for skippers also check-ins at boarding and the on-board expenses they record (fuel, drinks, food). They are needed to run the area and know who did what. Legal basis: the working relationship and the legitimate interest in security.</p>
+
+      <h2>Who we share it with</h2>
+      <p>Your data is seen only by the people who work with us and need it, and by the suppliers who help us provide the service:</p>
+      <ul>
+        <li>Cloudflare, Inc.: hosts the website and the booking database.</li>
+        <li>SumUp and PayPal: payments, as independent controllers.</li>
+        <li>Resend, Inc.: sending emails (confirmations, reminders, notices, gift vouchers).</li>
+        <li>WhatsApp (Meta) and Google (Gmail): when you message us on WhatsApp or by email, the messages pass through and stay on these services.</li>
+        <li>Partner accommodation, only as described above.</li>
+        <li>Our accountant and the authorities, when required by law.</li>
+      </ul>
+      <p>We do not sell your data and do not use it for advertising.</p>
+
+      <h2>Data outside the European Union</h2>
+      <p>Cloudflare, Resend, Google and Meta are companies with offices or servers in the United States. The transfer is protected by the EU-US Data Privacy Framework, to which they belong, and by the standard contractual clauses approved by the European Commission.</p>
+
+      <h2>How long we keep it</h2>
+      <ul>
+        <li>Bookings, payments and commissions: 10 years from the date of the tour, as required by law for accounting records (art. 2220 of the Italian Civil Code) and to defend ourselves in case of disputes.</li>
+        <li>WhatsApp messages and emails: as long as needed to reply and manage any booking.</li>
+        <li>Internet address fingerprint: until payment or until the pending booking expires ({regole.minutiPerPagare} minutes).</li>
+        {online && <li>Waiting list: until the day of the requested tour, then deleted automatically.</li>}
+        {online && <li>Gift vouchers and withdrawals: 10 years from purchase, like accounting records.</li>}
+        <li>Failed login attempts to restricted areas: 24 hours. Login session: 12 hours at most.</li>
+        <li>Restricted area accounts: for as long as the working relationship lasts.</li>
+        <li>Log of actions: like the booking data it refers to.</li>
+      </ul>
+
+      <h2>Is it compulsory?</h2>
+      <p>Name, email and phone are needed to book and to warn you in case of bad weather: without them we cannot confirm the booking. Notes are optional.</p>
+
+      <h2>Your rights</h2>
+      <p>You can ask us at any time to see your data, correct it, delete it, restrict its use or receive it in a readable format, and object to processing based on our legitimate interest. If you gave us your consent, you can withdraw it whenever you like. Write to <Dato v={contatti.email} e="email address" />.</p>
+      <p>You can also lodge a complaint with the Italian Data Protection Authority, the Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it/">garanteprivacy.it</a>).</p>
+      <p>We do not take automated decisions about you and do not carry out profiling.</p>
+
+      <p class="testo-2">Last updated: 18 November 2026</p>
+    </div>
+  </section>
+</Base>

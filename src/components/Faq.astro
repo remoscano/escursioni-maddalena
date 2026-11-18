@@ -1,7 +1,8 @@
 ---
 import Icona from './Icona.astro';
 import Dato from './Dato.astro';
-import { sito } from '../data/sito.js';
+import { datiLingua } from '../data/lingua.js';
+const { sito } = datiLingua(Astro.url);
 
 interface Props { domande: any[]; primaAperta?: boolean }
 const { domande, primaAperta = true } = Astro.props;
