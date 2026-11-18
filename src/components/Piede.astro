@@ -1,15 +1,13 @@
 ---
 import Logo from './Logo.astro';
 import Dato from './Dato.astro';
-import { datiLingua, versioni } from '../data/lingua.js';
+import { datiLingua, indirizziLingue } from '../data/lingua.js';
 const L = datiLingua(Astro.url);
 const { sito, escursioni, pagineImbarco } = L;
 const T = L.testi.piede;
 const { contatti, azienda } = sito;
 const anno = new Date().getFullYear();
-const altra = L.testi.testata.altraLingua;
-const versione = versioni(Astro.url.pathname);
-const hrefAltra = versione ? versione[altra.codice as 'it' | 'en'] : altra.home;
+const lingue = indirizziLingue(Astro.url.pathname);
 ---
 <footer class="piede">
   <div class="contenitore">
@@ -34,7 +32,6 @@ const hrefAltra = versione ? versione[altra.codice as 'it' | 'en'] : altra.home;
         <a href={L.link('/richiesta/')}>{T.scriviciWa}</a>
         <a href="/condizioni/">{T.condizioni}</a>
         <a href="/partner/">{T.partner}</a>
-        <a href={hrefAltra} lang={altra.codice} hreflang={altra.codice}>{altra.nome}</a>
       </nav>
       <div class="piede__col">
         <h2>{T.contatti}</h2>
@@ -49,6 +46,11 @@ const hrefAltra = versione ? versione[altra.codice as 'it' | 'en'] : altra.home;
     </div>
     <div class="piede__fondo">
       <p>© {anno} {azienda.ragioneSociale || sito.nome} · {T.partitaIva} <Dato v={azienda.partitaIva} e={T.numero} /></p>
+      <nav class="piede__link" aria-label={L.testi.testata.lingua}>
+        {lingue.map((l) => (
+          <a href={l.href} lang={l.codice} hreflang={l.codice} aria-current={l.codice === L.lingua ? 'true' : undefined}>{l.sigla}<span class="sr-only"> {l.nome}</span></a>
+        ))}
+      </nav>
       <div class="piede__link">
         <a href={L.link('/privacy/')}>Privacy</a>
         <a href={L.link('/cookie/')}>{T.cookie}</a>

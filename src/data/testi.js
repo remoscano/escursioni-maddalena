@@ -23,8 +23,7 @@ export const testi = {
     prenotaOnline: 'Prenota online',
     scriviciWa: 'Scrivici su WhatsApp',
     chiediDisponibilita: 'Chiedi disponibilità',
-    // Link all'altra lingua, in testata, nel menu del telefono e nel piè di pagina.
-    altraLingua: { codice: 'en', nome: 'English', home: '/en/' },
+    lingua: 'Lingua',
   },
   piede: {
     descrizione: `Escursioni in barca nell'Arcipelago di La Maddalena, in gommone con skipper: ${sito.partenze.frase}.`,

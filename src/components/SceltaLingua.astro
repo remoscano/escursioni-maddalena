@@ -1,0 +1,39 @@
+---
+// Menu a tendina delle lingue (Remo, 18 novembre 2026): in testata si vede la sigla della lingua attuale (IT, EN...),
+// toccandola si apre l'elenco. Le lingue arrivano da lingueSito in src/data/lingua.js: una lingua nuova compare da sola.
+// Funziona anche senza JavaScript (<details>); lo script chiude il menu con Esc o toccando fuori.
+import Icona from './Icona.astro';
+import { datiLingua, indirizziLingue } from '../data/lingua.js';
+const L = datiLingua(Astro.url);
+const lingue = indirizziLingue(Astro.url.pathname);
+const attuale = lingue.find((l) => l.codice === L.lingua)!;
+---
+<details class="lingue" data-lingue>
+  <summary class="lingue__bottone">
+    {attuale.sigla}<span class="sr-only">, {L.testi.testata.lingua}: {attuale.nome}</span>
+    <Icona nome="chevron" size={16} tratto={2.4} />
+  </summary>
+  <ul class="lingue__elenco">
+    {lingue.map((l) => (
+      <li>
+        <a href={l.href} lang={l.codice} hreflang={l.codice} aria-current={l.codice === L.lingua ? 'true' : undefined}>
+          <span class="lingue__sigla">{l.sigla}</span>{l.nome}
+        </a>
+      </li>
+    ))}
+  </ul>
+</details>
+
+<script>
+  document.querySelectorAll<HTMLDetailsElement>('[data-lingue]').forEach((menu) => {
+    document.addEventListener('click', (e) => {
+      if (menu.open && !menu.contains(e.target as Node)) menu.open = false;
+    });
+    menu.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.open) {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      }
+    });
+  });
+</script>

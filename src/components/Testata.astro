@@ -1,7 +1,8 @@
 ---
 import Logo from './Logo.astro';
 import Icona from './Icona.astro';
-import { datiLingua, versioni } from '../data/lingua.js';
+import SceltaLingua from './SceltaLingua.astro';
+import { datiLingua, indirizziLingue } from '../data/lingua.js';
 
 interface Props { scura?: boolean }
 const { scura = false } = Astro.props;
@@ -9,13 +10,10 @@ const L = datiLingua(Astro.url);
 const T = L.testi.testata;
 const { menu } = L;
 const percorso = Astro.url.pathname;
+const lingue = indirizziLingue(percorso);
 const catalogo = L.link('/escursioni/');
 const attivo = (href: string) =>
   href === catalogo ? percorso === href : percorso.startsWith(href);
-// Link all'altra lingua: stessa pagina se è tradotta, altrimenti la sua home.
-const altra = T.altraLingua;
-const versione = versioni(percorso);
-const hrefAltra = versione ? versione[altra.codice as 'it' | 'en'] : altra.home;
 ---
 <header class={`testata ${scura ? 'testata--scura su-scuro' : 'testata--chiara'}`}>
   <div class="testata__barra">
@@ -26,7 +24,7 @@ const hrefAltra = versione ? versione[altra.codice as 'it' | 'en'] : altra.home;
       ))}
     </nav>
     <div class="testata__azioni">
-      <a href={hrefAltra} class="testata__lingua" lang={altra.codice} hreflang={altra.codice}>{altra.nome}</a>
+      <SceltaLingua />
       {L.prenotaOnline
         ? <a href="/prenota/" class="btn btn--wa">{T.prenotaOnline}</a>
         : <a href={L.link('/richiesta/')} class="btn btn--wa"><Icona nome="whatsapp" />{T.scriviciWa}</a>}
@@ -42,7 +40,11 @@ const hrefAltra = versione ? versione[altra.codice as 'it' | 'en'] : altra.home;
       {menu.map((v: any) => (
         <a href={v.href} aria-current={attivo(v.href) ? 'page' : undefined}>{v.testo}</a>
       ))}
-      <a href={hrefAltra} lang={altra.codice} hreflang={altra.codice}>{altra.nome}</a>
+      <div class="testata__lingue" role="group" aria-label={T.lingua}>
+        {lingue.map((l) => (
+          <a href={l.href} lang={l.codice} hreflang={l.codice} aria-current={l.codice === L.lingua ? 'true' : undefined}>{l.sigla}<span class="sr-only"> {l.nome}</span></a>
+        ))}
+      </div>
       {L.prenotaOnline && <a href="/prenota/" class="btn btn--wa btn--grande">{T.prenotaOnline}</a>}
       <a href={L.link('/richiesta/')} class={`btn btn--grande ${L.prenotaOnline ? 'btn--bordo' : 'btn--wa'}`}><Icona nome="whatsapp" />{L.prenotaOnline ? T.scriviciWa : T.chiediDisponibilita}</a>
     </nav>

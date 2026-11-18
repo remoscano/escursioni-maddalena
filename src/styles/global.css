@@ -150,7 +150,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
   font-size: 11px; line-height: 1; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
   color: var(--turchese);
 }
-.logo__nome { font-family: var(--font-titoli); font-size: 23px; line-height: 1; font-weight: 800; letter-spacing: -0.01em; }
+.logo__nome { white-space: nowrap; font-family: var(--font-titoli); font-size: 23px; line-height: 1; font-weight: 800; letter-spacing: -0.01em; }
 .su-scuro .logo__sopra { color: #D7F1F3; }
 
 .testata { position: relative; z-index: 20; }
@@ -168,11 +168,28 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 .testata__menu a:hover { border-bottom-color: var(--laguna); color: inherit; }
 .testata__menu a[aria-current='page'] { border-bottom-color: currentColor; }
 .testata__azioni { display: flex; align-items: center; gap: 12px; }
-/* Link all'altra lingua ("English" / "Italiano"): in testata sul computer, nel menu sul telefono. */
-.testata__lingua {
-  color: inherit; font-size: 15px; font-weight: 600; min-height: 44px; display: inline-flex; align-items: center;
-  padding: 0 8px; text-underline-offset: 4px;
+/* Menu a tendina delle lingue (IT, EN...): sempre visibile, anche sul telefono accanto al menu. */
+.lingue { position: relative; }
+.lingue__bottone {
+  list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  min-height: 44px; min-width: 44px; padding: 0 10px; border-radius: 999px;
+  font-size: 15px; font-weight: 700; letter-spacing: 0.04em; color: inherit;
 }
+.lingue__bottone::-webkit-details-marker { display: none; }
+.lingue__bottone:hover { background: var(--acqua); }
+.lingue[open] .lingue__bottone svg { transform: rotate(180deg); }
+.lingue__elenco {
+  position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; margin: 0; padding: 6px; list-style: none;
+  min-width: 180px; background: var(--bianco); color: var(--mare); border: 1px solid var(--bordo); border-radius: 16px;
+  box-shadow: 0 16px 32px rgba(40, 40, 40, 0.15);
+}
+.lingue__elenco a {
+  display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px;
+  color: var(--mare); text-decoration: none; font-weight: 600;
+}
+.lingue__elenco a:hover, .lingue__elenco a:focus-visible { background: var(--acqua); }
+.lingue__elenco a[aria-current] { color: var(--turchese); }
+.lingue__sigla { font-weight: 800; letter-spacing: 0.04em; min-width: 2.2em; }
 .testata__apri {
   display: none; align-items: center; justify-content: center; width: 48px; height: 48px;
   border-radius: 999px; border: 1.5px solid currentColor; background: transparent; color: inherit; cursor: pointer;
@@ -180,8 +197,16 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 .testata__pannello { display: none; }
 
 @media (max-width: 1240px) {
-  .testata__menu, .testata__azioni .btn, .testata__lingua { display: none; }
+  .testata__menu, .testata__azioni .btn { display: none; }
   .testata__apri { display: inline-flex; }
+  .testata__azioni { gap: 6px; }
+  /* Lingue dentro il menu del telefono: si vedono solo sugli schermi stretti (sotto i 380 px). */
+  .testata__pannello .testata__lingue { display: none; gap: 8px; padding: 14px 0; border-bottom: 1px solid var(--bordo); }
+  .testata__pannello .testata__lingue a {
+    border: 1px solid var(--bordo); border-radius: 999px; min-width: 52px; justify-content: center;
+    display: inline-flex; align-items: center; padding: 0 14px; min-height: 44px; font-size: 16px; border-bottom: 1px solid var(--bordo);
+  }
+  .testata__pannello .testata__lingue a[aria-current] { border-color: var(--turchese); color: var(--turchese); }
   .testata__pannello:not([hidden]) {
     display: block; position: absolute; left: 0; right: 0; top: 100%;
     background: var(--sabbia); color: var(--mare); border-bottom: 1px solid var(--bordo);
@@ -193,6 +218,11 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
     padding: 14px 0; border-bottom: 1px solid var(--bordo);
   }
   .testata__pannello .btn { margin-top: 20px; }
+}
+
+@media (max-width: 379px) {
+  .testata .lingue { display: none; }
+  .testata__pannello .testata__lingue { display: flex; }
 }
 
 /* ---------- Hero della home ---------- */

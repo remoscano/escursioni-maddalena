@@ -37,6 +37,10 @@ with sync_playwright() as p:
     pg.fill('input[name=nome]','Anna'); pg.fill('input[name=data]','2027-07-14')
     msg=pg.inner_text('[data-anteprima]'); print(msg)
     if 'Sunset aperitivo' not in msg or 'Wednesday' not in msg: errori.append('messaggio WhatsApp inglese: '+msg)
+    # menu a tendina delle lingue (1440 px): dalla pagina italiana alla stessa pagina in inglese
+    pc=b.new_page(viewport={'width':1440,'height':900})
+    pc.goto(BASE+'/gommone/'); pc.click('.lingue__bottone'); pc.click('.lingue__elenco a[lang=en]')
+    if not pc.url.endswith('/en/boats/'): errori.append('tendina lingue: '+pc.url)
     # menu del telefono: etichetta inglese
     pg.goto(BASE+'/en/'); pg.click('[data-apri-menu]')
     if pg.inner_text('[data-apri-menu] .sr-only')!='Close the menu': errori.append('menu: etichetta')

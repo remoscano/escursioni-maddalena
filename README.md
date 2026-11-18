@@ -35,7 +35,7 @@ Il sito è in italiano e in inglese (`/en/`). Ogni pagina tradotta usa lo stesso
 - Pagine inglesi: `/en/`, `/en/boat-tours/` e le cinque escursioni (`/en/boat-tours/la-maddalena-archipelago-boat-tour/`, `half-day-boat-tour-la-maddalena/`, `sunset-boat-tour-la-maddalena/`, `private-boat-tour-la-maddalena/`, `corsica-boat-trip-from-la-maddalena/`), `/en/la-maddalena-boat-tours-from-palau/`, `/en/la-maddalena-boat-tours-from-cannigione/`, `/en/boats/`, `/en/useful-info/`, `/en/faq/`, `/en/contact/`, `/en/enquiry/`, `/en/privacy/`, `/en/cookies/`.
 - Solo in italiano, per ora: prenotazione online, buono regalo, recesso, condizioni, aree riservate. Dalle pagine inglesi i bottoni portano sempre alla richiesta su WhatsApp (il messaggio arriva in inglese).
 - Se cambi un testo in italiano, cambialo anche nel file inglese corrispondente (stesso nome, in `src/data/en/`). Privacy e cookie inglesi sono in `src/pages/en/privacy.astro` e `cookies.astro`.
-- Ogni pagina tradotta dice a Google qual è la sua versione nell'altra lingua (hreflang), anche nella mappa del sito, e ha il link "English" / "Italiano" in testata e nel piè di pagina.
+- Ogni pagina tradotta dice a Google qual è la sua versione nell'altra lingua (hreflang), anche nella mappa del sito, e il menu a tendina delle lingue con le sigle (IT, EN) in testata e nel piè di pagina. Le lingue del menu sono in `lingueSito` di `src/data/lingua.js`: spagnolo, francese e tedesco compariranno lì quando saranno tradotti.
 
 ## Prenotazioni online
 

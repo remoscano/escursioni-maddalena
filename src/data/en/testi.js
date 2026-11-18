@@ -21,7 +21,7 @@ export const testi = {
     prenotaOnline: 'Book online',
     scriviciWa: 'Message us on WhatsApp',
     chiediDisponibilita: 'Check availability',
-    altraLingua: { codice: 'it', nome: 'Italiano', home: '/' },
+    lingua: 'Language',
   },
   piede: {
     descrizione: `Boat tours in the La Maddalena Archipelago, on a RIB with skipper: ${sito.partenze.frase}.`,

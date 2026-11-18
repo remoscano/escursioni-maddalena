@@ -65,6 +65,19 @@ export const pacchetti = {
   en: pacchetto('en', { sito: sitoEn, escursioni: escursioniEn, faq: faqEn, menu: menuEn, pagineImbarco: pagineImbarcoEn, testi: testiEn }, indirizziEn),
 };
 
+// Lingue del sito, nell'ordine del menu a tendina (sigla, nome, home). Quando arriva una lingua nuova
+// (spagnolo, francese, tedesco) si aggiunge qui e compare da sola nel menu, in testata e nel piè di pagina.
+export const lingueSito = [
+  { codice: 'it', sigla: 'IT', nome: 'Italiano', home: '/' },
+  { codice: 'en', sigla: 'EN', nome: 'English', home: '/en/' },
+];
+
+// Indirizzo di questa pagina in ogni lingua: la stessa pagina se è tradotta, altrimenti la home di quella lingua.
+export function indirizziLingue(percorso) {
+  const v = versioni(percorso);
+  return lingueSito.map((l) => ({ ...l, href: v?.[l.codice] ?? l.home }));
+}
+
 export const linguaDi = (url) => (/^\/en(\/|$)/.test(url.pathname) ? 'en' : 'it');
 
 // Nelle pagine e nei componenti: const L = datiLingua(Astro.url);
