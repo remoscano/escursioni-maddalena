@@ -1,0 +1,36 @@
+---
+// Traduzione francese della pagina cookie (src/pages/cookie.astro). Quando cambia quella italiana, va cambiata anche questa.
+import Base from '../../layouts/Base.astro';
+---
+<Base titolo="Cookies" descrizione="Ce site n'utilise pas de cookies de profilage ni de cookies tiers à des fins publicitaires ou statistiques.">
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Cookies</p>
+      <h1>Cookies</h1>
+      <p class="intro">Pas de publicité, pas de suivi : nous utilisons seulement ce qui est nécessaire au fonctionnement du site.</p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:40px">
+    <div class="contenitore testo-lungo">
+      <p>Ce site n'utilise pas de cookies de profilage, ni de cookies ou d'outils tiers à des fins publicitaires ou statistiques. C'est pourquoi nous ne vous demandons pas votre consentement avec un bandeau : pour les outils uniquement techniques, il suffit de vous informer, comme le prévoient les lignes directrices sur les cookies de l'autorité italienne de protection des données (10 juin 2021). Ceci est une traduction de notre <a href="/cookie/" lang="it" hreflang="it">page cookies en italien</a>.</p>
+
+      <h2>Ce que nous utilisons</h2>
+      <ul>
+        <li><strong>Cookie technique de connexion</strong> (<code>em_sessione</code>) : uniquement pour ceux qui se connectent à l'espace des hébergements partenaires, à la gestion ou à l'espace d'embarquement des skippers. Il sert à rester connecté, dure 12 heures au maximum et s'efface à la déconnexion.</li>
+        <li><strong>Code de l'hébergement partenaire</strong> (stockage de session du navigateur, <code>em_partner</code>) : si vous arrivez par le lien d'un hôtel ou d'un hébergement partenaire, le navigateur retient son code jusqu'à la fermeture de l'onglet, pour lui attribuer la réservation. Il ne contient aucune donnée sur vous et ne sert à rien d'autre.</li>
+        <li><strong>Code du flyer</strong> (stockage de session du navigateur, <code>em_campagna</code>) : si vous arrivez par le QR de l'un de nos flyers ou affiches, le navigateur retient son code jusqu'à la fermeture de l'onglet, pour compter combien de réservations il apporte. Il ne contient aucune donnée sur vous.</li>
+        <li><strong>Gestion et embarquement installables</strong> (service worker dans <code>/gestione/</code> et <code>/imbarco/</code>) : uniquement pour ceux qui travaillent avec nous, il permet d'ajouter ces espaces à l'écran d'accueil du téléphone. Il ne conserve aucune donnée et n'est pas présent sur les pages publiques.</li>
+        <li><strong>Cookies de sécurité de Cloudflare</strong> : Cloudflare, qui héberge et protège le site, peut déposer des cookies techniques (par exemple <code>__cf_bm</code> ou <code>cf_clearance</code>) pour distinguer les personnes des programmes automatiques. Ils ne servent pas à vous profiler.</li>
+      </ul>
+
+      <h2>Paiements et liens externes</h2>
+      <p>Quand vous payez, vous passez sur les pages de SumUp ou de PayPal, qui utilisent leurs propres cookies selon leurs politiques.</p>
+      <p>Les polices et les images sont hébergées sur notre site : l'ouverture des pages ne contacte aucun service tiers comme Google Fonts, YouTube ou Google Maps. Les liens vers Google Maps et WhatsApp ne s'ouvrent que si vous les touchez.</p>
+
+      <h2>Comment les supprimer</h2>
+      <p>Vous pouvez supprimer les cookies et les données des sites depuis les paramètres de votre navigateur à tout moment. Sans le cookie de connexion, les espaces réservés ne fonctionnent pas ; le reste du site, si.</p>
+
+      <p class="testo-2">Dernière mise à jour : 18 novembre 2026</p>
+    </div>
+  </section>
+</Base>

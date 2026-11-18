@@ -1,0 +1,77 @@
+---
+// Traduzione francese dell'informativa privacy (src/pages/privacy.astro, art. 13 GDPR): deve dire le stesse cose.
+// Quando cambia quella italiana, va cambiata anche questa. Il testo di riferimento è quello italiano.
+import Base from '../../layouts/Base.astro';
+import Dato from '../../components/Dato.astro';
+import { sito } from '../../data/fr/sito.js';
+import { regole } from '../../data/prenotazioni.js';
+const { azienda, contatti } = sito;
+const online = regole.attive;
+---
+<Base titolo="Politique de confidentialité" descrizione="Comment Escursioni La Maddalena traite les données des personnes qui visitent le site, écrivent sur WhatsApp ou réservent.">
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Confidentialité</p>
+      <h1>Politique de confidentialité</h1>
+      <p class="intro"><span class="dato">[BROUILLON : à compléter avec les données en rose avant la publication]</span></p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:40px">
+    <div class="contenitore testo-lungo">
+      <p>Ceci est une traduction de notre <a href="/privacy/" lang="it" hreflang="it">politique de confidentialité en italien</a> (Informativa privacy), qui est le texte de référence.</p>
+
+      <h2>Qui traite vos données</h2>
+      <p>Le responsable du traitement est <Dato v={azienda.ragioneSociale} e="Raison sociale" />, dont le siège est situé <Dato v={azienda.indirizzo} e="adresse" />, n° TVA <Dato v={azienda.partitaIva} e="numéro" />. Pour toute question sur vos données, écrivez à <Dato v={contatti.email} e="e-mail" /> ou sur WhatsApp au <Dato v={contatti.telefonoVisibile} e="numéro" />.</p>
+
+      <h2>Quelles données nous traitons et pourquoi</h2>
+      <p><strong>Quand vous visitez le site.</strong> Cloudflare, qui héberge le site, enregistre des données techniques comme l'adresse IP, le navigateur et les pages demandées, pour faire fonctionner le site et le protéger des abus. Base juridique : notre intérêt légitime à la sécurité du site. Nous n'utilisons ni cookies de profilage ni outils publicitaires ou statistiques qui vous suivent.</p>
+      <p><strong>Quand vous nous écrivez sur WhatsApp ou par e-mail.</strong> Le formulaire de demande n'envoie aucune donnée au site : il rédige le message dans votre navigateur et l'ouvre dans WhatsApp, et il ne nous parvient que si vous décidez de l'envoyer, avec votre numéro. Nous utilisons ce que vous nous écrivez (prénom, date, personnes, embarquement, questions) pour vous répondre et organiser l'excursion. Base juridique : répondre à votre demande avant le contrat. Si vous décidez de réserver, nous enregistrons la réservation dans notre système avec nom, téléphone, e-mail et détails de l'excursion, et nous vous envoyons le lien de paiement et la confirmation : à partir de là, le paragraphe suivant s'applique.</p>
+      <p><strong>Quand vous réservez{online ? ' en ligne ou sur WhatsApp' : ''}.</strong> Vous nous donnez vos nom et prénom, e-mail, téléphone, éventuelles remarques et les détails de l'excursion (date, horaire, nombre d'adultes et d'enfants, embarquement). Nous les utilisons pour gérer la réservation, vous envoyer la confirmation et le rappel la veille, vous prévenir des changements dus à la météo et, si vous annulez ou choisissez le remboursement, vous rembourser. À l'embarquement, le skipper note que vous êtes monté à bord (date et heure du check-in). Base juridique : le contrat ; pour les données de paiement et comptables, les obligations légales. Si vous avez utilisé un code promo ou un bon cadeau, ou êtes arrivé par le QR de l'un de nos flyers, nous l'enregistrons avec la réservation. Si vous nous signalez un besoin lié à la santé (par exemple une allergie pour l'apéritif), nous l'utilisons uniquement pour organiser la sortie : la base juridique est votre consentement explicite, que vous donnez en nous le communiquant.</p>
+      <p><strong>E-mail après l'excursion.</strong> Quelques heures après le retour, nous vous envoyons un seul e-mail de remerciement, avec le lien pour laisser un avis sur Google si vous le souhaitez. L'avis est libre : nous n'offrons ni réduction ni autre avantage en échange. Base juridique : notre intérêt légitime à savoir comment cela s'est passé, auprès de ceux qui viennent de faire une excursion avec nous. Vous pouvez refuser à tout moment en répondant à l'e-mail.</p>
+      {online && <p><strong>Liste d'attente.</strong> Si vous demandez à être prévenu quand une place se libère, vous nous donnez nom, e-mail, téléphone (facultatif), date, excursion et nombre de personnes. Nous les utilisons uniquement pour vous envoyer cet avis. Base juridique : votre demande. Nous les effaçons automatiquement une fois la date passée.</p>}
+      {online && <p><strong>Bons cadeaux.</strong> Si vous achetez un bon, vous nous donnez nom, e-mail, téléphone (facultatif) et, si vous le souhaitez, le nom du bénéficiaire et un message, que nous imprimons sur le bon. Ils servent à vous envoyer le bon, à permettre son utilisation et aux obligations comptables. Base juridique : le contrat et les obligations légales. Si vous vous rétractez du bon depuis la page « Se rétracter du contrat ici », nous enregistrons nom, code du bon, e-mail, date et heure de la déclaration et nous vous envoyons l'accusé de réception : la loi l'exige (art. 54-bis du Code de la consommation italien).</p>}
+      <p><strong>Flyers avec QR.</strong> Quand quelqu'un ouvre le QR de l'un de nos flyers, nous comptons seulement le nombre de visites de ce flyer : aucune donnée sur vous et aucun cookie.</p>
+      <p><strong>Paiements.</strong> Vous payez sur les pages de SumUp (carte) ou de PayPal : vous y saisissez les données de votre carte, qui ne passent pas par notre site. Nous recevons seulement le résultat, le montant et un code de référence. SumUp et PayPal traitent les données de paiement en tant que responsables indépendants, selon leurs propres politiques.</p>
+      <p><strong>Hébergements partenaires.</strong> Si vous réservez par un hôtel ou un hébergement partenaire, ou depuis son lien, l'hébergement voit dans son espace la date, l'excursion, le nombre de personnes et le montant, pour calculer sa commission. Il ne voit votre nom que s'il a fait la réservation pour vous : dans ce cas, c'est lui qui nous a transmis vos données.</p>
+      <p><strong>Sécurité des réservations.</strong> Pour éviter que quelqu'un bloque des places avec de nombreuses réservations impayées, pendant que vous payez nous conservons une empreinte de votre adresse internet (pas l'adresse en clair). Nous l'effaçons automatiquement une fois la réservation payée ou le délai de paiement expiré. Base juridique : intérêt légitime à la sécurité.</p>
+      <p><strong>Espaces réservés.</strong> Pour les hébergements partenaires et les personnes qui travaillent avec nous : nom, e-mail, mot de passe (conservé uniquement sous forme d'empreinte non réversible), date des connexions et opérations effectuées ; pour les skippers aussi les check-in à l'embarquement et les dépenses de bord qu'ils enregistrent (carburant, boissons, nourriture). Ils servent au fonctionnement de l'espace et à savoir qui a fait quoi. Base juridique : la relation de collaboration et l'intérêt légitime à la sécurité.</p>
+
+      <h2>À qui nous les communiquons</h2>
+      <p>Les données ne sont vues que par les personnes qui travaillent avec nous et en ont besoin, et par les prestataires qui nous aident à fournir le service :</p>
+      <ul>
+        <li>Cloudflare, Inc. : héberge le site et la base de données des réservations.</li>
+        <li>SumUp et PayPal : paiements, en tant que responsables indépendants.</li>
+        <li>Resend, Inc. : envoi des e-mails (confirmations, rappels, avis, bons cadeaux).</li>
+        <li>WhatsApp (Meta) et Google (Gmail) : quand vous nous écrivez sur WhatsApp ou par e-mail, les messages passent et restent sur ces services.</li>
+        <li>Les hébergements partenaires, uniquement pour ce qui est indiqué ci-dessus.</li>
+        <li>Notre comptable et les autorités, quand la loi l'exige.</li>
+      </ul>
+      <p>Nous ne vendons pas vos données et ne les utilisons pas à des fins publicitaires.</p>
+
+      <h2>Données hors de l'Union européenne</h2>
+      <p>Cloudflare, Resend, Google et Meta sont des entreprises dont le siège ou les serveurs sont aux États-Unis. Le transfert est protégé par le cadre de protection des données UE-États-Unis (Data Privacy Framework), auquel elles adhèrent, et par les clauses contractuelles types approuvées par la Commission européenne.</p>
+
+      <h2>Combien de temps nous les conservons</h2>
+      <ul>
+        <li>Réservations, paiements et commissions : 10 ans à compter de la date de l'excursion, comme l'exige la loi pour les documents comptables (art. 2220 du Code civil italien) et pour nous défendre en cas de litige.</li>
+        <li>Messages WhatsApp et e-mails : le temps nécessaire pour vous répondre et gérer l'éventuelle réservation.</li>
+        <li>Empreinte de l'adresse internet : jusqu'au paiement ou à l'expiration de la réservation en attente ({regole.minutiPerPagare} minutes).</li>
+        {online && <li>Liste d'attente : jusqu'au jour de l'excursion demandée, puis effacement automatique.</li>}
+        {online && <li>Bons cadeaux et rétractations : 10 ans à compter de l'achat, comme les documents comptables.</li>}
+        <li>Tentatives de connexion échouées aux espaces réservés : 24 heures. Session de connexion : 12 heures au maximum.</li>
+        <li>Comptes des espaces réservés : tant que dure la collaboration.</li>
+        <li>Journal des opérations : comme les données des réservations auxquelles il se rapporte.</li>
+      </ul>
+
+      <h2>Sont-elles obligatoires ?</h2>
+      <p>Nom, e-mail et téléphone sont nécessaires pour réserver et pour vous prévenir en cas de mauvais temps : sans eux, nous ne pouvons pas confirmer la réservation. Les remarques sont facultatives.</p>
+
+      <h2>Vos droits</h2>
+      <p>Vous pouvez nous demander à tout moment d'accéder à vos données, de les corriger, de les effacer, d'en limiter l'utilisation ou de les recevoir dans un format lisible, et vous opposer aux traitements fondés sur notre intérêt légitime. Si vous nous avez donné votre consentement, vous pouvez le retirer quand vous le souhaitez. Écrivez à <Dato v={contatti.email} e="e-mail" />.</p>
+      <p>Vous pouvez aussi introduire une réclamation auprès de l'autorité italienne de protection des données, le Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it/">garanteprivacy.it</a>).</p>
+      <p>Nous ne prenons aucune décision automatisée vous concernant et ne faisons pas de profilage.</p>
+
+      <p class="testo-2">Dernière mise à jour : 18 novembre 2026</p>
+    </div>
+  </section>
+</Base>

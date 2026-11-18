@@ -1,0 +1,36 @@
+---
+// Traduzione spagnola della pagina cookie (src/pages/cookie.astro). Quando cambia quella italiana, va cambiata anche questa.
+import Base from '../../layouts/Base.astro';
+---
+<Base titolo="Cookies" descrizione="Esta web no usa cookies de perfilado ni cookies de terceros para publicidad o estadísticas.">
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Cookies</p>
+      <h1>Cookies</h1>
+      <p class="intro">Sin publicidad y sin rastreo: usamos solo lo necesario para que la web funcione.</p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:40px">
+    <div class="contenitore testo-lungo">
+      <p>Esta web no usa cookies de perfilado, ni cookies o herramientas de terceros para publicidad o estadísticas. Por eso no te pedimos el consentimiento con un banner: para las herramientas solo técnicas basta con informarte, como prevén las directrices sobre cookies de la autoridad italiana de protección de datos (10 de junio de 2021). Esta es una traducción de nuestra <a href="/cookie/" lang="it" hreflang="it">página de cookies en italiano</a>.</p>
+
+      <h2>Qué usamos</h2>
+      <ul>
+        <li><strong>Cookie técnica de acceso</strong> (<code>em_sessione</code>): solo para quien entra en el área de alojamientos colaboradores, en la gestión o en el área de embarque de los patrones. Sirve para mantener la sesión, dura como máximo 12 horas y se borra al salir.</li>
+        <li><strong>Código del alojamiento colaborador</strong> (memoria de sesión del navegador, <code>em_partner</code>): si llegas desde el enlace de un hotel o alojamiento colaborador, el navegador recuerda su código hasta que cierras la pestaña, para atribuirle la reserva. No contiene datos sobre ti ni sirve para otra cosa.</li>
+        <li><strong>Código del folleto</strong> (memoria de sesión del navegador, <code>em_campagna</code>): si llegas desde el QR de uno de nuestros folletos o carteles, el navegador recuerda su código hasta que cierras la pestaña, para contar cuántas reservas genera. No contiene datos sobre ti.</li>
+        <li><strong>Gestión y embarque instalables</strong> (service worker en <code>/gestione/</code> y <code>/imbarco/</code>): solo para quien trabaja con nosotros, permite añadir estas áreas a la pantalla de inicio del teléfono. No guarda datos y no está en las páginas públicas.</li>
+        <li><strong>Cookies de seguridad de Cloudflare</strong>: Cloudflare, que aloja y protege la web, puede usar cookies técnicas (por ejemplo <code>__cf_bm</code> o <code>cf_clearance</code>) para distinguir a las personas de los programas automáticos. No sirven para elaborar perfiles.</li>
+      </ul>
+
+      <h2>Pagos y enlaces externos</h2>
+      <p>Cuando pagas pasas a las páginas de SumUp o PayPal, que usan sus propias cookies según sus políticas.</p>
+      <p>Las fuentes y las imágenes están alojadas en nuestra web: al abrir las páginas no se contacta con servicios de terceros como Google Fonts, YouTube o Google Maps. Los enlaces a Google Maps y WhatsApp solo se abren si los pulsas.</p>
+
+      <h2>Cómo borrarlas</h2>
+      <p>Puedes borrar las cookies y los datos de los sitios desde la configuración del navegador cuando quieras. Sin la cookie de acceso las áreas reservadas no funcionan; el resto de la web sí.</p>
+
+      <p class="testo-2">Última actualización: 18 de noviembre de 2026</p>
+    </div>
+  </section>
+</Base>

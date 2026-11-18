@@ -1,0 +1,49 @@
+---
+// Tutte le pagine tradotte (inglese, spagnolo, francese, tedesco) nascono da qui, con gli stessi modelli delle
+// pagine italiane (src/viste/). Indirizzi: src/data/<lingua>/menu.js (pagine), escursioni.js (indirizzo), imbarchi.js (href).
+import Home from '../viste/Home.astro';
+import Escursioni from '../viste/Escursioni.astro';
+import Escursione from '../viste/Escursione.astro';
+import Imbarco from '../viste/Imbarco.astro';
+import Gommoni from '../viste/Gommoni.astro';
+import InfoUtili from '../viste/InfoUtili.astro';
+import Domande from '../viste/Domande.astro';
+import Contatti from '../viste/Contatti.astro';
+import Richiesta from '../viste/Richiesta.astro';
+import NonTrovata from '../viste/NonTrovata.astro';
+import PrivacyEn from '../viste/legali/PrivacyEn.astro';
+import CookieEn from '../viste/legali/CookieEn.astro';
+import PrivacyEs from '../viste/legali/PrivacyEs.astro';
+import CookieEs from '../viste/legali/CookieEs.astro';
+import PrivacyFr from '../viste/legali/PrivacyFr.astro';
+import CookieFr from '../viste/legali/CookieFr.astro';
+import PrivacyDe from '../viste/legali/PrivacyDe.astro';
+import CookieDe from '../viste/legali/CookieDe.astro';
+import { pagineTradotte, pacchetti, lingueSito } from '../data/lingua.js';
+import { escursioni } from '../data/escursioni.js';
+import { pagineImbarco } from '../data/imbarchi.js';
+
+export function getStaticPaths() {
+  const pagine = pagineTradotte.map((p) => ({ params: { traduzione: p.percorso.replace(/^\/|\/$/g, '') }, props: p }));
+  // Pagina "non trovata" di ogni lingua: /<lingua>/404/, spostata in /<lingua>/404.html da astro.config.mjs.
+  const nonTrovate = lingueSito.filter((l) => l.codice !== 'it').map((l) => ({ params: { traduzione: `${l.codice}/404` }, props: { lingua: l.codice, it: '/404/' } }));
+  return [...pagine, ...nonTrovate];
+}
+
+const { lingua, it } = Astro.props;
+const L = pacchetti[lingua];
+const legali: Record<string, any> = {
+  en: [PrivacyEn, CookieEn], es: [PrivacyEs, CookieEs], fr: [PrivacyFr, CookieFr], de: [PrivacyDe, CookieDe],
+};
+const escursione = escursioni.find((e) => it === `/escursioni/${e.indirizzo}/`);
+const imbarco = pagineImbarco.find((p) => p.href === it);
+const viste: Record<string, any> = {
+  '/': Home, '/escursioni/': Escursioni, '/gommone/': Gommoni, '/info-utili/': InfoUtili, '/domande-frequenti/': Domande,
+  '/contatti/': Contatti, '/richiesta/': Richiesta, '/404/': NonTrovata,
+  '/privacy/': legali[lingua][0], '/cookie/': legali[lingua][1],
+};
+const Vista = viste[it];
+---
+{escursione ? <Escursione e={L.trovaEscursione(escursione.slug)} />
+  : imbarco ? <Imbarco p={L.pagineImbarco.find((p: any) => p.id === imbarco.id)} />
+  : <Vista />}

@@ -3,14 +3,7 @@
 // When an Italian text in sito.js changes, change it here too. Empty values ('') show a pink placeholder.
 
 import { sito as it } from '../sito.js';
-
-// Deep merge: the Italian data plus the English texts below.
-const unisci = (base, sopra) => {
-  if (Array.isArray(sopra) || typeof sopra !== 'object' || sopra === null) return sopra;
-  const r = { ...base };
-  for (const [k, v] of Object.entries(sopra)) r[k] = k in (base ?? {}) ? unisci(base[k], v) : v;
-  return r;
-};
+import { sitoTradotto } from '../traduzioni.js';
 
 const testi = {
   contatti: {
@@ -66,8 +59,6 @@ const flottaEn = {
   esclusiva: { motori: 'Twin Suzuki 300 hp engines', dotazioni: 'cabin, toilet, shade', descrizione: 'The largest in the fleet, over 10 metres, kept for private tours with no more than 6 people: room for everyone. Cabin with a double bed, separate toilet and a bow sunbed where more than four can stretch out.' },
   cannigione: { motori: 'Single Honda 350 hp engine', dotazioni: 'T-top', descrizione: 'The RIB for departures from Cannigione, with a 350 hp Honda engine: it reaches the archipelago without wasting time. Up to 12 people, with shade on board.' },
 };
-testi.flotta = it.flotta.map((f) => ({ ...f, ...flottaEn[f.id] }));
-
-export const sito = unisci(it, testi);
+export const sito = sitoTradotto(testi, flottaEn);
 
 export const recensioni = [];

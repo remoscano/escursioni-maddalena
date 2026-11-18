@@ -3,17 +3,17 @@
 import { sito } from '../data/sito.js';
 import { escursioni } from '../data/escursioni.js';
 import { pagineImbarco } from '../data/imbarchi.js';
-import { versioni, tuttiGliIndirizziEn } from '../data/lingua.js';
+import { versioni, pagineTradotte } from '../data/lingua.js';
 
 const pagine = ['/', '/escursioni/', ...escursioni.map((e) => `/escursioni/${e.indirizzo}/`), ...pagineImbarco.map((p) => p.href), '/prenota/', '/buono-regalo/', '/gommone/',
-  '/info-utili/', '/domande-frequenti/', '/contatti/', '/richiesta/', '/condizioni/', '/privacy/', '/cookie/', ...tuttiGliIndirizziEn];
+  '/info-utili/', '/domande-frequenti/', '/contatti/', '/richiesta/', '/condizioni/', '/privacy/', '/cookie/', ...pagineTradotte.map((p) => p.percorso)];
 
 export function GET() {
   const base = sito.url.replace(/\/$/, '');
   const riga = (p) => {
     const v = versioni(p);
     const alternative = v
-      ? ['it', 'en'].map((l) => `\n    <xhtml:link rel="alternate" hreflang="${l}" href="${base}${v[l]}"/>`).join('') +
+      ? Object.entries(v).map(([l, u]) => `\n    <xhtml:link rel="alternate" hreflang="${l}" href="${base}${u}"/>`).join('') +
         `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${base}${v.it}"/>\n  `
       : '';
     return `  <url><loc>${base}${p}</loc>${alternative}</url>`;

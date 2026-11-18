@@ -40,8 +40,7 @@ const assoluto = (p: string) => new URL(p, sito.url).href;
   <meta name="theme-color" content="#FFFFFF" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <meta property="og:type" content="website" />
-  {altre && <link rel="alternate" hreflang="it" href={assoluto(altre.it)} />}
-  {altre && <link rel="alternate" hreflang="en" href={assoluto(altre.en)} />}
+  {altre && Object.entries(altre).map(([l, p]) => <link rel="alternate" hreflang={l} href={assoluto(p as string)} />)}
   {altre && <link rel="alternate" hreflang="x-default" href={assoluto(altre.it)} />}
   <meta property="og:locale" content={T.ogLocale} />
   <meta property="og:site_name" content={sito.nome} />

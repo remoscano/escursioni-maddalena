@@ -3,25 +3,14 @@
 // come from the Italian file and from src/data/prenotazioni.js (single price list).
 // If a tour changes in Italian (a stop, a text, what's included), change it here too.
 
-import { escursioni as it } from '../escursioni.js';
-import { prezzoDa, offerte, imbarchiPer } from '../prenotazioni.js';
 import { sito } from './sito.js';
+import {
+  da, ore, breve, posti, turno7, mattina, pomeriggio, privatoGiornata, corsica, partenzaCorsica, rientroCorsica,
+  daDoveIn, escursioniTradotte,
+} from '../traduzioni.js';
 
 const pranzo7 = sito.pranzo7;
-const da = (slug) => prezzoDa(slug) ?? {};
-const daDove = (slug) => {
-  const id = imbarchiPer(slug).map((i) => i.id);
-  const porti = [id.includes('maddalena') && `La Maddalena${id.includes('palau') ? ' (pick-up in Palau)' : ''}`, id.includes('cannigione') && 'Cannigione'].filter(Boolean);
-  return porti.join(' or ');
-};
-const posti = (slug) => it.find((e) => e.slug === slug).postiMax;
-const ore = (o) => String(o).split('–').map((x) => x.trim());
-const breve = (o) => String(o).replace(' – ', '–');
-const turno7 = offerte['tour-7-isole'].turni[0];
-const [mattina, pomeriggio] = offerte['mezza-giornata'].turni;
-const privatoGiornata = offerte['tour-privato'].turni.find((t) => t.id === 'giornata');
-const corsica = offerte['corsica'].turni[0];
-const [partenzaCorsica, rientroCorsica] = ore(corsica.orario);
+const daDove = daDoveIn('pick-up in Palau', 'or');
 const snorkel = 'Masks and snorkels: for hygiene reasons please bring your own (we keep a few on board)';
 const carburante = `Fuel: ${sito.carburante}`;
 
@@ -249,11 +238,4 @@ const testi = {
 };
 
 // Each tour: Italian data (prices, seats, map, photos) + English texts.
-export const escursioni = it.map((e) => ({
-  ...e,
-  ...testi[e.slug],
-  daDove: daDove(e.slug),
-}));
-
-export const trovaEscursione = (slug) => escursioni.find((e) => e.slug === slug);
-export const urlEscursione = (slug) => `/en/boat-tours/${trovaEscursione(slug)?.indirizzo ?? slug}/`;
+export const escursioni = escursioniTradotte(testi, daDove);

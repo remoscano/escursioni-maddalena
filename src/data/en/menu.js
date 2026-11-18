@@ -7,3 +7,17 @@ export const menu = [
   { href: '/en/faq/', testo: 'FAQ' },
   { href: '/en/contact/', testo: 'Contact' },
 ];
+
+// English addresses of the translated pages (Italian page → English page). Tour pages: catalogue + "indirizzo"
+// in escursioni.js; departure pages: "href" in imbarchi.js.
+export const pagine = {
+  '/': '/en/',
+  '/escursioni/': '/en/boat-tours/',
+  '/gommone/': '/en/boats/',
+  '/info-utili/': '/en/useful-info/',
+  '/domande-frequenti/': '/en/faq/',
+  '/contatti/': '/en/contact/',
+  '/richiesta/': '/en/enquiry/',
+  '/privacy/': '/en/privacy/',
+  '/cookie/': '/en/cookies/',
+};

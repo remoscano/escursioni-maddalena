@@ -30,12 +30,12 @@ Appena si compila il campo, il segnaposto sparisce in tutte le pagine.
 
 ## Lingue
 
-Il sito è in italiano e in inglese (`/en/`). Ogni pagina tradotta usa lo stesso modello per tutte e due le lingue (`src/viste/`): le pagine in `src/pages/` e `src/pages/en/` sono solo "porte" verso quel modello. La lingua si capisce dall'indirizzo e i testi arrivano da `src/data/lingua.js`, che sceglie tra i file italiani e quelli di `src/data/en/`.
+Il sito è in italiano, inglese (`/en/`), spagnolo (`/es/`), francese (`/fr/`) e tedesco (`/de/`). Le pagine italiane stanno in `src/pages/`; tutte quelle tradotte nascono da `src/pages/[...traduzione].astro`, con gli stessi modelli (`src/viste/`). La lingua si capisce dall'indirizzo e i testi arrivano da `src/data/lingua.js`, che sceglie tra i file italiani e quelli della cartella della lingua (`src/data/en/`, `es/`, `fr/`, `de/`).
 
-- Pagine inglesi: `/en/`, `/en/boat-tours/` e le cinque escursioni (`/en/boat-tours/la-maddalena-archipelago-boat-tour/`, `half-day-boat-tour-la-maddalena/`, `sunset-boat-tour-la-maddalena/`, `private-boat-tour-la-maddalena/`, `corsica-boat-trip-from-la-maddalena/`), `/en/la-maddalena-boat-tours-from-palau/`, `/en/la-maddalena-boat-tours-from-cannigione/`, `/en/boats/`, `/en/useful-info/`, `/en/faq/`, `/en/contact/`, `/en/enquiry/`, `/en/privacy/`, `/en/cookies/`.
-- Solo in italiano, per ora: prenotazione online, buono regalo, recesso, condizioni, aree riservate. Dalle pagine inglesi i bottoni portano sempre alla richiesta su WhatsApp (il messaggio arriva in inglese).
-- Se cambi un testo in italiano, cambialo anche nel file inglese corrispondente (stesso nome, in `src/data/en/`). Privacy e cookie inglesi sono in `src/pages/en/privacy.astro` e `cookies.astro`.
-- Ogni pagina tradotta dice a Google qual è la sua versione nell'altra lingua (hreflang), anche nella mappa del sito, e il menu a tendina delle lingue con le sigle (IT, EN) in testata e nel piè di pagina. Le lingue del menu sono in `lingueSito` di `src/data/lingua.js`: spagnolo, francese e tedesco compariranno lì quando saranno tradotti.
+- In ogni cartella: `sito.js`, `escursioni.js`, `faq.js`, `imbarchi.js`, `menu.js` (con gli indirizzi tradotti delle pagine) e `testi.js`. Solo parole: prezzi, orari, posti e moli arrivano dai file italiani.
+- Solo in italiano, per ora: prenotazione online, buono regalo, recesso, condizioni, aree riservate. Dalle pagine tradotte i bottoni portano sempre alla richiesta su WhatsApp (il messaggio arriva nella lingua del cliente).
+- Se cambi un testo in italiano, cambialo anche nelle quattro cartelle delle lingue. Privacy e cookie tradotti sono in `src/viste/legali/`.
+- Ogni pagina tradotta dice a Google quali sono le sue versioni nelle altre lingue (hreflang), anche nella mappa del sito, e il menu a tendina delle lingue (IT, EN, ES, FR, DE) porta alla stessa pagina nelle altre lingue. Le lingue del menu sono in `lingueSito` di `src/data/lingua.js`.
 
 ## Prenotazioni online
 

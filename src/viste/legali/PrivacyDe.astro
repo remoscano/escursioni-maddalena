@@ -1,0 +1,77 @@
+---
+// Traduzione tedesca dell'informativa privacy (src/pages/privacy.astro, art. 13 GDPR): deve dire le stesse cose.
+// Quando cambia quella italiana, va cambiata anche questa. Il testo di riferimento è quello italiano.
+import Base from '../../layouts/Base.astro';
+import Dato from '../../components/Dato.astro';
+import { sito } from '../../data/de/sito.js';
+import { regole } from '../../data/prenotazioni.js';
+const { azienda, contatti } = sito;
+const online = regole.attive;
+---
+<Base titolo="Datenschutzerklärung" descrizione="Wie Escursioni La Maddalena die Daten von Besuchern der Website, von WhatsApp-Anfragen und Buchungen verarbeitet.">
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">Datenschutz</p>
+      <h1>Datenschutzerklärung</h1>
+      <p class="intro"><span class="dato">[ENTWURF: vor der Veröffentlichung mit den rosa markierten Daten vervollständigen]</span></p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:40px">
+    <div class="contenitore testo-lungo">
+      <p>Dies ist eine Übersetzung unserer <a href="/privacy/" lang="it" hreflang="it">Datenschutzerklärung auf Italienisch</a> (Informativa privacy), die maßgeblich ist.</p>
+
+      <h2>Wer Ihre Daten verarbeitet</h2>
+      <p>Verantwortlich für die Verarbeitung ist <Dato v={azienda.ragioneSociale} e="Firmenname" />, mit Sitz in <Dato v={azienda.indirizzo} e="Adresse" />, USt-IdNr. <Dato v={azienda.partitaIva} e="Nummer" />. Bei Fragen zu Ihren Daten schreiben Sie an <Dato v={contatti.email} e="E-Mail" /> oder auf WhatsApp an <Dato v={contatti.telefonoVisibile} e="Nummer" />.</p>
+
+      <h2>Welche Daten wir verarbeiten und warum</h2>
+      <p><strong>Wenn Sie die Website besuchen.</strong> Cloudflare, das die Website hostet, erfasst technische Daten wie IP-Adresse, Browser und aufgerufene Seiten, um die Website zu betreiben und vor Missbrauch zu schützen. Rechtsgrundlage: unser berechtigtes Interesse an der Sicherheit der Website. Wir verwenden keine Profiling-Cookies und keine Werbe- oder Statistik-Tools, die Sie verfolgen.</p>
+      <p><strong>Wenn Sie uns auf WhatsApp oder per E-Mail schreiben.</strong> Das Anfrageformular sendet keine Daten an die Website: Es erstellt die Nachricht in Ihrem Browser und öffnet sie in WhatsApp; sie erreicht uns nur, wenn Sie sie abschicken, zusammen mit Ihrer Nummer. Wir nutzen, was Sie uns schreiben (Name, Datum, Personen, Einstieg, Fragen), um Ihnen zu antworten und den Ausflug zu organisieren. Rechtsgrundlage: die Beantwortung Ihrer Anfrage vor Vertragsschluss. Wenn Sie buchen, erfassen wir die Buchung in unserem System mit Name, Telefon, E-Mail und den Details des Ausflugs und senden Ihnen den Zahlungslink und die Bestätigung: Ab dann gilt der folgende Absatz.</p>
+      <p><strong>Wenn Sie buchen{online ? ' (online oder auf WhatsApp)' : ''}.</strong> Sie geben uns Vor- und Nachname, E-Mail, Telefon, eventuelle Hinweise und die Details des Ausflugs (Datum, Uhrzeit, Anzahl der Erwachsenen und Kinder, Einstieg). Wir nutzen sie, um die Buchung zu verwalten, Ihnen die Bestätigung und am Vortag die Erinnerung zu senden, Sie über wetterbedingte Änderungen zu informieren und Ihnen bei Stornierung oder gewählter Erstattung den Betrag zu erstatten. Beim Einstieg vermerkt der Skipper, dass Sie an Bord sind (Datum und Uhrzeit des Check-ins). Rechtsgrundlage: der Vertrag; für Zahlungs- und Buchhaltungsdaten die gesetzlichen Pflichten. Wenn Sie einen Rabattcode oder Geschenkgutschein genutzt haben oder über den QR-Code eines unserer Flyer gekommen sind, speichern wir dies mit der Buchung. Wenn Sie uns ein gesundheitliches Anliegen mitteilen (zum Beispiel eine Allergie für den Aperitif), nutzen wir es nur zur Organisation der Fahrt: Rechtsgrundlage ist Ihre ausdrückliche Einwilligung, die Sie mit der Mitteilung geben.</p>
+      <p><strong>E-Mail nach dem Ausflug.</strong> Einige Stunden nach der Rückkehr senden wir Ihnen eine einzige Dankes-E-Mail mit dem Link, um bei Google eine Bewertung zu hinterlassen, wenn Sie möchten. Die Bewertung ist freiwillig: Wir bieten keine Rabatte oder sonstigen Vorteile im Gegenzug. Rechtsgrundlage: unser berechtigtes Interesse zu erfahren, wie es war, gegenüber Personen, die gerade einen Ausflug mit uns gemacht haben. Sie können jederzeit widersprechen, indem Sie auf die E-Mail antworten.</p>
+      {online && <p><strong>Warteliste.</strong> Wenn Sie benachrichtigt werden möchten, sobald ein Platz frei wird, geben Sie uns Name, E-Mail, Telefon (optional), Datum, Ausflug und Personenzahl. Wir nutzen sie nur für diese Benachrichtigung. Rechtsgrundlage: Ihre Anfrage. Wir löschen sie automatisch, wenn das Datum vorbei ist.</p>}
+      {online && <p><strong>Geschenkgutscheine.</strong> Wenn Sie einen Gutschein kaufen, geben Sie uns Name, E-Mail, Telefon (optional) und, wenn Sie möchten, den Namen der beschenkten Person und eine Nachricht, die wir auf den Gutschein drucken. Sie dienen dazu, Ihnen den Gutschein zu senden, ihn einlösbar zu machen und für buchhalterische Pflichten. Rechtsgrundlage: der Vertrag und die gesetzlichen Pflichten. Wenn Sie über die Seite „Hier vom Vertrag zurücktreten“ vom Gutschein zurücktreten, speichern wir Name, Gutscheincode, E-Mail, Datum und Uhrzeit der Erklärung und senden Ihnen eine Eingangsbestätigung: Das schreibt das Gesetz vor (Art. 54-bis des italienischen Verbrauchergesetzbuchs).</p>}
+      <p><strong>Flyer mit QR-Code.</strong> Wenn jemand den QR-Code eines unserer Flyer öffnet, zählen wir nur die Anzahl der Besuche dieses Flyers: keine Daten über Sie und kein Cookie.</p>
+      <p><strong>Zahlungen.</strong> Sie zahlen auf den Seiten von SumUp (Karte) oder PayPal: Ihre Kartendaten geben Sie dort ein, sie laufen nicht über unsere Website. Wir erhalten nur das Ergebnis, den Betrag und eine Referenznummer. SumUp und PayPal verarbeiten die Zahlungsdaten als eigenständige Verantwortliche nach ihren eigenen Datenschutzerklärungen.</p>
+      <p><strong>Partnerunterkünfte.</strong> Wenn Sie über ein Hotel oder eine Partnerunterkunft buchen oder über deren Link, sieht die Unterkunft in ihrem Bereich Datum, Ausflug, Personenzahl und Betrag, um ihre Provision zu berechnen. Ihren Namen sieht sie nur, wenn sie die Buchung für Sie vorgenommen hat: In diesem Fall hat sie uns Ihre Daten übermittelt.</p>
+      <p><strong>Sicherheit der Buchungen.</strong> Damit niemand mit vielen unbezahlten Buchungen Plätze blockiert, speichern wir während der Zahlung einen Fingerabdruck Ihrer Internetadresse (nicht die Adresse im Klartext). Wir löschen ihn automatisch, sobald die Buchung bezahlt oder die Zahlungsfrist abgelaufen ist. Rechtsgrundlage: berechtigtes Interesse an der Sicherheit.</p>
+      <p><strong>Geschützte Bereiche.</strong> Für Partnerunterkünfte und Personen, die mit uns arbeiten: Name, E-Mail, Passwort (nur als nicht umkehrbarer Fingerabdruck gespeichert), Datum der Anmeldungen und ausgeführte Vorgänge; bei Skippern auch die Check-ins beim Einstieg und die erfassten Bordausgaben (Treibstoff, Getränke, Essen). Sie dienen dem Betrieb des Bereichs und der Nachvollziehbarkeit. Rechtsgrundlage: die Zusammenarbeit und das berechtigte Interesse an der Sicherheit.</p>
+
+      <h2>An wen wir sie weitergeben</h2>
+      <p>Die Daten sehen nur die Personen, die mit uns arbeiten und sie brauchen, sowie die Dienstleister, die uns bei der Erbringung des Service helfen:</p>
+      <ul>
+        <li>Cloudflare, Inc.: hostet die Website und die Buchungsdatenbank.</li>
+        <li>SumUp und PayPal: Zahlungen, als eigenständige Verantwortliche.</li>
+        <li>Resend, Inc.: Versand der E-Mails (Bestätigungen, Erinnerungen, Hinweise, Geschenkgutscheine).</li>
+        <li>WhatsApp (Meta) und Google (Gmail): Wenn Sie uns auf WhatsApp oder per E-Mail schreiben, laufen die Nachrichten über diese Dienste und bleiben dort gespeichert.</li>
+        <li>Die Partnerunterkünfte, nur wie oben beschrieben.</li>
+        <li>Unser Steuerberater und die Behörden, wenn das Gesetz es verlangt.</li>
+      </ul>
+      <p>Wir verkaufen Ihre Daten nicht und nutzen sie nicht für Werbung.</p>
+
+      <h2>Daten außerhalb der Europäischen Union</h2>
+      <p>Cloudflare, Resend, Google und Meta sind Unternehmen mit Sitz oder Servern in den USA. Die Übermittlung ist durch das EU-US Data Privacy Framework, dem sie beigetreten sind, und durch die von der Europäischen Kommission genehmigten Standardvertragsklauseln geschützt.</p>
+
+      <h2>Wie lange wir sie aufbewahren</h2>
+      <ul>
+        <li>Buchungen, Zahlungen und Provisionen: 10 Jahre ab dem Datum des Ausflugs, wie es das Gesetz für Buchhaltungsunterlagen verlangt (Art. 2220 des italienischen Zivilgesetzbuchs) und um uns bei Streitigkeiten verteidigen zu können.</li>
+        <li>WhatsApp-Nachrichten und E-Mails: so lange, wie es nötig ist, um Ihnen zu antworten und eine eventuelle Buchung abzuwickeln.</li>
+        <li>Fingerabdruck der Internetadresse: bis zur Zahlung oder bis zum Ablauf der offenen Buchung ({regole.minutiPerPagare} Minuten).</li>
+        {online && <li>Warteliste: bis zum Tag des gewünschten Ausflugs, danach automatische Löschung.</li>}
+        {online && <li>Geschenkgutscheine und Rücktritte: 10 Jahre ab dem Kauf, wie Buchhaltungsunterlagen.</li>}
+        <li>Fehlgeschlagene Anmeldeversuche in geschützten Bereichen: 24 Stunden. Anmeldesitzung: höchstens 12 Stunden.</li>
+        <li>Konten der geschützten Bereiche: für die Dauer der Zusammenarbeit.</li>
+        <li>Protokoll der Vorgänge: wie die Buchungsdaten, auf die es sich bezieht.</li>
+      </ul>
+
+      <h2>Sind die Angaben Pflicht?</h2>
+      <p>Name, E-Mail und Telefon sind nötig, um zu buchen und Sie bei schlechtem Wetter zu informieren: Ohne sie können wir die Buchung nicht bestätigen. Hinweise sind freiwillig.</p>
+
+      <h2>Ihre Rechte</h2>
+      <p>Sie können jederzeit Auskunft über Ihre Daten verlangen, sie berichtigen, löschen, ihre Verarbeitung einschränken oder sie in einem lesbaren Format erhalten und der Verarbeitung auf Grundlage unseres berechtigten Interesses widersprechen. Wenn Sie uns eine Einwilligung gegeben haben, können Sie sie jederzeit widerrufen. Schreiben Sie an <Dato v={contatti.email} e="E-Mail" />.</p>
+      <p>Sie können sich auch bei der italienischen Datenschutzbehörde beschweren, dem Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it/">garanteprivacy.it</a>).</p>
+      <p>Wir treffen keine automatisierten Entscheidungen über Sie und erstellen keine Profile.</p>
+
+      <p class="testo-2">Letzte Aktualisierung: 18. November 2026</p>
+    </div>
+  </section>
+</Base>

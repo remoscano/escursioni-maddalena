@@ -1,35 +1,18 @@
 // English version of src/data/imbarchi.js: the departure pages (Palau, Cannigione).
 // Times, prices and moorings come from prenotazioni.js and sito.js: never typed by hand here.
 
-import { offerte, gommoni, regole } from '../prenotazioni.js';
+import { regole } from '../prenotazioni.js';
 import { escursioni } from './escursioni.js';
 import { sito } from './sito.js';
+import { breve, escursioniDaImbarco, prezzoMinimo, honda, palauMattina, mezzaMattina, mezzaPomeriggio } from '../traduzioni.js';
 
-const breve = (o) => String(o).replace(' – ', '–');
 // Names of the time slots (the Italian ones are in prenotazioni.js, "nome" of each turno).
 const nomiTurni = { giornata: 'Full day', mattina: 'Morning', pomeriggio: 'Afternoon', tramonto: 'At sunset' };
 const nomiTurniPrivato = { giornata: 'Full day', mattina: 'Half day, morning', pomeriggio: 'Half day, afternoon', tramonto: 'Sunset aperitivo' };
-
-function escursioniDa(imbarco) {
-  return escursioni
-    .filter((e) => offerte[e.slug]?.imbarchi.includes(imbarco))
-    .map((e) => {
-      const nomi = offerte[e.slug].tipo === 'esclusiva' && offerte[e.slug].turni.length > 1 ? nomiTurniPrivato : nomiTurni;
-      const turni = offerte[e.slug].turni.map((t) => {
-        const orario = imbarco === 'maddalena' ? t.orario : t.orariImbarco?.[imbarco];
-        return { nome: nomi[t.id] ?? t.nome, orario: t.indicativo ? 'departure between 6:30 and 7 pm' : orario ? breve(orario) : '' };
-      });
-      return { e, turni };
-    });
-}
-
-const prezzoMinimo = (lista) => Math.min(...lista.filter((x) => !x.e.prezzoGommone).map((x) => Number(x.e.prezzoAdulti)));
+const escursioniDa = (imbarco) => escursioniDaImbarco(escursioni, imbarco, nomiTurni, nomiTurniPrivato, 'departure between 6:30 and 7 pm');
 const daPalau = escursioniDa('palau');
 const daCannigione = escursioniDa('cannigione');
-const honda = gommoni.find((g) => g.imbarchi.includes('cannigione') && g.imbarchi.length === 1);
 const hondaFlotta = sito.flotta.find((f) => f.id === honda?.id);
-const palauMattina = offerte['tour-7-isole'].turni[0].orariImbarco.palau.split('–')[0].trim();
-const [mezzaMattina, mezzaPomeriggio] = offerte['mezza-giornata'].turni;
 
 export const pagineImbarco = [
   {
