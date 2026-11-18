@@ -7,8 +7,8 @@ import { sito } from '../data/sito.js';
 const { contatti, imbarchi } = sito;
 ---
 <Base
-  titolo="Contatti: escursioni in barca a La Maddalena e Palau"
-  descrizione="Scrivici su WhatsApp, chiamaci o mandaci un'email. Partenza da La Maddalena, Palau e Cannigione."
+  titolo="Contatti: escursioni in barca Arcipelago di La Maddalena"
+  descrizione={`Scrivici su WhatsApp, chiamaci o mandaci un'email. ${sito.partenze.frase.charAt(0).toUpperCase()}${sito.partenze.frase.slice(1)}.`}
 >
   <section class="testa-pagina">
     <div class="contenitore">

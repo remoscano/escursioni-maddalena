@@ -55,6 +55,15 @@ export const sito = {
     },
   },
 
+  // Come si nominano i porti (Remo, 18 novembre 2026): La Maddalena è il porto principale (3 gommoni su 4);
+  // Palau è un servizio in più, il gommone passa a prendere chi non vuole o non può arrivare a La Maddalena:
+  // non compare mai prima di La Maddalena. Cannigione, più a sud, è il porto del solo Honda 9.50.
+  partenze: {
+    breve: 'La Maddalena (passaggio a Palau) e Cannigione',
+    frase: 'partenza da La Maddalena, con passaggio a Palau, e da Cannigione',
+    seo: 'da La Maddalena (con passaggio a Palau) e Cannigione',
+  },
+
   // I gommoni (Remo, 8 novembre 2026). "id" collega ogni gommone a quello del sistema di prenotazione
   // (src/data/prenotazioni.js), da cui arrivano i posti.
   // Descrizioni dei gommoni scritte da Claude (11 novembre 2026) dalle schede dei modelli (Joker Boat, BWA) e dai dati di Remo: da far controllare.

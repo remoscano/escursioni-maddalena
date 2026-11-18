@@ -21,7 +21,7 @@ const attivita = {
   url: `${base}/`,
   logo: `${base}/img/app-512.png`,
   image: `${base}/img/app-512.png`,
-  description: 'Escursioni in barca a La Maddalena, in gommone con skipper, da Palau, La Maddalena e Cannigione: giro delle isole, mezza giornata, aperitivo al tramonto, tour privato e Corsica.',
+  description: `Escursioni in barca nell'Arcipelago di La Maddalena, in gommone con skipper, ${sito.partenze.seo}: giro delle isole, mezza giornata, aperitivo al tramonto, tour privato e Corsica.`,
   ...(sito.contatti.telefonoVisibile ? { telephone: sito.contatti.telefonoVisibile.replace(/\s/g, '') } : {}),
   ...(sito.contatti.email ? { email: sito.contatti.email } : {}),
   ...(sito.azienda.indirizzo ? { address: { '@type': 'PostalAddress', streetAddress: sito.azienda.indirizzo, addressCountry: 'IT' } } : {}),

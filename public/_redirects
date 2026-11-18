@@ -7,10 +7,13 @@
 /escursioni/tramonto /escursioni/aperitivo-al-tramonto-la-maddalena/ 301
 /escursioni/tour-privato/ /escursioni/gommone-con-skipper-la-maddalena/ 301
 /escursioni/tour-privato /escursioni/gommone-con-skipper-la-maddalena/ 301
-/escursioni/corsica/ /escursioni/escursione-corsica-da-palau/ 301
-/escursioni/corsica /escursioni/escursione-corsica-da-palau/ 301
+/escursioni/corsica/ /escursioni/escursione-corsica-da-la-maddalena/ 301
+/escursioni/corsica /escursioni/escursione-corsica-da-la-maddalena/ 301
+# La Corsica parte da La Maddalena (Palau è un passaggio): indirizzo cambiato il 18 novembre 2026.
+/escursioni/escursione-corsica-da-palau/ /escursioni/escursione-corsica-da-la-maddalena/ 301
+/escursioni/escursione-corsica-da-palau /escursioni/escursione-corsica-da-la-maddalena/ 301
 # Indirizzi ancora più vecchi (mezza giornata e tramonto insieme fino all'11 novembre; Corsica con Bonifacio fino al 16 novembre 2026).
 /escursioni/tramonto-mezza-giornata/ /escursioni/escursione-mezza-giornata-la-maddalena/ 301
 /escursioni/tramonto-mezza-giornata /escursioni/escursione-mezza-giornata-la-maddalena/ 301
-/escursioni/corsica-lavezzi-bonifacio/ /escursioni/escursione-corsica-da-palau/ 301
-/escursioni/corsica-lavezzi-bonifacio /escursioni/escursione-corsica-da-palau/ 301
+/escursioni/corsica-lavezzi-bonifacio/ /escursioni/escursione-corsica-da-la-maddalena/ 301
+/escursioni/corsica-lavezzi-bonifacio /escursioni/escursione-corsica-da-la-maddalena/ 301

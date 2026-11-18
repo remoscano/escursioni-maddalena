@@ -9,8 +9,13 @@ const pranzo7 = sito.pranzo7; // testo unico del pranzo del Tour delle 7 isole
 
 // Prezzi "da" e posti arrivano da src/data/prenotazioni.js (listino unico per sito e prenotazioni).
 const da = (slug) => prezzoDa(slug) ?? {};
-// "Palau, La Maddalena o Cannigione": da dove parte un'escursione.
-const daDove = (slug) => { const n = imbarchiPer(slug).map((i) => i.nome); return n.length > 1 ? `${n.slice(0, -1).join(', ')} o ${n.at(-1)}` : n[0]; };
+// Da dove parte un'escursione: "La Maddalena (passaggio a Palau) o Cannigione". Palau è un passaggio, mai prima di
+// La Maddalena (Remo, 18 novembre 2026).
+const daDove = (slug) => {
+  const id = imbarchiPer(slug).map((i) => i.id);
+  const porti = [id.includes('maddalena') && `La Maddalena${id.includes('palau') ? ' (passaggio a Palau)' : ''}`, id.includes('cannigione') && 'Cannigione'].filter(Boolean);
+  return porti.join(' o ');
+};
 const posti = (slug) => String(Math.max(...gommoniPer(slug).map((g) => postiPer(offerte[slug], g))));
 // Orari dal listino: '9:00 – 13:00' → ['9:00', '13:00']; per Palau e Cannigione valgono gli orariImbarco del turno.
 const ore = (o) => String(o).split('–').map((x) => x.trim());
@@ -29,7 +34,7 @@ export const escursioni = [
     // Parole delle ricerche su Google (Semrush e suggerimenti di Google, 16 novembre 2026): vedi "SEO" in CLAUDE.md.
     titoloSeo: 'Giro delle isole La Maddalena in barca: tour delle 7 isole',
     titoloPagina: 'Giro delle isole La Maddalena in barca: il tour delle 7 isole',
-    descrizioneSeo: `Escursione in barca di un giorno nell'arcipelago di La Maddalena, da Palau o La Maddalena: 7 isole, Spiaggia Rosa dal mare. Da ${da('tour-7-isole').adulto} € a persona.`,
+    descrizioneSeo: `Escursione in barca di un giorno da La Maddalena, con passaggio a Palau: le 7 isole dell'arcipelago, Spiaggia Rosa dal mare. Da ${da('tour-7-isole').adulto} € a persona.`,
     inEvidenza: true,
     etichette: ['Giornata intera', '7 isole', pranzo7.breve],
     breve:
@@ -40,7 +45,7 @@ export const escursioni = [
     orari: `${breveOrario(turno7.orario)} (da Palau ${breveOrario(turno7.orariImbarco.palau)})`,
     durataTesto: '7 ore', // Remo, 16 novembre 2026: '7 ore', senza distinguere i porti
     partenze: `${ore(turno7.orario)[0]}, a Palau alle ${ore(turno7.orariImbarco.palau)[0]}`,
-    oraRientro: `alle ${ore(turno7.orariImbarco.palau)[1]} a Palau e alle ${ore(turno7.orario)[1]} a La Maddalena`,
+    oraRientro: `alle ${ore(turno7.orario)[1]} a La Maddalena (alle ${ore(turno7.orariImbarco.palau)[1]} a Palau)`,
     prezzoAdulti: String(da('tour-7-isole').adulto),
     prezzoBambini: String(da('tour-7-isole').bambino),
     postiMax: posti('tour-7-isole'),
@@ -76,7 +81,7 @@ export const escursioni = [
       { tipo: 'sosta', n: '5', rosa: true, titolo: 'Budelli e la Spiaggia Rosa', luogo: 'Sosta panoramica dal gommone', testo: "Ci fermiamo davanti alla spiaggia per ammirarne i colori e l'azzurro del fondale, che si trova solo qui. Da anni la Spiaggia Rosa è chiusa per proteggerla: il Parco vieta sbarco e bagno, e la si guarda dal mare." },
       { tipo: 'sosta', n: '6', titolo: 'Razzoli', luogo: 'Porto della Madonna · bagno', testo: "Lo specchio d'acqua tra Razzoli, Budelli e Santa Maria, riparato dalle correnti: una piscina naturale." },
       { tipo: 'sosta', n: '7', titolo: 'Santa Maria e la Lagunetta', luogo: 'Bagno · mirto e dolcetti', testo: "Uno dei pochi posti dove un gommone di queste dimensioni riesce ad arrivare: fondale basso, turchese e limpido, dove si cammina liberamente nell'acqua. Qui il nostro skipper serve il mirto con i dolcetti tipici." },
-      { tipo: 'rientro', titolo: 'Fine del tour', testo: `Rientro dove sei salito: alle ${ore(turno7.orariImbarco.palau)[1]} a Palau, alle ${ore(turno7.orario)[1]} a La Maddalena.` },
+      { tipo: 'rientro', titolo: 'Fine del tour', testo: `Rientro dove sei salito: alle ${ore(turno7.orario)[1]} a La Maddalena, mezz'ora prima (alle ${ore(turno7.orariImbarco.palau)[1]}) a Palau.` },
     ],
     // Bevande, mirto e dolcetti solo nel Tour delle 7 isole; niente tagliere nelle uscite di gruppo (Remo, 13 novembre 2026).
     incluso: [
@@ -110,7 +115,7 @@ export const escursioni = [
     titolo: 'Mezza giornata',
     titoloSeo: 'Escursione mezza giornata La Maddalena in barca',
     titoloPagina: 'Escursione di mezza giornata a La Maddalena in barca',
-    descrizioneSeo: `Tour in barca di mezza giornata a La Maddalena, mattina o pomeriggio, da Palau, La Maddalena o Cannigione: Caprera o isole del nord. Da ${da('mezza-giornata').adulto} € a persona.`,
+    descrizioneSeo: `Escursione in barca di mezza giornata, mattina o pomeriggio, ${sito.partenze.seo}: Caprera o isole del nord. Da ${da('mezza-giornata').adulto} € a persona.`,
     etichette: ['Mattina o pomeriggio', 'Caprera o isole del nord'],
     breve: 'Tre ore e mezza su uno dei due giri: Caprera, oppure Spargi, la Spiaggia Rosa e Porto della Madonna. Lo skipper sceglie in base al vento.',
     intro:
@@ -217,7 +222,7 @@ export const escursioni = [
     titolo: 'Tour privato in esclusiva',
     titoloSeo: 'Gommone con skipper La Maddalena: tour privato in esclusiva',
     titoloPagina: 'Gommone con skipper a La Maddalena: tour privato in esclusiva',
-    descrizioneSeo: `Noleggio gommone con skipper a La Maddalena: tour privato in esclusiva fino a ${posti('tour-privato')} persone, da Palau, La Maddalena o Cannigione, anche al tramonto. Da ${da('tour-privato').barca} €.`,
+    descrizioneSeo: `Noleggio gommone con skipper a La Maddalena: tour privato in esclusiva fino a ${posti('tour-privato')} persone, anche al tramonto, da La Maddalena, Palau o Cannigione. Da ${da('tour-privato').barca} €.`,
     etichette: ['Esclusiva', 'Su misura'],
     breve: 'Il gommone in esclusiva per famiglie, amici o aziende, con l\'itinerario su misura.',
     intro:
@@ -245,7 +250,7 @@ export const escursioni = [
     numeri: [],
     programma: [
       // In esclusiva si sale da un solo porto (Remo, 16 novembre 2026).
-      { tipo: 'imbarco', titolo: 'Partenza da La Maddalena, Palau o Cannigione', luogo: 'Scegli tu da dove partire', testo: `Giornata intera ${breveOrario(offerte['tour-privato'].turni.find((t) => t.id === 'giornata').orario)} da La Maddalena, ${breveOrario(offerte['tour-privato'].turni.find((t) => t.id === 'giornata').orariImbarco.palau)} da Palau. Mezza giornata ${breveOrario(mattina.orario)} o ${breveOrario(pomeriggio.orario)} da La Maddalena, ${breveOrario(mattina.orariImbarco.palau)} o ${breveOrario(pomeriggio.orariImbarco.palau)} da Palau. Sunset tra le 18:30 e le 19:00. Da Cannigione parte l'Honda 9.50 con i suoi orari.` },
+      { tipo: 'imbarco', titolo: `Partenza da ${daDove('tour-privato')}`, luogo: 'Scegli tu da dove partire', testo: `Giornata intera ${breveOrario(offerte['tour-privato'].turni.find((t) => t.id === 'giornata').orario)} da La Maddalena, ${breveOrario(offerte['tour-privato'].turni.find((t) => t.id === 'giornata').orariImbarco.palau)} da Palau. Mezza giornata ${breveOrario(mattina.orario)} o ${breveOrario(pomeriggio.orario)} da La Maddalena, ${breveOrario(mattina.orariImbarco.palau)} o ${breveOrario(pomeriggio.orariImbarco.palau)} da Palau. Sunset tra le 18:30 e le 19:00. Da Cannigione parte l'Honda 9.50 con i suoi orari.` },
       { tipo: 'sosta', n: '1', titolo: 'Le soste che scegliete voi', luogo: 'Su misura', testo: "Il giro delle 7 isole o solo le cale più tranquille: lo skipper vi propone l'itinerario in base al vento del giorno. Per la Corsica c'è l'escursione dedicata, anche quella in esclusiva." },
       { tipo: 'rientro', titolo: 'Rientro', testo: 'Quando volete, entro la durata concordata.' },
     ],
@@ -259,11 +264,11 @@ export const escursioni = [
   {
     slug: 'corsica',
     titolo: 'Corsica',
-    indirizzo: 'escursione-corsica-da-palau',
+    indirizzo: 'escursione-corsica-da-la-maddalena',
     nomeLink: 'Escursione in Corsica', // testo dei link interni: le parole delle ricerche
-    titoloSeo: 'Escursione in Corsica da Palau in barca: Lavezzi e Cavallo',
-    titoloPagina: 'Escursione in Corsica da Palau e La Maddalena: Lavezzi e Cavallo',
-    descrizioneSeo: `Escursione in barca dalla Sardegna alla Corsica, da Palau o La Maddalena: isola Piana, isole Lavezzi e Cavallo, gommone in esclusiva. Da ${da('corsica').barca} €.`,
+    titoloSeo: 'Escursione in Corsica da La Maddalena: Lavezzi e Cavallo',
+    titoloPagina: 'Escursione in Corsica da La Maddalena: Lavezzi e Cavallo',
+    descrizioneSeo: `Escursione in barca dalla Sardegna alla Corsica, da La Maddalena o Palau: isola Piana, isole Lavezzi e Cavallo, gommone in esclusiva. Da ${da('corsica').barca} €.`,
     etichette: ['Esclusiva', 'Giornata intera'],
     breve: "Gommone in esclusiva, giornata intera con visita all'isola Piana, Lavezzi e isola di Cavallo.",
     intro:
@@ -289,7 +294,7 @@ export const escursioni = [
     mappa: false,
     numeri: [],
     programma: [
-      { tipo: 'imbarco', ora: partenzaCorsica, titolo: 'Partenza da La Maddalena o da Palau', luogo: 'Scegli tu da dove partire', testo: `Alle ${partenzaCorsica} da La Maddalena, oppure alle ${ore(offerte['corsica'].turni[0].orariImbarco.palau)[0]} da Palau.` },
+      { tipo: 'imbarco', ora: partenzaCorsica, titolo: `Partenza da ${daDove('corsica')}`, luogo: 'Scegli tu da dove partire', testo: `Alle ${partenzaCorsica} da La Maddalena; se ti è più comodo, il gommone viene a prenderti a Palau alle ${ore(offerte['corsica'].turni[0].orariImbarco.palau)[0]}.` },
       // Testi delle soste scritti da Claude su richiesta di Remo (13 novembre 2026): solo cose note dei luoghi, niente tempi di sosta.
       { tipo: 'sosta', n: '1', titolo: 'Isola Piana', luogo: 'Bocche di Bonifacio · bagno', testo: "Il primo assaggio di Corsica, appena attraversate le Bocche: un isolotto basso con acqua bassa e trasparente, dove fermarsi per il primo bagno." },
       { tipo: 'sosta', n: '2', titolo: 'Isole Lavezzi', luogo: 'Riserva naturale · bagno', testo: "Il cuore della riserva naturale delle Bocche di Bonifacio: graniti levigati dal vento, calette e acqua turchese. Lo skipper sceglie la cala più riparata del giorno." },

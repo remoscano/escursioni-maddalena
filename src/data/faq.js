@@ -40,8 +40,8 @@ export const faq = [
       {
         // Ricerche "escursioni la maddalena da palau" (Semrush, 16 novembre 2026).
         id: 'palau',
-        domanda: 'Si può partire da Palau?',
-        risposta: `Sì. Nelle uscite di gruppo il gommone parte dal porto di La Maddalena e passa a prendere chi si imbarca a Palau: al mattino alle ${palauMattina}, e al ritorno ti riporta a Palau prima di rientrare a La Maddalena. In esclusiva (tour privato e Corsica) puoi partire direttamente da Palau. Prezzi uguali per tutti i porti.`,
+        domanda: 'Si può salire a bordo a Palau?',
+        risposta: `Sì. Nelle uscite di gruppo il gommone parte dal porto di La Maddalena e passa a prendere chi si imbarca a Palau: al mattino alle ${palauMattina}, e al ritorno ti riaccompagna lì prima di rientrare a La Maddalena. È un servizio in più per chi non vuole o non può arrivare a La Maddalena. In esclusiva (tour privato e Corsica) il gommone può venire a prenderti direttamente a Palau. Il prezzo è lo stesso.`,
       },
       {
         id: 'cancellare',

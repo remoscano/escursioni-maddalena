@@ -1,5 +1,6 @@
 ---
 import { regole, postiMassimi } from '../data/prenotazioni.js';
+import { sito } from '../data/sito.js';
 import Base from '../layouts/Base.astro';
 import Foto from '../components/Foto.astro';
 import Icona from '../components/Icona.astro';
@@ -30,15 +31,15 @@ const partenze = pagineImbarco.map((p) => ({ href: p.href, titolo: p.titoloPagin
 ---
 <Base
   titolo="Escursioni in barca Arcipelago di La Maddalena"
-  descrizione={`Escursioni in barca a La Maddalena da Palau, La Maddalena e Cannigione: giro delle isole, mezza giornata, aperitivo al tramonto, gommone con skipper. Da ${prezzoMinimo} €.`}
+  descrizione={`Escursioni in barca nell'Arcipelago di La Maddalena, con partenza da La Maddalena e Cannigione: giro delle isole, mezza giornata, tramonto, Corsica. Da ${prezzoMinimo} €.`}
 >
   <DatiStrutturati slot="head" tipo="attivita" />
   <section slot="hero" class="hero" aria-label="Apertura">
     <div class="hero__griglia">
       <div class="hero__contenuto">
-        <p class="hero__occhiello">Da La Maddalena, Palau e Cannigione · Sardegna</p>
+        <p class="hero__occhiello">Partenza da La Maddalena e Cannigione · Sardegna</p>
         <h1 class="hero__titolo">Escursioni in barca Arcipelago di La Maddalena</h1>
-        <p class="hero__testo">Gite in gommone con skipper nell'arcipelago di La Maddalena: il giro delle isole (Tour delle 7 isole), l'escursione di mezza giornata, l'aperitivo al tramonto, il tour privato in esclusiva e l'escursione in Corsica. Partenze da La Maddalena, Palau e Cannigione.</p>
+        <p class="hero__testo">Gite in gommone con skipper nell'arcipelago di La Maddalena: il giro delle isole (Tour delle 7 isole), l'escursione di mezza giornata, l'aperitivo al tramonto, il tour privato in esclusiva e l'escursione in Corsica. Si parte dal porto di La Maddalena, con passaggio a Palau per chi si imbarca lì, e da Cannigione.</p>
         <div class="hero__azioni">
           {regole.attive
             ? <a href="/prenota/" class="btn btn--wa btn--grande">Prenota online</a>
@@ -56,7 +57,7 @@ const partenze = pagineImbarco.map((p) => ({ href: p.href, titolo: p.titoloPagin
     <div class="hero__fatti">
       <dl>
         <div><dt><Icona nome="orologio" size={18} />Uscite</dt><dd>Mezza giornata, giornata intera, Sunset al tramonto</dd></div>
-        <div><dt><Icona nome="ancora" size={18} />Imbarco</dt><dd>La Maddalena, Palau, Cannigione</dd></div>
+        <div><dt><Icona nome="ancora" size={18} />Imbarco</dt><dd>{sito.partenze.breve}</dd></div>
         <div><dt><Icona nome="persone" size={18} />A bordo</dt><dd>Massimo {postiMassimi} persone</dd></div>
         <div><dt><Icona nome="euro" size={18} />Prezzo</dt><dd>Da {prezzoMinimo} € a persona</dd></div>
       </dl>

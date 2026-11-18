@@ -212,12 +212,12 @@ const durata = e.durataTesto ?? (e.ore ? `${e.ore} ore` : '');
         <div class="box">
           <h3>Partenza da La Maddalena</h3>
           <p><Dato v={imbarchi.maddalena.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.maddalena} minuti prima della partenza{orarioRitrovo && <Fragment> (alle <Dato v={imbarchi.maddalena.ritrovo} e=\"ora\" /> per le uscite di gruppo del mattino)</Fragment>}.</p>
-          <p>Il nostro porto di partenza. Comodo se dormi sull'isola.</p>
+          <p>Il nostro porto principale. Comodo se dormi sull'isola.</p>
         </div>
         <div class="box">
-          <h3>{offerte[e.slug]?.tipo === 'esclusiva' ? 'Partenza da Palau' : 'Passaggio a Palau'}</h3>
+          <h3>Passaggio a Palau</h3>
           <p>{offerte[e.slug]?.tipo === 'esclusiva'
-            ? 'In esclusiva parti da uno solo dei due porti: se ti è più comodo, il gommone viene a prenderti a Palau.'
+            ? 'In esclusiva il gommone parte da La Maddalena oppure, se ti è più comodo, viene a prenderti a Palau.'
             : 'Il gommone parte da La Maddalena e passa a prendere chi si imbarca a Palau.'}</p>
           <p><Dato v={imbarchi.palau.molo} e="Molo e indirizzo" />, ritrovo {regole.anticipoRitrovo.palau} minuti prima della partenza{orarioRitrovo && <Fragment> (alle <Dato v={imbarchi.palau.ritrovo} e=\"ora\" /> per le uscite di gruppo del mattino)</Fragment>}.</p>
           <p>Comodo se dormi in Gallura{!serale && <Fragment> o arrivi da fuori, per esempio da Olbia: con la partenza alle 11:00 non devi alzarti presto e hai il tempo di parcheggiare</Fragment>}. Parcheggio: <Dato v={imbarchi.palau.parcheggio} e="dove lasciare l'auto" />.</p>

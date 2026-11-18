@@ -5,6 +5,7 @@ import SezioneRichiesta from '../../components/SezioneRichiesta.astro';
 import { escursioni } from '../../data/escursioni.js';
 import { regole } from '../../data/prenotazioni.js';
 import { pagineImbarco } from '../../data/imbarchi.js';
+import { sito } from '../../data/sito.js';
 import Icona from '../../components/Icona.astro';
 const prezzoMinimo = Math.min(...escursioni.filter((e) => !e.prezzoGommone).map((e) => Number(e.prezzoAdulti)));
 const [evidenza, ...altre] = [...escursioni].sort((a, b) => Number(!!b.inEvidenza) - Number(!!a.inEvidenza));
@@ -18,8 +19,8 @@ const [evidenza, ...altre] = [...escursioni].sort((a, b) => Number(!!b.inEvidenz
       <p class="occhiello">Escursioni</p>
       <h1>Gite in barca a La Maddalena: tour in gommone e prezzi</h1>
       <p class="intro">{regole.attive
-        ? "Tour in barca nell'arcipelago di La Maddalena, in gommone con skipper, con partenza da La Maddalena, Palau e Cannigione: vedi i posti liberi e prenoti online."
-        : "Tour in barca nell'arcipelago di La Maddalena, in gommone con skipper, con partenza da La Maddalena, Palau e Cannigione, prenotabili con un messaggio WhatsApp."}</p>
+        ? `Tour in barca nell'arcipelago di La Maddalena, in gommone con skipper, con ${sito.partenze.frase}: vedi i posti liberi e prenoti online.`
+        : `Tour in barca nell'arcipelago di La Maddalena, in gommone con skipper, con ${sito.partenze.frase}, prenotabili con un messaggio WhatsApp.`}</p>
     </div>
   </section>
   <section class="sezione" style="padding-top:48px">
