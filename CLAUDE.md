@@ -120,6 +120,24 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
 
 Aggiorna questa sezione quando qualcosa viene completato.
 
+### Cosa manca, in ordine (revisione del 22 novembre 2026; stagione dal 1° maggio 2027)
+Il sito pubblico è finito nel codice: mancano dati del cliente e servizi da attivare. Strada più corta per aprire le prenotazioni online:
+1. Dati dal cliente: P. IVA e ragione sociale (oggi in rosa nel piè di pagina di TUTTE le pagine, in 5 lingue), molo e parcheggio di Palau, foto vere (40 pagine con segnaposto)
+2. Dominio su Cloudflare e collegato a Pages (serve anche alle email)
+3. Resend (email di conferma, obbligatorie) → SumUp e/o PayPal → Worker delle email automatiche
+4. Prove con soldi veri (1 € e rimborso) e giornata di prova con skipper e struttura partner
+5. `attive: true` e lancio (`inCostruzione: false`, robots, Search Console, scheda Google)
+Senza i punti 2–3 si può comunque aprire il sito "vetrina" con prenotazione su WhatsApp, ma i link di pagamento non funzionano finché non ci sono le chiavi SumUp/PayPal.
+
+### Domande aperte per Remo (tutte in un posto)
+- [ ] Prezzo al litro del carburante delle esclusive (obbligatorio da dire prima del pagamento, art. 49 Codice del consumo)
+- [ ] L'ufficio risponde su WhatsApp anche in spagnolo, francese o tedesco? Se sì, lo scriviamo nelle pagine come per l'inglese
+- [ ] Testi delle soste della Corsica: vanno bene?
+- [ ] Proposte su buoni regalo, durata dei link di pagamento e orari dei promemoria (vedi "In attesa")
+- [ ] Tre riquadri della pagina gommoni: sedute e prendisole, scaletta e doccetta, gavone stagno
+- [ ] Due piccole correzioni di testo trovate il 22 novembre (vedi sotto): va bene farle?
+- [ ] Prova con VoiceOver su iPhone (10 minuti, la fa Remo)
+
 ### Fatto
 - [x] Prima versione in italiano online su pages.dev
 - [x] WhatsApp (+39 331 505 5736) ed email (maddalena.escursioni@gmail.com) nel sito
@@ -174,9 +192,18 @@ Aggiorna questa sezione quando qualcosa viene completato.
 - [x] Orari scritti a mano tolti: il passaggio a Palau "alle 11:00" e "ritrovo 15 minuti" in `imbarchi.js`, in Info utili e nelle pagine escursione ora vengono dal listino (`prenotazioni.js`)
 - Nota: in CLAUDE.md la Corsica era "9:30 – 17:30" (8 novembre); il listino dice 10:30–18:00 da La Maddalena, 11:00–17:30 da Palau, come le altre giornate intere (16 novembre). Vale il listino
 
+### Revisione del 22 novembre 2026
+- [x] Nessuna modifica al codice dal 18 novembre. Build ok (96 pagine); prove automatiche tutte ok: API, gestione e strutture, pagine dal browser a 1440 e 390 px (nessun errore JavaScript), funzioni nuove, recesso, lingue (64 pagine tradotte, 102 link interni, testata su una riga), accessibilità WCAG 2.2 AA senza errori
+- [x] Rami: `prenotazioni` identico a `main`; `inglese` è già tutto dentro `main`
+- [ ] Cancellare il ramo `inglese` su GitHub (superato, come `tre-gommoni`)
+- [ ] Da far decidere a Remo, piccoli testi:
+  - Info utili e riquadro "Nel Parco Nazionale": si legge "Ticket del Parco: Sì, è incluso nel prezzo…"; il "Sì" risponde a una domanda che lì non c'è (il testo `regole.ticketParco` è lo stesso delle domande frequenti), in tutte e 5 le lingue. Proposta: un testo breve per i riquadri ("incluso nel prezzo di tutte le escursioni") e quello col "Sì" solo nelle domande
+  - Prezzi da 4 cifre scritti "1200 €" (Corsica, esclusive): meglio "1.200 €" (inglese "€1,200", francese "1 200 €", tedesco "1.200 €")
+- Nota: README, tabella "Dove si cambiano i contenuti": cita solo `src/data/en/`; le cartelle sono anche `es/`, `fr/`, `de/` (lo dice già la sezione Lingue)
+
 ### In attesa: informazioni dal cliente (Remo le sta aspettando)
 - [ ] **Punto d'imbarco di Palau:** molo, link Google Maps e parcheggio. Quando arrivano: `molo`, `mappa` e `parcheggio` in `sito.imbarchi.palau`; i segnaposto rosa spariscono da soli
-- [ ] **Dati dell'azienda:** ragione sociale, indirizzo, P. IVA, REA (in `sito.azienda`; servono a piè di pagina, condizioni e privacy)
+- [ ] **Dati dell'azienda:** ragione sociale, indirizzo, P. IVA, REA (in `sito.azienda`; servono a piè di pagina, condizioni e privacy). È il segnaposto più visibile: "P. IVA [numero]" in fondo a ogni pagina, in tutte le lingue, e "BOZZA" in condizioni, privacy e cookie. Obbligatoria la P. IVA nel sito (art. 7 D.Lgs. 70/2003)
 - [ ] **Foto:** le note sui segnaposto indicano gli scatti, comprese quelle dei piatti dei ristoranti convenzionati (il logo è deciso: "Libero", 16 novembre 2026)
 - [ ] **Testi delle soste della Corsica** (isola Piana, Lavezzi, Cavallo), scritti da Claude il 13 novembre 2026: da far controllare
 - [ ] **Proposte di Claude su buoni regalo e promemoria** (13 novembre 2026, in `regole` di `src/data/prenotazioni.js`): buoni regalo da 50/100/150/200/300 € (minimo 30, massimo 2000) validi 12 mesi; durata dei link di pagamento 2/12/24/48 ore; promemoria dalle 18 del giorno prima; grazie 2 ore dopo il rientro; spese di bordo: promemoria agli skipper alle 20:00 e alle 8:00 del giorno dopo, modificabili per 30 giorni. Nelle condizioni: buono rimborsabile se il cliente cambia idea entro 14 giorni (art. 52 Codice del consumo: da far confermare, non è un parere legale)
