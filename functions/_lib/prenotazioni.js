@@ -9,9 +9,22 @@ import { riattivaSeLibero } from './motore.js';
 import { avviaPagamento } from './pagamenti.js';
 import { extraDi } from './offerte.js';
 import { dataLeggibile, euroDaCent, ugualeSicuro } from './util.js';
-import { percorsoDi } from '../../src/data/percorsi.js';
+import { percorsoDi, linguaValida } from '../../src/data/percorsi.js';
+import { pacchetti } from '../../src/data/lingua.js';
+import { testiPrenotaDi, nomeTurno } from '../../src/data/prenota-testi.js';
 
 export const titoloEscursione = (slug) => escursioni.find((e) => e.slug === slug)?.titolo ?? slug;
+
+// Per il cliente (sua pagina e sue email): escursione, turno e data nella sua lingua. La gestione resta in italiano.
+export const titoloIn = (slug, lingua) => pacchetti[linguaValida(lingua)]?.trovaEscursione(slug)?.titolo ?? titoloEscursione(slug);
+export const turnoIn = (slug, turnoId, lingua) => { const t = turnoDi(slug, turnoId); return t ? nomeTurno(testiPrenotaDi(lingua), slug, t) : turnoId; };
+const formatiData = {};
+export const dataIn = (s, lingua) => {
+  const l = linguaValida(lingua);
+  if (l === 'it') return dataLeggibile(s);
+  formatiData[l] ??= new Intl.DateTimeFormat(testiPrenotaDi(l).locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+  return formatiData[l].format(new Date(`${s}T12:00:00Z`));
+};
 export const nomeImbarco = (id) => imbarchiPrenotazione.find((i) => i.id === id)?.nome ?? id;
 export const nomeGommone = (id) => gommoni.find((g) => g.id === id)?.nome ?? id;
 
@@ -51,7 +64,9 @@ export function pagabileConLink(p) {
 export function vistaCliente(p) {
   const t = turnoDi(p.escursione, p.turno);
   const offerta = offerte[p.escursione];
+  const lingua = linguaValida(p.lingua);
   return {
+    lingua,
     turnoId: p.turno,
     persone: p.adulti + p.bambini + p.neonati,
     pagato: p.pagato / 100,
@@ -65,20 +80,22 @@ export function vistaCliente(p) {
     rimborso: p.rimborso,
     recupero: p.recupero,
     dataOriginale: p.data_originale,
-    dataOriginaleLeggibile: p.data_originale ? dataLeggibile(p.data_originale) : null,
+    dataOriginaleLeggibile: p.data_originale ? dataIn(p.data_originale, lingua) : null,
     checkin: Boolean(p.checkin_il),
     annullabile: annullabileDalCliente(p),
     // Link di pagamento: si può pagare online (prenotazione in attesa dalla gestione o confermata ancora da pagare)
     pagabile: pagabileConLink(p),
     codice: p.codice,
-    escursione: titoloEscursione(p.escursione),
+    escursione: titoloIn(p.escursione, lingua),
     slug: p.escursione,
-    turno: t?.nome ?? p.turno,
+    turno: turnoIn(p.escursione, p.turno, lingua),
     data: p.data,
-    dataLeggibile: dataLeggibile(p.data),
+    dataLeggibile: dataIn(p.data, lingua),
     orario: orarioDi(t, p.data, p.imbarco),
     orarioIndicativo: Boolean(t?.indicativo),
     carburanteEscluso: Boolean(offerta?.carburanteEscluso),
+    // Come si paga il carburante delle esclusive, nella lingua del cliente ('' = dato mancante).
+    carburante: lingua === 'it' ? regole.carburante : pacchetti[lingua].sito.carburante,
     imbarco: nomeImbarco(p.imbarco),
     imbarcoId: p.imbarco,
     adulti: p.adulti,
