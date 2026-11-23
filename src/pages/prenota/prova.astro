@@ -29,11 +29,14 @@ import Base from '../../layouts/Base.astro';
   api(buono ? `/api/buono?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}` : `/api/prenotazione?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}`)
     .then((p) => { document.querySelector('[data-dati]')!.innerHTML = buono ? `Buono regalo · <strong>${euro(p.valore)}</strong> (${h(p.codice)})` : `${h(p.escursione)} · ${h(p.dataLeggibile)} · <strong>${euro(p.daPagare)}</strong> (${h(p.codice)})`; })
     .catch((e) => { err.textContent = e.message; err.hidden = false; });
+  // Pagina a cui tornare (quella della lingua del cliente); solo indirizzi del sito.
+  const r = q.get('ritorno') || '';
+  const ritorno = /^\/[a-z][a-z0-9\/-]*\/$/.test(r) ? r : `/${buono ? 'buono-regalo' : 'prenota'}/esito/`;
   document.querySelectorAll<HTMLButtonElement>('[data-esito]').forEach((b) => b.addEventListener('click', async () => {
     b.disabled = true;
     try {
       await api('/api/pagamento/prova', { corpo: { codice, t, esito: b.dataset.esito, tipo: buono ? 'buono' : undefined } });
-      location.assign(`/${buono ? 'buono-regalo' : 'prenota'}/esito/?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}${b.dataset.esito === 'ko' ? '&annullato=1' : ''}`);
+      location.assign(`${ritorno}?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}${b.dataset.esito === 'ko' ? '&annullato=1' : ''}`);
     } catch (e) { err.textContent = (e as Error).message; err.hidden = false; b.disabled = false; }
   }));
 </script>

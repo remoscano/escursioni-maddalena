@@ -1,3 +1,4 @@
+import { percorsiPrenota } from '../percorsi.js';
 // Spagnolo: menu e indirizzi delle pagine tradotte (pagina italiana → pagina spagnola).
 export const menu = [
   { href: '/es/excursiones-en-barco/', testo: 'Excursiones' },
@@ -18,5 +19,5 @@ export const pagine = {
   '/richiesta/': '/es/solicitud/',
   '/privacy/': '/es/privacidad/',
   '/cookie/': '/es/cookies/',
-  '/prenota/': '/es/reservar/',
+  '/prenota/': percorsiPrenota.es.prenota,
 };

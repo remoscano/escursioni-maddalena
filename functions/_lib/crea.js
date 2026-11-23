@@ -5,6 +5,7 @@ import { prima, esegui } from './db.js';
 import { regoleAttive, catalogoExtra, trovaCodice, vistaCodice, riservaCodice, salvaExtra, campagnaValida } from './offerte.js';
 import { caricaGiorni, situazioneTurno, inserisciPrenotazione, prenotabileOnline, prenotabileGestione } from './motore.js';
 import { Errore, testo, testoLungo, intero, email, telefono, dataValida, codicePrenotazione, tokenSicuro, adessoISO, traMinutiISO } from './util.js';
+import { linguaValida } from '../../src/data/percorsi.js';
 
 const MOTIVI = {
   'fuori-stagione': 'In questa data non ci sono uscite: la stagione va dal 1° maggio al 31 ottobre.',
@@ -141,6 +142,8 @@ export async function creaPrenotazione(contesto, b, { modo, utente = null, ipHas
     buono,
     extra_totale: importoAMano ? 0 : Math.round(calcolo.extraTotale * 100),
     campagna: gestione ? null : await campagnaValida(db, b.campagna),
+    // Lingua del cliente (pagine, email): quella della pagina da cui prenota; dalla gestione si può scegliere.
+    lingua: linguaValida(b.lingua),
   };
 
   let inserita = null;

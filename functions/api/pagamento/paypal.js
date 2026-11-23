@@ -3,6 +3,7 @@
 import { prenotazioneDaCodice } from '../../_lib/prenotazioni.js';
 import { buonoDaCodice } from '../../_lib/buoni.js';
 import { incassaPrenotazionePaypal, incassaBuonoPaypal } from '../../_lib/paypal.js';
+import { percorsoDi } from '../../../src/data/percorsi.js';
 
 export async function onRequestGet(contesto) {
   const { request, env } = contesto;
@@ -20,9 +21,9 @@ export async function onRequestGet(contesto) {
     return Response.redirect(r === 'non-pagato' ? `${esito}&non_pagato=1` : esito, 303);
   }
 
-  const esito = `${url.origin}/prenota/esito/?${q}`;
   const p = await prenotazioneDaCodice(env.DB, codice, t);
   if (!p) return Response.redirect(`${url.origin}/prenota/esito/?errore=1`, 303);
+  const esito = `${url.origin}${percorsoDi(p.lingua, 'esito')}?${q}`;
   const r = await incassaPrenotazionePaypal(contesto, p, ordine);
   if (r === 'scaduta') return Response.redirect(`${esito}&scaduta=1`, 303);
   if (r === 'non-pagata') return Response.redirect(`${esito}&non_pagato=1`, 303);

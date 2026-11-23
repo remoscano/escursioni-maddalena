@@ -114,7 +114,7 @@ function condizioniPosto(turno, escludiSe = false) {
 const COLONNE = [
   'codice', 'token', 'escursione', 'turno', 'data', 'barca', 'blocchi', 'adulti', 'bambini', 'neonati', 'posti', 'paganti',
   'imbarco', 'nome', 'email', 'telefono', 'note', 'totale', 'pagato', 'provvigione', 'stato', 'canale', 'partner_id', 'metodo',
-  'rif_esterno', 'ip_hash', 'scade_il', 'creata_da', 'listino', 'sconto', 'sconto_nota', 'codice_id', 'buono', 'extra_totale', 'campagna',
+  'rif_esterno', 'ip_hash', 'scade_il', 'creata_da', 'listino', 'sconto', 'sconto_nota', 'codice_id', 'buono', 'extra_totale', 'campagna', 'lingua',
 ];
 
 // Inserisce la prenotazione sul primo gommone libero tra i candidati. Restituisce { id, barca } o null se i posti sono finiti.

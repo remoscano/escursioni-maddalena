@@ -1,3 +1,4 @@
+import { percorsiPrenota } from '../percorsi.js';
 // Tedesco: menu e indirizzi delle pagine tradotte (pagina italiana → pagina tedesca).
 export const menu = [
   { href: '/de/bootsausfluege/', testo: 'Ausflüge' },
@@ -18,5 +19,5 @@ export const pagine = {
   '/richiesta/': '/de/anfrage/',
   '/privacy/': '/de/datenschutz/',
   '/cookie/': '/de/cookies/',
-  '/prenota/': '/de/buchen/',
+  '/prenota/': percorsiPrenota.de.prenota,
 };

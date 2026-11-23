@@ -8,6 +8,7 @@ import { titoloEscursione, nomeImbarco, nomeGommone, emailAttive, pagabileConLin
 import { inviaEmailLinkPagamento } from '../../_lib/email.js';
 import { prima } from '../../_lib/db.js';
 import { json, leggiJson, controllaOrigine, dataValida, oraRoma, aggiungiGiorni } from '../../_lib/util.js';
+import { percorsoDi } from '../../../src/data/percorsi.js';
 
 export async function onRequestGet({ request, env }) {
   await richiedi(env.DB, request, 'gestione');
@@ -50,7 +51,7 @@ export async function onRequestPost(contesto) {
   let link = null;
   let inviata = false;
   if (pagabileConLink(riga)) {
-    link = `${origine}/prenota/paga/?codice=${encodeURIComponent(riga.codice)}&t=${encodeURIComponent(riga.token)}`;
+    link = `${origine}${percorsoDi(riga.lingua, 'paga')}?codice=${encodeURIComponent(riga.codice)}&t=${encodeURIComponent(riga.token)}`;
     if (b.link && riga.email && emailAttive(env)) inviata = await inviaEmailLinkPagamento(env, riga, origine);
   }
   return json({ codice: p.codice, gommone: nomeGommone(p.barca), link, inviata, scadeIl: riga.scade_il, daPagare: daPagare(riga) / 100, nome: riga.nome, telefono: riga.telefono });

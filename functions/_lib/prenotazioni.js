@@ -9,6 +9,7 @@ import { riattivaSeLibero } from './motore.js';
 import { avviaPagamento } from './pagamenti.js';
 import { extraDi } from './offerte.js';
 import { dataLeggibile, euroDaCent, ugualeSicuro } from './util.js';
+import { percorsoDi } from '../../src/data/percorsi.js';
 
 export const titoloEscursione = (slug) => escursioni.find((e) => e.slug === slug)?.titolo ?? slug;
 export const nomeImbarco = (id) => imbarchiPrenotazione.find((i) => i.id === id)?.nome ?? id;
@@ -142,11 +143,11 @@ export async function pagamentoPrenotazione(contesto, p, metodo, tentativo = nul
   const origine = new URL(contesto.request.url).origin;
   const q = `codice=${encodeURIComponent(p.codice)}&t=${encodeURIComponent(p.token)}`;
   const url = {
-    esito: `${origine}/prenota/esito/?${q}`,
+    esito: `${origine}${percorsoDi(p.lingua, 'esito')}?${q}`,
     ritornoPaypal: `${origine}/api/pagamento/paypal?${q}`,
-    annullaPaypal: `${origine}/prenota/esito/?${q}&annullato=1`,
+    annullaPaypal: `${origine}${percorsoDi(p.lingua, 'esito')}?${q}&annullato=1`,
     notificaSumup: `${origine}/api/pagamento/sumup`,
-    prova: `${origine}/prenota/prova/?${q}`,
+    prova: `${origine}/prenota/prova/?${q}&ritorno=${encodeURIComponent(percorsoDi(p.lingua, 'esito'))}`,
   };
   const pagamento = await avviaPagamento(contesto.env, metodo, {
     codice: p.codice, totale: daPagare(p), descrizione: descrizioneBreve(p), tentativo,
@@ -181,7 +182,7 @@ export async function inviaEmail(env, { a, oggetto, testo }) {
   }
 }
 
-export const linkPrenotazione = (origine, p) => `${origine}/prenota/esito/?codice=${encodeURIComponent(p.codice)}&t=${encodeURIComponent(p.token)}`;
+export const linkPrenotazione = (origine, p) => `${origine}${percorsoDi(p.lingua, 'esito')}?codice=${encodeURIComponent(p.codice)}&t=${encodeURIComponent(p.token)}`;
 
 // Righe con il prezzo: sconto, extra, buono regalo, pagato.
 export async function righePrezzo(db, p) {

@@ -8,6 +8,7 @@ import { pagamentoPrenotazione, inviaEmailConferma } from '../_lib/prenotazioni.
 import { restituisciCodice } from '../_lib/offerte.js';
 import { utenteCollegato } from '../_lib/accessi.js';
 import { Errore, json, leggiJson, controllaOrigine, sha256, indirizzoIp, adessoISO } from '../_lib/util.js';
+import { percorsoDi } from '../../src/data/percorsi.js';
 
 export async function onRequestPost(contesto) {
   const { request, env } = contesto;
@@ -33,7 +34,7 @@ export async function onRequestPost(contesto) {
   if (p.stato === 'confermata') {
     const conferma = await prima(env.DB, 'SELECT * FROM prenotazioni WHERE id = :id', { id: p.id });
     contesto.waitUntil(inviaEmailConferma(env, conferma, origine));
-    return json({ codice: p.codice, redirect: `${origine}/prenota/esito/?${q}` });
+    return json({ codice: p.codice, redirect: `${origine}${percorsoDi(conferma.lingua, 'esito')}?${q}` });
   }
   if (metodo === 'buono') {
     // Il buono non basta: serve anche un pagamento. I posti tornano liberi.

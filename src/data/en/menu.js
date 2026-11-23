@@ -1,3 +1,4 @@
+import { percorsiPrenota } from '../percorsi.js';
 // English menu (same pages as src/data/menu.js).
 export const menu = [
   { href: '/en/boat-tours/', testo: 'Boat tours' },
@@ -20,5 +21,5 @@ export const pagine = {
   '/richiesta/': '/en/enquiry/',
   '/privacy/': '/en/privacy/',
   '/cookie/': '/en/cookies/',
-  '/prenota/': '/en/book/',
+  '/prenota/': percorsiPrenota.en.prenota,
 };

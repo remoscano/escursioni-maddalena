@@ -1,3 +1,4 @@
+import { percorsiPrenota } from '../percorsi.js';
 // Francese: menu e indirizzi delle pagine tradotte (pagina italiana → pagina francese).
 export const menu = [
   { href: '/fr/excursions-en-bateau/', testo: 'Excursions' },
@@ -18,5 +19,5 @@ export const pagine = {
   '/richiesta/': '/fr/demande/',
   '/privacy/': '/fr/confidentialite/',
   '/cookie/': '/fr/cookies/',
-  '/prenota/': '/fr/reserver/',
+  '/prenota/': percorsiPrenota.fr.prenota,
 };

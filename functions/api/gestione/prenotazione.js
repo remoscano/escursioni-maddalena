@@ -16,6 +16,7 @@ import { annullaPrenotazione, eseguiRimborso, sceltaRecupero } from '../../_lib/
 import { pagabileConLink, inviaEmailConferma, emailAttive, linkPrenotazione } from '../../_lib/prenotazioni.js';
 import { inviaEmailLinkPagamento } from '../../_lib/email.js';
 import { Errore, json, leggiJson, controllaOrigine, testo, dataValida } from '../../_lib/util.js';
+import { percorsoDi } from '../../../src/data/percorsi.js';
 
 export async function onRequestPost(contesto) {
   const { request, env } = contesto;
@@ -67,7 +68,7 @@ export async function onRequestPost(contesto) {
     await sceltaRecupero(contesto, p, { scelta: 'rimborso' });
   } else if (b.azione === 'link') {
     if (!pagabileConLink(p)) throw new Errore(409, 'Questa prenotazione non ha niente da pagare online (o il link è scaduto).');
-    const link = `${origine}/prenota/paga/?codice=${encodeURIComponent(p.codice)}&t=${encodeURIComponent(p.token)}`;
+    const link = `${origine}${percorsoDi(p.lingua, 'paga')}?codice=${encodeURIComponent(p.codice)}&t=${encodeURIComponent(p.token)}`;
     let inviata = false;
     if (b.invia && p.email && emailAttive(env)) inviata = await inviaEmailLinkPagamento(env, p, origine);
     return json({ ok: true, link, inviata });
