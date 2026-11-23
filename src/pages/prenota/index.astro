@@ -1,21 +1,4 @@
 ---
-import Base from '../../layouts/Base.astro';
-import Prenotazione from '../../components/Prenotazione.astro';
-import { sito } from '../../data/sito.js';
-import { testoChiusuraOnline, postiMassimi } from '../../data/prenotazioni.js';
+import Prenota from '../../viste/Prenota.astro';
 ---
-<Base titolo="Prenota online" descrizione="Prenota online la tua escursione in maxi gommone nell'Arcipelago di La Maddalena: scegli data e orario, vedi i posti liberi e paga con carta o PayPal." senzaBarra>
-  <section class="testa-pagina">
-    <div class="contenitore">
-      <p class="occhiello">Prenotazioni</p>
-      <h1>Prenota online</h1>
-      <p class="intro">Scegli escursione, giorno e orario: vedi subito i posti liberi e paghi con carta o PayPal.</p>
-      <p class="intro">{testoChiusuraOnline} Dopo quell'ora, o per gruppi di più di {postiMassimi} persone, <a href="/richiesta/">scrivici su WhatsApp</a>.</p>
-    </div>
-  </section>
-  <section class="sezione" style="padding-top:32px">
-    <div class="contenitore">
-      <Prenotazione />
-    </div>
-  </section>
-</Base>
+<Prenota />

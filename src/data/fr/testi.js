@@ -389,6 +389,8 @@ export const testi = {
     comeArrivare: 'Comment venir',
   },
   richiesta: {
+    prenotaSubito: " Pour réserver et payer tout de suite, sans attendre la réponse : ",
+    prenotaLink: "réservez en ligne",
     titolo: 'Demande de disponibilité sur WhatsApp',
     descrizione: "Choisissez l'excursion, la date, le nombre de personnes et le lieu d'embarquement : WhatsApp s'ouvre avec le message prêt et nous vous répondons.",
     occhiello: 'Demande sur WhatsApp',

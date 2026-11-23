@@ -9,7 +9,7 @@ const { e, grande = false } = Astro.props;
 const L = datiLingua(Astro.url);
 const T = L.testi.scheda;
 const href = L.urlEscursione(e.slug);
-const richiesta = L.prenotaOnline ? `/prenota/?escursione=${e.slug}` : L.link(`/richiesta/?escursione=${e.slug}`);
+const richiesta = L.prenotaOnline ? L.link(`/prenota/?escursione=${e.slug}`) : L.link(`/richiesta/?escursione=${e.slug}`);
 const tono = 'acqua';
 ---
 {grande ? (

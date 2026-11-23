@@ -81,7 +81,7 @@ const paginaCannigione = pagineImbarco.find((p: any) => p.id === 'cannigione');
           )}
           {prenotabile ? (
             <Fragment>
-              <a href={`/prenota/?escursione=${e.slug}`} class="btn btn--wa btn--grande btn--pieno">{T.vediPosti}</a>
+              <a href={L.link(`/prenota/?escursione=${e.slug}`)} class="btn btn--wa btn--grande btn--pieno">{T.vediPosti}</a>
               <a href="#richiesta" class="btn btn--bordo-chiaro btn--pieno"><Icona nome="whatsapp" />{T.domandeScrivici}</a>
               <p class="box-prezzo__nota">{T.notaOnline(regole.cancellazioneGratisOre)}</p>
             </Fragment>

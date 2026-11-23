@@ -58,7 +58,7 @@ if (tipo === 'escursione' && slug) {
         price: String(prezzo.adulto ?? prezzo.barca),
         priceCurrency: 'EUR',
         description: prezzo.barca ? T.prezzoGommone : T.prezzoPersona,
-        url: L.prenotaOnline ? `${base}/prenota/?escursione=${slug}` : pagina,
+        url: L.prenotaOnline ? `${base}${L.link(`/prenota/?escursione=${slug}`)}` : pagina,
         availability: L.prenotaOnline ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
         validFrom: regole.stagione.dal,
         validThrough: regole.stagione.al,

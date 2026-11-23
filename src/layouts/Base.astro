@@ -59,7 +59,7 @@ const assoluto = (p: string) => new URL(p, sito.url).href;
   <Piede />
   {!senzaBarra && (L.prenotaOnline ? (
     <nav class="barra-wa" aria-label={T.azioniRapide}>
-      <a href="/prenota/" class="btn btn--wa">{T.prenotaOnline}</a>
+      <a href={L.link('/prenota/')} class="btn btn--wa">{T.prenotaOnline}</a>
       <a href={L.link('/richiesta/')} class="btn btn--bordo" aria-label={T.scriviciWa}><Icona nome="whatsapp" /></a>
       <a href={telefono} class="btn btn--bordo" aria-label={T.chiama}><Icona nome="telefono" /></a>
     </nav>

@@ -14,7 +14,7 @@ const { p } = Astro.props;
 const L = datiLingua(Astro.url);
 const T = L.testi.imbarco;
 const euro = L.testi.scheda.euro;
-const richiesta = (slug: string) => (L.prenotaOnline ? `/prenota/?escursione=${slug}` : L.link(`/richiesta/?escursione=${slug}`));
+const richiesta = (slug: string) => (L.prenotaOnline ? L.link(`/prenota/?escursione=${slug}`) : L.link(`/richiesta/?escursione=${slug}`));
 const altre = L.pagineImbarco.filter((x: any) => x.id !== p.id);
 ---
 <Base titolo={p.titoloSeo} descrizione={p.descrizioneSeo}>

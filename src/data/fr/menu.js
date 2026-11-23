@@ -18,4 +18,5 @@ export const pagine = {
   '/richiesta/': '/fr/demande/',
   '/privacy/': '/fr/confidentialite/',
   '/cookie/': '/fr/cookies/',
+  '/prenota/': '/fr/reserver/',
 };

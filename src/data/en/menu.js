@@ -20,4 +20,5 @@ export const pagine = {
   '/richiesta/': '/en/enquiry/',
   '/privacy/': '/en/privacy/',
   '/cookie/': '/en/cookies/',
+  '/prenota/': '/en/book/',
 };

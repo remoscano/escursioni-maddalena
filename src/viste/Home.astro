@@ -45,7 +45,7 @@ const partenze = pagineImbarco.map((p: any) => ({ href: p.href, titolo: p.titolo
         <p class="hero__testo">{T.testo}</p>
         <div class="hero__azioni">
           {L.prenotaOnline
-            ? <a href="/prenota/" class="btn btn--wa btn--grande">{T.prenotaOnline}</a>
+            ? <a href={L.link('/prenota/')} class="btn btn--wa btn--grande">{T.prenotaOnline}</a>
             : <a href={L.link('/richiesta/')} class="btn btn--wa btn--grande"><Icona nome="whatsapp" />{T.chiediWa}</a>}
           <a href="#escursioni" class="btn btn--bordo btn--grande">{T.scegli}<Icona nome="giu" /></a>
         </div>

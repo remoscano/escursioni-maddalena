@@ -1,0 +1,25 @@
+---
+// Pagina "Prenota online" in tutte le lingue: /prenota/, /en/book/, /es/reservar/, /fr/reserver/, /de/buchen/.
+import Base from '../layouts/Base.astro';
+import Prenotazione from '../components/Prenotazione.astro';
+import { regole, postiMassimi } from '../data/prenotazioni.js';
+import { datiLingua } from '../data/lingua.js';
+import { testiPrenotaDi } from '../data/prenota-testi.js';
+const L = datiLingua(Astro.url);
+const P = testiPrenotaDi(L.lingua).pagina;
+---
+<Base titolo={P.titolo} descrizione={P.descrizione} senzaBarra>
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">{P.occhiello}</p>
+      <h1>{P.titolo}</h1>
+      <p class="intro">{P.intro}</p>
+      <p class="intro">{P.chiusura(regole.chiusuraOnline.ora)} {P.dopo(postiMassimi)} <a href={L.link('/richiesta/')}>{P.scrivici}</a>.</p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:32px">
+    <div class="contenitore">
+      <Prenotazione />
+    </div>
+  </section>
+</Base>

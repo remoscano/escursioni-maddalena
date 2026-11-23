@@ -29,6 +29,9 @@ export const lingueSito = [
   { codice: 'de', sigla: 'DE', nome: 'Deutsch', home: '/de/' },
 ];
 
+// Lingue in cui si prenota e si paga online (dal 23 novembre 2026, ramo prenotazione-lingue).
+export const lingueConPrenotazione = ['it', 'en', 'es', 'fr', 'de'];
+
 const datiPerLingua = {
   it: { sito, escursioni, faq, menu, pagineImbarco, testi, pagine: null },
   en, es, fr, de,
@@ -60,8 +63,8 @@ function pacchetto(lingua, d, mappa) {
     domande: (ids) => ids.map((id) => tutte.find((x) => x.id === id)).filter(Boolean),
     // Indirizzo di una pagina in questa lingua (se non è tradotta resta quella italiana).
     link,
-    // La prenotazione online esiste solo in italiano: nelle altre lingue i bottoni portano alla richiesta su WhatsApp.
-    prenotaOnline: regole.attive && lingua === 'it',
+    // Prenotazione online in questa lingua (lingueConPrenotazione, sotto); altrimenti i bottoni portano a WhatsApp.
+    prenotaOnline: regole.attive && lingueConPrenotazione.includes(lingua),
   };
 }
 

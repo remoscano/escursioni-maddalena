@@ -15,7 +15,7 @@ const { contatti } = sito;
       <p class="occhiello">{T.occhiello}</p>
       <h1>{T.h1}</h1>
       <p class="intro">{T.intro}{L.prenotaOnline
-        ? <Fragment> Per prenotare e pagare subito, senza aspettare la risposta: <a href="/prenota/">prenota online</a>.</Fragment>
+        ? <Fragment>{T.prenotaSubito}<a href={L.link('/prenota/')}>{T.prenotaLink}</a>.</Fragment>
         : ` ${sito.pagamentoLink.breve}.`}</p>
     </div>
   </section>

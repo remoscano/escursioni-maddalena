@@ -13,7 +13,7 @@
 // - Corsica: solo in esclusiva, stesso prezzo delle altre giornate intere in esclusiva;
 // - a tutte le esclusive si aggiunge il carburante.
 // Tutti e tre i gommoni si possono prenotare in esclusiva (quello da 6 posti fa solo esclusive).
-import { cifra } from './formato.js';
+import { testiPrenota, nomeTurno } from './prenota-testi.js';
 
 export const regole = {
   // false = i bottoni "Prenota" tornano alla richiesta su WhatsApp (utile finché i conti di pagamento non sono attivi).
@@ -308,32 +308,31 @@ export function regolaValida(r, { slug, data, orario, persone, adesso = new Date
   return false;
 }
 
-export const NOMI_REGOLE = {
-  anticipo: 'Prenotazione anticipata',
-  'ultimo-minuto': 'Ultimo minuto',
-  gruppo: 'Sconto gruppo',
-  weekend: 'Weekend',
-};
+export const NOMI_REGOLE = testiPrenota.it.regole;
 
 // Il codice sconto vale per questa prenotazione? Restituisce un messaggio se non vale.
-export function erroreCodice(c, slug, data) {
-  if (!c) return 'Codice non valido.';
+export function erroreCodice(c, slug, data, T = testiPrenota.it) {
+  const C = T.calcolo;
+  if (!c) return C.codiceNonValido;
   if (c.tipo === 'buono') {
-    if (c.al && adessoRoma().data > c.al) return 'Questo buono regalo è scaduto.';
-    if (!(c.saldo > 0)) return 'Questo buono regalo è già stato usato tutto.';
+    if (c.al && adessoRoma().data > c.al) return C.buonoScaduto;
+    if (!(c.saldo > 0)) return C.buonoFinito;
     return null;
   }
-  if (c.escursioni && !listaDi(c.escursioni).includes(slug)) return 'Questo codice non vale per questa escursione.';
-  if ((c.dal && data < c.dal) || (c.al && data > c.al)) return 'Questo codice non vale per questa data.';
-  if (c.esaurito) return 'Questo codice è già stato usato il numero massimo di volte.';
+  if (c.escursioni && !listaDi(c.escursioni).includes(slug)) return C.codiceEscursione;
+  if ((c.dal && data < c.dal) || (c.al && data > c.al)) return C.codiceData;
+  if (c.esaurito) return C.codiceEsaurito;
   return null;
 }
 
 // Calcola persone, posti occupati e totale (in euro) di una prenotazione, con regole di prezzo, codice, extra e buono.
-// opzioni: { regole: [...], codice: {...}, extra: [catalogo], extraScelti: { id: quantità }, adesso }
+// opzioni: { regole: [...], codice: {...}, extra: [catalogo], extraScelti: { id: quantità }, adesso, testi }
+// testi: le frasi della lingua del cliente (src/data/prenota-testi.js); senza, italiano.
 // Restituisce { errore } se qualcosa non va.
 export function calcolaPrenotazione(slug, turnoId, data, persone, opzioni = {}) {
-  const base = calcolaListino(slug, turnoId, data, persone);
+  const T = opzioni.testi || testiPrenota.it;
+  const C = T.calcolo;
+  const base = calcolaListino(slug, turnoId, data, persone, T);
   if (base.errore) return base;
   const { regole: rp = [], codice = null, extra = [], extraScelti = {}, adesso = new Date() } = opzioni;
   const turno = turnoDi(slug, turnoId);
@@ -345,26 +344,26 @@ export function calcolaPrenotazione(slug, turnoId, data, persone, opzioni = {}) 
   const weekend = rp.filter((r) => r.tipo === 'weekend' && regolaValida(r, ctx)).sort((a, b) => b.percentuale - a.percentuale)[0];
   if (weekend) {
     const piu = arrotonda((base.totale * weekend.percentuale) / 100);
-    righe.push({ testo: `${weekend.nome || NOMI_REGOLE.weekend} +${weekend.percentuale}%`, importo: piu });
+    righe.push({ testo: `${weekend.nome || T.regole.weekend} +${weekend.percentuale}%`, importo: piu });
     prezzo = arrotonda(prezzo + piu);
   }
 
   // Sconti: si applica il migliore tra le promozioni e il codice sconto (non si sommano).
   const promo = rp.filter((r) => r.tipo !== 'weekend' && regolaValida(r, ctx))
-    .map((r) => ({ nota: `${r.nome || NOMI_REGOLE[r.tipo]} −${r.percentuale}%`, importo: arrotonda((prezzo * r.percentuale) / 100) }))
+    .map((r) => ({ nota: `${r.nome || T.regole[r.tipo]} −${r.percentuale}%`, importo: arrotonda((prezzo * r.percentuale) / 100) }))
     .sort((a, b) => b.importo - a.importo)[0];
   let scontoCodice = null;
   let codiceErrore = null;
   if (codice && codice.tipo !== 'buono') {
-    codiceErrore = erroreCodice(codice, slug, data);
+    codiceErrore = erroreCodice(codice, slug, data, T);
     if (!codiceErrore) {
       const importo = codice.tipo === 'percentuale' ? arrotonda((prezzo * codice.valore) / 100) : Math.min(prezzo, Number(codice.valore));
-      scontoCodice = { nota: `Codice ${codice.codice}${codice.tipo === 'percentuale' ? ` −${codice.valore}%` : ''}`, importo };
+      scontoCodice = { nota: `${C.codice(codice.codice)}${codice.tipo === 'percentuale' ? ` −${codice.valore}%` : ''}`, importo };
     }
   }
   const migliore = [promo, scontoCodice].filter(Boolean).sort((a, b) => b.importo - a.importo)[0] || null;
   let codiceNonCumulabile = false;
-  if (scontoCodice && promo && migliore === promo) { codiceErrore = 'Il codice non si somma alla promozione già applicata, che conviene di più.'; codiceNonCumulabile = true; }
+  if (scontoCodice && promo && migliore === promo) { codiceErrore = C.nonCumulabile; codiceNonCumulabile = true; }
   if (migliore) { righe.push({ testo: migliore.nota, importo: -migliore.importo }); prezzo = arrotonda(prezzo - migliore.importo); }
 
   // Extra a pagamento (non scontati).
@@ -373,10 +372,10 @@ export function calcolaPrenotazione(slug, turnoId, data, persone, opzioni = {}) 
     const quantita = Number(q) || 0;
     if (!quantita) continue;
     const e = extra.find((x) => String(x.id) === String(id));
-    if (!e || (e.escursioni && !listaDi(e.escursioni).includes(slug))) return { errore: 'Extra non disponibile per questa escursione.' };
+    if (!e || (e.escursioni && !listaDi(e.escursioni).includes(slug))) return { errore: C.extraNonDisponibile };
     const massimo = e.modo === 'persona' ? base.persone : 1;
-    if (!Number.isInteger(quantita) || quantita < 0 || quantita > massimo) return { errore: `Quantità non valida per: ${e.nome}.` };
-    if (e.rimanenti !== null && e.rimanenti !== undefined && quantita > e.rimanenti) return { errore: `${e.nome}: ne restano ${e.rimanenti} per questo giorno.` };
+    if (!Number.isInteger(quantita) || quantita < 0 || quantita > massimo) return { errore: C.quantitaNonValida(e.nome) };
+    if (e.rimanenti !== null && e.rimanenti !== undefined && quantita > e.rimanenti) return { errore: C.extraRimasti(e.nome, e.rimanenti) };
     const totaleExtra = arrotonda(quantita * e.prezzo);
     scelti.push({ id: e.id, nome: e.nome, quantita, prezzo: e.prezzo, totale: totaleExtra });
     righe.push({ testo: `${e.nome}${e.modo === 'persona' ? ` × ${quantita}` : ''}`, importo: totaleExtra });
@@ -387,10 +386,10 @@ export function calcolaPrenotazione(slug, turnoId, data, persone, opzioni = {}) 
   // Buono regalo: paga tutto o una parte del totale.
   let buono = 0;
   if (codice && codice.tipo === 'buono') {
-    codiceErrore = erroreCodice(codice, slug, data);
+    codiceErrore = erroreCodice(codice, slug, data, T);
     if (!codiceErrore) {
       buono = Math.min(totale, Number(codice.saldo));
-      righe.push({ testo: `Buono regalo ${codice.codice}`, importo: -buono, buono: true });
+      righe.push({ testo: C.buono(codice.codice), importo: -buono, buono: true });
     }
   }
 
@@ -413,37 +412,38 @@ export function calcolaPrenotazione(slug, turnoId, data, persone, opzioni = {}) 
 }
 
 // Solo listino: persone, posti e prezzo base.
-function calcolaListino(slug, turnoId, data, persone) {
+function calcolaListino(slug, turnoId, data, persone, T = testiPrenota.it) {
+  const C = T.calcolo;
   const o = offerte[slug];
   const t = turnoDi(slug, turnoId);
-  if (!o || !t) return { errore: 'Escursione o turno non validi.' };
+  if (!o || !t) return { errore: C.turnoNonValido };
   const adulti = Number(persone.adulti) || 0;
   // Niente più "neonati" (0–3 gratis): se arrivano da una versione vecchia, contano come bambini.
   const vecchiNeonati = Number(persone.neonati) || 0;
   const bambini = (Number(persone.bambini) || 0) + vecchiNeonati;
   const neonati = 0;
-  if ([adulti, bambini, vecchiNeonati].some((n) => !Number.isInteger(n) || n < 0 || n > 20)) return { errore: 'Numero di persone non valido.' };
-  if (adulti < 1) return { errore: 'Serve almeno un adulto.' };
+  if ([adulti, bambini, vecchiNeonati].some((n) => !Number.isInteger(n) || n < 0 || n > 20)) return { errore: C.personeNonValide };
+  if (adulti < 1) return { errore: C.almenoAdulto };
   const totPersone = adulti + bambini;
   const paganti = totPersone;
   const riga = rigaPrezzo(t.prezzi, data);
-  if (!riga) return { errore: 'Nessun prezzo per questa data.' };
+  if (!riga) return { errore: C.nessunPrezzo };
   const capienza = Math.max(...gommoniPer(slug).map((g) => postiPer(o, g)));
 
   if (o.tipo === 'esclusiva') {
-    if (totPersone > capienza) return { errore: `In esclusiva il gommone porta al massimo ${capienza} persone, bambini compresi: per gruppi più grandi scrivici su WhatsApp.` };
+    if (totPersone > capienza) return { errore: C.maxEsclusiva(capienza) };
     // "posti" viene poi portato alla capienza del gommone scelto: in esclusiva il gommone è tutto vostro.
     return {
       adulti, bambini, neonati, persone: totPersone, paganti, posti: totPersone, totale: riga.barca,
-      righe: [{ testo: `${t.nome}, gommone in esclusiva`, importo: riga.barca }],
+      righe: [{ testo: C.esclusiva(nomeTurno(T, slug, t)), importo: riga.barca }],
       carburanteEscluso: Boolean(o.carburanteEscluso),
     };
   }
 
-  if (totPersone > capienza) return { errore: `Su questa uscita ci sono al massimo ${capienza} posti: per gruppi più grandi scrivici su WhatsApp.` };
+  if (totPersone > capienza) return { errore: C.maxPosti(capienza) };
   const righe = [];
-  if (adulti) righe.push({ testo: `${adulti} × intero ${cifra(riga.adulto)} €`, importo: adulti * riga.adulto });
-  if (bambini) righe.push({ testo: `${bambini} × ridotto fino a ${regole.eta.bambiniFinoA} anni ${cifra(riga.bambino)} €`, importo: bambini * riga.bambino });
+  if (adulti) righe.push({ testo: C.intero(adulti, T.euro(riga.adulto)), importo: adulti * riga.adulto });
+  if (bambini) righe.push({ testo: C.ridotto(bambini, regole.eta.bambiniFinoA, T.euro(riga.bambino)), importo: bambini * riga.bambino });
   const totale = righe.reduce((s, r) => s + r.importo, 0);
   return { adulti, bambini, neonati, persone: totPersone, paganti, posti: totPersone, totale, righe, carburanteEscluso: false };
 }

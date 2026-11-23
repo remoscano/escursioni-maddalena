@@ -25,7 +25,8 @@ export const euro = (n: number) => `${cifra(n)} €`;
 
 const fData = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 const fDataBreve = new Intl.DateTimeFormat('it-IT', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
-export const dataLunga = (s: string) => fData.format(new Date(`${s}T12:00:00Z`));
+// Data per esteso; nelle pagine tradotte si passa il "locale" della lingua (es. 'en-GB').
+export const dataLunga = (s: string, locale = 'it-IT') => (locale === 'it-IT' ? fData : new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })).format(new Date(`${s}T12:00:00Z`));
 export const dataBreve = (s: string) => fDataBreve.format(new Date(`${s}T12:00:00Z`));
 
 export function oggiRoma(): string {
