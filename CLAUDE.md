@@ -131,9 +131,9 @@ Il sito pubblico è finito nel codice: mancano dati del cliente e servizi da att
 Senza i punti 2–3 si può comunque aprire il sito "vetrina" con prenotazione su WhatsApp, ma i link di pagamento non funzionano finché non ci sono le chiavi SumUp/PayPal.
 
 ### Domande aperte per Remo (tutte in un posto)
-- [ ] Carburante delle esclusive (Remo, 23 novembre 2026: i litri si comunicano a fine giornata). Riletto l'art. 49, c. 1, lett. e: per le spese che non si possono calcolare prima basta dire che sono a parte e come si calcolano, e il sito lo dice già. Chiesto a Remo se i litri si pagano al prezzo del distributore del giorno: se sì, aggiungere la mezza frase in `regole.carburante`
-- [ ] WhatsApp in spagnolo, francese, tedesco (Remo, 23 novembre 2026): in ufficio nessuno le parla bene, si risponde con risposte automatiche o traducendo con l'AI. Le pagine non promettono la lingua. Proposta in attesa di sì/no: "scrivici pure in spagnolo, ti rispondiamo in inglese o in spagnolo con l'aiuto di un traduttore"
-- [ ] Tre riquadri della pagina gommoni (`src/viste/Gommoni.astro`, sezione "Su tutti i gommoni"): chiesto a Remo il 23 novembre 2026, per tutti e quattro i gommoni, se ci sono prendisole a prua e sedute a poppa, scaletta, doccetta d'acqua dolce, gavone stagno. Dove è no, si toglie la riga
+- [x] Carburante delle esclusive: resta com'è (Remo, 23 novembre 2026: i litri si comunicano a fine giornata; il sito dice già che è a parte e come si calcola, art. 49, c. 1, lett. e)
+- [x] WhatsApp in spagnolo, francese, tedesco: va bene così, le pagine non promettono la lingua della risposta (Remo, 23 novembre 2026)
+- [x] Tre riquadri della pagina gommoni (Remo, 23 novembre 2026: sì su tutti e quattro): prendisole a prua e sedute a poppa, scaletta e doccetta d'acqua dolce, gavone stagno. Testi `ombraExtra`, `bagnoExtra`, `bagagliExtra` in `testi.js` di ogni lingua
 - [ ] Prova con VoiceOver su iPhone (10 minuti, la fa Remo)
 
 ### Fatto
@@ -204,7 +204,6 @@ Senza i punti 2–3 si può comunque aprire il sito "vetrina" con prenotazione s
 - [ ] **Foto:** le note sui segnaposto indicano gli scatti, comprese quelle dei piatti dei ristoranti convenzionati (il logo è deciso: "Libero", 16 novembre 2026)
 - [x] **Testi delle soste della Corsica** (isola Piana, Lavezzi, Cavallo), scritti da Claude il 13 novembre 2026: approvati da Remo il 23 novembre 2026
 - [x] **Proposte di Claude su buoni regalo e promemoria**, approvate da Remo il 23 novembre 2026 (13 novembre 2026, in `regole` di `src/data/prenotazioni.js`): buoni regalo da 50/100/150/200/300 € (minimo 30, massimo 2000) validi 12 mesi; durata dei link di pagamento 2/12/24/48 ore; promemoria dalle 18 del giorno prima; grazie 2 ore dopo il rientro; spese di bordo: promemoria agli skipper alle 20:00 e alle 8:00 del giorno dopo, modificabili per 30 giorni. Nelle condizioni: buono rimborsabile se il cliente cambia idea entro 14 giorni (art. 52 Codice del consumo: da far confermare, non è un parere legale)
-- [ ] **Novità — pagina dei gommoni**, tre riquadri "Su tutti i gommoni" ancora in rosa: sedute e prendisole, scaletta e doccetta, gavone stagno per telefoni e documenti (`src/pages/gommone.astro`)
 - [ ] **QR code per le recensioni Google** (Remo, 16 novembre 2026; non riguarda il sito): un adesivo da attaccare sul gommone, il cliente lo scansiona e lascia la recensione. Serve il link della scheda Google per le recensioni (lo stesso di `recensioniGoogle` in `src/data/sito.js`); poi Claude prepara il QR pronto da stampare
 
 ### Da decidere o da avere dal cliente, quando serve
@@ -213,7 +212,7 @@ Senza i punti 2–3 si può comunque aprire il sito "vetrina" con prenotazione s
 - [ ] Risposte automatiche di WhatsApp Business (benvenuto, assenza fuori orario, risposte rapide): testi proposti da Claude, li imposta il cliente nell'app
 
 ### Da attivare prima di aprire le prenotazioni vere
-- [ ] Dominio: c'è già, **escursionimaddalena.com** (Remo, 23 novembre 2026; chiesto dov'è registrato). Da spostare su Cloudflare (DNS), collegarlo in Pages → Custom domains; poi `site` in `astro.config.mjs`, `url` in `src/data/sito.js`, `www` che rimanda alla versione senza `www`
+- [ ] Dominio: c'è già, **escursionimaddalena.com**, registrato su GoDaddy, oggi non mostra niente (Remo, 23 novembre 2026). Da spostare su Cloudflare (DNS), collegarlo in Pages → Custom domains; poi `site` in `astro.config.mjs`, `url` in `src/data/sito.js`, `www` che rimanda alla versione senza `www`
 - [ ] Email di conferma, obbligatorie (art. 51, comma 7, Codice del consumo): account Resend, dominio verificato, `RESEND_API_KEY` ed `EMAIL_MITTENTE` in Cloudflare Pages. Non serve Google Workspace: il sito spedisce da un indirizzo del dominio (es. prenotazioni@dominio) solo aggiungendo alcuni record DNS, e le risposte dei clienti arrivano a maddalena.escursioni@gmail.com. Per ora resta la Gmail (Remo, 16 novembre 2026); se il cliente prende Workspace si potrà usare info@
 - [ ] Conti SumUp e PayPal (li apre il cliente) → chiavi in Cloudflare Pages (Production): `SUMUP_API_KEY`, `SUMUP_MERCHANT_CODE`, `PAYPAL_CLIENT_ID`, `PAYPAL_SECRET`. Nell'app PayPal registrare l'avviso automatico: `https://<dominio>/api/pagamento/paypal-notifica`, eventi `CHECKOUT.ORDER.APPROVED` e `PAYMENT.CAPTURE.COMPLETED`
 - [ ] Email automatiche: segreto `AUTOMATICO_CHIAVE` (e `SITO_URL` col dominio) in Cloudflare Pages, poi pubblicare il Worker in `automatico/` (istruzioni nel suo LEGGIMI). Al 16 novembre 2026 sull'account Cloudflare non c'è ancora nessun Worker. Testi di tutte le email riletti e corretti da Claude (16 novembre 2026): "Cosa portare" del promemoria preso da `sito.cosaPortare`, niente più "acqua" né "bevande a carico tuo"; date e frasi sistemate. Per rileggerli: `EMAIL_SALVA=email.json python3 prove/prova_nuove.py`. Documento per Remo e il cliente con tutti i testi da approvare e i passi di attivazione: https://claude.ai/artifact/NLzpzj62zJ1bfD7ceWzztf
