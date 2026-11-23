@@ -82,7 +82,7 @@ const barche = sito.flotta.map((f: any) => {
           <span class="box__icona"><Icona nome="sole" size={24} tratto={1.8} /></span>
           <h3>{T.ombra}</h3>
           <p>{T.ombraTesto}</p>
-          <p><Dato e="Sedute e prendisole: cosa c'è a bordo" /></p>
+          <p>{T.ombraExtra}</p>
         </div>
         <div class="box">
           <span class="box__icona"><Icona nome="persone" size={24} tratto={1.8} /></span>
@@ -93,12 +93,12 @@ const barche = sito.flotta.map((f: any) => {
           <span class="box__icona"><Icona nome="ancora" size={24} tratto={1.8} /></span>
           <h3>{T.bagno}</h3>
           <p>{T.bagnoTesto}</p>
-          <p><Dato e="Scaletta e doccetta?" /></p>
+          <p>{T.bagnoExtra}</p>
         </div>
         <div class="box">
           <span class="box__icona"><Icona nome="borsa" size={24} tratto={1.8} /></span>
           <h3>{T.bagagli}</h3>
-          <p>{T.bagagliTesto} <Dato e="Gavone stagno per telefoni e documenti?" /></p>
+          <p>{T.bagagliTesto} {T.bagagliExtra}</p>
         </div>
       </div>
     </div>
