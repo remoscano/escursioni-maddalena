@@ -23,4 +23,6 @@ export const pagine = {
   '/cookie/': '/en/cookies/',
   '/prenota/': percorsiPrenota.en.prenota,
   '/condizioni/': percorsiPrenota.en.condizioni,
+  '/buono-regalo/': percorsiPrenota.en.buono,
+  '/recesso/': percorsiPrenota.en.recesso,
 };

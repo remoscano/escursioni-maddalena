@@ -1,0 +1,77 @@
+---
+// Il buono regalo dopo il pagamento, da stampare o inoltrare, in tutte le lingue (/buono-regalo/esito/, /en/gift-voucher/voucher/ ...).
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+import { datiLingua } from '../data/lingua.js';
+import { percorsiPrenota } from '../data/percorsi.js';
+import { testiBuonoDi } from '../data/buono-testi.js';
+const L = datiLingua(Astro.url);
+const C = testiBuonoDi(L.lingua).carta;
+const config = { lingua: L.lingua, percorsi: percorsiPrenota[L.lingua] };
+---
+<Base titolo={C.titolo} descrizione={C.descrizione} nascosta senzaBarra>
+  <section class="sezione" style="padding-top:56px">
+    <div class="contenitore" style="max-width:760px">
+      <div data-buono-esito data-whatsapp={L.sito.contatti.whatsapp} data-config={JSON.stringify(config)}><p class="testo-2">{C.carico}</p></div>
+      <template data-logo><Logo /></template>
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  .buono-carta { border: 2px solid var(--mare); border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 14px; background: var(--bianco); }
+  @media (max-width: 520px) { .buono-carta { padding: 24px 18px; } }
+  .buono-carta h1 { font-weight: 800; font-size: clamp(30px, 4.4vw, 44px); line-height: 1.05; }
+  .buono-carta__valore { font-family: var(--font-titoli); font-weight: 800; font-size: clamp(44px, 8vw, 72px); line-height: 1; color: var(--turchese); }
+  .buono-carta__codice { align-self: flex-start; background: var(--acqua); border-radius: 999px; padding: 8px 16px; font-weight: 800; letter-spacing: .08em; font-size: 20px; }
+  .buono-carta__messaggio { font-size: 18px; font-style: italic; }
+  .buono-azioni { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+  @media print { .testata, .piede, .buono-azioni { display: none !important; } }
+</style>
+
+<script>
+  import { api, h, dataLunga as dataLungaIt } from '../scripts/comune';
+  import { testiPrenotaDi } from '../data/prenota-testi.js';
+  import { testiBuonoDi } from '../data/buono-testi.js';
+  import { testiEsitoDi } from '../data/esito-testi.js';
+  const box = document.querySelector<HTMLElement>('[data-buono-esito]')!;
+  const config = JSON.parse(box.dataset.config || '{}');
+  const T: any = testiPrenotaDi(config.lingua);
+  const C: any = testiBuonoDi(config.lingua).carta;
+  const P = config.percorsi;
+  const euro = (n: number) => T.euro(n);
+  const dataLunga = (s: string) => dataLungaIt(s, T.locale);
+  const logo = document.querySelector<HTMLTemplateElement>('[data-logo]')!.innerHTML;
+  const q = new URLSearchParams(location.search);
+  const codice = q.get('codice') || '', t = q.get('t') || '';
+  const whatsapp = box.dataset.whatsapp || '';
+  const wa = (testo: string) => whatsapp ? `<a class="btn btn--bordo" href="https://wa.me/${h(whatsapp)}?text=${encodeURIComponent(testo)}">${h(testiEsitoDi(config.lingua).scrivici)}</a>` : '';
+  let tentativi = 0;
+  async function carica() {
+    let b: any;
+    try { b = await api(`/api/buono?codice=${encodeURIComponent(codice)}&t=${encodeURIComponent(t)}`); }
+    catch (e) { box.innerHTML = `<h1>${h(C.nonTrovato)}</h1><p>${h((e as Error).message)}</p>`; return; }
+    if (b.stato === 'attivo') {
+      box.innerHTML = `<div class="buono-carta">
+          ${logo}
+          <h1>${h(C.buono(b.destinatario))}</h1>
+          <p class="buono-carta__valore">${euro(b.valore)}</p>
+          ${b.messaggio ? `<p class="buono-carta__messaggio">“${h(b.messaggio)}”</p>` : ''}
+          ${b.acquirente ? `<p>${h(C.da(b.acquirente))}</p>` : ''}
+          <p class="buono-carta__codice">${h(b.codice)}</p>
+          <p>${h(C.vale(b.al ? dataLunga(b.al) : '', `${location.host}${P.prenota}`))}</p>
+          ${b.saldo !== b.valore ? `<p class="testo-2">${h(C.credito(euro(b.saldo)))}</p>` : ''}
+        </div>
+        <div class="buono-azioni"><button type="button" class="btn btn--wa" onclick="window.print()">${h(C.stampa)}</button><a class="btn btn--bordo" href="${P.prenota}">${h(C.prenota)}</a>${wa(C.waHo(b.codice))}</div>
+        ${b.saldo === b.valore ? `<p class="buono-azioni testo-2" style="font-size:15px">${h(C.cambiato)}<a href="${P.recesso}?codice=${encodeURIComponent(b.codice)}">${h(C.recedi)}</a></p>` : ''}`;
+      return;
+    }
+    if (b.stato === 'in_attesa' && !b.scaduto && q.get('annullato') !== '1') {
+      box.innerHTML = `<h1>${h(C.aspettiamo)}</h1><p class="testo-2">${h(C.pochiSecondi)}</p>`;
+      if (tentativi++ < 20) setTimeout(carica, 3000);
+      return;
+    }
+    box.innerHTML = `<h1>${h(b.stato === 'annullato' ? C.annullato : C.nonCompletato)}</h1><p>${h(b.stato === 'annullato' && b.pagato ? C.rimborso : C.nessunAddebito)}</p><div class="buono-azioni"><a class="btn btn--wa" href="${P.buono}">${h(b.stato === 'annullato' && b.pagato ? C.altro : C.riprova)}</a>${wa(C.waAiuto)}</div>`;
+  }
+  carica();
+</script>

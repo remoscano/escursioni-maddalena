@@ -1,16 +1,17 @@
 // English version of src/data/faq.js. Same ids, so pages pick the same questions in both languages.
-// Online booking exists only in Italian for now: English answers describe booking on WhatsApp.
+// Answers describe booking on WhatsApp; with online booking on, src/data/faq-online.js changes some of them.
 // Prices come from the single price list (src/data/prenotazioni.js), never typed by hand.
 import { cifra } from '../formato.js';
 
 import { prezzoDa, offerte, regole } from '../prenotazioni.js';
 import { sito } from './sito.js';
+import { faqConOnline } from '../faq-online.js';
 
 const p7 = prezzoDa('tour-7-isole'), pM = prezzoDa('mezza-giornata'), pT = prezzoDa('tramonto'), pP = prezzoDa('tour-privato'), pC = prezzoDa('corsica');
 const palauMattina = offerte['tour-7-isole'].turni[0].orariImbarco.palau.split('–')[0].trim();
 const minimo = offerte['tour-7-isole'].minimo;
 
-export const faq = [
+const gruppi = [
   {
     gruppo: 'Booking and payment',
     domande: [
@@ -112,3 +113,6 @@ export const faq = [
     ],
   },
 ];
+
+// Con la prenotazione online accesa cambiano alcune risposte, come in italiano (src/data/faq-online.js).
+export const faq = faqConOnline('en', gruppi, sito.regole.pagamento);

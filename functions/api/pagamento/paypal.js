@@ -14,9 +14,9 @@ export async function onRequestGet(contesto) {
   const q = `codice=${encodeURIComponent(codice || '')}&t=${encodeURIComponent(t || '')}`;
 
   if (url.searchParams.get('tipo') === 'buono') {
-    const esito = `${url.origin}/buono-regalo/esito/?${q}`;
     const b = await buonoDaCodice(env.DB, codice, t);
     if (!b) return Response.redirect(`${url.origin}/buono-regalo/esito/?errore=1`, 303);
+    const esito = `${url.origin}${percorsoDi(b.lingua, 'buonoEsito')}?${q}`;
     const r = await incassaBuonoPaypal(contesto, b, ordine);
     return Response.redirect(r === 'non-pagato' ? `${esito}&non_pagato=1` : esito, 303);
   }

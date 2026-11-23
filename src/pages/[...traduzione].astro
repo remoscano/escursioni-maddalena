@@ -15,6 +15,9 @@ import Prenota from '../viste/Prenota.astro';
 import Esito from '../viste/Esito.astro';
 import Paga from '../viste/Paga.astro';
 import Condizioni from '../viste/Condizioni.astro';
+import Buono from '../viste/Buono.astro';
+import BuonoEsito from '../viste/BuonoEsito.astro';
+import Recesso from '../viste/Recesso.astro';
 import PrivacyEn from '../viste/legali/PrivacyEn.astro';
 import CookieEn from '../viste/legali/CookieEn.astro';
 import PrivacyEs from '../viste/legali/PrivacyEs.astro';
@@ -33,7 +36,7 @@ export function getStaticPaths() {
   // Pagina "non trovata" di ogni lingua: /<lingua>/404/, spostata in /<lingua>/404.html da astro.config.mjs.
   const nonTrovate = lingueSito.filter((l) => l.codice !== 'it').map((l) => ({ params: { traduzione: `${l.codice}/404` }, props: { lingua: l.codice, it: '/404/' } }));
   // Pagine della prenotazione senza versioni nelle altre lingue (hanno il codice nell'indirizzo): biglietto e link di pagamento.
-  const servizio = lingueSito.filter((l) => l.codice !== 'it').flatMap((l) => [['esito', '/prenota/esito/'], ['paga', '/prenota/paga/']]
+  const servizio = lingueSito.filter((l) => l.codice !== 'it').flatMap((l) => [['esito', '/prenota/esito/'], ['paga', '/prenota/paga/'], ['buonoEsito', '/buono-regalo/esito/']]
     .map(([k, it]) => ({ params: { traduzione: percorsiPrenota[l.codice][k].replace(/^\/|\/$/g, '') }, props: { lingua: l.codice, it } })));
   return [...pagine, ...nonTrovate, ...servizio];
 }
@@ -47,7 +50,7 @@ const escursione = escursioni.find((e) => it === `/escursioni/${e.indirizzo}/`);
 const imbarco = pagineImbarco.find((p) => p.href === it);
 const viste: Record<string, any> = {
   '/': Home, '/escursioni/': Escursioni, '/gommone/': Gommoni, '/info-utili/': InfoUtili, '/domande-frequenti/': Domande,
-  '/contatti/': Contatti, '/richiesta/': Richiesta, '/404/': NonTrovata, '/prenota/': Prenota, '/prenota/esito/': Esito, '/prenota/paga/': Paga, '/condizioni/': Condizioni,
+  '/contatti/': Contatti, '/richiesta/': Richiesta, '/404/': NonTrovata, '/prenota/': Prenota, '/prenota/esito/': Esito, '/prenota/paga/': Paga, '/condizioni/': Condizioni, '/buono-regalo/': Buono, '/buono-regalo/esito/': BuonoEsito, '/recesso/': Recesso,
   '/privacy/': legali[lingua][0], '/cookie/': legali[lingua][1],
 };
 const Vista = viste[it];

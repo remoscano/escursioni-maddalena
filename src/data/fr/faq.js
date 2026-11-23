@@ -4,10 +4,11 @@ import { cifra } from '../formato.js';
 import { prezzoDa, regole } from '../prenotazioni.js';
 import { palauMattina, minimoGruppo } from '../traduzioni.js';
 import { sito } from './sito.js';
+import { faqConOnline } from '../faq-online.js';
 
 const p7 = prezzoDa('tour-7-isole'), pM = prezzoDa('mezza-giornata'), pT = prezzoDa('tramonto'), pP = prezzoDa('tour-privato'), pC = prezzoDa('corsica');
 
-export const faq = [
+const gruppi = [
   {
     gruppo: 'Réservation et paiement',
     domande: [
@@ -43,3 +44,6 @@ export const faq = [
     ],
   },
 ];
+
+// Con la prenotazione online accesa cambiano alcune risposte, come in italiano (src/data/faq-online.js).
+export const faq = faqConOnline('fr', gruppi, sito.regole.pagamento);

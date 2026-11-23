@@ -18,6 +18,7 @@ python3 prove/prova_nuove.py       # rinvio e rimborsi, link di pagamento, scont
 python3 prove/prova_ui_nuove.py    # le stesse funzioni dal browser, 1440 e 390 px (serve openpyxl per controllare l'Excel)
 python3 prove/prova_recesso.py     # recesso online dai buoni regalo (art. 54-bis Codice del consumo), API e pagina a 1440 e 390 px
 
+python3 prove/prova_prenota_lingue.py  # prenotazione completa in inglese, spagnolo, francese, tedesco (1440 e 390 px), email nella lingua del cliente, link di pagamento, condizioni, buono regalo e recesso
 python3 prove/prova_lingue.py      # inglese, spagnolo, francese, tedesco: 1440, 1241 e 390 px, lingua, hreflang, testata su una riga, link, messaggio WhatsApp tradotto
 
 # Avviso automatico di PayPal, con un finto PayPal (porta 8797): sito avviato a parte sulla porta 8789

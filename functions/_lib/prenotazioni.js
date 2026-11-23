@@ -260,7 +260,7 @@ export async function inviaEmailConferma(env, p, origine) {
     '',
     condizioniInTesto(lingua),
   ].filter((r) => r !== null);
-  await inviaEmail(env, { a: p.email, oggetto: `Prenotazione ${p.codice} · ${v.escursione}`, testo: righe.join('\n') });
+  await inviaEmail(env, { a: p.email, oggetto: M.conferma.oggetto(p.codice, v.escursione), testo: righe.join('\n') });
   if (sito.contatti.email) {
     await inviaEmail(env, {
       a: sito.contatti.email,

@@ -40,7 +40,10 @@ with sync_playwright() as p:
                 lingua = u.split('/')[1]
                 if pg.evaluate('document.documentElement.lang') != lingua: errori.append(f'{u}: lang sbagliato')
                 alt = pg.eval_on_selector_all('link[hreflang]', 'e=>e.map(x=>x.hreflang)')
-                if sorted(alt) != sorted(['it', 'en', 'es', 'fr', 'de', 'x-default']): errori.append(f'{u}: hreflang {alt}')
+                # Le pagine di servizio della prenotazione (biglietto, link di pagamento, buono da stampare) non si indicizzano
+                # e non hanno versioni nelle altre lingue: niente hreflang.
+                nascosta = 'noindex' in (pg.get_attribute('meta[name="robots"]', 'content') or '')
+                if not nascosta and sorted(alt) != sorted(['it', 'en', 'es', 'fr', 'de', 'x-default']): errori.append(f'{u}: hreflang {alt}')
                 for h in pg.eval_on_selector_all('a[href]', 'e=>e.map(x=>x.getAttribute("href"))'):
                     if h.startswith('/'): link.add(urljoin(u, h).split('#')[0])
         pg.close()

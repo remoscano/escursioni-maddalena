@@ -10,6 +10,10 @@ import { prima, esegui, registra } from '../_lib/db.js';
 import { rimborsa } from '../_lib/pagamenti.js';
 import { inviaEmail } from '../_lib/prenotazioni.js';
 import { sito } from '../../src/data/sito.js';
+import { linguaValida } from '../../src/data/percorsi.js';
+import { testiBuonoDi } from '../../src/data/buono-testi.js';
+import { testiPrenotaDi } from '../../src/data/prenota-testi.js';
+import { testiEmailDi } from '../../src/data/email-testi.js';
 import { Errore, json, leggiJson, controllaOrigine, testo, email as validaEmail, oraRoma, euroDaCent } from '../_lib/util.js';
 
 const GIORNI = 14;
@@ -21,7 +25,8 @@ function ultimoGiorno(creatoIl) {
   return d.toISOString().slice(0, 10);
 }
 
-const quando = (d) => new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' }).format(d);
+// Data e ora nella lingua del cliente.
+const quando = (d, locale = 'it-IT') => new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' }).format(d);
 
 export async function onRequestPost(contesto) {
   const { request, env } = contesto;
@@ -30,6 +35,11 @@ export async function onRequestPost(contesto) {
   const codice = testo(b.codice, { campo: 'codice del buono', massimo: 20, obbligatorio: true }).toUpperCase();
   const nome = testo(b.nome, { campo: 'nome e cognome', massimo: 100, obbligatorio: true });
   const indirizzo = validaEmail(b.email, true);
+  // Dichiarazione e ricevuta nella lingua della pagina da cui il cliente recede.
+  const lingua = linguaValida(b.lingua);
+  const R = testiBuonoDi(lingua).recesso;
+  const T = testiPrenotaDi(lingua);
+  const soldi = (cent) => T.euro(cent / 100);
 
   const buono = await prima(env.DB, "SELECT * FROM codici_sconto WHERE codice = :c AND tipo = 'buono' AND creato_da = 'cliente'", { c: codice });
   // Stesso messaggio se il codice non c'è o l'email non corrisponde: non si rivela se un codice esiste.
@@ -58,22 +68,20 @@ export async function onRequestPost(contesto) {
   }
   await registra(env.DB, 'cliente', 'buono-recesso', { codice, importo: buono.pagato, rimborsoFatto });
 
-  const dichiarazione = `Io, ${nome}, recedo dal contratto di acquisto del buono regalo ${codice} (${euroDaCent(buono.valore)} €), comprato il ${quando(new Date(buono.creato_il))}.`;
+  const dichiarazione = R.testoDichiarazione(nome, codice, soldi(buono.valore), quando(new Date(buono.creato_il), T.locale));
   const ricevuta = [
-    `Ciao ${nome},`,
-    'abbiamo ricevuto il tuo recesso. Ecco la ricevuta.',
+    R.ciao(nome),
+    R.abbiamoRicevuto,
     '',
-    `Dichiarazione: ${dichiarazione}`,
-    `Inviata il: ${quando(adesso)}`,
+    `${R.dichiarazione}: ${dichiarazione}`,
+    `${R.inviata}: ${quando(adesso, T.locale)}`,
     '',
-    rimborsoFatto
-      ? `Il buono è annullato e il rimborso di ${euroDaCent(buono.pagato)} € è partito sullo stesso metodo con cui hai pagato (${buono.metodo === 'paypal' ? 'PayPal' : 'carta'}). Di solito arriva in pochi giorni.`
-      : `Il buono è annullato. Ti rimborsiamo ${euroDaCent(buono.pagato)} € sullo stesso metodo con cui hai pagato entro 14 giorni da oggi.`,
+    rimborsoFatto ? R.rimborsoPartito(soldi(buono.pagato), buono.metodo) : R.rimborsoEntro(soldi(buono.pagato)),
     '',
-    sito.contatti.telefonoVisibile ? `Per qualsiasi cosa scrivici su WhatsApp: ${sito.contatti.telefonoVisibile}` : null,
+    sito.contatti.telefonoVisibile ? testiEmailDi(lingua).whatsapp(sito.contatti.telefonoVisibile) : null,
     sito.nome,
   ].filter((x) => x !== null).join('\n');
-  const inviata = await inviaEmail(env, { a: indirizzo, oggetto: `Ricevuta del recesso · buono ${codice}`, testo: ricevuta });
+  const inviata = await inviaEmail(env, { a: indirizzo, oggetto: R.oggetto(codice), testo: ricevuta });
   if (sito.contatti.email) {
     await inviaEmail(env, {
       a: sito.contatti.email,
@@ -82,5 +90,5 @@ export async function onRequestPost(contesto) {
     });
   }
 
-  return json({ dichiarazione, inviataIl: quando(adesso), rimborsoFatto, importo: buono.pagato / 100, emailInviata: inviata });
+  return json({ dichiarazione, inviataIl: quando(adesso, T.locale), rimborsoFatto, importo: buono.pagato / 100, emailInviata: inviata });
 }

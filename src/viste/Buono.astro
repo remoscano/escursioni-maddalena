@@ -1,0 +1,97 @@
+---
+// Buono regalo, in tutte le lingue (/buono-regalo/, /en/gift-voucher/ ...): si compra online e vale come credito
+// per prenotare qualsiasi escursione. Testi in src/data/buono-testi.js.
+import Base from '../layouts/Base.astro';
+import { regole } from '../data/prenotazioni.js';
+import { datiLingua } from '../data/lingua.js';
+import { testiBuonoDi } from '../data/buono-testi.js';
+import { testiPrenotaDi } from '../data/prenota-testi.js';
+const { importi, minimo, massimo, validitaMesi } = regole.buoni;
+const L = datiLingua(Astro.url);
+const B = testiBuonoDi(L.lingua).buono;
+const euro = testiPrenotaDi(L.lingua).euro;
+const config = { lingua: L.lingua };
+---
+<Base titolo={B.titolo} descrizione={B.descrizione(euro(minimo), euro(massimo), validitaMesi)}>
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">{B.occhiello}</p>
+      <h1>{B.titolo}</h1>
+      <p class="intro">{B.intro(validitaMesi)}</p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:32px">
+    <div class="contenitore" style="max-width:760px">
+      <form class="buono" data-buono novalidate data-whatsapp={L.sito.contatti.whatsapp} data-config={JSON.stringify(config)}>
+        <fieldset class="buono__importi">
+          <legend>{B.importo}</legend>
+          <div class="scelte">
+            {importi.map((v, i) => <label class="scelta"><input type="radio" name="valore" value={v} checked={i === 1} />{euro(v)}</label>)}
+            <label class="scelta"><input type="radio" name="valore" value="altro" />{B.altro}</label>
+          </div>
+          <div class="campo" data-altro hidden><label for="b-altro">{B.importoLibero(euro(minimo), euro(massimo))}</label><input id="b-altro" name="altro" type="number" min={minimo} max={massimo} step="1" inputmode="numeric" /></div>
+        </fieldset>
+        <div class="buono__campi">
+          <div class="campo"><label for="b-nome">{B.nome}</label><input id="b-nome" name="nome" autocomplete="name" maxlength="100" required /></div>
+          <div class="campo"><label for="b-email">{B.email}</label><input id="b-email" name="email" type="email" autocomplete="email" maxlength="160" required /></div>
+          <div class="campo"><label for="b-tel">{B.telefono}</label><input id="b-tel" name="telefono" type="tel" autocomplete="tel" maxlength="30" /></div>
+          <div class="campo"><label for="b-dest">{B.destinatario}</label><input id="b-dest" name="destinatario" maxlength="100" /></div>
+          <div class="campo buono__intero"><label for="b-msg">{B.messaggio}</label><textarea id="b-msg" name="messaggio" rows="3" maxlength="300"></textarea></div>
+        </div>
+        <ul class="buono__info">
+          {B.info(validitaMesi).map((x: string) => <li>{x}</li>)}
+        </ul>
+        <label class="prenota__accetto"><input type="checkbox" name="accetto" /><span>{B.accettoPrima}<a href={L.link('/condizioni/')} target="_blank" rel="noopener">{B.condizioni}</a>{B.accettoMezzo}<a href={L.link('/privacy/')} target="_blank" rel="noopener">{B.privacy}</a>{B.accettoDopo}</span></label>
+        <p class="avviso" data-errore role="alert" hidden></p>
+        <div class="buono__paga" data-metodi><p class="testo-2">{B.caricoMetodi}</p></div>
+        <p class="testo-2" style="font-size:13px">{testiPrenotaDi(L.lingua).sicuro}</p>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .buono { background: var(--bianco); border: 1px solid var(--bordo); border-radius: var(--raggio-m); padding: 28px; display: flex; flex-direction: column; gap: 20px; }
+  .buono__importi { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .buono__importi legend { font-weight: 800; font-size: 20px; margin-bottom: 10px; }
+  .buono__campi { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 14px; }
+  .buono__intero { grid-column: 1 / -1; }
+  .buono textarea { width: 100%; border: 1.5px solid var(--bordo-campo); border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 16px; color: var(--mare); }
+  .buono__info { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; line-height: 1.5; color: var(--testo-2); }
+  .buono__paga { display: flex; flex-direction: column; gap: 10px; max-width: 420px; }
+  .prenota__accetto { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.5; cursor: pointer; }
+  .prenota__accetto input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--mare); flex: none; }
+</style>
+
+<script>
+  import { api, h } from '../scripts/comune';
+  import { testiPrenotaDi } from '../data/prenota-testi.js';
+  import { testiBuonoDi } from '../data/buono-testi.js';
+  const f = document.querySelector<HTMLFormElement>('[data-buono]')!;
+  const err = f.querySelector<HTMLElement>('[data-errore]')!;
+  const config = JSON.parse(f.dataset.config || '{}');
+  const B: any = testiBuonoDi(config.lingua).buono;
+  const ETICHETTE: Record<string, string> = testiPrenotaDi(config.lingua).paga;
+  f.addEventListener('change', () => { f.querySelector<HTMLElement>('[data-altro]')!.hidden = f.valore.value !== 'altro'; });
+  // I metodi di pagamento attivi arrivano dal server (come nella prenotazione).
+  api(`/api/disponibilita?escursione=tour-7-isole&mese=${new Date().toISOString().slice(0, 7)}`)
+    .then((d) => {
+      const box = f.querySelector<HTMLElement>('[data-metodi]')!;
+      box.innerHTML = d.pagamenti.length ? d.pagamenti.map((m: string, i: number) => `<button type="button" class="btn ${i === 0 ? 'btn--wa' : 'btn--scuro'} btn--grande btn--pieno" data-metodo="${h(m)}">${h(ETICHETTE[m] || m)}</button>`).join('')
+        : `<p class="avviso">${h(B.spenti)}</p>${f.dataset.whatsapp ? `<a class="btn btn--wa" href="https://wa.me/${h(f.dataset.whatsapp)}?text=${encodeURIComponent(B.waChiedi)}">${h(B.chiedi)}</a>` : ''}`;
+    })
+    .catch(() => {});
+  f.addEventListener('click', async (ev) => {
+    const b = (ev.target as Element).closest<HTMLButtonElement>('[data-metodo]');
+    if (!b) return;
+    err.hidden = true;
+    for (const c of [f.nome, f.email] as HTMLInputElement[]) if (!c.value.trim() || !c.checkValidity()) { c.reportValidity(); c.focus(); return; }
+    if (!f.accetto.checked) { err.textContent = B.spunta; err.hidden = false; return; }
+    const valore = f.valore.value === 'altro' ? Number(f.altro.value) : Number(f.valore.value);
+    b.disabled = true;
+    try {
+      const r = await api('/api/buono', { corpo: { valore, nome: f.nome.value, email: f.email.value, telefono: f.telefono.value, destinatario: f.destinatario.value, messaggio: f.messaggio.value, metodo: b.dataset.metodo, accetto: true, lingua: config.lingua } });
+      location.assign(r.redirect);
+    } catch (e) { b.disabled = false; err.textContent = (e as Error).message; err.hidden = false; }
+  });
+</script>

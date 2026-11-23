@@ -1,0 +1,76 @@
+---
+// Recesso online (art. 54-bis del Codice del consumo, dal 19 giugno 2026): ci si arriva dal link "Recedi dal contratto qui"
+// (piè di pagina e pagina del buono). Vale per i buoni regalo comprati sul sito: le escursioni con una data precisa
+// non hanno il recesso di 14 giorni (art. 59, comma 1, lettera n), e si annullano con le regole delle condizioni.
+// In tutte le lingue: /recesso/, /en/withdrawal/ ... Testi in src/data/buono-testi.js.
+import Base from '../layouts/Base.astro';
+import { regole } from '../data/prenotazioni.js';
+import { datiLingua } from '../data/lingua.js';
+import { testiBuonoDi } from '../data/buono-testi.js';
+const L = datiLingua(Astro.url);
+const R = testiBuonoDi(L.lingua).recesso;
+const sito = L.sito;
+const config = { lingua: L.lingua };
+---
+<Base titolo={R.titolo} descrizione={R.descrizione} nascosta>
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">{R.occhiello}</p>
+      <h1>{R.titolo}</h1>
+      <p class="intro">{R.intro}</p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:32px">
+    <div class="contenitore testo-lungo pila" style="gap:24px">
+      <form class="modulo modulo--chiaro" data-recesso novalidate data-config={JSON.stringify(config)}>
+        <h2 style="font-size:22px">{R.modulo}</h2>
+        <div class="campo"><label for="r-nome">{R.nome}</label><input id="r-nome" name="nome" autocomplete="name" required maxlength="100" /></div>
+        <div class="campo"><label for="r-codice">{R.codice}</label><input id="r-codice" name="codice" placeholder="BR-…" required maxlength="20" autocapitalize="characters" /></div>
+        <div class="campo"><label for="r-email">{R.email}</label><input id="r-email" name="email" type="email" autocomplete="email" required maxlength="200" /></div>
+        <p class="avviso" data-errore hidden role="alert"></p>
+        <button type="submit" class="btn btn--wa btn--grande btn--pieno">{R.conferma}</button>
+      </form>
+      <div data-ricevuta hidden aria-live="polite"></div>
+      <h2>{R.escursioni}</h2>
+      <p>{R.escursioniTesto(regole.cancellazioneGratisOre)}<a href={L.link('/condizioni/')}>{R.condizioni}</a>{sito.contatti.telefonoVisibile && R.oppure(sito.contatti.telefonoVisibile)}.</p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { api, h } from '../scripts/comune';
+  import { testiPrenotaDi } from '../data/prenota-testi.js';
+  import { testiBuonoDi } from '../data/buono-testi.js';
+  const form = document.querySelector<HTMLFormElement>('[data-recesso]')!;
+  const config = JSON.parse(form.dataset.config || '{}');
+  const R: any = testiBuonoDi(config.lingua).recesso;
+  const euro = (n: number) => testiPrenotaDi(config.lingua).euro(n);
+  const err = form.querySelector<HTMLElement>('[data-errore]')!;
+  const ricevuta = document.querySelector<HTMLElement>('[data-ricevuta]')!;
+  // Dalla pagina del buono si arriva con il codice già scritto.
+  const q = new URLSearchParams(location.search);
+  if (q.get('codice')) (form.elements.namedItem('codice') as HTMLInputElement).value = q.get('codice')!.toUpperCase();
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    err.hidden = true;
+    const f = form.elements as any;
+    if (!form.reportValidity()) return;
+    const bottone = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+    bottone.disabled = true;
+    try {
+      const r = await api('/api/recesso', { corpo: { nome: f.nome.value, codice: f.codice.value, email: f.email.value, lingua: config.lingua } });
+      form.hidden = true;
+      ricevuta.hidden = false;
+      ricevuta.innerHTML = `<div class="box box--acqua"><h2 style="font-size:24px">${h(R.ricevuto)}</h2>
+        <p><strong>${h(R.dichiarazione)}:</strong> ${h(r.dichiarazione)}</p>
+        <p><strong>${h(R.inviata)}:</strong> ${h(r.inviataIl)}</p>
+        <p>${h(r.rimborsoFatto ? R.fatto(euro(r.importo)) : R.daFare(euro(r.importo)))}
+        ${h(r.emailInviata ? R.emailInviata : R.salva)}</p></div>`;
+      ricevuta.focus?.();
+    } catch (e) {
+      bottone.disabled = false;
+      err.textContent = (e as Error).message;
+      err.hidden = false;
+    }
+  });
+</script>

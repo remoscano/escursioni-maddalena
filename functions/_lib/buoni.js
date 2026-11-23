@@ -5,6 +5,7 @@ import { prima, esegui, registra } from './db.js';
 import { avviaPagamento } from './pagamenti.js';
 import { inviaEmailBuono } from './email.js';
 import { Errore, testo, testoLungo, email, telefono, codiceCasuale, tokenSicuro, traMinutiISO, adessoISO, ugualeSicuro, oraRoma, euroDaCent } from './util.js';
+import { linguaValida, percorsoDi } from '../../src/data/percorsi.js';
 
 export const codiceBuono = () => `BR-${codiceCasuale(8)}`;
 
@@ -47,11 +48,12 @@ export async function creaBuono(db, b, { metodo, ipHash }) {
     metodo,
     ipHash,
     scade: traMinutiISO(regole.minutiPerPagare),
+    lingua: linguaValida(b.lingua),
   };
   for (let i = 0; i < 3; i++) {
     try {
-      const r = await esegui(db, `INSERT INTO codici_sconto (codice, tipo, valore, saldo, stato, token, acquirente, email, telefono, destinatario, messaggio, metodo, ip_hash, scade_il, creato_da)
-        VALUES (:codice, 'buono', :valore, 0, 'in_attesa', :token, :acquirente, :email, :telefono, :destinatario, :messaggio, :metodo, :ipHash, :scade, 'cliente')`, dati);
+      const r = await esegui(db, `INSERT INTO codici_sconto (codice, tipo, valore, saldo, stato, token, acquirente, email, telefono, destinatario, messaggio, metodo, ip_hash, scade_il, creato_da, lingua)
+        VALUES (:codice, 'buono', :valore, 0, 'in_attesa', :token, :acquirente, :email, :telefono, :destinatario, :messaggio, :metodo, :ipHash, :scade, 'cliente', :lingua)`, dati);
       return { ...dati, id: r.meta.last_row_id };
     } catch (e) {
       if (String(e?.message || e).includes('UNIQUE') && i < 2) { dati.codice = codiceBuono(); continue; }
@@ -67,11 +69,11 @@ export async function pagamentoBuono(contesto, b) {
   const pagamento = await avviaPagamento(contesto.env, b.metodo, {
     codice: b.codice, totale: b.valore, descrizione: `Buono regalo ${b.codice}`, scadeIl: b.scade,
   }, {
-    esito: `${origine}/buono-regalo/esito/?${q}`,
+    esito: `${origine}${percorsoDi(b.lingua, 'buonoEsito')}?${q}`,
     ritornoPaypal: `${origine}/api/pagamento/paypal?${q}&tipo=buono`,
-    annullaPaypal: `${origine}/buono-regalo/esito/?${q}&annullato=1`,
+    annullaPaypal: `${origine}${percorsoDi(b.lingua, 'buonoEsito')}?${q}&annullato=1`,
     notificaSumup: `${origine}/api/pagamento/sumup`,
-    prova: `${origine}/prenota/prova/?${q}&tipo=buono`,
+    prova: `${origine}/prenota/prova/?${q}&tipo=buono&ritorno=${encodeURIComponent(percorsoDi(b.lingua, 'buonoEsito'))}`,
   });
   await esegui(contesto.env.DB, 'UPDATE codici_sconto SET pagamento_rif = :r WHERE id = :id', { r: pagamento.rif, id: b.id });
   return pagamento.redirect;
