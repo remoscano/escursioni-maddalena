@@ -2,162 +2,182 @@
 // promemoria del giorno prima, grazie dopo l'uscita, lista d'attesa, buono regalo.
 // Partono solo se le email sono attive (RESEND_API_KEY ed EMAIL_MITTENTE). Testo semplice, senza immagini né tracciamenti.
 
-import { testoRitrovo, offerte } from '../../src/data/prenotazioni.js';
+import { oraRitrovo, anticipoDi, offerte } from '../../src/data/prenotazioni.js';
 import { sito } from '../../src/data/sito.js';
-import { inviaEmail, vistaCliente, linkPrenotazione, daPagare } from './prenotazioni.js';
-import { dataLeggibile, euroDaCent } from './util.js';
+import { testiEmailDi } from '../../src/data/email-testi.js';
+import { testiPrenotaDi } from '../../src/data/prenota-testi.js';
+import { linguaValida, percorsoDi } from '../../src/data/percorsi.js';
+import { pacchetti } from '../../src/data/lingua.js';
+import { inviaEmail, vistaCliente, linkPrenotazione, daPagare, dataIn } from './prenotazioni.js';
+import { dataLeggibile } from './util.js';
 
-const firma = () => [
+// Testi, importi e persone nella lingua del cliente (src/data/email-testi.js; l'italiano è il testo di riferimento).
+export const linguaEmail = (l) => {
+  const lingua = linguaValida(l);
+  const T = testiPrenotaDi(lingua);
+  return {
+    lingua, M: testiEmailDi(lingua), T,
+    soldi: (cent) => T.euro(Math.round(cent) / 100),
+    ritrovo: (orario, imbarco) => { const ora = oraRitrovo(orario, imbarco); return ora ? T.info.ritrovo(ora, anticipoDi(imbarco)) : ''; },
+  };
+};
+
+export const firma = (M) => [
   '',
-  sito.contatti.telefonoVisibile ? `Per qualsiasi cosa scrivici su WhatsApp: ${sito.contatti.telefonoVisibile}` : null,
+  sito.contatti.telefonoVisibile ? M.whatsapp(sito.contatti.telefonoVisibile) : null,
   sito.nome,
 ].filter((r) => r !== null);
 
-const persone = (v) => [
-  v.adulti && `${v.adulti} ${v.adulti === 1 ? 'adulto' : 'adulti'}`,
-  (v.bambini + v.neonati) && `${v.bambini + v.neonati} ${v.bambini + v.neonati === 1 ? 'bambino' : 'bambini'}`,
-].filter(Boolean).join(', ');
-
-const testa = (v) => [`Codice: ${v.codice}`, `${v.escursione} · ${v.turno}`, `Data: ${v.dataLeggibile}`, `Imbarco: ${v.imbarco}`, `Persone: ${persone(v)}`];
+const testa = (v, M, T) => [`${M.codice}: ${v.codice}`, `${v.escursione} · ${v.turno}`, `${M.data}: ${v.dataLeggibile}`, `${M.imbarco}: ${v.imbarco}`, `${M.persone}: ${T.persone(v.adulti, v.bambini + v.neonati)}`];
 
 // Uscita annullata da noi (maltempo o altro motivo): il cliente sceglie rinvio o rimborso dal link.
 export async function inviaEmailRecupero(env, p, origine, motivo) {
   const v = vistaCliente(p);
-  // La gestione salva "Uscita annullata: motivo": al cliente basta il motivo.
-  motivo = String(motivo || '').replace(/^Uscita annullata:?\s*/i, '');
+  const { M, T, soldi, lingua } = linguaEmail(p.lingua);
+  // La gestione salva "Uscita annullata: motivo": al cliente basta il motivo. Il motivo è scritto in italiano
+  // dall'ufficio: nelle altre lingue si dice solo che è per le condizioni del mare.
+  motivo = lingua === 'it' ? String(motivo || '').replace(/^Uscita annullata:?\s*/i, '') : '';
   const testo = [
-    `Ciao ${p.nome},`,
-    `purtroppo dobbiamo annullare l'uscita di ${v.dataLeggibile}${motivo ? `: ${motivo}` : ' per le condizioni del mare'}.`,
+    M.ciao(p.nome),
+    M.recupero.annullata(v.dataLeggibile, motivo),
     '',
-    ...testa(v),
+    ...testa(v, M, T),
     '',
-    "Scegli tu cosa preferisci, da qui (bastano due clic):",
+    M.recupero.scegli,
     linkPrenotazione(origine, p),
     '',
-    `- Un'altra data: scegli giorno e orario tra quelli con posti liberi. Il prezzo resta quello che hai pagato.`,
-    `- Il rimborso completo: ${euroDaCent(p.pagato + (p.buono || 0))} €, sullo stesso metodo con cui hai pagato${p.buono ? ' (la parte pagata con il buono regalo torna sul buono)' : ''}.`,
+    M.recupero.altraData,
+    M.recupero.rimborso(soldi(p.pagato + (p.buono || 0)), p.buono),
     '',
-    'Ci dispiace: in mare la sicurezza viene prima di tutto.',
-    ...firma(),
+    M.recupero.dispiace,
+    ...firma(M),
   ];
-  return inviaEmail(env, { a: p.email, oggetto: `Uscita annullata: scegli rinvio o rimborso · ${p.codice}`, testo: testo.join('\n') });
+  return inviaEmail(env, { a: p.email, oggetto: M.recupero.oggetto(p.codice), testo: testo.join('\n') });
 }
 
 // Prenotazione presa dalla gestione: il cliente paga online dal link.
 export async function inviaEmailLinkPagamento(env, p, origine) {
   const v = vistaCliente(p);
+  const { M, T, soldi } = linguaEmail(p.lingua);
   const scade = p.stato === 'in_attesa' && p.scade_il
-    ? new Intl.DateTimeFormat('it-IT', { timeZone: 'Europe/Rome', weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(p.scade_il))
+    ? new Intl.DateTimeFormat(T.locale, { timeZone: 'Europe/Rome', weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(p.scade_il))
     : null;
   const testo = [
-    `Ciao ${p.nome},`,
-    p.stato === 'in_attesa' ? 'ti teniamo da parte i posti: per confermare la prenotazione paga online da questo link.' : 'ecco il link per pagare la tua prenotazione online.',
+    M.ciao(p.nome),
+    p.stato === 'in_attesa' ? M.link.tenuti : M.link.ecco,
     '',
-    ...testa(v),
-    `Da pagare: ${euroDaCent(daPagare(p))} € (IVA inclusa)`,
+    ...testa(v, M, T),
+    M.link.daPagare(soldi(daPagare(p))),
     '',
-    `Paga con carta o PayPal: ${origine}/prenota/paga/?codice=${encodeURIComponent(p.codice)}&t=${encodeURIComponent(p.token)}`,
-    scade ? `I posti restano tenuti fino a ${scade}: dopo tornano disponibili.` : null,
-    ...firma(),
+    M.link.paga(`${origine}${percorsoDi(p.lingua, 'paga')}?codice=${encodeURIComponent(p.codice)}&t=${encodeURIComponent(p.token)}`),
+    scade ? M.link.scade(scade) : null,
+    ...firma(M),
   ].filter((r) => r !== null);
-  return inviaEmail(env, { a: p.email, oggetto: `Paga la prenotazione ${p.codice} · ${v.escursione}`, testo: testo.join('\n') });
+  return inviaEmail(env, { a: p.email, oggetto: M.link.oggetto(p.codice, v.escursione), testo: testo.join('\n') });
 }
 
 // Prenotazione annullata (dal cliente o da noi) con l'esito del rimborso.
 export async function inviaEmailAnnullata(env, p, { rimborsoFatto, importo, buonoReso }) {
   const v = vistaCliente(p);
+  const { M, T, soldi } = linguaEmail(p.lingua);
   const testo = [
-    `Ciao ${p.nome},`,
-    `la prenotazione ${p.codice} è annullata.`,
+    M.ciao(p.nome),
+    M.annullata.annullata(p.codice),
     '',
-    ...testa(v),
+    ...testa(v, M, T),
     '',
-    importo > 0 && rimborsoFatto ? `Rimborso: ${euroDaCent(importo)} €, sullo stesso metodo con cui hai pagato. Di solito arriva in pochi giorni lavorativi, a seconda della banca.` : null,
-    importo > 0 && !rimborsoFatto ? `Rimborso: ${euroDaCent(importo)} €. Lo facciamo noi a breve, sullo stesso metodo con cui hai pagato.` : null,
-    buonoReso > 0 ? `I ${euroDaCent(buonoReso)} € pagati con il buono regalo sono tornati sul buono: puoi usarlo per un'altra prenotazione.` : null,
-    ...firma(),
+    importo > 0 && rimborsoFatto ? M.annullata.rimborsoFatto(soldi(importo)) : null,
+    importo > 0 && !rimborsoFatto ? M.annullata.rimborsoDaFare(soldi(importo)) : null,
+    buonoReso > 0 ? M.annullata.buonoReso(soldi(buonoReso)) : null,
+    ...firma(M),
   ].filter((r) => r !== null);
-  return inviaEmail(env, { a: p.email, oggetto: `Prenotazione annullata · ${p.codice}`, testo: testo.join('\n') });
+  return inviaEmail(env, { a: p.email, oggetto: M.annullata.oggetto(p.codice), testo: testo.join('\n') });
 }
 
 // Promemoria del giorno prima.
 export async function inviaEmailPromemoria(env, p, origine) {
   const v = vistaCliente(p);
+  const { M, T, soldi, ritrovo, lingua } = linguaEmail(p.lingua);
   const imbarco = sito.imbarchi[p.imbarco];
+  // Stessa lista "Cosa portare" del sito (sito.cosaPortare), nella lingua del cliente: da bere lo diamo noi (Remo, 13 novembre 2026).
+  const cosaPortare = pacchetti[lingua].sito.cosaPortare;
   const testo = [
-    `Ciao ${p.nome},`,
-    `domani si va in mare! Ecco tutto quello che ti serve.`,
+    M.ciao(p.nome),
+    M.promemoria.domani,
     '',
-    ...testa(v),
-    v.orario ? `Orario: ${v.orario}${v.orarioIndicativo ? ' (indicativo: segue la luce del tramonto)' : ''}` : null,
-    testoRitrovo(v.orario, p.imbarco) || null,
-    imbarco?.molo ? `Dove: ${imbarco.molo}${imbarco.mappa ? ` (mappa: ${imbarco.mappa})` : ''}` : null,
-    p.imbarco === 'palau' && offerte[p.escursione]?.tipo === 'gruppo' ? "Il gommone parte da La Maddalena e passa a prenderti a Palau." : null,
+    ...testa(v, M, T),
+    v.orario ? `${M.orario}: ${v.orario}${v.orarioIndicativo ? M.indicativo : ''}` : null,
+    ritrovo(v.orario, p.imbarco) || null,
+    imbarco?.molo ? M.promemoria.dove(imbarco.molo, imbarco.mappa) : null,
+    p.imbarco === 'palau' && offerte[p.escursione]?.tipo === 'gruppo' ? M.promemoria.palau : null,
     '',
-    v.documento ? "Si va in Corsica: porta un documento valido per l'espatrio per ogni persona, anche per i bambini." : null,
-    // Stessa lista "Cosa portare" del sito (sito.cosaPortare): da bere lo diamo noi (Remo, 13 novembre 2026).
-    `Cosa portare: ${sito.cosaPortare.map((x) => x.charAt(0).toLowerCase() + x.slice(1)).join('; ')}.`,
-    `Il tuo biglietto con il codice QR da mostrare all'imbarco: ${linkPrenotazione(origine, p)}`,
-    daPagare(p) > 0 ? `Da pagare all'imbarco: ${euroDaCent(daPagare(p))} €.` : null,
+    v.documento ? M.conferma.documento : null,
+    M.promemoria.cosaPortare(cosaPortare.map((x) => x.charAt(0).toLowerCase() + x.slice(1)).join('; ')),
+    M.promemoria.biglietto(linkPrenotazione(origine, p)),
+    daPagare(p) > 0 ? M.promemoria.daPagare(soldi(daPagare(p))) : null,
     '',
-    "Se il mare non è sicuro ti scriviamo noi prima della partenza: scegli tu tra un'altra data e il rimborso.",
-    ...firma(),
+    M.promemoria.mare,
+    ...firma(M),
   ].filter((r) => r !== null);
-  return inviaEmail(env, { a: p.email, oggetto: `Domani: ${v.escursione} · ${p.codice}`, testo: testo.join('\n') });
+  return inviaEmail(env, { a: p.email, oggetto: M.promemoria.oggetto(v.escursione, p.codice), testo: testo.join('\n') });
 }
 
 // Grazie dopo l'uscita, con il link per lasciare una recensione su Google (se c'è).
 export async function inviaEmailGrazie(env, p) {
   const v = vistaCliente(p);
+  const { M } = linguaEmail(p.lingua);
   const testo = [
-    `Ciao ${p.nome},`,
-    `grazie per la tua uscita in mare con noi (${v.escursione}): speriamo che ti sia piaciuta!`,
+    M.ciao(p.nome),
+    M.grazie.grazie(v.escursione),
     '',
-    sito.recensioniGoogle ? 'Se hai un minuto, una recensione su Google ci aiuta tantissimo: altri viaggiatori ci trovano grazie a te.' : null,
+    sito.recensioniGoogle ? M.grazie.recensione : null,
     sito.recensioniGoogle ? sito.recensioniGoogle : null,
     sito.recensioniGoogle ? '' : null,
-    "Se qualcosa non è andato come speravi, rispondi a questa email: leggiamo tutto.",
+    M.grazie.male,
     '',
-    'Non vuoi ricevere altre email come questa? Rispondi con "no grazie" e non te ne mandiamo più.',
-    ...firma(),
+    M.grazie.basta,
+    ...firma(M),
   ].filter((r) => r !== null);
-  return inviaEmail(env, { a: p.email, oggetto: `Grazie da ${sito.nome}`, testo: testo.join('\n') });
+  return inviaEmail(env, { a: p.email, oggetto: M.grazie.oggetto(sito.nome), testo: testo.join('\n') });
 }
 
-// Lista d'attesa: si è liberato un posto.
+// Lista d'attesa: si è liberato un posto. titolo e nomeTurno arrivano già nella lingua del cliente.
 export async function inviaEmailAttesa(env, a, origine, titolo, nomeTurno) {
-  const link = `${origine}/prenota/?escursione=${encodeURIComponent(a.escursione)}&imbarco=${encodeURIComponent(a.imbarco)}&data=${encodeURIComponent(a.data)}`;
+  const { M } = linguaEmail(a.lingua);
+  const link = `${origine}${percorsoDi(a.lingua, 'prenota')}?escursione=${encodeURIComponent(a.escursione)}&imbarco=${encodeURIComponent(a.imbarco)}&data=${encodeURIComponent(a.data)}`;
   const testo = [
-    `Ciao ${a.nome},`,
-    `si è liberato un posto per ${titolo} · ${nomeTurno} di ${dataLeggibile(a.data)}, per ${a.posti} ${a.posti === 1 ? 'persona' : 'persone'}.`,
+    M.ciao(a.nome),
+    M.attesa.liberato(titolo, nomeTurno, dataIn(a.data, a.lingua), a.posti),
     '',
-    `Prenota da qui prima che lo prenda qualcun altro: ${link}`,
+    M.attesa.prenota(link),
     '',
-    "Ti abbiamo scritto perché eri in lista d'attesa: è l'unico messaggio che ti mandiamo per questa data.",
-    ...firma(),
+    M.attesa.unico,
+    ...firma(M),
   ];
-  return inviaEmail(env, { a: a.email, oggetto: `Si è liberato un posto · ${titolo}`, testo: testo.join('\n') });
+  return inviaEmail(env, { a: a.email, oggetto: M.attesa.oggetto(titolo), testo: testo.join('\n') });
 }
 
-// Buono regalo comprato online.
+// Buono regalo comprato online, nella lingua di chi l'ha comprato. Avviso all'ufficio in italiano.
 export async function inviaEmailBuono(env, b, origine) {
+  const { M, soldi } = linguaEmail(b.lingua);
   const testo = [
-    `Ciao ${b.acquirente},`,
-    'grazie! Ecco il tuo buono regalo.',
+    M.ciao(b.acquirente),
+    M.buono.grazie,
     '',
-    `Codice: ${b.codice}`,
-    `Valore: ${euroDaCent(b.valore)} €`,
-    b.destinatario ? `Per: ${b.destinatario}` : null,
-    b.messaggio ? `Messaggio: ${b.messaggio}` : null,
-    b.al ? `Valido fino a ${dataLeggibile(b.al)}` : null,
+    `${M.codice}: ${b.codice}`,
+    `${M.buono.valore}: ${soldi(b.valore)}`,
+    b.destinatario ? `${M.buono.per}: ${b.destinatario}` : null,
+    b.messaggio ? `${M.buono.messaggio}: ${b.messaggio}` : null,
+    b.al ? M.buono.valido(dataIn(b.al, b.lingua)) : null,
     '',
-    `Il buono da stampare o da inoltrare: ${origine}/buono-regalo/esito/?codice=${encodeURIComponent(b.codice)}&t=${encodeURIComponent(b.token)}`,
-    `Per usarlo: si prenota su ${origine}/prenota/ e si scrive il codice nel riepilogo, prima di pagare. Se il buono non copre tutto, la differenza si paga con carta o PayPal; se avanza qualcosa, resta sul buono.`,
-    ...firma(),
+    M.buono.stampa(`${origine}${percorsoDi(b.lingua, 'buonoEsito')}?codice=${encodeURIComponent(b.codice)}&t=${encodeURIComponent(b.token)}`),
+    M.buono.usa(`${origine}${percorsoDi(b.lingua, 'prenota')}`),
+    ...firma(M),
   ].filter((r) => r !== null);
-  await inviaEmail(env, { a: b.email, oggetto: `Il tuo buono regalo ${sito.nome}`, testo: testo.join('\n') });
+  await inviaEmail(env, { a: b.email, oggetto: M.buono.oggetto(sito.nome), testo: testo.join('\n') });
   if (sito.contatti.email) {
-    await inviaEmail(env, { a: sito.contatti.email, oggetto: `Buono regalo venduto ${b.codice} · ${euroDaCent(b.valore)} €`, testo: `${[b.acquirente, b.email, b.telefono].filter(Boolean).join(' · ')}\nValore: ${euroDaCent(b.valore)} € (${b.metodo})` });
+    const it = linguaEmail('it');
+    await inviaEmail(env, { a: sito.contatti.email, oggetto: `Buono regalo venduto ${b.codice} · ${it.soldi(b.valore)}`, testo: `${[b.acquirente, b.email, b.telefono].filter(Boolean).join(' · ')}\nValore: ${it.soldi(b.valore)} (${b.metodo})` });
   }
 }
 

@@ -18,6 +18,10 @@ import { escursioni } from './escursioni.js';
 import {
   regole, offerte, gommoni, postiMassimi, testoChiusuraOnline, testoDopoChiusura, CARBURANTE_MANCA,
 } from './prenotazioni.js';
+import { pacchetti } from './lingua.js';
+import { testiPrenotaDi } from './prenota-testi.js';
+import { linguaValida, percorsoDi } from './percorsi.js';
+import { condizioniTradotte } from './condizioni-lingue.js';
 
 const { azienda, contatti } = sito;
 const v = (valore, etichetta) => (valore === undefined || valore === null || String(valore).trim() === '' ? { manca: etichetta } : String(valore));
@@ -164,10 +168,57 @@ for (let i = condizioni.length - 1; i >= 0; i--) {
   else if (condizioni[i].punti) condizioni[i].punti = condizioni[i].punti.filter(Boolean);
 }
 
+// ---------- Le altre lingue (23 novembre 2026) ----------
+// Traduzioni in src/data/condizioni-lingue.js, con gli stessi dati dell'italiano. L'italiano resta il testo che vale.
+const congiunzione = { en: 'and', es: 'y', fr: 'et', de: 'und' };
+const etichettaAggiornamento = { it: 'Ultimo aggiornamento', en: 'Last updated', es: 'Última actualización', fr: 'Dernière mise à jour', de: 'Letzte Aktualisierung' };
+const dataAggiornamento = '2026-11-16'; // la stessa di "aggiornamento" qui sopra
+
+function datiPer(lingua) {
+  const L = pacchetti[lingua];
+  const T = testiPrenotaDi(lingua);
+  const elencoIn = (n) => (n.length > 1 ? `${n.slice(0, -1).join(', ')} ${congiunzione[lingua]} ${n.at(-1)}` : n[0] ?? '');
+  const nomeIn = (slug) => { const e = L.trovaEscursione(slug); return e?.nomeBreve ?? e?.titolo ?? slug; };
+  const nomiTipo = (tipo) => elencoIn(escursioni.filter((e) => offerte[e.slug]?.tipo === tipo).map((e) => nomeIn(e.slug)));
+  const valori = { ragioneSociale: azienda.ragioneSociale, indirizzo: azienda.indirizzo, partitaIva: azienda.partitaIva, rea: azienda.rea, telefono: contatti.telefonoVisibile, email: contatti.email };
+  return {
+    online,
+    v: (campo, etichetta) => v(valori[campo], etichetta),
+    nomiGruppo: nomiTipo('gruppo'),
+    nomiEsclusiva: nomiTipo('esclusiva'),
+    nomiCannigione: elencoIn(escursioni.filter((e) => offerte[e.slug]?.imbarchi.includes('cannigione')).map((e) => nomeIn(e.slug))),
+    postiMassimi, postiSunset, piuPiccolo, minimo, bambiniFinoA,
+    minutiPerPagare: regole.minutiPerPagare,
+    ore: regole.cancellazioneGratisOre,
+    anticipo: regole.anticipoRitrovo.maddalena,
+    ritrovoMaddalena: sito.imbarchi.maddalena.ritrovo,
+    ritrovoPalau: sito.imbarchi.palau.ritrovo,
+    chiusura: T.pagina.chiusura(regole.chiusuraOnline.ora),
+    dopoChiusura: `${T.pagina.dopo(postiMassimi)} ${T.pagina.scrivici}.`,
+    carburante: v(L.sito.carburante, CARBURANTE_MANCA),
+    validitaMesi: regole.buoni.validitaMesi,
+    recesso: percorsoDi(lingua, 'recesso'),
+  };
+}
+
+// Le condizioni nella lingua chiesta (italiano se non c'è la traduzione).
+export function condizioniDi(lingua = 'it') {
+  const l = linguaValida(lingua);
+  if (l === 'it' || !condizioniTradotte[l]) return condizioni;
+  return condizioniTradotte[l](datiPer(l)).filter(Boolean).map((s) => (s.punti ? { ...s, punti: s.punti.filter(Boolean) } : s));
+}
+
+// Data dell'ultimo aggiornamento nella lingua chiesta.
+export const aggiornamentoDi = (lingua = 'it') => {
+  const l = linguaValida(lingua);
+  return l === 'it' ? aggiornamento : new Intl.DateTimeFormat(testiPrenotaDi(l).locale, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${dataAggiornamento}T12:00:00Z`));
+};
+export const etichettaAggiornamentoDi = (lingua = 'it') => etichettaAggiornamento[linguaValida(lingua)];
+
 // Versione in testo semplice, per l'email di conferma e per il file /condizioni.txt (da mandare su WhatsApp).
 const riga = (pezzi) => pezzi.map((x) => (typeof x === 'string' ? x : `[${x.manca}]`)).join('');
-export function condizioniInTesto() {
-  return condizioni
+export function condizioniInTesto(lingua = 'it') {
+  return condizioniDi(lingua)
     .map((s) => [s.titolo.toUpperCase(), ...(s.paragrafi ?? []).map(riga), ...(s.punti ?? []).map((p) => `- ${riga(p)}`)].join('\n'))
-    .join('\n\n') + `\n\nUltimo aggiornamento: ${aggiornamento}`;
+    .join('\n\n') + `\n\n${etichettaAggiornamentoDi(lingua)}: ${aggiornamentoDi(lingua)}`;
 }

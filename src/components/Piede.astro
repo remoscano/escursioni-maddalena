@@ -30,7 +30,7 @@ const lingue = indirizziLingue(Astro.url.pathname);
         {L.prenotaOnline && <a href="/buono-regalo/">{T.buonoRegalo}</a>}
         {L.prenotaOnline && <a href="/recesso/">{T.recesso}</a>}
         <a href={L.link('/richiesta/')}>{T.scriviciWa}</a>
-        <a href="/condizioni/">{T.condizioni}</a>
+        <a href={L.link('/condizioni/')}>{T.condizioni}</a>
         <a href="/partner/">{T.partner}</a>
       </nav>
       <div class="piede__col">

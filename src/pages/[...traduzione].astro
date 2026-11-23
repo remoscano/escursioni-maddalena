@@ -14,6 +14,7 @@ import NonTrovata from '../viste/NonTrovata.astro';
 import Prenota from '../viste/Prenota.astro';
 import Esito from '../viste/Esito.astro';
 import Paga from '../viste/Paga.astro';
+import Condizioni from '../viste/Condizioni.astro';
 import PrivacyEn from '../viste/legali/PrivacyEn.astro';
 import CookieEn from '../viste/legali/CookieEn.astro';
 import PrivacyEs from '../viste/legali/PrivacyEs.astro';
@@ -46,7 +47,7 @@ const escursione = escursioni.find((e) => it === `/escursioni/${e.indirizzo}/`);
 const imbarco = pagineImbarco.find((p) => p.href === it);
 const viste: Record<string, any> = {
   '/': Home, '/escursioni/': Escursioni, '/gommone/': Gommoni, '/info-utili/': InfoUtili, '/domande-frequenti/': Domande,
-  '/contatti/': Contatti, '/richiesta/': Richiesta, '/404/': NonTrovata, '/prenota/': Prenota, '/prenota/esito/': Esito, '/prenota/paga/': Paga,
+  '/contatti/': Contatti, '/richiesta/': Richiesta, '/404/': NonTrovata, '/prenota/': Prenota, '/prenota/esito/': Esito, '/prenota/paga/': Paga, '/condizioni/': Condizioni,
   '/privacy/': legali[lingua][0], '/cookie/': legali[lingua][1],
 };
 const Vista = viste[it];

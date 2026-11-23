@@ -471,7 +471,7 @@ const perOspite = area === 'struttura';
       try {
         const r = await api('/api/lista-attesa', { corpo: {
           escursione: st.slug, imbarco: st.imbarco, data: f.data.value, turno: f.turno.value, adulti: Number(f.adulti.value), bambini: Number(f.bambini.value),
-          nome: f.nome.value, email: f.email.value, telefono: f.telefono.value, accetto: f.accetto.checked,
+          nome: f.nome.value, email: f.email.value, telefono: f.telefono.value, accetto: f.accetto.checked, lingua: config.lingua,
         } });
         okBox.textContent = r.gia ? T.attesa.gia : T.attesa.fatto(dataLunga(f.data.value), f.email.value);
         okBox.hidden = false;

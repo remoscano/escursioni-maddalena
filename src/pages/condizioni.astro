@@ -1,26 +1,4 @@
 ---
-// Il testo sta in src/data/condizioni.js: lo stesso finisce nell'email di conferma.
-import Base from '../layouts/Base.astro';
-import { condizioni, aggiornamento } from '../data/condizioni.js';
+import Condizioni from '../viste/Condizioni.astro';
 ---
-<Base titolo="Condizioni di prenotazione" descrizione="Come funzionano prenotazione, pagamento, cancellazione e maltempo per le escursioni in barca di Escursioni La Maddalena.">
-  <section class="testa-pagina">
-    <div class="contenitore">
-      <p class="occhiello">Prenotazioni</p>
-      <h1>Condizioni di prenotazione</h1>
-      <p class="intro"><span class="dato">[BOZZA: da completare con i dati in rosa prima della pubblicazione]</span></p>
-    </div>
-  </section>
-  <section class="sezione" style="padding-top:40px">
-    <div class="contenitore testo-lungo">
-      {condizioni.map((s) => (
-        <Fragment>
-          <h2>{s.titolo}</h2>
-          {s.paragrafi?.map((p) => <p>{p.map((x) => typeof x === 'string' ? x : <span class="dato">[{x.manca}]</span>)}</p>)}
-          {s.punti && <ul>{s.punti.map((p) => <li>{p.map((x) => typeof x === 'string' ? x : <span class="dato">[{x.manca}]</span>)}</li>)}</ul>}
-        </Fragment>
-      ))}
-      <p class="testo-2">Ultimo aggiornamento: {aggiornamento}</p>
-    </div>
-  </section>
-</Base>
+<Condizioni />

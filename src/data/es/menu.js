@@ -20,4 +20,5 @@ export const pagine = {
   '/privacy/': '/es/privacidad/',
   '/cookie/': '/es/cookies/',
   '/prenota/': percorsiPrenota.es.prenota,
+  '/condizioni/': percorsiPrenota.es.condizioni,
 };

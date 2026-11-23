@@ -3,7 +3,7 @@
 import { offerte, turnoDi } from '../../src/data/prenotazioni.js';
 import { tutte, esegui } from './db.js';
 import { caricaGiorni, situazioneTurno, prenotabileOnline } from './motore.js';
-import { emailAttive, titoloEscursione } from './prenotazioni.js';
+import { emailAttive, titoloIn, turnoIn } from './prenotazioni.js';
 import { inviaEmailAttesa } from './email.js';
 import { oraRoma } from './util.js';
 
@@ -34,7 +34,7 @@ export async function avvisaListaAttesa(env, origine) {
   if (!emailAttive(env)) return [];
   const avvisati = [];
   for (const a of (await situazioneAttesa(env.DB)).filter((x) => x.libero && x.email)) {
-    const ok = await inviaEmailAttesa(env, a, origine, titoloEscursione(a.escursione), turnoDi(a.escursione, a.turno)?.nome ?? a.turno);
+    const ok = await inviaEmailAttesa(env, a, origine, titoloIn(a.escursione, a.lingua), turnoIn(a.escursione, a.turno, a.lingua));
     if (ok) {
       await esegui(env.DB, "UPDATE lista_attesa SET stato = 'avvisato', avvisata_il = :ora WHERE id = :id", { ora: new Date().toISOString(), id: a.id });
       avvisati.push(a.id);

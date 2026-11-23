@@ -1,0 +1,32 @@
+---
+// Condizioni di prenotazione in tutte le lingue: /condizioni/, /en/booking-terms/ ... (src/data/percorsi.js).
+// Il testo sta in src/data/condizioni.js (italiano, che vale) e condizioni-lingue.js: lo stesso finisce nell'email di conferma.
+import Base from '../layouts/Base.astro';
+import { datiLingua } from '../data/lingua.js';
+import { condizioniDi, aggiornamentoDi, etichettaAggiornamentoDi } from '../data/condizioni.js';
+import { paginaCondizioni } from '../data/condizioni-lingue.js';
+const L = datiLingua(Astro.url);
+const P = paginaCondizioni[L.lingua];
+const condizioni = condizioniDi(L.lingua);
+---
+<Base titolo={P.titolo} descrizione={P.descrizione}>
+  <section class="testa-pagina">
+    <div class="contenitore">
+      <p class="occhiello">{P.occhiello}</p>
+      <h1>{P.titolo}</h1>
+      <p class="intro"><span class="dato">[{P.bozza}]</span></p>
+    </div>
+  </section>
+  <section class="sezione" style="padding-top:40px">
+    <div class="contenitore testo-lungo">
+      {condizioni.map((s: any) => (
+        <Fragment>
+          <h2>{s.titolo}</h2>
+          {s.paragrafi?.map((p: any[]) => <p>{p.map((x) => typeof x === 'string' ? x : <span class="dato">[{x.manca}]</span>)}</p>)}
+          {s.punti && <ul>{s.punti.map((p: any[]) => <li>{p.map((x) => typeof x === 'string' ? x : <span class="dato">[{x.manca}]</span>)}</li>)}</ul>}
+        </Fragment>
+      ))}
+      <p class="testo-2">{etichettaAggiornamentoDi(L.lingua)}: {aggiornamentoDi(L.lingua)}</p>
+    </div>
+  </section>
+</Base>

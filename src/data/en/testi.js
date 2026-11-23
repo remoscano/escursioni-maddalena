@@ -35,7 +35,7 @@ export const testi = {
     buonoRegalo: 'Gift voucher',
     recesso: 'Withdraw from the contract here',
     scriviciWa: 'Message us on WhatsApp',
-    condizioni: 'Booking terms (in Italian)',
+    condizioni: 'Booking terms',
     partner: 'Partner area (in Italian)',
     contatti: 'Contact',
     whatsappTelefono: 'WhatsApp and phone',

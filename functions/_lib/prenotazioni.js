@@ -1,6 +1,6 @@
 // Operazioni sulle prenotazioni condivise da più API: lettura, conferma dopo il pagamento, email.
 
-import { offerte, turnoDi, regole, imbarchiPrenotazione, gommoni, testoCarburante, testoRitrovo, orarioDi, oreAllaPartenza } from '../../src/data/prenotazioni.js';
+import { offerte, turnoDi, regole, imbarchiPrenotazione, gommoni, oraRitrovo, anticipoDi, orarioDi, oreAllaPartenza } from '../../src/data/prenotazioni.js';
 import { escursioni } from '../../src/data/escursioni.js';
 import { sito } from '../../src/data/sito.js';
 import { condizioniInTesto } from '../../src/data/condizioni.js';
@@ -12,6 +12,7 @@ import { dataLeggibile, euroDaCent, ugualeSicuro } from './util.js';
 import { percorsoDi, linguaValida } from '../../src/data/percorsi.js';
 import { pacchetti } from '../../src/data/lingua.js';
 import { testiPrenotaDi, nomeTurno } from '../../src/data/prenota-testi.js';
+import { testiEmailDi } from '../../src/data/email-testi.js';
 
 export const titoloEscursione = (slug) => escursioni.find((e) => e.slug === slug)?.titolo ?? slug;
 
@@ -202,63 +203,69 @@ export async function inviaEmail(env, { a, oggetto, testo }) {
 export const linkPrenotazione = (origine, p) => `${origine}${percorsoDi(p.lingua, 'esito')}?codice=${encodeURIComponent(p.codice)}&t=${encodeURIComponent(p.token)}`;
 
 // Righe con il prezzo: sconto, extra, buono regalo, pagato.
+// Righe del prezzo per le email del cliente, nella sua lingua (la nota dello sconto resta come è salvata).
 export async function righePrezzo(db, p) {
   const extra = db ? await extraDi(db, p.id) : [];
+  const M = testiEmailDi(linguaValida(p.lingua)).prezzo;
+  const T = testiPrenotaDi(linguaValida(p.lingua));
+  const soldi = (cent) => T.euro(Math.round(cent) / 100);
   return [
-    p.sconto_nota && p.sconto ? `${p.sconto > 0 ? 'Sconto' : 'Maggiorazione'}: ${p.sconto_nota} (${p.sconto > 0 ? '−' : '+'}${euroDaCent(Math.abs(p.sconto))} €)` : null,
-    ...extra.map((e) => `Extra: ${e.nome}${e.quantita > 1 ? ` × ${e.quantita}` : ''} (${euroDaCent(e.totale * 100)} €)`),
-    `Totale: ${euroDaCent(p.totale)} € (IVA inclusa)`,
-    p.buono ? `Pagato con buono regalo: ${euroDaCent(p.buono)} €` : null,
-    p.pagato ? `Pagato ${p.metodo === 'paypal' ? 'con PayPal' : p.metodo === 'sumup' ? 'con carta' : ''}: ${euroDaCent(p.pagato)} €`.replace('Pagato :', 'Pagato:') : null,
-    daPagare(p) > 0 ? `Da pagare: ${euroDaCent(daPagare(p))} €` : null,
+    p.sconto_nota && p.sconto ? `${p.sconto > 0 ? M.sconto : M.maggiorazione}: ${p.sconto_nota} (${p.sconto > 0 ? '−' : '+'}${soldi(Math.abs(p.sconto))})` : null,
+    ...extra.map((e) => `${M.extra}: ${e.nome}${e.quantita > 1 ? ` × ${e.quantita}` : ''} (${soldi(e.totale * 100)})`),
+    M.totale(soldi(p.totale)),
+    p.buono ? M.buono(soldi(p.buono)) : null,
+    p.pagato ? M.pagato(p.metodo, soldi(p.pagato)) : null,
+    daPagare(p) > 0 ? M.daPagare(soldi(daPagare(p))) : null,
   ].filter(Boolean);
 }
 
 export async function inviaEmailConferma(env, p, origine) {
   const v = vistaCliente(p);
-  const persone = [
-    v.adulti && `${v.adulti} ${v.adulti === 1 ? 'adulto' : 'adulti'}`,
-    (v.bambini + v.neonati) && `${v.bambini + v.neonati} ${v.bambini + v.neonati === 1 ? 'bambino' : 'bambini'}`,
-  ].filter(Boolean).join(', ');
+  const lingua = linguaValida(p.lingua);
+  const M = testiEmailDi(lingua);
+  const T = testiPrenotaDi(lingua);
+  const persone = T.persone(v.adulti, v.bambini + v.neonati);
+  const ritrovo = (() => { const ora = oraRitrovo(v.orario, v.imbarcoId); return ora ? T.info.ritrovo(ora, anticipoDi(v.imbarcoId)) : null; })();
   const link = linkPrenotazione(origine, p);
   const prezzo = await righePrezzo(env.DB, p);
   const { azienda } = sito;
   // null = riga che non serve per questa prenotazione; '' = riga vuota tra un blocco e l'altro.
   const righe = [
-    `Ciao ${p.nome},`,
-    p.stato === 'confermata' ? 'la tua prenotazione è confermata.' : 'abbiamo ricevuto il tuo pagamento: ti contattiamo a breve per confermare il posto.',
+    M.ciao(p.nome),
+    p.stato === 'confermata' ? M.conferma.confermata : M.conferma.ricevuto,
     '',
-    `Codice: ${p.codice}`,
-    `${v.escursione} · ${v.turno}${v.privato && !/esclusiva/i.test(v.escursione) ? ' · gommone in esclusiva' : ''}`,
-    `Data: ${v.dataLeggibile}`,
-    `Imbarco: ${v.imbarco}`,
-    v.orario ? `Orario: ${v.orario}${v.orarioIndicativo ? ' (indicativo: segue la luce del tramonto)' : ''}` : 'Orario: te lo confermiamo noi',
-    testoRitrovo(v.orario, v.imbarcoId) || null,
-    `Persone: ${persone}`,
+    `${M.codice}: ${p.codice}`,
+    // "Gommone in esclusiva" quando il nome dell'escursione non lo dice già (il tour privato lo dice in ogni lingua).
+    `${v.escursione} · ${v.turno}${v.privato && p.escursione !== 'tour-privato' && !/esclusiva/i.test(v.escursione) ? M.esclusiva : ''}`,
+    `${M.data}: ${v.dataLeggibile}`,
+    `${M.imbarco}: ${v.imbarco}`,
+    v.orario ? `${M.orario}: ${v.orario}${v.orarioIndicativo ? M.indicativo : ''}` : M.orarioDopo,
+    ritrovo,
+    `${M.persone}: ${persone}`,
     ...prezzo,
-    v.carburanteEscluso ? testoCarburante() : null,
+    v.carburanteEscluso && v.carburante ? T.info.carburante(v.carburante) : null,
     '',
-    v.documento ? "Si va in Corsica: porta un documento valido per l'espatrio per ogni persona, anche per i bambini." : null,
-    !v.privato && v.minimo ? `L'uscita parte con almeno ${v.minimo} persone paganti: se non si raggiungono ti proponiamo un'altra data o ti rimborsiamo per intero.` : null,
-    `Cancellazione gratuita fino a ${v.cancellazioneGratisOre} ore prima. Con mare o vento non sicuri annulliamo noi e scegli tu: rimborso completo o nuova data.`,
+    v.documento ? M.conferma.documento : null,
+    !v.privato && v.minimo ? T.info.minimo(v.minimo) : null,
+    M.conferma.cancellazione(v.cancellazioneGratisOre),
     '',
-    `Il tuo biglietto, con il codice QR da mostrare all'imbarco: ${link}`,
-    v.annullabile ? `Da quella pagina puoi anche annullare fino a ${v.cancellazioneGratisOre} ore prima: il rimborso è automatico.` : null,
-    sito.contatti.telefonoVisibile ? `Per qualsiasi cosa scrivici su WhatsApp: ${sito.contatti.telefonoVisibile}` : null,
+    M.conferma.biglietto(link),
+    v.annullabile ? M.conferma.annullabile(v.cancellazioneGratisOre) : null,
+    sito.contatti.telefonoVisibile ? M.whatsapp(sito.contatti.telefonoVisibile) : null,
     '',
     `${azienda.ragioneSociale || sito.nome}${azienda.indirizzo ? ` · ${azienda.indirizzo}` : ''}${azienda.partitaIva ? ` · P. IVA ${azienda.partitaIva}` : ''}`,
     '',
     '----------',
-    'CONDIZIONI DI PRENOTAZIONE (la tua copia)',
+    M.conferma.condizioni,
     '',
-    condizioniInTesto(),
+    condizioniInTesto(lingua),
   ].filter((r) => r !== null);
   await inviaEmail(env, { a: p.email, oggetto: `Prenotazione ${p.codice} · ${v.escursione}`, testo: righe.join('\n') });
   if (sito.contatti.email) {
     await inviaEmail(env, {
       a: sito.contatti.email,
-      oggetto: `Nuova prenotazione ${p.codice} · ${v.escursione} · ${v.dataLeggibile}`,
-      testo: [[p.nome, p.telefono, p.email].filter(Boolean).join(' · '), `${v.escursione} · ${v.turno} · ${v.dataLeggibile}`, `Imbarco: ${v.imbarco}`, `Persone: ${persone}`, `Totale: ${euroDaCent(p.totale)} € · pagato ${euroDaCent(p.pagato)} € (${p.metodo})${p.buono ? ` · buono ${euroDaCent(p.buono)} €` : ''}${p.sconto_nota ? ` · ${p.sconto_nota}` : ''}`, p.campagna ? `Volantino: ${p.campagna}` : '', `Gommone: ${nomeGommone(p.barca)}`, `Canale: ${p.canale}`, p.note ? `Note: ${p.note}` : ''].filter(Boolean).join('\n'),
+      oggetto: `Nuova prenotazione ${p.codice} · ${titoloEscursione(p.escursione)} · ${dataLeggibile(p.data)}`,
+      testo: [[p.nome, p.telefono, p.email].filter(Boolean).join(' · '), `${titoloEscursione(p.escursione)} · ${turnoDi(p.escursione, p.turno)?.nome ?? p.turno} · ${dataLeggibile(p.data)}`, `Imbarco: ${v.imbarco}`, `Persone: ${testiPrenotaDi('it').persone(v.adulti, v.bambini + v.neonati)}`, lingua !== 'it' ? `Lingua del cliente: ${lingua.toUpperCase()}` : '', `Totale: ${euroDaCent(p.totale)} € · pagato ${euroDaCent(p.pagato)} € (${p.metodo})${p.buono ? ` · buono ${euroDaCent(p.buono)} €` : ''}${p.sconto_nota ? ` · ${p.sconto_nota}` : ''}`, p.campagna ? `Volantino: ${p.campagna}` : '', `Gommone: ${nomeGommone(p.barca)}`, `Canale: ${p.canale}`, p.note ? `Note: ${p.note}` : ''].filter(Boolean).join('\n'),
     });
   }
 }
