@@ -195,7 +195,7 @@ Senza i punti 2–3 si può comunque aprire il sito "vetrina" con prenotazione s
 ### Revisione del 22 novembre 2026
 - [x] Nessuna modifica al codice dal 18 novembre. Build ok (96 pagine); prove automatiche tutte ok: API, gestione e strutture, pagine dal browser a 1440 e 390 px (nessun errore JavaScript), funzioni nuove, recesso, lingue (64 pagine tradotte, 102 link interni, testata su una riga), accessibilità WCAG 2.2 AA senza errori
 - [x] Rami: `prenotazioni` identico a `main`; `inglese` è già tutto dentro `main`
-- [ ] Cancellare il ramo `inglese` su GitHub (superato, come `tre-gommoni`)
+- [ ] Cancellare il ramo `inglese` su GitHub (superato, come `tre-gommoni`; controllato il 23 novembre 2026: è tutto dentro `main`). Lo fa Remo dalla pagina Branches di GitHub: dalle sessioni di Claude si può pubblicare ma non cancellare rami
 - [x] Ticket del Parco (Remo, 22 novembre 2026): in Info utili e nel riquadro "Nel Parco Nazionale" ora si legge "Il ticket del Parco è incluso nel prezzo di tutte le escursioni" (`regole.ticketParcoInfo`, in tutte e 5 le lingue); la risposta col "Sì" (`regole.ticketParco`) resta solo nelle domande frequenti
 - [x] Prezzi con il separatore delle migliaia (Remo, 22 novembre 2026): "1.200 €" (inglese "€1,200", francese "1 200 €", spagnolo e tedesco "1.200 €") su pagine, descrizioni per Google, domande, buono regalo, prenotazione, gestione, email e messaggi del server. Un solo strumento: `cifra()` in `src/data/formato.js`. Build e prove tutte ok
 - Nota: README, tabella "Dove si cambiano i contenuti": cita solo `src/data/en/`; le cartelle sono anche `es/`, `fr/`, `de/` (lo dice già la sezione Lingue)
