@@ -35,6 +35,7 @@ const testi = {
   regole: {
     maltempo: 'Si el mar o el viento no son seguros, cancelamos nosotros y tú eliges: reembolso completo u otra fecha.',
     ticketParco: 'Sí, está incluida en el precio de todas las excursiones.',
+    ticketParcoInfo: 'La tasa del Parque Nacional está incluida en el precio de todas las excursiones.',
     pagamento: 'Online al reservar, con tarjeta o PayPal. En las excursiones privadas el combustible se paga aparte.',
     bambini: 'Sí, de cualquier edad. Hasta los 10 años pagan la tarifa reducida. A bordo los chalecos salvavidas son obligatorios, pero son de talla adulta: para ir más tranquilo, trae un chaleco de la talla de tus hijos.',
     animali: 'No, no se admiten animales a bordo.',

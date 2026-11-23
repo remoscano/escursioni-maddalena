@@ -1,6 +1,7 @@
 // English version of src/data/faq.js. Same ids, so pages pick the same questions in both languages.
 // Online booking exists only in Italian for now: English answers describe booking on WhatsApp.
 // Prices come from the single price list (src/data/prenotazioni.js), never typed by hand.
+import { cifra } from '../formato.js';
 
 import { prezzoDa, offerte, regole } from '../prenotazioni.js';
 import { sito } from './sito.js';
@@ -26,7 +27,7 @@ export const faq = [
       {
         id: 'prezzi',
         domanda: 'How much does a boat tour in La Maddalena cost?',
-        risposta: `On group tours: half-day tour from €${pM.adulto} per person, the island tour (7 Islands Tour) from €${p7.adulto}, sunset aperitivo from €${pT.adulto}. Children up to 10 pay a reduced price (from €${pM.bambino} on the half day). A private RIB with skipper costs from €${pP.barca} (Corsica from €${pC.barca}), with fuel extra. Prices vary with the time of the season.`,
+        risposta: `On group tours: half-day tour from €${cifra(pM.adulto, 'en')} per person, the island tour (7 Islands Tour) from €${cifra(p7.adulto, 'en')}, sunset aperitivo from €${cifra(pT.adulto, 'en')}. Children up to 10 pay a reduced price (from €${cifra(pM.bambino, 'en')} on the half day). A private RIB with skipper costs from €${cifra(pP.barca, 'en')} (Corsica from €${cifra(pC.barca, 'en')}), with fuel extra. Prices vary with the time of the season.`,
       },
       {
         id: 'palau',

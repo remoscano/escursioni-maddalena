@@ -78,13 +78,13 @@ async def privato(b):
     await pg.wait_for_selector('.cal__giorno:not([disabled])')
     for _ in range(3): await pg.click('[data-mese="1"]')
     await pg.click('[data-data="2027-08-10"]'); await pg.click('[data-turno="giornata"]')
-    t = await pg.inner_text('[data-righe]'); ok('1620 €' in t and 'carburante' in t.lower(), 'privato giornata 10 agosto = 1620 €, carburante escluso')
+    t = await pg.inner_text('[data-righe]'); ok('1.620 €' in t and 'carburante' in t.lower(), 'privato giornata 10 agosto = 1.620 €, carburante escluso')
     for _ in range(12):
         if await pg.locator('[data-piu="adulti"]').is_disabled(): break
         await pg.click('[data-piu="adulti"]')
     n = await pg.inner_text('[data-num="adulti"]'); dis = await pg.locator('[data-piu="adulti"]').is_disabled()
     ok(n == '12' and dis, f'privato: massimo 12 persone su un gommone grande (adulti fermi a {n}, + disattivato)')
-    t = await pg.inner_text('[data-righe]'); ok('1620 €' in t, 'privato da 12: il prezzo resta quello del gommone (1620 €)')
+    t = await pg.inner_text('[data-righe]'); ok('1.620 €' in t, 'privato da 12: il prezzo resta quello del gommone (1.620 €)')
     await ctx.close()
 
 async def corsica(b):
@@ -95,7 +95,7 @@ async def corsica(b):
     await pg.click('[data-data="2027-06-15"]')
     await pg.wait_for_selector('[data-riepilogo]:not([hidden])')
     t = await pg.inner_text('[data-righe]')
-    ok('1200 €' in t and 'gommone in esclusiva' in t and 'espatrio' in t and 'carburante' in t.lower(), 'Corsica 15 giugno: 1200 € il gommone, documento e carburante nel riepilogo')
+    ok('1.200 €' in t and 'gommone in esclusiva' in t and 'espatrio' in t and 'carburante' in t.lower(), 'Corsica 15 giugno: 1.200 € il gommone, documento e carburante nel riepilogo')
     ok('calcoliamo insieme i litri consumati' in t, 'nel riepilogo c\'è come si paga il carburante')
     await larghezza(pg, 390, 'prenota Corsica')
     await pg.screenshot(path=f'{OUT}/prenota-corsica-390.png', full_page=True)

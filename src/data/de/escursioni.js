@@ -1,5 +1,6 @@
 // Tedesco: le cinque escursioni (solo testi e indirizzi; prezzi, posti, orari e mappe arrivano dal file italiano
 // e dal listino unico). Se cambia un'escursione in italiano, va cambiata anche qui.
+import { cifra } from '../formato.js';
 import { sito } from './sito.js';
 import {
   da, ore, breve, posti, turno7, mattina, pomeriggio, privatoGiornata, corsica, partenzaCorsica, rientroCorsica,
@@ -10,7 +11,7 @@ const pranzo7 = sito.pranzo7;
 const daDove = daDoveIn('Zustieg in Palau', 'oder');
 const snorkel = 'Taucherbrille und Schnorchel: aus hygienischen Gründen bitte selbst mitbringen (ein paar haben wir an Bord)';
 const carburante = `Treibstoff: ${sito.carburante}`;
-const ab = (n) => `Ab ${n} €`;
+const ab = (n) => `Ab ${cifra(n, 'de')} €`;
 
 const testi = {
   'tour-7-isole': {

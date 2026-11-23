@@ -1,5 +1,6 @@
 // English version of src/data/testi.js: same keys, English texts.
 // Buttons, section titles and labels. Real data (prices, times, moorings, tours, questions) is NOT here.
+import { cifra } from '../formato.js';
 
 import { sito } from './sito.js';
 
@@ -59,7 +60,6 @@ export const testi = {
     maestrale: 'With a strong mistral the route changes or the tour is moved: we let you know on WhatsApp.',
     parco: 'In the National Park',
     regoleParco: 'No landing or swimming at the Pink Beach. Sand, pebbles and shells stay where they are.',
-    ticket: 'National Park fee',
   },
   soste: { rientro: 'Return', sosta: 'Stop' },
   gommone: {
@@ -88,7 +88,7 @@ export const testi = {
     rosa7: '5 · Pink Beach, from the RIB only',
   },
   scheda: {
-    euro: (n) => (n === '' || n === null || n === undefined ? '' : `€${n}`),
+    euro: (n) => (n === '' || n === null || n === undefined ? '' : `€${cifra(n, 'en')}`),
     da: 'From',
     daMinuscolo: 'from',
     aPersona: 'per person',
@@ -150,7 +150,7 @@ export const testi = {
   },
   home: {
     titolo: 'La Maddalena Archipelago Boat Tours',
-    descrizione: (prezzo) => `Boat tours in the La Maddalena Archipelago, from La Maddalena, Palau and Cannigione: island tour, half day, sunset, Corsica. From €${prezzo}.`,
+    descrizione: (prezzo) => `Boat tours in the La Maddalena Archipelago, from La Maddalena, Palau and Cannigione: island tour, half day, sunset, Corsica. From €${cifra(prezzo, 'en')}.`,
     apertura: 'Introduction',
     occhiello: 'Departures from La Maddalena, Palau and Cannigione · Sardinia',
     testo: 'Boat trips on a RIB with skipper in the La Maddalena archipelago: the island tour (7 Islands Tour), the half-day tour, the sunset aperitivo, the private tour and the trip to Corsica. We leave from the port of La Maddalena, with a pick-up in Palau for guests boarding there, and from Cannigione.',
@@ -165,7 +165,7 @@ export const testi = {
       aBordo: 'On board',
       massimo: (n) => `Up to ${n} people`,
       prezzo: 'Price',
-      da: (n) => `From €${n} per person`,
+      da: (n) => `From €${cifra(n, 'en')} per person`,
     },
     escursioni: {
       occhiello: 'Boat tours',
@@ -202,7 +202,7 @@ export const testi = {
   catalogo: {
     titolo: 'La Maddalena Boat Trips: RIB Tours and Prices',
     h1: 'Boat trips in La Maddalena: RIB tours and prices',
-    descrizione: (prezzo) => `Boat trips and tours in La Maddalena: island tour, half-day tour, sunset aperitivo, private RIB with skipper and Corsica. From €${prezzo} per person.`,
+    descrizione: (prezzo) => `Boat trips and tours in La Maddalena: island tour, half-day tour, sunset aperitivo, private RIB with skipper and Corsica. From €${cifra(prezzo, 'en')} per person.`,
     occhiello: 'Boat tours',
     introOnline: `Boat tours in the La Maddalena archipelago, on a RIB with skipper, ${sito.partenze.frase}: see available places and book online.`,
     intro: `Boat tours in the La Maddalena archipelago, on a RIB with skipper, ${sito.partenze.frase}, bookable with a WhatsApp message.`,
@@ -364,7 +364,6 @@ export const testi = {
         'Sand, pebbles and shells stay on the beaches: taking them away is forbidden.',
         'Rubbish and cigarette ends come back on board with us.',
       ],
-      ticket: 'National Park fee',
     },
   },
   domande: {

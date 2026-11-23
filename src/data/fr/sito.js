@@ -35,6 +35,7 @@ const testi = {
   regole: {
     maltempo: "Si la mer ou le vent ne sont pas sûrs, nous annulons et vous choisissez : remboursement intégral ou une autre date.",
     ticketParco: 'Oui, il est inclus dans le prix de toutes les excursions.',
+    ticketParcoInfo: "Le droit d'entrée du Parc national est inclus dans le prix de toutes les excursions.",
     pagamento: 'En ligne au moment de la réservation, par carte ou PayPal. Pour les sorties privatisées, le carburant est en supplément.',
     bambini: "Oui, à tout âge. Jusqu'à 10 ans ils paient le tarif réduit. À bord, les gilets de sauvetage sont obligatoires mais ils sont en taille adulte : pour plus de tranquillité, apportez un gilet à la taille de vos enfants.",
     animali: 'Non, les animaux ne sont pas admis à bord.',

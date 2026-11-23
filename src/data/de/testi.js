@@ -1,7 +1,8 @@
 // Tedesco: testi fissi delle pagine (stesse chiavi di src/data/testi.js e src/data/en/testi.js).
+import { cifra } from '../formato.js';
 import { sito } from './sito.js';
 
-const euro = (n) => (n === '' || n === null || n === undefined ? '' : `${n} €`);
+const euro = (n) => (n === '' || n === null || n === undefined ? '' : `${cifra(n, 'de')} €`);
 
 export const testi = {
   base: {
@@ -59,7 +60,6 @@ export const testi = {
     maestrale: 'Bei starkem Mistral ändert sich die Route oder der Ausflug wird verschoben: Wir sagen Ihnen auf WhatsApp Bescheid.',
     parco: 'Im Nationalpark',
     regoleParco: 'Am Rosa Strand kein Anlanden und kein Baden. Sand, Steine und Muscheln bleiben, wo sie sind.',
-    ticket: 'Nationalparkgebühr',
   },
   soste: { rientro: 'Rückkehr', sosta: 'Stopp' },
   gommone: {
@@ -150,7 +150,7 @@ export const testi = {
   },
   home: {
     titolo: 'Bootsausflüge im La-Maddalena-Archipel',
-    descrizione: (prezzo) => `Bootsausflüge im La-Maddalena-Archipel, ab La Maddalena, Palau und Cannigione: Inselrundfahrt, Halbtagestour, Sonnenuntergang, Korsika. Ab ${prezzo} €.`,
+    descrizione: (prezzo) => `Bootsausflüge im La-Maddalena-Archipel, ab La Maddalena, Palau und Cannigione: Inselrundfahrt, Halbtagestour, Sonnenuntergang, Korsika. Ab ${cifra(prezzo, 'de')} €.`,
     apertura: 'Einleitung',
     occhiello: 'Abfahrt ab La Maddalena, Palau und Cannigione · Sardinien',
     testo: 'Bootsausflüge im Schlauchboot mit Skipper im La-Maddalena-Archipel: die Inselrundfahrt (7-Inseln-Tour), die Halbtagestour, der Aperitif bei Sonnenuntergang, die exklusive Privattour und der Ausflug nach Korsika. Wir starten im Hafen von La Maddalena, mit Zustieg in Palau für Gäste, die dort einsteigen, und ab Cannigione.',
@@ -165,7 +165,7 @@ export const testi = {
       aBordo: 'An Bord',
       massimo: (n) => `Höchstens ${n} Personen`,
       prezzo: 'Preis',
-      da: (n) => `Ab ${n} € pro Person`,
+      da: (n) => `Ab ${cifra(n, 'de')} € pro Person`,
     },
     escursioni: {
       occhiello: 'Ausflüge',
@@ -202,7 +202,7 @@ export const testi = {
   catalogo: {
     titolo: 'Bootsausflüge La Maddalena: Touren und Preise',
     h1: 'Bootsausflüge in La Maddalena: Touren im Schlauchboot und Preise',
-    descrizione: (prezzo) => `Bootsausflüge und Touren in La Maddalena: Inselrundfahrt, Halbtagestour, Aperitif bei Sonnenuntergang, Boot mit Skipper und Korsika. Ab ${prezzo} € pro Person.`,
+    descrizione: (prezzo) => `Bootsausflüge und Touren in La Maddalena: Inselrundfahrt, Halbtagestour, Aperitif bei Sonnenuntergang, Boot mit Skipper und Korsika. Ab ${cifra(prezzo, 'de')} € pro Person.`,
     occhiello: 'Ausflüge',
     introOnline: `Bootstouren im La-Maddalena-Archipel, im Schlauchboot mit Skipper, ${sito.partenze.frase}: Sie sehen die freien Plätze und buchen online.`,
     intro: `Bootstouren im La-Maddalena-Archipel, im Schlauchboot mit Skipper, ${sito.partenze.frase}, buchbar mit einer WhatsApp-Nachricht.`,
@@ -364,7 +364,6 @@ export const testi = {
         'Sand, Steine und Muscheln bleiben an den Stränden: Sie mitzunehmen ist verboten.',
         'Abfälle und Zigarettenstummel kommen mit uns zurück an Bord.',
       ],
-      ticket: 'Nationalparkgebühr',
     },
   },
   domande: {

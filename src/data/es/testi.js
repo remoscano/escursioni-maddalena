@@ -1,7 +1,8 @@
 // Spagnolo: testi fissi delle pagine (stesse chiavi di src/data/testi.js e src/data/en/testi.js).
+import { cifra } from '../formato.js';
 import { sito } from './sito.js';
 
-const euro = (n) => (n === '' || n === null || n === undefined ? '' : `${n} €`);
+const euro = (n) => (n === '' || n === null || n === undefined ? '' : `${cifra(n, 'es')} €`);
 
 export const testi = {
   base: {
@@ -59,7 +60,6 @@ export const testi = {
     maestrale: 'Con mistral fuerte la ruta cambia o la salida se aplaza: te avisamos por WhatsApp.',
     parco: 'En el Parque Nacional',
     regoleParco: 'En la Playa Rosa no se desembarca ni se baña. La arena, las piedras y las conchas se quedan donde están.',
-    ticket: 'Tasa del Parque Nacional',
   },
   soste: { rientro: 'Vuelta', sosta: 'Parada' },
   gommone: {
@@ -150,7 +150,7 @@ export const testi = {
   },
   home: {
     titolo: 'Excursiones en barco archipiélago de La Maddalena',
-    descrizione: (prezzo) => `Excursiones en barco por el archipiélago de La Maddalena, desde La Maddalena, Palau y Cannigione: vuelta a las islas, medio día, atardecer, Córcega. Desde ${prezzo} €.`,
+    descrizione: (prezzo) => `Excursiones en barco por el archipiélago de La Maddalena, desde La Maddalena, Palau y Cannigione: vuelta a las islas, medio día, atardecer, Córcega. Desde ${cifra(prezzo, 'es')} €.`,
     apertura: 'Presentación',
     occhiello: 'Salidas desde La Maddalena, Palau y Cannigione · Cerdeña',
     testo: 'Excursiones en neumática con patrón por el archipiélago de La Maddalena: la vuelta a las islas (Tour de las 7 islas), la excursión de medio día, el aperitivo al atardecer, el tour privado en exclusiva y la excursión a Córcega. Salimos del puerto de La Maddalena, con recogida en Palau para quien embarca allí, y desde Cannigione.',
@@ -165,7 +165,7 @@ export const testi = {
       aBordo: 'A bordo',
       massimo: (n) => `Máximo ${n} personas`,
       prezzo: 'Precio',
-      da: (n) => `Desde ${n} € por persona`,
+      da: (n) => `Desde ${cifra(n, 'es')} € por persona`,
     },
     escursioni: {
       occhiello: 'Excursiones',
@@ -202,7 +202,7 @@ export const testi = {
   catalogo: {
     titolo: 'Excursiones en barco La Maddalena: tours y precios',
     h1: 'Excursiones en barco en La Maddalena: tours en neumática y precios',
-    descrizione: (prezzo) => `Excursiones y tours en barco en La Maddalena: vuelta a las islas, medio día, aperitivo al atardecer, neumática con patrón y Córcega. Desde ${prezzo} € por persona.`,
+    descrizione: (prezzo) => `Excursiones y tours en barco en La Maddalena: vuelta a las islas, medio día, aperitivo al atardecer, neumática con patrón y Córcega. Desde ${cifra(prezzo, 'es')} € por persona.`,
     occhiello: 'Excursiones',
     introOnline: `Tours en barco por el archipiélago de La Maddalena, en neumática con patrón, con ${sito.partenze.frase}: ves las plazas libres y reservas online.`,
     intro: `Tours en barco por el archipiélago de La Maddalena, en neumática con patrón, con ${sito.partenze.frase}, reservables con un mensaje de WhatsApp.`,
@@ -364,7 +364,6 @@ export const testi = {
         'La arena, las piedras y las conchas se quedan en las playas: llevárselas está prohibido.',
         'Los residuos y las colillas vuelven a bordo con nosotros.',
       ],
-      ticket: 'Tasa del Parque Nacional',
     },
   },
   domande: {

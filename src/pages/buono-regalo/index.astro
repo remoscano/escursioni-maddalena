@@ -3,9 +3,10 @@
 import Base from '../../layouts/Base.astro';
 import { regole } from '../../data/prenotazioni.js';
 import { sito } from '../../data/sito.js';
+import { cifra } from '../../data/formato.js';
 const { importi, minimo, massimo, validitaMesi } = regole.buoni;
 ---
-<Base titolo="Buono regalo" descrizione={`Regala un'escursione in gommone nell'Arcipelago di La Maddalena: buono regalo da ${minimo} a ${massimo} €, valido ${validitaMesi} mesi su tutte le escursioni.`}>
+<Base titolo="Buono regalo" descrizione={`Regala un'escursione in gommone nell'Arcipelago di La Maddalena: buono regalo da ${cifra(minimo)} a ${cifra(massimo)} €, valido ${validitaMesi} mesi su tutte le escursioni.`}>
   <section class="testa-pagina">
     <div class="contenitore">
       <p class="occhiello">Da regalare</p>
@@ -19,10 +20,10 @@ const { importi, minimo, massimo, validitaMesi } = regole.buoni;
         <fieldset class="buono__importi">
           <legend>Importo</legend>
           <div class="scelte">
-            {importi.map((v, i) => <label class="scelta"><input type="radio" name="valore" value={v} checked={i === 1} />{v} €</label>)}
+            {importi.map((v, i) => <label class="scelta"><input type="radio" name="valore" value={v} checked={i === 1} />{cifra(v)} €</label>)}
             <label class="scelta"><input type="radio" name="valore" value="altro" />Altro</label>
           </div>
-          <div class="campo" data-altro hidden><label for="b-altro">Importo (da {minimo} a {massimo} €)</label><input id="b-altro" name="altro" type="number" min={minimo} max={massimo} step="1" inputmode="numeric" /></div>
+          <div class="campo" data-altro hidden><label for="b-altro">Importo (da {cifra(minimo)} a {cifra(massimo)} €)</label><input id="b-altro" name="altro" type="number" min={minimo} max={massimo} step="1" inputmode="numeric" /></div>
         </fieldset>
         <div class="buono__campi">
           <div class="campo"><label for="b-nome">Il tuo nome e cognome</label><input id="b-nome" name="nome" autocomplete="name" maxlength="100" required /></div>

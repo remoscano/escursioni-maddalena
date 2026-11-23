@@ -1,6 +1,7 @@
 // Domande frequenti. "risposta" può contenere un segnaposto: se "mancante" è valorizzato,
 // sul sito compare un segnaposto rosa al posto del dato ancora da inserire.
 // "regola" collega la risposta a un campo di sito.regole: quando lo compili, il segnaposto sparisce.
+import { cifra } from './formato.js';
 
 import { regole as regoleP, testoChiusuraOnline, testoDopoChiusura, prezzoDa, offerte } from './prenotazioni.js';
 
@@ -35,7 +36,7 @@ export const faq = [
         // Ricerche "escursioni la maddalena prezzi", "quanto costa" (Semrush e Google, 16 novembre 2026).
         id: 'prezzi',
         domanda: "Quanto costa un'escursione a La Maddalena?",
-        risposta: `Nelle uscite di gruppo: escursione di mezza giornata da ${pM.adulto} € a persona, giro delle isole (Tour delle 7 isole) da ${p7.adulto} €, aperitivo al tramonto da ${pT.adulto} €. Fino a 10 anni c'è il ridotto (da ${pM.bambino} € nella mezza giornata). Il gommone con skipper in esclusiva costa da ${pP.barca} € (Corsica da ${pC.barca} €), con il carburante a parte. I prezzi cambiano con il periodo della stagione.`,
+        risposta: `Nelle uscite di gruppo: escursione di mezza giornata da ${cifra(pM.adulto)} € a persona, giro delle isole (Tour delle 7 isole) da ${cifra(p7.adulto)} €, aperitivo al tramonto da ${cifra(pT.adulto)} €. Fino a 10 anni c'è il ridotto (da ${cifra(pM.bambino)} € nella mezza giornata). Il gommone con skipper in esclusiva costa da ${cifra(pP.barca)} € (Corsica da ${cifra(pC.barca)} €), con il carburante a parte. I prezzi cambiano con il periodo della stagione.`,
       },
       {
         // Ricerche "escursioni la maddalena da palau" (Semrush, 16 novembre 2026).

@@ -7,7 +7,7 @@ import { spostaPrenotazione } from './motore.js';
 import { inviaEmailConferma, linkPrenotazione } from './prenotazioni.js';
 import { inviaEmailRecupero, inviaEmailAnnullata } from './email.js';
 import { avvisaListaAttesa } from './attesa.js';
-import { Errore, adessoISO } from './util.js';
+import { Errore, adessoISO, euroDaCent } from './util.js';
 
 // Si è liberato un posto: chi è in lista d'attesa viene avvisato subito (se le email sono attive).
 const liberato = (contesto) => contesto.waitUntil?.(avvisaListaAttesa(contesto.env, contesto.env.SITO_URL || new URL(contesto.request.url).origin).catch((e) => console.error('Lista d\'attesa', e)));
@@ -21,7 +21,7 @@ const origineDi = (contesto) => new URL(contesto.request.url).origin;
 export async function eseguiRimborso(contesto, p, importo, chi) {
   const db = contesto.env.DB;
   const rimborsabile = (p.pagato || 0) - (p.rimborsato || 0);
-  if (!(importo > 0) || importo > rimborsabile) throw new Errore(400, `Si possono rimborsare al massimo ${(rimborsabile / 100).toFixed(2).replace('.', ',')} €.`);
+  if (!(importo > 0) || importo > rimborsabile) throw new Errore(400, `Si possono rimborsare al massimo ${euroDaCent(rimborsabile)} €.`);
   if (!PAGATA_SUL_SITO.includes(p.metodo)) throw new Errore(400, 'Questa prenotazione non è stata pagata sul sito: il rimborso va fatto a mano o sulla piattaforma.');
   const ora = adessoISO();
   try {

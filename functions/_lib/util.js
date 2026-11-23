@@ -1,4 +1,5 @@
 // Funzioni di servizio comuni a tutte le API.
+import { cifra } from '../../src/data/formato.js';
 
 export class Errore extends Error {
   constructor(stato, messaggio, extra = {}) {
@@ -140,4 +141,4 @@ export function ugualeSicuro(a, b) {
 
 export const indirizzoIp = (request) => request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For')?.split(',')[0].trim() || 'locale';
 
-export const euroDaCent = (c) => (Math.round(c) / 100).toLocaleString('it-IT', { minimumFractionDigits: c % 100 ? 2 : 0, maximumFractionDigits: 2 });
+export const euroDaCent = (c) => cifra(Math.round(c) / 100);

@@ -1,4 +1,5 @@
 // Spagnolo: pagine dei punti di partenza (Palau, Cannigione). Orari, prezzi e moli dal listino e da sito.js.
+import { cifra } from '../formato.js';
 import { regole } from '../prenotazioni.js';
 import { escursioni } from './escursioni.js';
 import { sito } from './sito.js';
@@ -22,7 +23,7 @@ export const pagineImbarco = [
     titoloDomande: 'Recogida en Palau: preguntas',
     titoloRichiesta: 'Embarca en Palau: elige la fecha',
     briciola: 'Recogida en Palau',
-    descrizioneSeo: `Excursiones La Maddalena con recogida en Palau: la neumática sale de La Maddalena y te recoge en Palau. Vuelta a las islas, medio día, atardecer, Córcega. Desde ${prezzoMinimo(daPalau)} €.`,
+    descrizioneSeo: `Excursiones La Maddalena con recogida en Palau: la neumática sale de La Maddalena y te recoge en Palau. Vuelta a las islas, medio día, atardecer, Córcega. Desde ${cifra(prezzoMinimo(daPalau), 'es')} €.`,
     breve: `La neumática sale de La Maddalena y a las ${palauMattina} te recoge en Palau: cómodo si llegas desde Olbia o te alojas en Gallura.`,
     intro: `Las excursiones en neumática con patrón salen del puerto de La Maddalena. Para quien no quiere o no puede llegar hasta allí, la neumática recoge a los clientes en Palau: por la mañana a las ${palauMattina}, y a la vuelta te deja en Palau antes de regresar a La Maddalena.`,
     perche: {
@@ -49,7 +50,7 @@ export const pagineImbarco = [
     titoloDomande: 'Excursiones desde Cannigione: preguntas',
     titoloRichiesta: 'Excursión desde Cannigione: elige la fecha',
     briciola: 'Desde Cannigione',
-    descrizioneSeo: `Excursiones en barco desde Cannigione al archipiélago de La Maddalena: medio día, aperitivo al atardecer y neumática con patrón, Desde ${prezzoMinimo(daCannigione)} €.`,
+    descrizioneSeo: `Excursiones en barco desde Cannigione al archipiélago de La Maddalena: medio día, aperitivo al atardecer y neumática con patrón, Desde ${cifra(prezzoMinimo(daCannigione), 'es')} €.`,
     breve: `Desde Cannigione sale una neumática propia, la ${hondaFlotta?.modello ?? ''}: medio día, aperitivo al atardecer y tour privado.`,
     intro: `Excursiones en barco desde Cannigione al archipiélago de La Maddalena, en neumática con patrón. Desde Cannigione sale una neumática dedicada, la ${hondaFlotta?.modello ?? ''}: hasta ${honda?.posti ?? ''} personas, con sombra a bordo y ${(hondaFlotta?.motori ?? '').replace(/^1 /, 'un ')} que llega al archipiélago sin perder tiempo.`,
     perche: {

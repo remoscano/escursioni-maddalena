@@ -51,6 +51,7 @@ Leggi questo file all'inizio di ogni sessione. Il README spiega dove stanno i co
   - Spese di bordo degli skipper (13 novembre 2026, migrazione `0005_spese_skipper.sql`, tabelle `rendiconti` e `promemoria_spese`): nell'app `/imbarco/` scheda Spese (calendario del mese, verde = scritte, rosso = da compilare) lo skipper scrive per giorno e gommone litri ed euro di carburante, bevande, cibo, altro (con nota). I giorni "da compilare" sono quelli in cui ha fatto almeno un check-in (`checkin_da`) senza spese scritte, negli ultimi `regole.spese.giorniModifica` giorni. Promemoria email da `/api/automatico` (sera alle `promemoriaSera` per oggi, mattina alle `promemoriaMattina` per i giorni mancanti). La gestione vede tutto nella scheda "Spese di bordo" (totali, per gommone, per skipper, per mese, giornate con uscite senza spese) e scarica l'Excel. Codice: `functions/_lib/spese.js`, `/api/spese`, `/api/gestione/spese`.
   - Dati per Google: `src/components/DatiStrutturati.astro` (LocalBusiness in home, TouristTrip + briciole + domande nelle pagine escursione, FAQPage) e `src/pages/sitemap.xml.js`. Scrivono solo dati veri: i campi vuoti di `sito.js` non compaiono.
   - Prove automatiche in `prove/` (vedi `prove/LEGGIMI.md`): prima di ogni push che tocca le prenotazioni devono passare tutte.
+- Importi: sempre con `cifra(n, lingua)` di `src/data/formato.js` ("1.200 €", "€1,200"), mai `${n} €` né `toLocaleString`, che in italiano non separa le 4 cifre. Sul server `euroDaCent` (`functions/_lib/util.js`), nel browser `euro` (`src/scripts/comune.ts`), nei testi delle lingue `euro` di `testi.js`: usano tutti `cifra`.
 - I contenuti stanno in `src/data/` (`sito.js`, `escursioni.js`, `faq.js`, `menu.js`, `imbarchi.js`, `testi.js` per i testi fissi delle pagine). Prima di scrivere testo dentro una pagina, chiediti se va in un file dati.
 - Lingue (18 novembre 2026):
   - La lingua si capisce dall'indirizzo (`/en/`, `/es/`, `/fr/`, `/de/`; il resto è italiano). In pagine e componenti: `const L = datiLingua(Astro.url)` (`src/data/lingua.js`) dà `sito`, `escursioni`, `faq`, `menu`, `pagineImbarco`, `testi` della lingua giusta, più `L.link('/gommone/')` (indirizzo della stessa pagina in quella lingua), `L.urlEscursione(slug)`, `L.domande(ids)` e `L.prenotaOnline` (vero solo in italiano con `regole.attive`). Non importare più `sito.js` o `escursioni.js` direttamente in un componente pubblico.
@@ -135,7 +136,6 @@ Senza i punti 2–3 si può comunque aprire il sito "vetrina" con prenotazione s
 - [ ] Testi delle soste della Corsica: vanno bene?
 - [ ] Proposte su buoni regalo, durata dei link di pagamento e orari dei promemoria (vedi "In attesa")
 - [ ] Tre riquadri della pagina gommoni: sedute e prendisole, scaletta e doccetta, gavone stagno
-- [ ] Due piccole correzioni di testo trovate il 22 novembre (vedi sotto): va bene farle?
 - [ ] Prova con VoiceOver su iPhone (10 minuti, la fa Remo)
 
 ### Fatto
@@ -196,9 +196,8 @@ Senza i punti 2–3 si può comunque aprire il sito "vetrina" con prenotazione s
 - [x] Nessuna modifica al codice dal 18 novembre. Build ok (96 pagine); prove automatiche tutte ok: API, gestione e strutture, pagine dal browser a 1440 e 390 px (nessun errore JavaScript), funzioni nuove, recesso, lingue (64 pagine tradotte, 102 link interni, testata su una riga), accessibilità WCAG 2.2 AA senza errori
 - [x] Rami: `prenotazioni` identico a `main`; `inglese` è già tutto dentro `main`
 - [ ] Cancellare il ramo `inglese` su GitHub (superato, come `tre-gommoni`)
-- [ ] Da far decidere a Remo, piccoli testi:
-  - Info utili e riquadro "Nel Parco Nazionale": si legge "Ticket del Parco: Sì, è incluso nel prezzo…"; il "Sì" risponde a una domanda che lì non c'è (il testo `regole.ticketParco` è lo stesso delle domande frequenti), in tutte e 5 le lingue. Proposta: un testo breve per i riquadri ("incluso nel prezzo di tutte le escursioni") e quello col "Sì" solo nelle domande
-  - Prezzi da 4 cifre scritti "1200 €" (Corsica, esclusive): meglio "1.200 €" (inglese "€1,200", francese "1 200 €", tedesco "1.200 €")
+- [x] Ticket del Parco (Remo, 22 novembre 2026): in Info utili e nel riquadro "Nel Parco Nazionale" ora si legge "Il ticket del Parco è incluso nel prezzo di tutte le escursioni" (`regole.ticketParcoInfo`, in tutte e 5 le lingue); la risposta col "Sì" (`regole.ticketParco`) resta solo nelle domande frequenti
+- [x] Prezzi con il separatore delle migliaia (Remo, 22 novembre 2026): "1.200 €" (inglese "€1,200", francese "1 200 €", spagnolo e tedesco "1.200 €") su pagine, descrizioni per Google, domande, buono regalo, prenotazione, gestione, email e messaggi del server. Un solo strumento: `cifra()` in `src/data/formato.js`. Build e prove tutte ok
 - Nota: README, tabella "Dove si cambiano i contenuti": cita solo `src/data/en/`; le cartelle sono anche `es/`, `fr/`, `de/` (lo dice già la sezione Lingue)
 
 ### In attesa: informazioni dal cliente (Remo le sta aspettando)

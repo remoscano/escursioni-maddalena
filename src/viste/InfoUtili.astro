@@ -68,7 +68,7 @@ const porti = [
         <ul style="padding-left:22px;display:flex;flex-direction:column;gap:8px">
           {T.parco.regole.map((r: string) => <li>{r}</li>)}
         </ul>
-        <p>{T.parco.ticket}: <Dato v={sito.regole.ticketParco} e="incluso o da pagare" /></p>
+        <p><Dato v={sito.regole.ticketParcoInfo} e="Ticket del Parco: incluso o da pagare" /></p>
       </div>
     </div>
   </section>

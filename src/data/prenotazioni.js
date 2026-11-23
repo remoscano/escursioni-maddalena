@@ -13,6 +13,7 @@
 // - Corsica: solo in esclusiva, stesso prezzo delle altre giornate intere in esclusiva;
 // - a tutte le esclusive si aggiunge il carburante.
 // Tutti e tre i gommoni si possono prenotare in esclusiva (quello da 6 posti fa solo esclusive).
+import { cifra } from './formato.js';
 
 export const regole = {
   // false = i bottoni "Prenota" tornano alla richiesta su WhatsApp (utile finché i conti di pagamento non sono attivi).
@@ -441,8 +442,8 @@ function calcolaListino(slug, turnoId, data, persone) {
 
   if (totPersone > capienza) return { errore: `Su questa uscita ci sono al massimo ${capienza} posti: per gruppi più grandi scrivici su WhatsApp.` };
   const righe = [];
-  if (adulti) righe.push({ testo: `${adulti} × intero ${riga.adulto} €`, importo: adulti * riga.adulto });
-  if (bambini) righe.push({ testo: `${bambini} × ridotto fino a ${regole.eta.bambiniFinoA} anni ${riga.bambino} €`, importo: bambini * riga.bambino });
+  if (adulti) righe.push({ testo: `${adulti} × intero ${cifra(riga.adulto)} €`, importo: adulti * riga.adulto });
+  if (bambini) righe.push({ testo: `${bambini} × ridotto fino a ${regole.eta.bambiniFinoA} anni ${cifra(riga.bambino)} €`, importo: bambini * riga.bambino });
   const totale = righe.reduce((s, r) => s + r.importo, 0);
   return { adulti, bambini, neonati, persone: totPersone, paganti, posti: totPersone, totale, righe, carburanteEscluso: false };
 }

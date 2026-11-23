@@ -35,6 +35,7 @@ const testi = {
   regole: {
     maltempo: 'Wenn Meer oder Wind nicht sicher sind, sagen wir die Fahrt ab und Sie wählen: volle Rückerstattung oder ein anderes Datum.',
     ticketParco: 'Ja, sie ist im Preis aller Ausflüge enthalten.',
+    ticketParcoInfo: 'Die Nationalparkgebühr ist im Preis aller Ausflüge enthalten.',
     pagamento: 'Online bei der Buchung, per Karte oder PayPal. Bei Privattouren wird der Treibstoff extra berechnet.',
     bambini: 'Ja, in jedem Alter. Bis 10 Jahre gilt der ermäßigte Preis. Schwimmwesten sind an Bord Pflicht, aber in Erwachsenengröße: Wenn Sie ganz sicher sein wollen, bringen Sie eine Schwimmweste in der Größe Ihrer Kinder mit.',
     animali: 'Nein, Tiere sind an Bord nicht erlaubt.',

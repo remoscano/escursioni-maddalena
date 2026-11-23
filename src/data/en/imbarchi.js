@@ -1,5 +1,6 @@
 // English version of src/data/imbarchi.js: the departure pages (Palau, Cannigione).
 // Times, prices and moorings come from prenotazioni.js and sito.js: never typed by hand here.
+import { cifra } from '../formato.js';
 
 import { regole } from '../prenotazioni.js';
 import { escursioni } from './escursioni.js';
@@ -25,7 +26,7 @@ export const pagineImbarco = [
     titoloDomande: 'Pick-up in Palau: questions',
     titoloRichiesta: 'Board in Palau: choose your date',
     briciola: 'Pick-up in Palau',
-    descrizioneSeo: `La Maddalena boat tours with pick-up in Palau: the RIB leaves La Maddalena and collects you in Palau. Island tour, half day, sunset, Corsica. From €${prezzoMinimo(daPalau)}.`,
+    descrizioneSeo: `La Maddalena boat tours with pick-up in Palau: the RIB leaves La Maddalena and collects you in Palau. Island tour, half day, sunset, Corsica. From €${cifra(prezzoMinimo(daPalau), 'en')}.`,
     breve: `The RIB leaves La Maddalena and picks you up in Palau at ${palauMattina}: handy if you're coming from Olbia or staying in Gallura.`,
     intro: `Our boat tours with skipper leave from the port of La Maddalena. For guests who can't or don't want to get there, the RIB picks people up in Palau: at ${palauMattina} in the morning, and on the way back it drops you in Palau before returning to La Maddalena.`,
     perche: {
@@ -52,7 +53,7 @@ export const pagineImbarco = [
     titoloDomande: 'Tours from Cannigione: questions',
     titoloRichiesta: 'Tour from Cannigione: choose your date',
     briciola: 'From Cannigione',
-    descrizioneSeo: `Boat tours from Cannigione to the La Maddalena archipelago: half day, sunset aperitivo and private RIB with skipper, from Pontile La Sciumara. From €${prezzoMinimo(daCannigione)}.`,
+    descrizioneSeo: `Boat tours from Cannigione to the La Maddalena archipelago: half day, sunset aperitivo and private RIB with skipper, from Pontile La Sciumara. From €${cifra(prezzoMinimo(daCannigione), 'en')}.`,
     breve: `Cannigione has its own RIB, the ${hondaFlotta?.modello ?? ''}: half day, sunset aperitivo and private tour.`,
     intro: `Boat tours from Cannigione to the La Maddalena archipelago, on a RIB with skipper. A dedicated RIB leaves from Cannigione, the ${hondaFlotta?.modello ?? ''}: up to ${honda?.posti ?? ''} people, with shade on board and ${(hondaFlotta?.motori ?? '').replace(/^Single Honda /, 'a ')} that reaches the archipelago without wasting time.`,
     perche: {

@@ -1,7 +1,8 @@
 // Francese: testi fissi delle pagine (stesse chiavi di src/data/testi.js e src/data/en/testi.js).
+import { cifra } from '../formato.js';
 import { sito } from './sito.js';
 
-const euro = (n) => (n === '' || n === null || n === undefined ? '' : `${n} €`);
+const euro = (n) => (n === '' || n === null || n === undefined ? '' : `${cifra(n, 'fr')} €`);
 
 export const testi = {
   base: {
@@ -59,7 +60,6 @@ export const testi = {
     maestrale: "Par fort mistral, l'itinéraire change ou la sortie est déplacée : nous vous prévenons sur WhatsApp.",
     parco: 'Dans le Parc national',
     regoleParco: 'À la Plage Rose, ni débarquement ni baignade. Le sable, les galets et les coquillages restent où ils sont.',
-    ticket: "Droit d'entrée du Parc national",
   },
   soste: { rientro: 'Retour', sosta: 'Escale' },
   gommone: {
@@ -150,7 +150,7 @@ export const testi = {
   },
   home: {
     titolo: 'Excursions en bateau archipel de La Maddalena',
-    descrizione: (prezzo) => `Excursions en bateau dans l'archipel de La Maddalena, au départ de La Maddalena, Palau et Cannigione : tour des îles, demi-journée, coucher de soleil, Corse. Dès ${prezzo} €.`,
+    descrizione: (prezzo) => `Excursions en bateau dans l'archipel de La Maddalena, au départ de La Maddalena, Palau et Cannigione : tour des îles, demi-journée, coucher de soleil, Corse. Dès ${cifra(prezzo, 'fr')} €.`,
     apertura: 'Présentation',
     occhiello: 'Départs de La Maddalena, Palau et Cannigione · Sardaigne',
     testo: "Sorties en semi-rigide avec skipper dans l'archipel de La Maddalena : le tour des îles (Tour des 7 îles), l'excursion à la demi-journée, l'apéritif au coucher du soleil, la sortie privatisée et l'excursion en Corse. Départ du port de La Maddalena, avec passage à Palau pour ceux qui y embarquent, et de Cannigione.",
@@ -165,7 +165,7 @@ export const testi = {
       aBordo: 'À bord',
       massimo: (n) => `${n} personnes maximum`,
       prezzo: 'Prix',
-      da: (n) => `À partir de ${n} € par personne`,
+      da: (n) => `À partir de ${cifra(n, 'fr')} € par personne`,
     },
     escursioni: {
       occhiello: 'Excursions',
@@ -202,7 +202,7 @@ export const testi = {
   catalogo: {
     titolo: 'Excursions en bateau La Maddalena : sorties et prix',
     h1: 'Excursions en bateau à La Maddalena : sorties en semi-rigide et prix',
-    descrizione: (prezzo) => `Excursions en bateau à La Maddalena : tour des îles, demi-journée, apéritif au coucher du soleil, semi-rigide avec skipper et Corse. Dès ${prezzo} € par personne.`,
+    descrizione: (prezzo) => `Excursions en bateau à La Maddalena : tour des îles, demi-journée, apéritif au coucher du soleil, semi-rigide avec skipper et Corse. Dès ${cifra(prezzo, 'fr')} € par personne.`,
     occhiello: 'Excursions',
     introOnline: `Sorties en bateau dans l'archipel de La Maddalena, en semi-rigide avec skipper, ${sito.partenze.frase} : voyez les places libres et réservez en ligne.`,
     intro: `Sorties en bateau dans l'archipel de La Maddalena, en semi-rigide avec skipper, ${sito.partenze.frase}, réservables par un message WhatsApp.`,
@@ -364,7 +364,6 @@ export const testi = {
         "Le sable, les galets et les coquillages restent sur les plages : les emporter est interdit.",
         'Les déchets et les mégots reviennent à bord avec nous.',
       ],
-      ticket: "Droit d'entrée du Parc national",
     },
   },
   domande: {

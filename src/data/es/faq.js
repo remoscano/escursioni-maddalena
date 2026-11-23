@@ -1,5 +1,6 @@
 // Spagnolo: domande frequenti (stessi id dell'italiano). La prenotazione online per ora è solo in italiano:
 // qui si spiega la prenotazione su WhatsApp. Prezzi dal listino unico.
+import { cifra } from '../formato.js';
 import { prezzoDa, regole } from '../prenotazioni.js';
 import { palauMattina, minimoGruppo } from '../traduzioni.js';
 import { sito } from './sito.js';
@@ -12,7 +13,7 @@ export const faq = [
     domande: [
       { id: 'prenotare', domanda: '¿Cómo se reserva?', risposta: `Con un mensaje de WhatsApp: en la página Solicitud eliges excursión, día, número de personas y punto de embarque, y el mensaje ya está listo para enviar. Te respondemos con la disponibilidad y la hora de encuentro. ${sito.pagamentoLink.testo}` },
       { id: 'pagare', domanda: '¿Cómo se paga?', risposta: `${sito.pagamentoLink.testo} En las excursiones privadas el combustible se paga aparte: ${sito.carburante}.` },
-      { id: 'prezzi', domanda: '¿Cuánto cuesta una excursión en La Maddalena?', risposta: `En las salidas en grupo: excursión de medio día desde ${pM.adulto} € por persona, la vuelta a las islas (Tour de las 7 islas) desde ${p7.adulto} €, aperitivo al atardecer desde ${pT.adulto} €. Hasta los 10 años hay tarifa reducida (desde ${pM.bambino} € en el medio día). La neumática con patrón en exclusiva cuesta desde ${pP.barca} € (Córcega desde ${pC.barca} €), con el combustible aparte. Los precios cambian según el periodo de la temporada.` },
+      { id: 'prezzi', domanda: '¿Cuánto cuesta una excursión en La Maddalena?', risposta: `En las salidas en grupo: excursión de medio día desde ${cifra(pM.adulto, 'es')} € por persona, la vuelta a las islas (Tour de las 7 islas) desde ${cifra(p7.adulto, 'es')} €, aperitivo al atardecer desde ${cifra(pT.adulto, 'es')} €. Hasta los 10 años hay tarifa reducida (desde ${cifra(pM.bambino, 'es')} € en el medio día). La neumática con patrón en exclusiva cuesta desde ${cifra(pP.barca, 'es')} € (Córcega desde ${cifra(pC.barca, 'es')} €), con el combustible aparte. Los precios cambian según el periodo de la temporada.` },
       { id: 'palau', domanda: '¿Se puede embarcar en Palau?', risposta: `Sí. En las salidas en grupo la neumática sale del puerto de La Maddalena y recoge a quien embarca en Palau: por la mañana a las ${palauMattina}, y a la vuelta te deja allí antes de regresar a La Maddalena. Es un servicio extra para quien no quiere o no puede llegar a La Maddalena. En exclusiva (tour privado y Córcega) la neumática puede recogerte directamente en Palau. El precio es el mismo.` },
       { id: 'cancellare', domanda: '¿Puedo cancelar la reserva?', risposta: `Sí: si cancelas al menos ${regole.cancellazioneGratisOre} horas antes, te devolvemos el importe completo. Escríbenos por WhatsApp. Después no hay reembolso.` },
       { id: 'minimo', domanda: '¿Y si no se llega al número mínimo?', risposta: `Las salidas en grupo se hacen con al menos ${minimoGruppo} personas. Si la tarde anterior no se alcanzan, te proponemos otra fecha u otro tour, o te devolvemos el importe completo.` },

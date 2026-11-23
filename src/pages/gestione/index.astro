@@ -827,7 +827,7 @@ const titoli = Object.fromEntries(escursioni.filter((e) => offerte[e.slug]).map(
       }
       if (az === 'rimborsa' || az === 'rimborsa-tutto') {
         const importo = az === 'rimborsa' ? $<HTMLInputElement>('#dlg-importo').value : String(p.pagato - (p.rimborsato || 0));
-        if (!window.confirm(`Rimborsare ${importo.replace('.', ',')} € a ${p.nome}?`)) { b.disabled = false; return; }
+        if (!window.confirm(`Rimborsare ${euro(Number(String(importo).replace(',', '.')))} a ${p.nome}?`)) { b.disabled = false; return; }
         if (az === 'rimborsa-tutto') await chiama({ azione: 'rimborso-maltempo' });
         else await chiama({ azione: 'rimborsa', importo });
         dialogo.close(); dopoAzione(); return;

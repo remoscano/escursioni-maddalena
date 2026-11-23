@@ -1,5 +1,6 @@
 // Tedesco: domande frequenti (stessi id dell'italiano). La prenotazione online per ora è solo in italiano:
 // qui si spiega la prenotazione su WhatsApp. Prezzi dal listino unico.
+import { cifra } from '../formato.js';
 import { prezzoDa, regole } from '../prenotazioni.js';
 import { palauMattina, minimoGruppo } from '../traduzioni.js';
 import { sito } from './sito.js';
@@ -12,7 +13,7 @@ export const faq = [
     domande: [
       { id: 'prenotare', domanda: 'Wie buche ich?', risposta: `Mit einer WhatsApp-Nachricht: Auf der Seite Anfrage wählen Sie Ausflug, Tag, Personenzahl und Einstiegsort, und die Nachricht ist fertig zum Senden. Wir antworten mit der Verfügbarkeit und der Treffpunktzeit. ${sito.pagamentoLink.testo}` },
       { id: 'pagare', domanda: 'Wie bezahle ich?', risposta: `${sito.pagamentoLink.testo} Bei Privattouren wird der Treibstoff extra berechnet: ${sito.carburante}.` },
-      { id: 'prezzi', domanda: 'Was kostet ein Bootsausflug in La Maddalena?', risposta: `Bei Gruppenausflügen: Halbtagestour ab ${pM.adulto} € pro Person, die Inselrundfahrt (7-Inseln-Tour) ab ${p7.adulto} €, Aperitif bei Sonnenuntergang ab ${pT.adulto} €. Bis 10 Jahre gilt ein ermäßigter Preis (ab ${pM.bambino} € bei der Halbtagestour). Das exklusive Boot mit Skipper kostet ab ${pP.barca} € (Korsika ab ${pC.barca} €), Treibstoff extra. Die Preise ändern sich je nach Zeitraum der Saison.` },
+      { id: 'prezzi', domanda: 'Was kostet ein Bootsausflug in La Maddalena?', risposta: `Bei Gruppenausflügen: Halbtagestour ab ${cifra(pM.adulto, 'de')} € pro Person, die Inselrundfahrt (7-Inseln-Tour) ab ${cifra(p7.adulto, 'de')} €, Aperitif bei Sonnenuntergang ab ${cifra(pT.adulto, 'de')} €. Bis 10 Jahre gilt ein ermäßigter Preis (ab ${cifra(pM.bambino, 'de')} € bei der Halbtagestour). Das exklusive Boot mit Skipper kostet ab ${cifra(pP.barca, 'de')} € (Korsika ab ${cifra(pC.barca, 'de')} €), Treibstoff extra. Die Preise ändern sich je nach Zeitraum der Saison.` },
       { id: 'palau', domanda: 'Kann ich in Palau einsteigen?', risposta: `Ja. Bei Gruppenausflügen startet das Boot im Hafen von La Maddalena und holt die Gäste in Palau ab: morgens um ${palauMattina} Uhr, und auf dem Rückweg bringt es Sie dorthin zurück, bevor es nach La Maddalena fährt. Das ist ein zusätzlicher Service für alle, die nicht nach La Maddalena kommen können oder wollen. Bei Privattouren (private Bootstour und Korsika) kann das Boot Sie direkt in Palau abholen. Der Preis ist derselbe.` },
       { id: 'cancellare', domanda: 'Kann ich meine Buchung stornieren?', risposta: `Ja: Wenn Sie mindestens ${regole.cancellazioneGratisOre} Stunden vorher stornieren, erstatten wir den vollen Betrag. Schreiben Sie uns auf WhatsApp. Danach ist keine Erstattung vorgesehen.` },
       { id: 'minimo', domanda: 'Und wenn die Mindestteilnehmerzahl nicht erreicht wird?', risposta: `Gruppenausflüge finden ab ${minimoGruppo} Personen statt. Wird diese Zahl am Vorabend nicht erreicht, schlagen wir Ihnen ein anderes Datum oder einen anderen Ausflug vor oder erstatten den vollen Betrag.` },

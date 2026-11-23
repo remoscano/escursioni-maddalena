@@ -4,7 +4,7 @@ import { regole } from '../../src/data/prenotazioni.js';
 import { prima, esegui, registra } from './db.js';
 import { avviaPagamento } from './pagamenti.js';
 import { inviaEmailBuono } from './email.js';
-import { Errore, testo, testoLungo, email, telefono, codiceCasuale, tokenSicuro, traMinutiISO, adessoISO, ugualeSicuro, oraRoma } from './util.js';
+import { Errore, testo, testoLungo, email, telefono, codiceCasuale, tokenSicuro, traMinutiISO, adessoISO, ugualeSicuro, oraRoma, euroDaCent } from './util.js';
 
 export const codiceBuono = () => `BR-${codiceCasuale(8)}`;
 
@@ -34,7 +34,7 @@ export function scadenzaBuono(mesi = regole.buoni.validitaMesi) {
 export async function creaBuono(db, b, { metodo, ipHash }) {
   const valore = Number(String(b.valore ?? '').replace(',', '.'));
   const { minimo, massimo } = regole.buoni;
-  if (!Number.isFinite(valore) || valore < minimo || valore > massimo || Math.round(valore) !== valore) throw new Errore(400, `Scegli un importo tra ${minimo} e ${massimo} €, senza centesimi.`);
+  if (!Number.isFinite(valore) || valore < minimo || valore > massimo || Math.round(valore) !== valore) throw new Errore(400, `Scegli un importo tra ${euroDaCent(minimo * 100)} e ${euroDaCent(massimo * 100)} €, senza centesimi.`);
   const dati = {
     codice: codiceBuono(),
     token: tokenSicuro(24),

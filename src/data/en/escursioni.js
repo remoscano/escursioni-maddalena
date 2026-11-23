@@ -2,6 +2,7 @@
 // Only texts and English web addresses are here: prices, seats, times, maps and photos-to-take
 // come from the Italian file and from src/data/prenotazioni.js (single price list).
 // If a tour changes in Italian (a stop, a text, what's included), change it here too.
+import { cifra } from '../formato.js';
 
 import { sito } from './sito.js';
 import {
@@ -21,7 +22,7 @@ const testi = {
     titolo: '7 Islands Tour',
     titoloSeo: 'La Maddalena Archipelago Boat Tour: the 7 Islands',
     titoloPagina: 'La Maddalena Archipelago boat tour: the 7 Islands Tour',
-    descrizioneSeo: `Full-day boat tour from La Maddalena, with pick-up in Palau: the 7 islands of the archipelago and the Pink Beach seen from the sea. From €${da('tour-7-isole').adulto} per person.`,
+    descrizioneSeo: `Full-day boat tour from La Maddalena, with pick-up in Palau: the 7 islands of the archipelago and the Pink Beach seen from the sea. From €${cifra(da('tour-7-isole').adulto, 'en')} per person.`,
     etichette: ['Full day', '7 islands', pranzo7.breve],
     breve: 'La Maddalena, Santo Stefano, Caprera, Spargi, Budelli, Razzoli and Santa Maria in one day, with the Pink Beach seen from the sea.',
     intro: 'A full day among La Maddalena, Santo Stefano, Caprera, Spargi, Budelli, Razzoli and Santa Maria, with the Pink Beach seen from the sea.',
@@ -85,7 +86,7 @@ const testi = {
     titolo: 'Half-day tour',
     titoloSeo: 'Half-Day Boat Tour La Maddalena: Caprera or the North',
     titoloPagina: 'Half-day boat tour in La Maddalena',
-    descrizioneSeo: `Half-day boat tour, morning or afternoon, ${sito.partenze.seo}: Caprera or the northern islands. From €${da('mezza-giornata').adulto} per person.`,
+    descrizioneSeo: `Half-day boat tour, morning or afternoon, ${sito.partenze.seo}: Caprera or the northern islands. From €${cifra(da('mezza-giornata').adulto, 'en')} per person.`,
     etichette: ['Morning or afternoon', 'Caprera or northern islands'],
     breve: 'Three and a half hours on one of two routes: Caprera, or Spargi, the Pink Beach and Porto della Madonna. The skipper chooses depending on the wind.',
     intro: "For those short on time who don't want to miss the archipelago's sea: three and a half hours, morning or afternoon, on one of two routes. Caprera, or the northern islands.",
@@ -125,7 +126,7 @@ const testi = {
     nomeLink: 'Sunset aperitivo boat trip',
     titoloSeo: 'Sunset Boat Tour La Maddalena with Aperitivo',
     titoloPagina: 'Sunset boat tour with aperitivo in La Maddalena',
-    descrizioneSeo: `Sunset aperitivo on a boat in La Maddalena: prosecco, a sharing board and a swim stop at Santo Stefano. Departure between 6:30 and 7 pm. From €${da('tramonto').adulto} per person.`,
+    descrizioneSeo: `Sunset aperitivo on a boat in La Maddalena: prosecco, a sharing board and a swim stop at Santo Stefano. Departure between 6:30 and 7 pm. From €${cifra(da('tramonto').adulto, 'en')} per person.`,
     etichette: ['Aperitivo on board', `Max ${posti('tramonto')} people`],
     breve: 'Aperitivo on a RIB at sunset: prosecco, a sharing board and a stop in calm water at Santo Stefano.',
     intro: 'Our Sunset is an aperitivo on a RIB: a prosecco toast, something to nibble and a stop in shallow, sheltered water while the sun sets over the islands.',
@@ -169,7 +170,7 @@ const testi = {
     titolo: 'Private boat tour',
     titoloSeo: 'Private Boat Tour La Maddalena: RIB with Skipper',
     titoloPagina: 'Private boat tour in La Maddalena: RIB with skipper',
-    descrizioneSeo: `Private RIB with skipper in La Maddalena: just your group, up to ${posti('tour-privato')} people, also at sunset, from La Maddalena, Palau or Cannigione. From €${da('tour-privato').barca}.`,
+    descrizioneSeo: `Private RIB with skipper in La Maddalena: just your group, up to ${posti('tour-privato')} people, also at sunset, from La Maddalena, Palau or Cannigione. From €${cifra(da('tour-privato').barca, 'en')}.`,
     etichette: ['Private', 'Tailor-made'],
     breve: 'A private RIB for families, friends or companies, with a tailor-made route.',
     intro: 'A private RIB with skipper just for your group: families, friends, companies or a special occasion. Route and stops are decided together with the skipper.',
@@ -202,7 +203,7 @@ const testi = {
     nomeLink: 'Boat trip to Corsica',
     titoloSeo: 'Corsica Boat Trip from La Maddalena: Lavezzi and Cavallo',
     titoloPagina: 'Corsica boat trip from La Maddalena: Lavezzi and Cavallo',
-    descrizioneSeo: `Boat trip from Sardinia to Corsica, from La Maddalena or Palau: Piana island, the Lavezzi islands and Cavallo on a private RIB. From €${da('corsica').barca}.`,
+    descrizioneSeo: `Boat trip from Sardinia to Corsica, from La Maddalena or Palau: Piana island, the Lavezzi islands and Cavallo on a private RIB. From €${cifra(da('corsica').barca, 'en')}.`,
     etichette: ['Private', 'Full day'],
     breve: 'A private RIB for a full day, visiting Piana island, the Lavezzi islands and Cavallo.',
     intro: 'A full day with a private RIB: we cross the sea to Corsica to discover Piana island, the clear waters of the Lavezzi islands and the island of Cavallo.',

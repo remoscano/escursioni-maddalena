@@ -2,6 +2,7 @@
 // La versione inglese ha le stesse chiavi in src/data/en/testi.js: se cambi una frase qui, cambiala anche lì.
 // I dati veri (prezzi, orari, moli, escursioni, domande) NON stanno qui: arrivano da sito.js, escursioni.js,
 // faq.js, imbarchi.js e prenotazioni.js.
+import { cifra } from './formato.js';
 
 import { sito } from './sito.js';
 
@@ -61,7 +62,6 @@ export const testi = {
     maestrale: "Con il maestrale forte l'itinerario cambia o l'uscita si sposta: ti avvisiamo su WhatsApp.",
     parco: 'Nel Parco Nazionale',
     regoleParco: 'Alla Spiaggia Rosa niente sbarco né bagno. Sabbia, sassi e conchiglie restano dove sono.',
-    ticket: 'Ticket del Parco',
   },
   soste: { rientro: 'Rientro', sosta: 'Sosta' },
   gommone: {
@@ -90,7 +90,7 @@ export const testi = {
     rosa7: '5 · Spiaggia Rosa, solo dal gommone',
   },
   scheda: {
-    euro: (n) => (n === '' || n === null || n === undefined ? '' : `${n} €`),
+    euro: (n) => (n === '' || n === null || n === undefined ? '' : `${cifra(n)} €`),
     da: 'Da',
     daMinuscolo: 'da',
     aPersona: 'a persona',
@@ -153,7 +153,7 @@ export const testi = {
   },
   home: {
     titolo: 'Escursioni in barca Arcipelago di La Maddalena',
-    descrizione: (prezzo) => `Escursioni in barca nell'Arcipelago di La Maddalena, partenza da La Maddalena, Palau e Cannigione: giro delle isole, mezza giornata, tramonto, Corsica. Da ${prezzo} €.`,
+    descrizione: (prezzo) => `Escursioni in barca nell'Arcipelago di La Maddalena, partenza da La Maddalena, Palau e Cannigione: giro delle isole, mezza giornata, tramonto, Corsica. Da ${cifra(prezzo)} €.`,
     apertura: 'Apertura',
     occhiello: 'Partenza da La Maddalena, Palau e Cannigione · Sardegna',
     testo: "Gite in gommone con skipper nell'arcipelago di La Maddalena: il giro delle isole (Tour delle 7 isole), l'escursione di mezza giornata, l'aperitivo al tramonto, il tour privato in esclusiva e l'escursione in Corsica. Si parte dal porto di La Maddalena, con passaggio a Palau per chi si imbarca lì, e da Cannigione.",
@@ -168,7 +168,7 @@ export const testi = {
       aBordo: 'A bordo',
       massimo: (n) => `Massimo ${n} persone`,
       prezzo: 'Prezzo',
-      da: (n) => `Da ${n} € a persona`,
+      da: (n) => `Da ${cifra(n)} € a persona`,
     },
     escursioni: {
       occhiello: 'Escursioni',
@@ -205,7 +205,7 @@ export const testi = {
   catalogo: {
     titolo: 'Gite in barca La Maddalena: tour in gommone e prezzi',
     h1: 'Gite in barca a La Maddalena: tour in gommone e prezzi',
-    descrizione: (prezzo) => `Gite e tour in barca a La Maddalena: giro delle isole, escursione di mezza giornata, aperitivo al tramonto, gommone con skipper e Corsica. Da ${prezzo} € a persona.`,
+    descrizione: (prezzo) => `Gite e tour in barca a La Maddalena: giro delle isole, escursione di mezza giornata, aperitivo al tramonto, gommone con skipper e Corsica. Da ${cifra(prezzo)} € a persona.`,
     occhiello: 'Escursioni',
     introOnline: `Tour in barca nell'arcipelago di La Maddalena, in gommone con skipper, con ${sito.partenze.frase}: vedi i posti liberi e prenoti online.`,
     intro: `Tour in barca nell'arcipelago di La Maddalena, in gommone con skipper, con ${sito.partenze.frase}, prenotabili con un messaggio WhatsApp.`,
@@ -367,7 +367,6 @@ export const testi = {
         'Sabbia, sassi e conchiglie restano sulle spiagge: portarli via è vietato.',
         'Rifiuti e mozziconi tornano a bordo con noi.',
       ],
-      ticket: 'Ticket del Parco',
     },
   },
   domande: {

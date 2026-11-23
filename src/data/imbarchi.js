@@ -1,6 +1,7 @@
 // Pagine dei punti di partenza (16 novembre 2026): /escursioni-la-maddalena-da-palau/ e /escursioni-la-maddalena-da-cannigione/.
 // Nate dalle ricerche su Google: "escursioni la maddalena da palau" e simili valgono più di 2.000 ricerche al mese.
 // Orari, prezzi e moli arrivano da prenotazioni.js e sito.js: qui non si scrivono a mano.
+import { cifra } from './formato.js';
 
 import { offerte, gommoni, regole } from './prenotazioni.js';
 import { escursioni } from './escursioni.js';
@@ -42,7 +43,7 @@ export const pagineImbarco = [
     titoloDomande: 'Passaggio a Palau: le domande',
     titoloRichiesta: 'Sali a bordo a Palau: scegli la data',
     briciola: 'Passaggio a Palau',
-    descrizioneSeo: `Escursioni La Maddalena da Palau: il gommone parte da La Maddalena e passa a prenderti a Palau. Giro delle isole, mezza giornata, tramonto, Corsica. Da ${prezzoMinimo(daPalau)} €.`,
+    descrizioneSeo: `Escursioni La Maddalena da Palau: il gommone parte da La Maddalena e passa a prenderti a Palau. Giro delle isole, mezza giornata, tramonto, Corsica. Da ${cifra(prezzoMinimo(daPalau))} €.`,
     breve: `Il gommone parte da La Maddalena e alle ${palauMattina} passa a prenderti a Palau: comodo se arrivi da Olbia o dormi in Gallura.`,
     intro: `Le escursioni in gommone con skipper partono dal porto di La Maddalena. Per chi non vuole o non può arrivare fin lì, il gommone passa a prendere i clienti a Palau: al mattino alle ${palauMattina}, e al ritorno ti riaccompagna a Palau prima di rientrare a La Maddalena.`,
     perche: {
@@ -69,7 +70,7 @@ export const pagineImbarco = [
     titoloDomande: 'Escursioni da Cannigione: le domande',
     titoloRichiesta: 'Escursione da Cannigione: scegli la data',
     briciola: 'Da Cannigione',
-    descrizioneSeo: `Escursioni in barca da Cannigione all'arcipelago di La Maddalena: mezza giornata, aperitivo al tramonto e gommone con skipper, dal Pontile La Sciumara. Da ${prezzoMinimo(daCannigione)} €.`,
+    descrizioneSeo: `Escursioni in barca da Cannigione all'arcipelago di La Maddalena: mezza giornata, aperitivo al tramonto e gommone con skipper, dal Pontile La Sciumara. Da ${cifra(prezzoMinimo(daCannigione))} €.`,
     breve: `Da Cannigione parte un gommone tutto suo, l'${hondaFlotta?.modello ?? ''}: mezza giornata, aperitivo al tramonto e tour privato.`,
     intro: `Escursioni in barca da Cannigione all'arcipelago di La Maddalena, in gommone con skipper. Da Cannigione parte un gommone dedicato, l'${hondaFlotta?.modello ?? ''}: fino a ${honda?.posti ?? ''} persone, con l'ombra a bordo e un motore da ${(hondaFlotta?.motori ?? '').replace(/^1 motore Honda da /, '')} che arriva nell'arcipelago senza perdere tempo.`,
     perche: {

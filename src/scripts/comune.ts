@@ -1,4 +1,5 @@
 // Funzioni condivise dalle pagine con JavaScript (prenotazione, area strutture, gestione).
+import { cifra } from '../data/formato.js';
 
 export class ErroreApi extends Error {
   constructor(public stato: number, messaggio: string) { super(messaggio); }
@@ -20,8 +21,7 @@ export async function api<T = any>(percorso: string, opzioni: { metodo?: string;
 const esc: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 export const h = (v: unknown) => String(v ?? '').replace(/[&<>"']/g, (c) => esc[c]);
 
-export const euro = (n: number) =>
-  `${n.toLocaleString('it-IT', { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 })} €`;
+export const euro = (n: number) => `${cifra(n)} €`;
 
 const fData = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 const fDataBreve = new Intl.DateTimeFormat('it-IT', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });

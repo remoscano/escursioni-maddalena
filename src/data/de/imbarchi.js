@@ -1,4 +1,5 @@
 // Tedesco: pagine dei punti di partenza (Palau, Cannigione). Orari, prezzi e moli dal listino e da sito.js.
+import { cifra } from '../formato.js';
 import { regole } from '../prenotazioni.js';
 import { escursioni } from './escursioni.js';
 import { sito } from './sito.js';
@@ -22,7 +23,7 @@ export const pagineImbarco = [
     titoloDomande: 'Zustieg in Palau: Fragen',
     titoloRichiesta: 'In Palau einsteigen: Datum wählen',
     briciola: 'Zustieg in Palau',
-    descrizioneSeo: `Bootstouren La Maddalena mit Zustieg in Palau: Start in La Maddalena, wir holen Sie in Palau ab. Inselrundfahrt, Halbtagestour, Sonnenuntergang, Korsika. Ab ${prezzoMinimo(daPalau)} €.`,
+    descrizioneSeo: `Bootstouren La Maddalena mit Zustieg in Palau: Start in La Maddalena, wir holen Sie in Palau ab. Inselrundfahrt, Halbtagestour, Sonnenuntergang, Korsika. Ab ${cifra(prezzoMinimo(daPalau), 'de')} €.`,
     breve: `Das Boot startet in La Maddalena und holt Sie um ${palauMattina} Uhr in Palau ab: praktisch, wenn Sie aus Olbia kommen oder in der Gallura wohnen.`,
     intro: `Unsere Bootstouren mit Skipper starten im Hafen von La Maddalena. Für alle, die nicht dorthin kommen können oder wollen, holt das Boot die Gäste in Palau ab: morgens um ${palauMattina} Uhr, und auf dem Rückweg bringt es Sie nach Palau, bevor es nach La Maddalena zurückfährt.`,
     perche: {
@@ -49,7 +50,7 @@ export const pagineImbarco = [
     titoloDomande: 'Ausflüge ab Cannigione: Fragen',
     titoloRichiesta: 'Ausflug ab Cannigione: Datum wählen',
     briciola: 'Ab Cannigione',
-    descrizioneSeo: `Bootsausflüge ab Cannigione in den La-Maddalena-Archipel: Halbtagestour, Aperitif bei Sonnenuntergang und Boot mit Skipper, ab dem Pontile La Sciumara. Ab ${prezzoMinimo(daCannigione)} €.`,
+    descrizioneSeo: `Bootsausflüge ab Cannigione in den La-Maddalena-Archipel: Halbtagestour, Aperitif bei Sonnenuntergang und Boot mit Skipper, ab dem Pontile La Sciumara. Ab ${cifra(prezzoMinimo(daCannigione), 'de')} €.`,
     breve: `Ab Cannigione fährt ein eigenes Boot, die ${hondaFlotta?.modello ?? ''}: Halbtagestour, Aperitif bei Sonnenuntergang und Privattour.`,
     intro: `Bootsausflüge ab Cannigione in den La-Maddalena-Archipel, im Schlauchboot mit Skipper. Ab Cannigione fährt ein eigenes Boot, die ${hondaFlotta?.modello ?? ''}: bis zu ${honda?.posti ?? ''} Personen, mit Schatten an Bord und ${(hondaFlotta?.motori ?? '').replace(/^1 /, 'einem ').replace('Honda-Motor', 'Honda-Motor')}, der den Archipel ohne Zeitverlust erreicht.`,
     perche: {

@@ -46,6 +46,7 @@ const testi = {
   regole: {
     maltempo: "If the sea or wind isn't safe, we cancel and you choose: a full refund or another date.",
     ticketParco: 'Yes, it is included in the price of every tour.',
+    ticketParcoInfo: 'The National Park fee is included in the price of every tour.',
     pagamento: 'Online when you book, by card or PayPal. On private tours fuel is extra.',
     bambini: 'Yes, at any age. Up to 10 years old they pay the child price. Life jackets are compulsory on board, but ours are adult size: for extra peace of mind, bring a life jacket in the right size for your children.',
     animali: 'No, pets are not allowed on board.',
