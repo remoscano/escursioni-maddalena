@@ -209,7 +209,7 @@ Senza i punti 2–3 si può comunque aprire il sito "vetrina" con prenotazione s
 ### Da decidere o da avere dal cliente, quando serve
 - [ ] Da decidere nella gestione (scheda Offerte): promozioni, eventuale aumento nel weekend, codici sconto, extra a pagamento (foto, kit...): ora non ce n'è nessuno
 - [ ] Link alla scheda Google per le recensioni (`recensioniGoogle` in `src/data/sito.js`): serve all'email di ringraziamento
-- [ ] Risposte automatiche di WhatsApp Business (benvenuto, assenza fuori orario, risposte rapide): testi proposti da Claude, li imposta il cliente nell'app
+- [ ] Risposte automatiche di WhatsApp Business: testi scritti da Claude il 23 novembre 2026 nel documento https://claude.ai/artifact/KN1XDGDYKEW8SMazEg5xUg (benvenuto e assenza in italiano + inglese, in stagione e fuori stagione; 30 risposte rapide in 5 lingue: prezzi, orari, pranzo, cosa portare, imbarco, pagamento; passi nell'app). Li imposta il cliente; manca il molo di Palau nella risposta /imbarco. Se cambiano prezzi o orari nel listino, aggiornare anche il documento
 
 ### Da attivare prima di aprire le prenotazioni vere
 - [ ] Dominio: c'è già, **escursionimaddalena.com**, registrato su GoDaddy, oggi non mostra niente (Remo, 23 novembre 2026). Da spostare su Cloudflare (DNS), collegarlo in Pages → Custom domains; poi `site` in `astro.config.mjs`, `url` in `src/data/sito.js`, `www` che rimanda alla versione senza `www`
