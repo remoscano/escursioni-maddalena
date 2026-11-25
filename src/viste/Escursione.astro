@@ -10,7 +10,8 @@ import Faq from '../components/Faq.astro';
 import SezioneRichiesta from '../components/SezioneRichiesta.astro';
 import DatiStrutturati from '../components/DatiStrutturati.astro';
 import { datiLingua } from '../data/lingua.js';
-import { fotoGalleria, fotoPiatto } from '../data/foto.js';
+import { fotoGalleria, fotoPiatto, fotoCopertina } from '../data/foto.js';
+import { Image } from 'astro:assets';
 import { regole, offerte, testoChiusuraOnline, testoDopoChiusura } from '../data/prenotazioni.js';
 
 interface Props { e: any }
@@ -266,7 +267,9 @@ const paginaCannigione = pagineImbarco.find((p: any) => p.id === 'cannigione');
       <div class="altre">
         {altre.map((x: any) => (
           <a href={L.urlEscursione(x.slug)} class="altra">
-            <span class="altra__foto" aria-hidden="true"></span>
+            {fotoCopertina(x.slug)
+              ? <Image src={fotoCopertina(x.slug)} alt="" widths={[176, 264]} sizes="88px" class="altra__foto" loading="lazy" />
+              : <span class="altra__foto" aria-hidden="true"></span>}
             <span><strong>{x.titolo}</strong><span>{x.breve}</span></span>
           </a>
         ))}

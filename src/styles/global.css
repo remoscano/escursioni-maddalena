@@ -560,7 +560,7 @@ p, ul, ol, dl, figure, blockquote { margin: 0; }
 }
 .altra:hover { border-color: var(--mare); color: var(--mare); }
 .altra__foto {
-  flex: none; width: 88px; height: 88px; border-radius: 14px; background-color: #EEEEEE;
+  flex: none; width: 88px; height: 88px; border-radius: 14px; object-fit: cover; background-color: #EEEEEE;
   background-image: repeating-linear-gradient(135deg, rgba(40, 40, 40, 0.07) 0 2px, transparent 2px 12px);
 }
 .altra strong { display: block; font-family: var(--font-titoli); font-size: 19px; line-height: 1.25; }
