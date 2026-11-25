@@ -33,9 +33,9 @@ const testi = {
     foto: {
       copertina: 'Spargi von oben, mit dem Boot vor Anker',
       galleria: [
-        'Porto della Madonna von oben, das Boot zwischen den drei Inseln',
+        'Porto della Madonna von oben, zwischen den Inseln',
         'Der Rosa Strand vom Boot aus',
-        'Gäste im Wasser bei Caprera',
+        'Eine Bucht auf Caprera von oben',
         'Das Zentrum von La Maddalena zur Mittagszeit',
         'Spargi, Sand und Granit',
       ],
@@ -74,7 +74,7 @@ const testi = {
         'Ein Fischgericht im Partnerrestaurant',
         'Ein Nudelgericht der sardischen Küche',
         'Eine sardische Vorspeise',
-        'Der gedeckte Tisch im Zentrum von La Maddalena',
+        'Ein Restaurant im Freien im Zentrum von La Maddalena',
       ],
     },
   },
@@ -96,7 +96,7 @@ const testi = {
       copertina: 'Cala Coticcio, das Boot vor Anker im klaren Wasser',
       galleria: [
         'Das Boot an der Küste von Caprera',
-        'Sprung ins Wasser an der Cala Garibaldi',
+        'Das Boot in voller Fahrt Richtung Inseln',
         'Spargi vom Meer aus',
         'Der Rosa Strand vom Boot aus',
         'Porto della Madonna, türkisfarbenes Wasser',
@@ -136,7 +136,7 @@ const testi = {
       copertina: 'Das Boot im Gegenlicht bei Sonnenuntergang',
       galleria: [
         'Anstoßen mit Prosecco an Bord',
-        'Das Brettchen mit Wurst und Käse und die Obstspieße',
+        'Ein Brett mit Aufschnitt und Käse',
         'Der orangefarbene Himmel über dem Meer',
         'Das Boot in einer Bucht im Abendlicht',
         'Die Rückkehr in den Hafen mit den ersten Lichtern',
@@ -177,10 +177,10 @@ const testi = {
     durataTesto: '2,5 bis 7 Stunden',
     fatti: [`Einstieg in ${daDove('tour-privato')}`, 'Route nach Maß'],
     foto: {
-      copertina: 'Eine Familie an Bord, Sprung vom Bug',
+      copertina: 'Das Boot vor Anker im klaren Wasser, ein Gast schnorchelt',
       galleria: [
         'Eine Freundesgruppe an Bord',
-        'Sprung vom Bug',
+        'Ein Sprung vom Boot',
         'Das private Boot in einer ruhigen Bucht',
         'Aperitif an Bord',
         'Kinder mit Taucherbrille und Schnorchel',
@@ -210,11 +210,11 @@ const testi = {
     durataTesto: '7 Stunden',
     fatti: ['Exklusives Boot', `Einstieg in ${daDove('corsica')}`, 'Gültiger Ausweis für das Ausland erforderlich'],
     foto: {
-      copertina: 'Die Lavezzi-Inseln vom Meer aus, mit dem Boot vor Anker',
+      copertina: 'Die Lavezzi-Inseln vom Meer aus',
       galleria: [
-        'Die Insel Piana vom Boot aus',
+        'Die Insel Piana von oben',
         'Die Lavezzi-Inseln, Wasser und Granit',
-        'Gäste im Wasser bei den Lavezzi',
+        'Boote vor Anker in einer Bucht der Lavezzi',
         'Die Insel Cavallo vom Meer aus',
         'Die Überfahrt nach Korsika',
       ],

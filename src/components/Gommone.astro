@@ -4,6 +4,7 @@ import Dato from './Dato.astro';
 import Icona from './Icona.astro';
 import { datiLingua } from '../data/lingua.js';
 import { gommoni } from '../data/prenotazioni.js';
+import { foto } from '../data/foto.js';
 interface Props { titoloLivello?: 'h1' | 'h2'; link?: boolean }
 const { titoloLivello = 'h2', link = true } = Astro.props;
 const L = datiLingua(Astro.url);
@@ -18,7 +19,7 @@ const uso = (id: string) => {
 const Titolo = titoloLivello;
 ---
 <div class="due-colonne">
-  <Foto nota={T.foto} class="gommone__foto" />
+  <Foto nota={T.foto} src={foto('home/gommoni')} class="gommone__foto" />
   <div style="display:flex;flex-direction:column;gap:28px">
     <div style="display:flex;flex-direction:column;gap:16px">
       <p class="occhiello">{T.occhiello}</p>

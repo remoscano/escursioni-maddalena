@@ -66,7 +66,7 @@ export const testi = {
     usoCannigione: 'Ab Cannigione',
     usoEsclusive: 'Nur Privattouren',
     usoGruppo: 'Gruppe und privat',
-    foto: 'Die Schlauchboote im Profil, vor Anker in türkisfarbenem Wasser',
+    foto: 'Ein Schlauchboot vor Anker in türkisfarbenem Wasser, mit Gästen an Bord',
     occhiello: 'Unsere Boote',
     titolo: 'Unsere großen Schlauchboote',
     finoA: (n) => `Bis zu ${n} Personen`,
@@ -157,7 +157,7 @@ export const testi = {
     prenotaOnline: 'Online buchen',
     chiediWa: 'Verfügbarkeit auf WhatsApp anfragen',
     scegli: 'Ausflug wählen',
-    fotoApertura: 'ein Schlauchboot in voller Fahrt zwischen den Inseln des Archipels, von oben (mindestens 2000 px)',
+    fotoApertura: 'Ein Schlauchboot in voller Fahrt auf türkisfarbenem Wasser, von oben',
     fatti: {
       uscite: 'Ausflüge',
       usciteValore: 'Halber Tag, ganzer Tag, Sunset bei Sonnenuntergang',
@@ -324,7 +324,7 @@ export const testi = {
     bagagliTesto: 'Bringen Sie nur eine weiche Tasche mit: An Bord ist Platz kostbar.',
     bagagliExtra: "Handys und Ausweise bleiben im wasserdichten Staufach trocken.",
     fotoBordo: 'Fotos an Bord',
-    foto: ['Das Boot in Fahrt, von einem anderen Boot aus', 'Der Skipper am Steuer', 'Gäste am Bug', 'Die Badeleiter', 'Das geöffnete Sonnendach'],
+    foto: ['Ein Selfie an Bord, mit türkisfarbenem Wasser im Hintergrund', 'Baden im klaren Wasser', 'In Fahrt, am Heck liegend', 'Eine Gruppe von Gästen auf einem Felsen beim Badestopp', 'Eine Freundesgruppe am Bug'],
   },
   infoUtili: {
     titolo: 'Bootsausflug La Maddalena: Einstieg, Packliste, Wetter',

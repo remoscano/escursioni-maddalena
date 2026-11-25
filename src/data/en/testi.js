@@ -66,7 +66,7 @@ export const testi = {
     usoCannigione: 'From Cannigione',
     usoEsclusive: 'Private tours only',
     usoGruppo: 'Group and private',
-    foto: 'The RIBs side by side, at anchor in turquoise water',
+    foto: 'A RIB at anchor in turquoise water, with guests on board',
     occhiello: 'Our boats',
     titolo: 'Our large RIBs',
     finoA: (n) => `Up to ${n} people`,
@@ -157,7 +157,7 @@ export const testi = {
     prenotaOnline: 'Book online',
     chiediWa: 'Check availability on WhatsApp',
     scegli: 'Choose your tour',
-    fotoApertura: 'a RIB speeding between the islands of the archipelago, seen from above (at least 2000 px)',
+    fotoApertura: 'A RIB speeding across turquoise water, seen from above',
     fatti: {
       uscite: 'Tours',
       usciteValore: 'Half day, full day, Sunset aperitivo',
@@ -324,7 +324,7 @@ export const testi = {
     bagagliTesto: 'Bring just a soft bag: space on board is precious.',
     bagagliExtra: "Phones and documents stay dry in the watertight locker.",
     fotoBordo: 'Photos on board',
-    foto: ['The RIB under way, seen from another boat', 'The skipper at the helm', 'Guests at the bow', 'The swim ladder', 'The sunshade open'],
+    foto: ['A selfie on board, with turquoise water behind', 'A swim in clear water', 'Under way, lying at the stern', 'A group of guests on a rock during the swim stop', 'A group of friends sitting at the bow'],
   },
   infoUtili: {
     titolo: 'La Maddalena Boat Tour: Boarding, What to Bring, Weather',

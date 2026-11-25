@@ -6,6 +6,7 @@ import Icona from '../components/Icona.astro';
 import Dato from '../components/Dato.astro';
 import SezioneRichiesta from '../components/SezioneRichiesta.astro';
 import { datiLingua } from '../data/lingua.js';
+import { fotoBarca, fotoBordo } from '../data/foto.js';
 import { gommoni, gommoniPer, imbarchiPrenotazione } from '../data/prenotazioni.js';
 
 const L = datiLingua(Astro.url);
@@ -46,7 +47,7 @@ const barche = sito.flotta.map((f: any) => {
   {barche.map((b, i) => (
     <section class={`sezione barca${i % 2 ? ' barca--inversa' : ''}`} id={b.id} aria-labelledby={`${b.id}-titolo`}>
       <div class="contenitore due-colonne">
-        <Foto nota={T.fotoBarca(b.modello)} class="barca__foto" tono={i % 2 ? 'sabbia' : undefined} />
+        <Foto nota={T.fotoBarca(b.modello)} src={fotoBarca(b.id)} class="barca__foto" tono={i % 2 ? 'sabbia' : undefined} />
         <div class="barca__testo">
           <div class="pila-stretta">
             <p class="occhiello">{b.uso}</p>
@@ -106,12 +107,12 @@ const barche = sito.flotta.map((f: any) => {
 
   <section class="sezione" aria-label={T.fotoBordo}>
     <div class="contenitore galleria">
-      <Foto nota={T.foto[0]} class="galleria__grande" />
+      <Foto nota={T.foto[0]} src={fotoBordo(0)} class="galleria__grande" />
       <div class="galleria__piccole">
-        <Foto nota={T.foto[1]} tono="sabbia" />
-        <Foto nota={T.foto[2]} />
-        <Foto nota={T.foto[3]} tono="rosa" />
-        <Foto nota={T.foto[4]} />
+        <Foto nota={T.foto[1]} src={fotoBordo(1)} tono="sabbia" />
+        <Foto nota={T.foto[2]} src={fotoBordo(2)} />
+        <Foto nota={T.foto[3]} src={fotoBordo(3)} tono="rosa" />
+        <Foto nota={T.foto[4]} src={fotoBordo(4)} />
       </div>
     </div>
   </section>

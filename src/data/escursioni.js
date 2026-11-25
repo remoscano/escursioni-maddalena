@@ -54,9 +54,9 @@ export const escursioni = [
     foto: {
       copertina: "Spargi dall'alto, con il gommone all'ancora",
       galleria: [
-        "Porto della Madonna dall'alto, il gommone tra le tre isole",
+        "Porto della Madonna dall'alto, tra le isole",
         'La Spiaggia Rosa dal gommone',
-        'Ospiti in acqua a Caprera',
+        'Una cala di Caprera vista dall\'alto',
         'Il centro di La Maddalena a pranzo',
         'Spargi, sabbia e graniti',
       ],
@@ -105,7 +105,7 @@ export const escursioni = [
         'Un piatto di pesce del ristorante convenzionato',
         'Un primo della cucina sarda',
         'Un antipasto di terra sardo',
-        'La tavola apparecchiata nel centro di La Maddalena',
+        'Un ristorante all\'aperto nel centro di La Maddalena',
       ],
     },
   },
@@ -132,7 +132,7 @@ export const escursioni = [
       copertina: "Cala Coticcio, il gommone all'ancora nell'acqua trasparente",
       galleria: [
         'Il gommone lungo la costa di Caprera',
-        'Tuffo a Cala Garibaldi',
+        'Il gommone in velocità verso le isole',
         'Spargi dal mare',
         'La Spiaggia Rosa dal gommone',
         'Porto della Madonna, acqua turchese',
@@ -186,7 +186,7 @@ export const escursioni = [
       copertina: 'Il gommone controluce al tramonto',
       galleria: [
         'Il brindisi con il prosecco a bordo',
-        'Il tagliere con salsiccia e formaggio e gli spiedini di frutta',
+        'Un tagliere di salumi e formaggi',
         'Il cielo arancione sul mare',
         'Il gommone fermo in una baia, con la luce della sera',
         'Il rientro in porto con le prime luci',
@@ -238,10 +238,10 @@ export const escursioni = [
     postiMax: posti('tour-privato'),
     fatti: [`Imbarco a ${daDove('tour-privato')}`, 'Itinerario su misura'],
     foto: {
-      copertina: 'Una famiglia a bordo, tuffo dalla prua',
+      copertina: 'Il gommone all\'ancora nell\'acqua trasparente, con un ospite che nuota con la maschera',
       galleria: [
         'Un gruppo di amici a bordo',
-        'Tuffo dalla prua',
+        'Un tuffo dal gommone',
         'Il gommone in esclusiva in una cala tranquilla',
         'Aperitivo a bordo',
         'Bambini con maschera e boccaglio',
@@ -283,11 +283,11 @@ export const escursioni = [
     postiMax: posti('corsica'),
     fatti: ['Gommone in esclusiva', `Imbarco a ${daDove('corsica')}`, "Serve un documento valido per l'espatrio"],
     foto: {
-      copertina: 'Le isole Lavezzi viste dal mare, con il gommone all\'ancora',
+      copertina: 'Le isole Lavezzi viste dal mare',
       galleria: [
-        "L'isola Piana dal gommone",
+        "L'isola Piana vista dall'alto",
         'Le isole Lavezzi, acqua e granito',
-        'Ospiti in acqua alle Lavezzi',
+        'Barche all\'ancora in una cala delle Lavezzi',
         "L'isola di Cavallo dal mare",
         'La traversata verso la Corsica',
       ],

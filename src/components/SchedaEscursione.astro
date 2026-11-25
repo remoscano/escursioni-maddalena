@@ -3,6 +3,7 @@ import Foto from './Foto.astro';
 import Dato from './Dato.astro';
 import Icona from './Icona.astro';
 import { datiLingua } from '../data/lingua.js';
+import { fotoCopertina } from '../data/foto.js';
 
 interface Props { e: any; grande?: boolean }
 const { e, grande = false } = Astro.props;
@@ -14,7 +15,7 @@ const tono = 'acqua';
 ---
 {grande ? (
   <article class="scheda-grande">
-    <Foto nota={e.foto.copertina} tono={tono} />
+    <Foto nota={e.foto.copertina} src={fotoCopertina(e.slug)} tono={tono} />
     <div class="scheda-grande__corpo">
       <div class="etichette">{e.etichette.map((t: string) => <span class="etichetta">{t}</span>)}</div>
       <h3><a href={href}>{e.titolo}</a></h3>
@@ -33,7 +34,7 @@ const tono = 'acqua';
   </article>
 ) : (
   <article class="scheda">
-    <Foto nota={e.foto.copertina} tono={tono} sizes="(max-width: 760px) 100vw, 33vw" />
+    <Foto nota={e.foto.copertina} src={fotoCopertina(e.slug)} tono={tono} sizes="(max-width: 760px) 100vw, 33vw" />
     <div class="scheda__corpo">
       <div class="etichette">{e.etichette.map((t: string) => <span class="etichetta">{t}</span>)}</div>
       <h3><a href={href}>{e.titolo}</a></h3>

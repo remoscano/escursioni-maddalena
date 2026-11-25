@@ -33,9 +33,9 @@ const testi = {
     foto: {
       copertina: "Spargi vue d'en haut, avec le semi-rigide au mouillage",
       galleria: [
-        "Porto della Madonna vu d'en haut, le semi-rigide entre les trois îles",
+        "Porto della Madonna vu d'en haut, entre les îles",
         'La Plage Rose depuis le semi-rigide',
-        'Baignade à Caprera',
+        'Une crique de Caprera vue d\'en haut',
         "Le centre de La Maddalena à l'heure du déjeuner",
         'Spargi, sable et granit',
       ],
@@ -74,7 +74,7 @@ const testi = {
         'Un plat de poisson du restaurant partenaire',
         'Un plat de pâtes de la cuisine sarde',
         'Une entrée sarde de terroir',
-        'La table dressée dans le centre de La Maddalena',
+        'Un restaurant en terrasse dans le centre de La Maddalena',
       ],
     },
   },
@@ -96,7 +96,7 @@ const testi = {
       copertina: "Cala Coticcio, le semi-rigide au mouillage dans l'eau transparente",
       galleria: [
         'Le semi-rigide le long de la côte de Caprera',
-        'Plongeon à Cala Garibaldi',
+        'Le semi-rigide filant vers les îles',
         'Spargi depuis la mer',
         'La Plage Rose depuis le semi-rigide',
         'Porto della Madonna, eau turquoise',
@@ -136,7 +136,7 @@ const testi = {
       copertina: 'Le semi-rigide à contre-jour au coucher du soleil',
       galleria: [
         'Le toast au prosecco à bord',
-        'La planche saucisse et fromage et les brochettes de fruits',
+        'Une planche de charcuterie et de fromages',
         'Le ciel orange sur la mer',
         'Le semi-rigide à l’arrêt dans une baie, dans la lumière du soir',
         'Le retour au port avec les premières lumières',
@@ -177,10 +177,10 @@ const testi = {
     durataTesto: 'De 2 heures et demie à 7 heures',
     fatti: [`Embarquement à ${daDove('tour-privato')}`, 'Itinéraire sur mesure'],
     foto: {
-      copertina: "Une famille à bord, plongeon depuis l'avant",
+      copertina: "Le semi-rigide au mouillage dans l'eau transparente, avec un passager qui nage avec masque",
       galleria: [
         "Un groupe d'amis à bord",
-        "Plongeon depuis l'avant",
+        "Un plongeon depuis le semi-rigide",
         'Le semi-rigide privatisé dans une crique tranquille',
         'Apéritif à bord',
         'Enfants avec masque et tuba',
@@ -210,11 +210,11 @@ const testi = {
     durataTesto: '7 heures',
     fatti: ['Semi-rigide privatisé', `Embarquement à ${daDove('corsica')}`, "Pièce d'identité valable pour l'étranger obligatoire"],
     foto: {
-      copertina: 'Les îles Lavezzi vues de la mer, avec le semi-rigide au mouillage',
+      copertina: 'Les îles Lavezzi vues de la mer',
       galleria: [
-        "L'île Piana depuis le semi-rigide",
+        "L'île Piana vue d'en haut",
         'Les îles Lavezzi, eau et granit',
-        'Baignade aux Lavezzi',
+        'Bateaux au mouillage dans une crique des Lavezzi',
         "L'île de Cavallo vue de la mer",
         'La traversée vers la Corse',
       ],

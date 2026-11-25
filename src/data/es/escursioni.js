@@ -33,9 +33,9 @@ const testi = {
     foto: {
       copertina: 'Spargi desde arriba, con la neumática fondeada',
       galleria: [
-        'Porto della Madonna desde arriba, la neumática entre las tres islas',
+        'Porto della Madonna desde arriba, entre las islas',
         'La Playa Rosa desde la neumática',
-        'Bañistas en el agua en Caprera',
+        'Una cala de Caprera vista desde arriba',
         'El centro de La Maddalena a la hora de comer',
         'Spargi, arena y granito',
       ],
@@ -74,7 +74,7 @@ const testi = {
         'Un plato de pescado del restaurante colaborador',
         'Un primer plato de la cocina sarda',
         'Un entrante sardo de tierra',
-        'La mesa puesta en el centro de La Maddalena',
+        'Un restaurante al aire libre en el centro de La Maddalena',
       ],
     },
   },
@@ -96,7 +96,7 @@ const testi = {
       copertina: 'Cala Coticcio, la neumática fondeada en agua transparente',
       galleria: [
         'La neumática a lo largo de la costa de Caprera',
-        'Un baño en Cala Garibaldi',
+        'La neumática a toda velocidad hacia las islas',
         'Spargi desde el mar',
         'La Playa Rosa desde la neumática',
         'Porto della Madonna, agua turquesa',
@@ -136,7 +136,7 @@ const testi = {
       copertina: 'La neumática a contraluz al atardecer',
       galleria: [
         'El brindis con prosecco a bordo',
-        'La tabla con embutido y queso y las brochetas de fruta',
+        'Una tabla de embutidos y quesos',
         'El cielo naranja sobre el mar',
         'La neumática parada en una bahía, con la luz de la tarde',
         'La vuelta a puerto con las primeras luces',
@@ -177,10 +177,10 @@ const testi = {
     durataTesto: 'De 2 horas y media a 7 horas',
     fatti: [`Embarque en ${daDove('tour-privato')}`, 'Ruta a medida'],
     foto: {
-      copertina: 'Una familia a bordo, saltando desde la proa',
+      copertina: 'La neumática fondeada en agua transparente, con un pasajero buceando con gafas',
       galleria: [
         'Un grupo de amigos a bordo',
-        'Salto desde la proa',
+        'Un salto desde la neumática',
         'La neumática en exclusiva en una cala tranquila',
         'Aperitivo a bordo',
         'Niños con gafas y tubo',
@@ -210,11 +210,11 @@ const testi = {
     durataTesto: '7 horas',
     fatti: ['Neumática en exclusiva', `Embarque en ${daDove('corsica')}`, 'Se necesita un documento válido para viajar al extranjero'],
     foto: {
-      copertina: 'Las islas Lavezzi vistas desde el mar, con la neumática fondeada',
+      copertina: 'Las islas Lavezzi vistas desde el mar',
       galleria: [
-        'La isla Piana desde la neumática',
+        'La isla Piana vista desde arriba',
         'Las islas Lavezzi, agua y granito',
-        'Bañistas en el agua en las Lavezzi',
+        'Barcos fondeados en una cala de las Lavezzi',
         'La isla de Cavallo desde el mar',
         'La travesía hacia Córcega',
       ],

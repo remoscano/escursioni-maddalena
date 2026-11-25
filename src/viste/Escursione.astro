@@ -10,6 +10,7 @@ import Faq from '../components/Faq.astro';
 import SezioneRichiesta from '../components/SezioneRichiesta.astro';
 import DatiStrutturati from '../components/DatiStrutturati.astro';
 import { datiLingua } from '../data/lingua.js';
+import { fotoGalleria, fotoPiatto } from '../data/foto.js';
 import { regole, offerte, testoChiusuraOnline, testoDopoChiusura } from '../data/prenotazioni.js';
 
 interface Props { e: any }
@@ -100,10 +101,10 @@ const paginaCannigione = pagineImbarco.find((p: any) => p.id === 'cannigione');
 
   <section aria-label={T.galleria} style="padding-bottom:96px">
     <div class="contenitore galleria">
-      <Foto nota={e.foto.galleria[0]} class="galleria__grande" priorita sizes="(max-width: 760px) 100vw, 60vw" />
+      <Foto nota={e.foto.galleria[0]} src={fotoGalleria(e.slug, 0)} class="galleria__grande" priorita sizes="(max-width: 760px) 100vw, 60vw" />
       <div class="galleria__piccole">
         {e.foto.galleria.slice(1, 5).map((n: string, i: number) => (
-          <Foto nota={n} tono={toni[i + 1]} sizes="(max-width: 760px) 50vw, 20vw" />
+          <Foto nota={n} src={fotoGalleria(e.slug, i + 1)} tono={toni[i + 1]} sizes="(max-width: 760px) 50vw, 20vw" />
         ))}
       </div>
     </div>
@@ -179,7 +180,7 @@ const paginaCannigione = pagineImbarco.find((p: any) => p.id === 'cannigione');
           <p class="intestazione__lato">{e.pranzo.testo}</p>
         </div>
         <div class="piatti">
-          {e.pranzo.foto.map((n: string, i: number) => <Foto nota={n} tono={i % 2 ? 'sabbia' : 'acqua'} sizes="(max-width: 760px) 50vw, 25vw" />)}
+          {e.pranzo.foto.map((n: string, i: number) => <Foto nota={n} src={fotoPiatto(i)} tono={i % 2 ? 'sabbia' : 'acqua'} sizes="(max-width: 760px) 50vw, 25vw" />)}
         </div>
       </div>
     </section>

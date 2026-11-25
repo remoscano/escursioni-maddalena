@@ -66,7 +66,7 @@ export const testi = {
     usoCannigione: 'Depuis Cannigione',
     usoEsclusive: 'Sorties privatisées uniquement',
     usoGruppo: 'Groupe et privatisé',
-    foto: 'Les semi-rigides de profil, au mouillage dans une eau turquoise',
+    foto: 'Un semi-rigide au mouillage dans une eau turquoise, avec les passagers à bord',
     occhiello: 'Nos bateaux',
     titolo: 'Nos grands semi-rigides',
     finoA: (n) => `Jusqu'à ${n} personnes`,
@@ -157,7 +157,7 @@ export const testi = {
     prenotaOnline: 'Réserver en ligne',
     chiediWa: 'Vérifier les disponibilités sur WhatsApp',
     scegli: "Choisir l'excursion",
-    fotoApertura: "un semi-rigide filant entre les îles de l'archipel, vu d'en haut (au moins 2000 px)",
+    fotoApertura: "Un semi-rigide filant sur la mer turquoise, vu d'en haut",
     fatti: {
       uscite: 'Sorties',
       usciteValore: 'Demi-journée, journée entière, Sunset au coucher du soleil',
@@ -324,7 +324,7 @@ export const testi = {
     bagagliTesto: "Prenez seulement un sac souple : à bord, l'espace est précieux.",
     bagagliExtra: "Téléphones et papiers restent au sec dans le coffre étanche.",
     fotoBordo: 'Photos à bord',
-    foto: ['Le semi-rigide en navigation, vu depuis un autre bateau', 'Le skipper à la barre', "Passagers à l'avant", "L'échelle de bain", 'Le taud ouvert'],
+    foto: ['Un selfie à bord, avec l\'eau turquoise derrière', 'Une baignade dans l\'eau transparente', "En navigation, allongés à l'arrière", "Un groupe de passagers sur un rocher pendant l'arrêt baignade", 'Un groupe d\'amis assis à l\'avant'],
   },
   infoUtili: {
     titolo: 'Excursion à La Maddalena : embarquement, que prendre, météo',

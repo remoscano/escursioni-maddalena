@@ -66,7 +66,7 @@ export const testi = {
     usoCannigione: 'Desde Cannigione',
     usoEsclusive: 'Solo en exclusiva',
     usoGruppo: 'Grupo y exclusiva',
-    foto: 'Las neumáticas de perfil, fondeadas en agua turquesa',
+    foto: 'Una neumática fondeada en agua turquesa, con los pasajeros a bordo',
     occhiello: 'Nuestros barcos',
     titolo: 'Nuestras neumáticas grandes',
     finoA: (n) => `Hasta ${n} personas`,
@@ -157,7 +157,7 @@ export const testi = {
     prenotaOnline: 'Reservar online',
     chiediWa: 'Consultar disponibilidad por WhatsApp',
     scegli: 'Elige la excursión',
-    fotoApertura: 'una neumática navegando entre las islas del archipiélago, vista desde arriba (al menos 2000 px)',
+    fotoApertura: 'Una neumática navegando a toda velocidad sobre el mar turquesa, vista desde arriba',
     fatti: {
       uscite: 'Salidas',
       usciteValore: 'Medio día, día completo, Sunset al atardecer',
@@ -324,7 +324,7 @@ export const testi = {
     bagagliTesto: 'Trae solo una bolsa blanda: a bordo el espacio es valioso.',
     bagagliExtra: "Móviles y documentos se quedan secos en el cofre estanco.",
     fotoBordo: 'Fotos a bordo',
-    foto: ['La neumática navegando, vista desde otro barco', 'El patrón al timón', 'Pasajeros en la proa', 'La escalerilla para el baño', 'El toldo abierto'],
+    foto: ['Un selfi a bordo, con el agua turquesa detrás', 'Un baño en agua transparente', 'Navegando, tumbados en la popa', 'Un grupo de pasajeros sobre una roca durante la parada para el baño', 'Un grupo de amigos sentados en la proa'],
   },
   infoUtili: {
     titolo: 'Excursión en La Maddalena: embarque, qué llevar y tiempo',

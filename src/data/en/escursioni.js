@@ -35,9 +35,9 @@ const testi = {
     foto: {
       copertina: 'Spargi from above, with the RIB at anchor',
       galleria: [
-        'Porto della Madonna from above, the RIB among the three islands',
+        'Porto della Madonna from above, among the islands',
         'The Pink Beach from the RIB',
-        'Guests swimming at Caprera',
+        'A cove on Caprera seen from above',
         'The centre of La Maddalena at lunchtime',
         'Spargi, sand and granite',
       ],
@@ -76,7 +76,7 @@ const testi = {
         'A fish dish at a partner restaurant',
         'A Sardinian pasta dish',
         'A Sardinian starter',
-        'The table set in the centre of La Maddalena',
+        'An open-air restaurant in the centre of La Maddalena',
       ],
     },
   },
@@ -98,7 +98,7 @@ const testi = {
       copertina: 'Cala Coticcio, the RIB at anchor in clear water',
       galleria: [
         'The RIB along the coast of Caprera',
-        'A swim at Cala Garibaldi',
+        'The RIB speeding towards the islands',
         'Spargi from the sea',
         'The Pink Beach from the RIB',
         'Porto della Madonna, turquoise water',
@@ -138,7 +138,7 @@ const testi = {
       copertina: 'The RIB against the light at sunset',
       galleria: [
         'A prosecco toast on board',
-        'The board with sausage and cheese and the fruit skewers',
+        'A board of cured meats and cheese',
         'The orange sky over the sea',
         'The RIB at rest in a bay, in the evening light',
         'Back in port as the lights come on',
@@ -179,10 +179,10 @@ const testi = {
     durataTesto: 'From 2½ to 7 hours',
     fatti: [`Board in ${daDove('tour-privato')}`, 'Tailor-made route'],
     foto: {
-      copertina: 'A family on board, diving from the bow',
+      copertina: 'The RIB at anchor in clear water, with a guest snorkelling',
       galleria: [
         'A group of friends on board',
-        'Diving from the bow',
+        'A dive from the RIB',
         'The private RIB in a quiet cove',
         'Aperitivo on board',
         'Children with mask and snorkel',
@@ -212,11 +212,11 @@ const testi = {
     durataTesto: '7 hours',
     fatti: ['Private RIB', `Board in ${daDove('corsica')}`, 'A valid ID card or passport for travel abroad is required'],
     foto: {
-      copertina: 'The Lavezzi islands seen from the sea, with the RIB at anchor',
+      copertina: 'The Lavezzi islands seen from the sea',
       galleria: [
-        'Piana island from the RIB',
+        'Piana island seen from above',
         'The Lavezzi islands, water and granite',
-        'Guests swimming at the Lavezzi',
+        'Boats at anchor in a cove of the Lavezzi',
         'The island of Cavallo from the sea',
         'Crossing to Corsica',
       ],
